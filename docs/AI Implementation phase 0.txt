@@ -1,0 +1,1298 @@
+﻿AI Agent Coding Plan
+________________
+Phase Zero — Implementation Spec
+Section 1 — ActorCharacter2D Specification
+1.1 Purpose
+ActorCharacter2D is the base class for all humanoid/creature actors that move through the world using collisions. It encapsulates:
+* Physics & movement
+
+* Collision behavior
+
+* Integration points to FSM, Stats, and Actor Interface layers
+
+* Signals for higher‑level systems
+
+This specification defines the exact node tree, required properties, methods, and behaviors.
+________________
+
+
+1.2 Node Tree Structure (Canonical)
+ActorCharacter2D (CharacterBody2D)
+├── CollisionShape2D            # Main physical collider
+├── SpriteRoot (Node2D)         # Anchor for visuals
+│   ├── AnimatedSprite2D or AnimationTree
+├── Hurtbox (Area2D)
+│   ├── CollisionShape2D        # Defines where actor receives damage
+├── Hitboxes (Node2D)           # Empty holder; states activate specific hitboxes
+│   ├── [HitboxName] (Area2D)
+│       ├── CollisionShape2D
+├── ActorInterface (Node)       # Non-physics logic module
+
+
+Notes:
+   * SpriteRoot ensures visual offsets never break collision alignment.
+
+   * Hitboxes are normally disabled; states enable/disable them.
+
+   * ActorInterface is the composition layer attaching FSM, Stats, Tags, Signals, Events.
+
+________________
+
+
+1.3 Required Collision Setup
+CollisionShape2D:
+      * Shape: Capsule or Rectangle (decide per sprite style)
+
+      * Size: Must fully contain idle pose
+
+      * Position: Centered on root
+
+      * Layer: Player or Enemy (depending on final variant)
+
+      * Mask: World, Hazards, Projectiles
+
+Hurtbox (Area2D):
+         * Layer: Interaction / Triggers
+
+         * Mask: Player/Enemy hitboxes
+
+         * Requires signal: area_entered(hitbox)
+
+Hitboxes:
+            * Each Area2D starts disabled
+
+            * Must have metadata: damage, knockback_vec, element, owner_id
+
+________________
+
+
+1.4 Physics Configuration
+Movement Variables
+var velocity: Vector2
+const GRAVITY := ProjectSettings["physics/2d/default_gravity"]
+var move_speed := 140.0
+var jump_speed := -320.0
+var acceleration := 900.0
+var friction_ground := 900.0
+var friction_air := 300.0
+
+
+CharacterBody2D Settings
+               * floor_max_angle = 0.785398 (45 degrees)
+
+               * wall_min_slide_angle = 0.436332 (25 degrees)
+
+               * platform_floor_layers = World
+
+               * platform_wall_layers = World
+
+________________
+
+
+1.5 Actor Lifecycle Hooks
+These are required for integration with the engine runtime.
+Initialization
+func _ready():
+    _cache_nodes()
+    _register_signals()
+    ActorInterface.initialize(self)
+
+
+Physics Step
+func _physics_process(delta):
+    _apply_gravity(delta)
+    _apply_horizontal_accel(delta)
+    _apply_friction(delta)
+    _move_character()
+    ActorInterface.post_physics(self)
+
+
+________________
+
+
+1.6 Required Methods
+Gravity
+func _apply_gravity(delta):
+    if not is_on_floor():
+        velocity.y += GRAVITY * delta
+
+
+Horizontal Movement
+func set_move_input(dir: float):
+    _move_input = dir    # -1, 0, 1
+
+
+func _apply_horizontal_accel(delta):
+    if _move_input != 0:
+        velocity.x = lerp(velocity.x, _move_input * move_speed, acceleration * delta)
+
+
+Friction
+func _apply_friction(delta):
+    if _move_input == 0:
+        var f = is_on_floor() ? friction_ground : friction_air
+        velocity.x = move_toward(velocity.x, 0, f * delta)
+
+
+Movement Call
+func _move_character():
+    velocity = move_and_slide(velocity, Vector2.UP)
+
+
+________________
+
+
+1.7 Signals
+ActorCharacter2D must emit:
+                  * signal landed — when transitioning from air → floor
+
+                  * signal jumped — on jump start
+
+                  * signal direction_changed(dir) — left/right
+
+                  * signal hurt(damage, source_id) — triggered by hurtbox
+
+ActorInterface will also forward FSM/state events.
+________________
+
+
+1.8 Integration Requirements
+FSM
+                     * Exposes callbacks: enter_state(), exit_state(), state_process(delta)
+
+                     * States modify movement variables, enable hitboxes, handle animation.
+
+Stats
+                        * Must expose HP, MP, Strength, Defense, Luck
+
+                        * On hurt(dmg): Stats module applies reduction and triggers death event if below zero.
+
+Animation System
+                           * States instruct animation tree via ActorInterface
+
+                           * Required animations: idle, walk, run, jump, fall, land, hurt, attack, death
+
+________________
+
+
+1.9 Debug Requirements
+Character actors must support:
+                              * Debug print of active state
+
+                              * Visual toggle of hit/hurtboxes
+
+                              * Velocity vector line
+
+                              * Floor contact indicator
+
+________________
+
+
+1.10 Notes
+This spec forms the foundation. No FSM, no stats, and no advanced gameplay logic are added until the Collision Greenlight tests pass.
+________________
+
+
+Section 2 — ActorProjectile2D Specification
+2.1 Purpose
+ActorProjectile2D represents any moving hit-volume that does not need full character physics:
+                                 * Player projectiles (shuriken, arrows, ki bolts)
+
+                                 * Enemy projectiles (kunai, energy blasts, traps)
+
+It uses Area2D for overlap detection and moves using manual velocity updates in _physics_process().
+________________
+
+
+2.2 Node Tree Structure (Canonical)
+ActorProjectile2D (Area2D)
+├── CollisionShape2D          # Main hit volume
+├── SpriteRoot (Node2D)
+│   └── Sprite2D / AnimatedSprite2D / GPUParticles2D
+├── TrailFX (optional Node2D)
+└── ProjectileData (Node)     # Script-only helper or data holder
+
+
+                                    * The root Area2D is responsible for collision detection.
+
+                                    * ProjectileData stores parameters like speed, lifetime, damage, element, owner.
+
+________________
+
+
+2.3 Collision & Layers
+CollisionShape2D:
+                                       * Shape: Circle or Capsule (small, tight around sprite)
+
+                                       * Layer: PlayerProjectiles or EnemyProjectiles
+
+                                       * Mask: World, Enemies, Player, Shields, Traps (as appropriate)
+
+Signals:
+                                          * Uses body_entered and area_entered to detect hits.
+
+________________
+
+
+2.4 Core Parameters
+var velocity: Vector2
+var speed: float = 300.0
+var lifetime: float = 3.0
+var gravity: float = 0.0      # for arcing shots
+var damage: int = 1
+var knockback: Vector2 = Vector2.ZERO
+var owner_id: int = -1
+var element: int = 0          # link to elemental enum
+var pierce_count: int = 0     # 0 = no pierce
+
+
+________________
+
+
+2.5 Lifecycle
+Initialization
+func _ready():
+    set_physics_process(true)
+
+
+Physics Step
+func _physics_process(delta: float) -> void:
+    lifetime -= delta
+    if lifetime <= 0.0:
+        queue_free()
+        return
+
+
+    # Apply gravity if used
+    if gravity != 0.0:
+        velocity.y += gravity * delta
+
+
+    global_position += velocity * delta
+
+
+Collision Handling
+func _on_body_entered(body: Node) -> void:
+    if _is_owner(body):
+        return
+    _apply_hit_to(body)
+    _on_impact()
+
+
+func _on_area_entered(area: Area2D) -> void:
+    if _is_owner(area):
+        return
+    _apply_hit_to(area)
+    _on_impact()
+
+
+_on_impact() must:
+                                             * Reduce pierce_count if > 0
+
+                                             * If pierce_count <= 0, queue_free()
+
+                                             * Optionally spawn impact VFX / sound via EventBus
+
+________________
+
+
+2.6 Integration Points
+                                                * Combat System:
+
+                                                   * Uses projectile data for damage, element, knockback.
+
+                                                   * Notifies hit targets via a central damage application function.
+
+                                                      * Event Bus:
+
+                                                         * Emits events like projectile_fired, projectile_hit, projectile_destroyed.
+
+                                                            * Stats / Resistances:
+
+                                                               * Targets reduce damage based on armor/resistance tables.
+
+________________
+
+
+2.7 Debug Requirements
+                                                                  * Option to draw trajectory (line from previous to current position).
+
+                                                                  * Optional label showing damage and owner_id.
+
+                                                                  * Toggle all projectile colliders and paths from the debug overlay.
+
+________________
+
+
+2.8 Notes
+                                                                     * For very fast projectiles, Phase Zero uses simple step movement. In later phases we may add raycast-based continuous collision detection.
+
+                                                                     * Projectiles never use move_and_slide(); they are not CharacterBody2D.
+
+________________
+
+
+Section 3 — ActorTrap2D Specification
+3.1 Purpose
+ActorTrap2D models static or semi-static hazards:
+                                                                        * Spikes, saws, flame jets
+
+                                                                        * Pressure plates, collapsing floors
+
+                                                                        * Magical glyphs that deal damage or apply status effects
+
+They generally do not move using character physics, but they can animate or toggle on/off.
+________________
+
+
+3.2 Node Tree Variants
+Two canonical variants:
+A) Static Hazard (non-moving)
+ActorTrap2D (StaticBody2D)
+├── CollisionShape2D       # Physical blocker (optional)
+├── DamageArea (Area2D)   # Damage / effect zone
+│   └── CollisionShape2D
+└── SpriteRoot (Node2D)
+    └── Sprite2D / AnimatedSprite2D / AnimationPlayer
+
+
+B) Pure Trigger Hazard (no physical block)
+ActorTrap2D (Area2D)
+├── CollisionShape2D       # Trigger only
+└── SpriteRoot (Node2D)
+    └── Sprite2D / AnimatedSprite2D
+
+
+Variant A is used when the trap also acts as a wall/floor obstacle. Variant B for “walk-through” magic zones, etc.
+________________
+
+
+3.3 Collision & Layers
+For Variant A (StaticBody2D):
+                                                                           * Physical CollisionShape2D:
+
+                                                                              * Layer: Traps/Hazards
+
+                                                                              * Mask: Player, Enemies (if they collide)
+
+                                                                                 * DamageArea (Area2D):
+
+                                                                                    * Layer: Interaction/Triggers
+
+                                                                                    * Mask: Player, Enemies as needed
+
+For Variant B (Area2D root):
+                                                                                       * Root CollisionShape2D configured as damage zone only.
+
+________________
+
+
+3.4 Parameters
+var damage: int = 1
+var knockback: Vector2 = Vector2.ZERO
+var element: int = 0
+var active: bool = true
+var one_shot: bool = false
+var cooldown: float = 0.0
+var _cooldown_timer: float = 0.0
+
+
+                                                                                          * active: whether trap currently harms.
+
+                                                                                          * one_shot: if true, trap disables itself after a single trigger.
+
+                                                                                          * cooldown: time before trap can damage again.
+
+________________
+
+
+3.5 Behavior
+On Body/Area Entered
+func _on_damage_area_body_entered(body: Node) -> void:
+    if not active:
+        return
+    _apply_trap_effect(body)
+
+
+func _apply_trap_effect(target: Node) -> void:
+    # send damage/effect event to combat/stats system
+    if one_shot:
+        active = false
+    elif cooldown > 0.0:
+        _cooldown_timer = cooldown
+        active = false
+
+
+Cooldown Handling
+func _physics_process(delta: float) -> void:
+    if not active and cooldown > 0.0:
+        _cooldown_timer -= delta
+        if _cooldown_timer <= 0.0:
+            active = true
+
+
+________________
+
+
+3.6 Integration Points
+                                                                                             * Combat System: applies damage, knockback, elements, status effects.
+
+                                                                                             * Event Bus: events like trap_triggered, trap_reset, trap_destroyed.
+
+                                                                                             * Level Scripts: able to toggle trap active state, e.g., for puzzle logic.
+
+________________
+
+
+3.7 Debug Requirements
+                                                                                                * Visual overlay showing active vs inactive state (e.g., tint or outline).
+
+                                                                                                * Option to show trigger radius.
+
+                                                                                                * Trap ID label to correlate with level design docs.
+
+________________
+
+
+3.8 Notes
+                                                                                                   * Moving platforms that harm the player can be implemented as ActorTrap2D combined with motion logic, or via a hybrid scene using AnimatableBody2D + DamageArea.
+
+                                                                                                   * For Phase Zero, traps are static; moving hazards can come in a later phase once core collisions are validated.
+
+________________
+
+
+Section 4 — ActorItem2D Specification
+4.1 Purpose
+ActorItem2D represents any pickup or collectible that the player (and sometimes other actors) can acquire:
+                                                                                                      * Health/ki orbs
+
+                                                                                                      * Currency, resources, materials
+
+                                                                                                      * Keys, quest items
+
+                                                                                                      * Temporary powerups
+
+It is implemented as an Area2D with a collision shape and optional idle animation.
+________________
+
+
+4.2 Node Tree Structure
+ActorItem2D (Area2D)
+├── CollisionShape2D
+├── SpriteRoot (Node2D)
+│   └── Sprite2D / AnimatedSprite2D
+└── ItemData (Node)      # Script-only; defines what this item does
+
+
+                                                                                                         * Root Area2D handles detection of overlapping bodies.
+
+                                                                                                         * ItemData can be a dedicated script or resource reference containing item ID, type, etc.
+
+________________
+
+
+4.3 Collision & Layers
+                                                                                                            * Layer: Interaction / Triggers
+
+                                                                                                            * Mask: Player (primary), optionally other actors
+
+CollisionShape2D matches the visible sprite and is typically a small circle or rectangle.
+________________
+
+
+4.4 Parameters
+var item_id: String = ""       # Link to database/lookup
+var amount: int = 1            # For stackable items
+var auto_pickup: bool = true   # If false, requires input
+var float_idle: bool = true    # Applies bobbing animation if desired
+
+
+If linking to a data table later, item_id will fetch properties such as name, icon, description, usage effects.
+________________
+
+
+4.5 Behavior
+Detection
+func _on_body_entered(body: Node) -> void:
+    if not _can_be_picked_by(body):
+        return
+    if auto_pickup:
+        _give_to(body)
+    else:
+        _show_interaction_prompt(body)
+
+
+Transfer Logic
+func _give_to(body: Node) -> void:
+    # Notify inventory/quest system that item was acquired
+    # Event example: EventBus.emit("item_picked", {"id": item_id, "amount": amount, "owner": body})
+    queue_free()
+
+
+Manual pickup (non-auto) will be handled via an interaction system that calls _give_to() when the player confirms.
+________________
+
+
+4.6 Integration Points
+                                                                                                               * Inventory System: adds items, triggers UI updates.
+
+                                                                                                               * Quest System: may consume or mark specific item IDs as acquired.
+
+                                                                                                               * UI/HUD: shows pickup notifications and floating text.
+
+                                                                                                               * Audio: plays pickup sound.
+
+________________
+
+
+4.7 Visual & FX Behavior
+                                                                                                                  * Optional bobbing motion (small vertical sine wave) for visibility.
+
+                                                                                                                  * Optional glow or highlight for rarer items.
+
+                                                                                                                  * Optional “pop” animation/spawn effect.
+
+These effects must not affect collision logic.
+________________
+
+
+4.8 Debug Requirements
+                                                                                                                     * Toggle item ID labels.
+
+                                                                                                                     * Option to highlight pickup radius.
+
+                                                                                                                     * Test command to spawn items at cursor position.
+
+________________
+
+
+4.9 Notes
+                                                                                                                        * For Phase Zero, only simple one-step pickups are required.
+
+                                                                                                                        * Complex interactions (e.g., contextual items, placeable objects) can reuse this base and extend behavior later.
+
+________________
+
+
+Section 5 — ActorDeco2D Specification
+5.1 Purpose
+ActorDeco2D represents decorative world elements, both non-colliding and colliding, that are not active gameplay agents:
+                                                                                                                           * Background props (lanterns, crates, fences, statues)
+
+                                                                                                                           * Foreground clutter
+
+                                                                                                                           * Collidable obstacles (crates, rocks) that do not move
+
+They help define geometry, framing, and world feel without running full Actor/FSM logic.
+________________
+
+
+5.2 Node Tree Variants
+A) Non-colliding Decoration
+ActorDeco2D (Node2D)
+└── SpriteRoot (Node2D)
+    └── Sprite2D / AnimatedSprite2D / GPUParticles2D
+
+
+B) Colliding Decoration
+ActorDeco2D (StaticBody2D)
+├── CollisionShape2D
+└── SpriteRoot (Node2D)
+    └── Sprite2D / AnimatedSprite2D
+
+
+Variant A purely visual. Variant B also blocks movement.
+________________
+
+
+5.3 Collision & Layers (Variant B)
+                                                                                                                              * Layer: World
+
+                                                                                                                              * Mask: Player, Enemies, Projectiles (if they should impact)
+
+Collision shapes must:
+                                                                                                                                 * Align with the visual footprint from player’s perspective.
+
+                                                                                                                                 * Avoid over-complex polygons to reduce physics overhead.
+
+________________
+
+
+5.4 Parameters
+var deco_id: String = ""          # for documentation and referencing
+var is_foreground: bool = false   # may affect rendering layer
+var blocks_player: bool = true    # if false, use Node2D variant instead
+
+
+deco_id helps level designers refer to specific elements in documentation or bug reports.
+________________
+
+
+5.5 Behavior
+                                                                                                                                    * No AI, no FSM.
+
+                                                                                                                                    * Optional idle animations (e.g., flag waving, lantern swaying).
+
+                                                                                                                                    * May emit ambient sound via a separate Audio node (later phase).
+
+ActorDeco2D remains passive. Any interactions (e.g., breakable crate) are implemented by using a different Actor type (e.g., ActorDestructible2D) built in a later phase.
+________________
+
+
+5.6 Integration Points
+                                                                                                                                       * Rendering System: layering, parallax, sorting.
+
+                                                                                                                                       * Level Streaming: deco instances may be streamed in/out with chunks.
+
+                                                                                                                                       * Collision System: only for Variant B.
+
+________________
+
+
+5.7 Debug Requirements
+                                                                                                                                          * Simple overlay to show collision shapes when enabled.
+
+                                                                                                                                          * Optional label with deco_id.
+
+________________
+
+
+5.8 Notes
+                                                                                                                                             * ActorDeco2D is intentionally kept minimal. It exists to keep collision and visual geometry well-structured without pushing non-essential nodes into the Actor/FSM ecosystem.
+
+                                                                                                                                             * Interactable environmental objects will use specialized actor types defined later; this spec covers decoration only.
+
+________________
+
+
+Section 6 — TileMap & Ground Setup Specification
+6.1 Purpose
+Define the canonical way ground, walls, platforms, and basic collision geometry are built using Godot’s TileMap and physics layers. This is essential for consistent behavior across all levels and for reliable interaction with ActorCharacter2D and other actors.
+________________
+
+
+6.2 TileMap Structure
+Recommended setup:
+LevelRoot (Node2D)
+├── TileMap_Ground      # solid ground, walls, platforms
+├── TileMap_Background  # background visuals only (no collision)
+├── TileMap_DecoFront   # foreground visuals (no collision)
+└── [Other nodes: actors, deco, etc.]
+
+
+                                                                                                                                                * TileMap_Ground is the only TileMap used for collisions in Phase Zero.
+
+                                                                                                                                                * Background/foreground TileMaps have collision disabled.
+
+________________
+
+
+6.3 Tileset Physics Rules
+Each tile that should be “solid” must:
+                                                                                                                                                   * Have a defined CollisionShape2D or polygon in the Tileset editor.
+
+                                                                                                                                                   * Be assigned to the World collision layer.
+
+Tileset must contain categories:
+                                                                                                                                                      * Flat ground tiles
+
+                                                                                                                                                      * Slope tiles (e.g., 45° up, 45° down)
+
+                                                                                                                                                      * One-way platform tiles
+
+One-Way Platforms
+                                                                                                                                                         * Use the one-way flag in the tileset collision.
+
+                                                                                                                                                         * Ensure orientation (upward normal) is correct.
+
+                                                                                                                                                         * Player: configured with platform_floor_layers referencing the World layer.
+
+________________
+
+
+6.4 Collision Layers & Masks
+                                                                                                                                                            * TileMap_Ground uses:
+
+                                                                                                                                                               * Layer: World
+
+                                                                                                                                                               * Mask: none (static)
+
+                                                                                                                                                                  * ActorCharacter2D physics uses:
+
+                                                                                                                                                                     * Floor layers: World
+
+                                                                                                                                                                     * Wall layers: World
+
+This ensures all character movement interacts predictably with tile-based geometry.
+________________
+
+
+6.5 Level Boundaries & Kill Zones
+For Phase Zero tests:
+                                                                                                                                                                        * Add a simple Area2D below the level as a kill zone.
+
+                                                                                                                                                                        * On player enter → respawn at spawn point.
+
+This confirms collision and fall detection early.
+________________
+
+
+6.6 Decoration vs Collision
+Rules:
+                                                                                                                                                                           * If something looks solid and blocks movement, it must either:
+
+                                                                                                                                                                              * Be part of TileMap_Ground with collision, or
+
+                                                                                                                                                                              * Be an ActorDeco2D (StaticBody2D variant) with a collision shape.
+
+                                                                                                                                                                                 * If something is purely visual, it must have no collision.
+
+This avoids confusion during level design and QA.
+________________
+
+
+6.7 Test Map Requirements
+Create a dedicated Collision Test Map with:
+                                                                                                                                                                                    * Flat ground
+
+                                                                                                                                                                                    * Short and long slopes
+
+                                                                                                                                                                                    * Small steps
+
+                                                                                                                                                                                    * Walls of various heights
+
+                                                                                                                                                                                    * One-way platforms
+
+                                                                                                                                                                                    * Simple pit with a kill zone
+
+This map is the primary reference for all Phase Zero collision tests.
+________________
+
+
+6.8 Debug Requirements
+                                                                                                                                                                                       * Option to toggle debug_draw for TileMap collisions (Godot’s built-in view).
+
+                                                                                                                                                                                       * Optional overlay showing tile categories (ground, slope, one-way).
+
+________________
+
+
+6.9 Notes
+                                                                                                                                                                                          * For Phase Zero, only one collision TileMap is required.
+
+                                                                                                                                                                                          * In later phases, we can introduce multiple TileMaps per level (e.g., different collision logic per layer), but not before collisions are greenlit.
+
+________________
+
+
+Section 7 — Collision Rules Matrix
+7.1 Purpose
+Define a clear, canonical collision matrix for Phase Zero, so every actor type knows:
+                                                                                                                                                                                             * What it collides with physically.
+
+                                                                                                                                                                                             * What it detects via triggers.
+
+                                                                                                                                                                                             * What it ignores.
+
+This prevents ambiguity and strange side effects when more content is added.
+________________
+
+
+7.2 Layers (Recap)
+                                                                                                                                                                                                1. World
+
+                                                                                                                                                                                                2. Player
+
+                                                                                                                                                                                                3. Enemies
+
+                                                                                                                                                                                                4. Player Projectiles
+
+                                                                                                                                                                                                5. Enemy Projectiles
+
+                                                                                                                                                                                                6. Traps / Hazards
+
+                                                                                                                                                                                                7. Interaction / Triggers
+
+                                                                                                                                                                                                8. Reserved / Future
+
+________________
+
+
+7.3 Physical Collisions (Bodies)
+Legend:
+                                                                                                                                                                                                   * ✅ = collides
+
+                                                                                                                                                                                                   * ❌ = no physical collision
+
+Player (ActorCharacter2D on Player layer)
+                                                                                                                                                                                                      * World: ✅
+
+                                                                                                                                                                                                      * Player: ❌ (no player-player collision in Phase Zero)
+
+                                                                                                                                                                                                      * Enemies: ✅ (body bump; can be refined later)
+
+                                                                                                                                                                                                      * Player Projectiles: ❌
+
+                                                                                                                                                                                                      * Enemy Projectiles: ❌ (damage via Area2D, not body)
+
+                                                                                                                                                                                                      * Traps/Hazards (Static bodies): ✅ if they block
+
+                                                                                                                                                                                                      * Interaction/Triggers: N/A (areas, not physical)
+
+Enemies (ActorCharacter2D on Enemies layer)
+                                                                                                                                                                                                         * World: ✅
+
+                                                                                                                                                                                                         * Player: ✅ (as above)
+
+                                                                                                                                                                                                         * Enemies: ✅ or ❌ (choice: Phase Zero = ✅ simple bump)
+
+                                                                                                                                                                                                         * Player Projectiles: ❌ (damage handled by Area2D)
+
+                                                                                                                                                                                                         * Enemy Projectiles: ❌
+
+                                                                                                                                                                                                         * Traps/Hazards: ✅ if we want them to collide
+
+Projectiles (Area2D)
+Projectiles do not physically collide as bodies; they trigger via Area2D overlaps:
+                                                                                                                                                                                                            * Player Projectiles:
+
+                                                                                                                                                                                                               * Detect: World, Enemies, Traps (if relevant), Shields
+
+                                                                                                                                                                                                                  * Enemy Projectiles:
+
+                                                                                                                                                                                                                     * Detect: Player, World, Traps (if relevant)
+
+________________
+
+
+7.4 Trigger Interactions (Areas)
+Areas use masks to detect overlaps:
+Hurtboxes (on actors)
+                                                                                                                                                                                                                        * Layer: Interaction / Triggers
+
+                                                                                                                                                                                                                        * Mask: Player Projectiles, Enemy Projectiles, Traps/Hazards, possibly other special areas
+
+Hitboxes (for attacks)
+                                                                                                                                                                                                                           * Layer: Interaction / Triggers
+
+                                                                                                                                                                                                                           * Mask: Hurtboxes (Interaction / Triggers)
+
+Traps (DamageArea)
+                                                                                                                                                                                                                              * Layer: Interaction / Triggers
+
+                                                                                                                                                                                                                              * Mask: Player, Enemies (depending on design)
+
+Items (ActorItem2D)
+                                                                                                                                                                                                                                 * Layer: Interaction / Triggers
+
+                                                                                                                                                                                                                                 * Mask: Player
+
+________________
+
+
+7.5 Summary Matrix (Simplified)
+Physical body collisions:
+                                                                                                                                                                                                                                    * Player ↔ World: ✅
+
+                                                                                                                                                                                                                                    * Player ↔ Enemies: ✅
+
+                                                                                                                                                                                                                                    * Player ↔ Traps (solid): ✅
+
+                                                                                                                                                                                                                                    * Enemies ↔ World: ✅
+
+                                                                                                                                                                                                                                    * Enemies ↔ Enemies: ✅ (Phase Zero)
+
+                                                                                                                                                                                                                                    * Enemies ↔ Traps (solid): ✅ (if designed that way)
+
+Area-based triggers:
+                                                                                                                                                                                                                                       * Player Projectiles → Enemies, World, Traps
+
+                                                                                                                                                                                                                                       * Enemy Projectiles → Player, World, Traps
+
+                                                                                                                                                                                                                                       * Traps (DamageArea) → Player (+ Enemies if configured)
+
+                                                                                                                                                                                                                                       * Items (Area2D) → Player
+
+                                                                                                                                                                                                                                       * Hitboxes → Hurtboxes
+
+________________
+
+
+7.6 Future Extensions (Not Phase Zero)
+Later phases may add:
+                                                                                                                                                                                                                                          * Faction-specific layers (e.g., Neutral, Summons, Environmental)
+
+                                                                                                                                                                                                                                          * Team-based collision rules (e.g., PvP in local multiplayer)
+
+                                                                                                                                                                                                                                          * Element-based interaction layers (e.g., certain attacks pass through certain actors)
+
+These will build on the Phase Zero matrix instead of replacing it.
+________________
+
+
+7.7 Notes
+                                                                                                                                                                                                                                             * The collision rules from this matrix must be implemented as constants or a settings asset so they can be referenced and not redefined ad hoc.
+
+                                                                                                                                                                                                                                             * Any deviation must be documented at the actor level (e.g., a ghost that passes through World layer).
+
+________________
+
+
+Section 8 — Collision Greenlight Testing Protocol
+8.1 Purpose
+Define the exact tests that must pass before we declare Phase Zero collisions “good enough” to build FSM, combat, and advanced systems on top.
+If a test fails, we do not proceed with higher-level systems.
+________________
+
+
+8.2 Test Map Setup
+Use the dedicated Collision Test Map defined in Section 6:
+                                                                                                                                                                                                                                                * Flat ground
+
+                                                                                                                                                                                                                                                * Short and long slopes
+
+                                                                                                                                                                                                                                                * Walls of varying heights
+
+                                                                                                                                                                                                                                                * One-way platforms
+
+                                                                                                                                                                                                                                                * Pit + kill zone
+
+                                                                                                                                                                                                                                                * At least one colliding decoration (ActorDeco2D B variant)
+
+Spawn points:
+                                                                                                                                                                                                                                                   * Player spawn
+
+                                                                                                                                                                                                                                                   * Enemy spawn (optional for collision tests)
+
+________________
+
+
+8.3 Player Movement Tests
+1) Standing & Idle
+                                                                                                                                                                                                                                                      * Result: Player stands on flat ground without sliding or sinking.
+
+2) Walking on Flat Ground
+                                                                                                                                                                                                                                                         * Result: Consistent speed, no jitter.
+
+                                                                                                                                                                                                                                                         * No micro-bumps where tiles meet.
+
+3) Walking Off a Ledge
+                                                                                                                                                                                                                                                            * Result: Player falls smoothly.
+
+                                                                                                                                                                                                                                                            * is_on_floor() becomes false at the correct time.
+
+4) Jumping & Landing
+                                                                                                                                                                                                                                                               * Result:
+
+                                                                                                                                                                                                                                                                  * Upward movement is smooth.
+
+                                                                                                                                                                                                                                                                  * Peak arc is as expected.
+
+                                                                                                                                                                                                                                                                  * Player lands and remains stable on floor.
+
+5) Slopes (Up & Down)
+                                                                                                                                                                                                                                                                     * Result:
+
+                                                                                                                                                                                                                                                                        * Player walks up and down 45° slopes without snapping or sliding.
+
+                                                                                                                                                                                                                                                                        * No stuck edges at slope transitions.
+
+6) Wall Collisions
+                                                                                                                                                                                                                                                                           * Result:
+
+                                                                                                                                                                                                                                                                              * Player cannot pass through walls.
+
+                                                                                                                                                                                                                                                                              * Player does not jitter when pressing into walls.
+
+7) Ceiling Collisions
+                                                                                                                                                                                                                                                                                 * Result:
+
+                                                                                                                                                                                                                                                                                    * Jumping into ceiling stops upward motion.
+
+                                                                                                                                                                                                                                                                                    * Player falls afterwards.
+
+8) One-Way Platform Tests
+                                                                                                                                                                                                                                                                                       * From below: Player can jump through and land on top.
+
+                                                                                                                                                                                                                                                                                       * From above: Player stands on it.
+
+                                                                                                                                                                                                                                                                                       * Optional: Platform drop-through (later phase, not mandatory for Phase Zero greenlight).
+
+________________
+
+
+8.4 Projectile Tests
+1) Player Projectile vs World
+                                                                                                                                                                                                                                                                                          * Fire horizontally into a wall.
+
+                                                                                                                                                                                                                                                                                          * Result:
+
+                                                                                                                                                                                                                                                                                             * Projectile collides and disappears or triggers impact event at correct position.
+
+2) Player Projectile vs Enemy Hurtbox (dummy enemy)
+                                                                                                                                                                                                                                                                                                * Place dummy enemy.
+
+                                                                                                                                                                                                                                                                                                * Result:
+
+                                                                                                                                                                                                                                                                                                   * Projectile triggers a hit event.
+
+                                                                                                                                                                                                                                                                                                   * Projectile respects pierce rules.
+
+3) Enemy Projectile vs Player
+                                                                                                                                                                                                                                                                                                      * Spawn enemy projectile toward player.
+
+                                                                                                                                                                                                                                                                                                      * Result:
+
+                                                                                                                                                                                                                                                                                                         * Correct detection of hit.
+
+                                                                                                                                                                                                                                                                                                         * Projectile removed/handled correctly.
+
+________________
+
+
+8.5 Trap Tests
+1) Static Trap (Spikes) vs Player
+                                                                                                                                                                                                                                                                                                            * Player walks into/over trap.
+
+                                                                                                                                                                                                                                                                                                            * Result:
+
+                                                                                                                                                                                                                                                                                                               * Damage event fires once per expected contact.
+
+                                                                                                                                                                                                                                                                                                               * If one_shot = true, trap stops damaging.
+
+2) Cooldown Trap
+                                                                                                                                                                                                                                                                                                                  * Player remains inside trap area.
+
+                                                                                                                                                                                                                                                                                                                  * Result:
+
+                                                                                                                                                                                                                                                                                                                     * Damage only re-applies according to cooldown.
+
+________________
+
+
+8.6 Item Pickup Tests
+1) Auto Pickup
+                                                                                                                                                                                                                                                                                                                        * Player walks into ActorItem2D.
+
+                                                                                                                                                                                                                                                                                                                        * Result:
+
+                                                                                                                                                                                                                                                                                                                           * Pickup event fires.
+
+                                                                                                                                                                                                                                                                                                                           * Item disappears.
+
+2) Non-Auto Pickup
+                                                                                                                                                                                                                                                                                                                              * Not required for Phase Zero, but if implemented:
+
+                                                                                                                                                                                                                                                                                                                                 * Item should wait for explicit interaction input.
+
+________________
+
+
+8.7 Decoration Collision Tests
+1) Non-colliding Deco
+                                                                                                                                                                                                                                                                                                                                    * Player can move through Variant A decorations.
+
+2) Colliding Deco
+                                                                                                                                                                                                                                                                                                                                       * Player cannot pass through Variant B decorations.
+
+                                                                                                                                                                                                                                                                                                                                       * Edges blend well with TileMap ground.
+
+________________
+
+
+8.8 Debug View Checks
+With collision debug overlays enabled:
+                                                                                                                                                                                                                                                                                                                                          * All colliders line up visually with sprites and tiles.
+
+                                                                                                                                                                                                                                                                                                                                          * No hidden colliders extend into visible empty space.
+
+                                                                                                                                                                                                                                                                                                                                          * Hitboxes and hurtboxes enable/disable correctly (for later combat tests).
+
+________________
+
+
+8.9 Pass Criteria
+Phase Zero collisions are considered greenlit when:
+                                                                                                                                                                                                                                                                                                                                             * All tests in 8.3–8.8 pass without major issues.
+
+                                                                                                                                                                                                                                                                                                                                             * No crashes or physics errors occur.
+
+                                                                                                                                                                                                                                                                                                                                             * No actor consistently gets stuck due to geometry.
+
+Minor cosmetic issues (e.g., very small sprite overlap at tile seams) can be deferred, but anything that affects player trust in movement must be resolved first.
+________________
+
+
+8.10 Notes
+Only after Collision Greenlight is achieved do we:
+                                                                                                                                                                                                                                                                                                                                                * Integrate advanced FSM logic
+
+                                                                                                                                                                                                                                                                                                                                                * Add combat hitbox logic
+
+                                                                                                                                                                                                                                                                                                                                                * Implement time anomalies & advanced gadgets
+
+This avoids chasing bugs that are actually rooted in unstable collisions.
+________________
+
+
+Section 9 — Implementation Order (Coding Roadmap)
+9.1 Purpose
+Define a strict order of implementation so that collisions and basic actors are built in a controlled, testable way, without jumping ahead into complex systems (FSM, combat trees, AI, anomalies).
+Each step must compile and be testable in isolation before moving forward.
+________________
+
+
+9.2 Step 1 — Project & Layers Setup
+                                                                                                                                                                                                                                                                                                                                                   1. Create a clean Godot 4.2+ project for the Densetsu Engine prototype.
+
+                                                                                                                                                                                                                                                                                                                                                   2. Configure collision layers according to Section 7.
+
+                                                                                                                                                                                                                                                                                                                                                   3. Configure physics:
+
+                                                                                                                                                                                                                                                                                                                                                      * 2D gravity
+
+                                                                                                                                                                                                                                                                                                                                                      * physics FPS (usually 60)
+
+                                                                                                                                                                                                                                                                                                                                                         4. Create a base folder structure:
+
+                                                                                                                                                                                                                                                                                                                                                            * res://engine/actors/
+
+                                                                                                                                                                                                                                                                                                                                                            * res://engine/core/
+
+                                                                                                                                                                                                                                                                                                                                                            * res://engine/tests/
+
+                                                                                                                                                                                                                                                                                                                                                            * res://game/levels/
+
+                                                                                                                                                                                                                                                                                                                                                            * res://game/prototypes/
+
+________________
+
+
+9.3 Step 2 — TileMap & Ground Baseline
+                                                                                                                                                                                                                                                                                                                                                               1. Create the Collision Test Map scene.
+
+                                                                                                                                                                                                                                                                                                                                                               2. Set up TileMap_Ground with a small tileset:
+
+                                                                                                                                                                                                                                                                                                                                                                  * Flat tiles
+
+                                                                                                                                                                                                                                                                                                                                                                  * Slopes (basic 45°)
+
+                                                                                                                                                                                                                                                                                                                                                                  * One-way platform tiles
+
+                                                                                                                                                                                                                                                                                                                                                                     3. Ensure all relevant tiles have correct physics shapes.
+
+                                                                                                                                                                                                                                                                                                                                                                     4. Add a simple kill zone Area2D below the level.
+
+Test: confirm that an empty scene with only TileMap + camera runs without issues.
+________________
+
+
+9.4 Step 3 — ActorCharacter2D Prototype
+                                                                                                                                                                                                                                                                                                                                                                        1. Create ActorCharacter2D scene exactly as specified in Section 1.
+
+                                                                                                                                                                                                                                                                                                                                                                        2. Implement minimal script:
+
+                                                                                                                                                                                                                                                                                                                                                                           * gravity
+
+                                                                                                                                                                                                                                                                                                                                                                           * horizontal move input
+
+                                                                                                                                                                                                                                                                                                                                                                           * jump
+
+                                                                                                                                                                                                                                                                                                                                                                           * move_and_slide() usage
+
+                                                                                                                                                                                                                                                                                                                                                                              3. Place the actor in the Collision Test Map.
+
+Run tests 8.3.x (player movement & collision). Fix until stable.
+________________
+
+
+9.5 Step 4 — ActorDeco2D (Colliding & Non-Colliding)
+                                                                                                                                                                                                                                                                                                                                                                                 1. Create ActorDeco2D non-colliding variant.
+
+                                                                                                                                                                                                                                                                                                                                                                                 2. Create colliding variant as StaticBody2D with CollisionShape2D.
+
+                                                                                                                                                                                                                                                                                                                                                                                 3. Place several deco instances in the test map.
+
+Verify collisions & visual alignment.
+________________
+
+
+9.6 Step 5 — ActorTrap2D Basics
+                                                                                                                                                                                                                                                                                                                                                                                    1. Create static spike trap using Variant A (StaticBody2D + DamageArea).
+
+                                                                                                                                                                                                                                                                                                                                                                                    2. Implement damage event stub (no full combat yet).
+
+                                                                                                                                                                                                                                                                                                                                                                                    3. Verify entering trap triggers the expected log/event.
+
+Later, integrate damage with the future Stat/Combat system.
+________________
+
+
+9.7 Step 6 — ActorItem2D Basics
+                                                                                                                                                                                                                                                                                                                                                                                       1. Create a simple pickup (e.g., health orb) with ActorItem2D.
+
+                                                                                                                                                                                                                                                                                                                                                                                       2. Implement auto-pickup behavior and stub event (e.g., print/log).
+
+                                                                                                                                                                                                                                                                                                                                                                                       3. Place items in the test map.
+
+Confirm basic pickup logic works.
+________________
+
+
+9.8 Step 7 — ActorProjectile2D Basics
+                                                                                                                                                                                                                                                                                                                                                                                          1. Create ActorProjectile2D.
+
+                                                                                                                                                                                                                                                                                                                                                                                          2. Implement movement, lifetime, simple collision response.
+
+                                                                                                                                                                                                                                                                                                                                                                                          3. Temporarily bind firing to a simple input (e.g., press key to spawn projectile from player).
+
+                                                                                                                                                                                                                                                                                                                                                                                          4. Test collisions against World, dummy enemy, and optionally traps.
+
+________________
+
+
+9.9 Step 8 — Debug Overlay Hooks (Minimal)
+                                                                                                                                                                                                                                                                                                                                                                                             1. Implement simple debug toggles:
+
+                                                                                                                                                                                                                                                                                                                                                                                                * Show collision shapes
+
+                                                                                                                                                                                                                                                                                                                                                                                                * Show actor IDs
+
+                                                                                                                                                                                                                                                                                                                                                                                                * Show velocity vector for player
+
+                                                                                                                                                                                                                                                                                                                                                                                                   2. Hook to a global debug flag or key.
+
+This prepares the ground for the later full debug system.
+________________
+
+
+9.10 Step 9 — Run Full Collision Greenlight Protocol
+Execute all tests defined in Section 8:
+                                                                                                                                                                                                                                                                                                                                                                                                      * Player movement tests
+
+                                                                                                                                                                                                                                                                                                                                                                                                      * Projectile tests
+
+                                                                                                                                                                                                                                                                                                                                                                                                      * Trap tests
+
+                                                                                                                                                                                                                                                                                                                                                                                                      * Item tests
+
+                                                                                                                                                                                                                                                                                                                                                                                                      * Deco tests
+
+                                                                                                                                                                                                                                                                                                                                                                                                      * Debug overlays
+
+Fix all critical issues before proceeding.
+________________
+
+
+9.11 After Greenlight — Next Phase Entry
+Only after Phase Zero is fully validated do we:
+                                                                                                                                                                                                                                                                                                                                                                                                         * Integrate FSM system into ActorCharacter2D.
+
+                                                                                                                                                                                                                                                                                                                                                                                                         * Connect Stats & Combat.
+
+                                                                                                                                                                                                                                                                                                                                                                                                         * Begin work on AI behaviors.
+
+                                                                                                                                                                                                                                                                                                                                                                                                         * Introduce narrative and anomaly mechanics.
+
+This roadmap ensures that future complexity is built on a stable, predictable foundation.

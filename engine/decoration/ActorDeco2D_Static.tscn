@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://deco_static"]
+
+[ext_resource type="Texture2D" path="res://assets/placeholder_deco.tres" id="1"]
+[ext_resource type="Script" path="res://engine/decoration/ActorDeco2D.gd" id="2"]
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(20, 20)
+
+[node name="ActorDeco2D_Static" type="StaticBody2D"]
+collision_layer = 1
+collision_mask = 2
+script = ExtResource("2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("1")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1")
+centered = true

@@ -1,0 +1,760 @@
+I went through the Construct 2 project and pulled out everything relevant to the player’s input/movement pipeline. Below is a structured analysis plus how to rebuild it in Godot/Densetsu terms.
+
+---
+
+## 1. Player actor structure in the C2 project
+
+There are three important pieces:
+
+### 1.1 Visual actor (Michio)
+
+* **Object-type:** `ACTOR_Michio` (global Sprite).
+* Contains:
+
+  * Animation folder “Michio” with multiple animations (idle/walk/attack etc.).
+  * Image points: `"belt"`, `"Hitbox"` etc.
+  * A narrow upright **collision poly** around the lower body in each frame.
+* **No behaviors or instance variables** here.
+  Michio is just the visual shell.
+
+### 1.2 Physics / state actor (legacy)
+
+* **Object-type:** `deprecated_ACTOR_Player_1` (Sprite).
+* This is the real **physics body + state container**.
+* **Behaviors (plugins):**
+
+  * `Rex_pushOutSolid` → pushes the sprite out of overlapping solids.
+  * `PlatformPlus` → main movement/physics behavior.
+  * `AnpurStateMachine` (`StateMachine` behavior) → not configured in events, likely used minimally or was WIP.
+* **Key instance variables** (movement & control related):
+
+  ```text
+  ACTOR_Name          : string (who this body represents; e.g. Michio)
+  PlayerNr            : number (1–4)
+  ControlsEnabled     : bool (can read input at all)
+  canMove             : number (0 = no, 1 = yes, -1 = limited / jump only)
+  Enabled             : bool (body active)
+  Alive               : bool
+  Restrained          : bool (cutscenes/grabs/etc.)
+
+  InTheAir            : bool
+  Jumping             : bool
+  JumpCount           : number
+  Falling             : bool
+  Airtime             : number (time in air)
+  canDoubleJump       : bool
+  HighFall            : bool
+
+  SpeedX, SpeedY      : number
+  SpeedXABS, SpeedYABS: number (abs())
+  InputDirectionX     : number (-1, 0, 1)
+  InputDirectionY     : number (-1, 0, 1)
+  Facing              : number (-1 = left, 1 = right)
+
+  WallJumping         : bool
+  canWallJump         : bool
+  WallJumpSide        : number (-1/1)
+
+  Ledge               : bool
+  Pole                : bool
+  Climbing            : bool
+
+  DoubleTapLeft       : bool
+  DoubleTapRight      : bool
+  DoubleTapDown       : bool
+  DoubleTapUp         : bool
+  Dashing             : bool
+  FallingThrough      : bool  (drop-down through one-way platforms)
+  Rolling             : bool
+  Ducking             : bool
+  Sneaking            : bool
+
+  MovingAtSpeed       : number (threshold indicator, not raw velocity)
+  inCombat            : bool
+
+  KEY_weapon          : bool
+  KEY_shoot           : bool
+  KEY_hth             : bool
+
+  AttackWeapon        : bool
+  AttackHtH           : bool
+  AttackSub           : bool
+  BlockingHtH         : bool
+  BlockingWeapon      : bool
+
+  HitType, HurtType   : number (damage metadata; not central to movement)
+  hasXinput           : number (-1 = keyboard only, >=0 gamepad index)
+  ```
+
+So: **all of the actual movement/air/ledge/wall/dash logic is keyed off this object’s instance variables + its PlatformPlus behavior state**.
+
+### 1.3 Family for “Players” (newer abstraction)
+
+* **Family:** `Players`
+
+* **Member:** `ACTOR_Player_1234` (Sprite with same “PlayerPin/Camera/floorsensor” image points as the old object).
+
+* Family-level instance variables mirror the ones on `deprecated_ACTOR_Player_1`:
+
+  * `ACTOR_Name`, `ControlledByPlayerNr`, `ControlsEnabled`, `canMove`, `Enabled`, `Alive`, `Restrained`, `intheAir`, `Hurt`, etc.
+
+* This is clearly a refactor toward a generic **player family** for up to 4 players, but the main movement sheet (`Player - States`) is still written against `deprecated_ACTOR_Player_1`.
+
+For reconstruction in Godot, you should treat **this combined design** as:
+
+* A **physics body + state component** (old object / family).
+* A **visual shell** (Michio sprite, possibly swappable per character).
+
+---
+
+## 2. Input pipeline (Controls.xml)
+
+### 2.1 Raw input variables
+
+The `Controls` sheet defines global variables for:
+
+* Keycodes:
+
+  * `jumpKey`, `jumpKey2` (Space / other jump),
+  * `leftKey`, `rightKey`, `upKey`, `downKey`,
+  * `leftKey2`, `rightKey2`, `upKey2`, `downKey2` (WASD),
+  * `dashKey`, `hthKey`, `weaponKey`, `shootKey`, `blockKey`, etc.
+* Input labels used by the `InputManager` plugin:
+
+  * `jump_`, `left_`, `right_`, `up_`, `down_` (strings).
+* Timers for double-tap detection per player:
+
+  * `P1doubletapTimerL`, `P1doubletapTimerR`, `P1doubletapTimerL2`, `P1doubletapTimerR2`
+    (and P2 equivalents), used to detect **dash** from double-tapping left/right.
+* Gamepad presence:
+
+  * `hasXinput` is set to -1 for “no gamepad”, or to a pad index when one is detected.
+
+### 2.2 Mapping to InputManager
+
+Core logic in `Controls`:
+
+* For each direction **Left / Right / Up / Down**:
+
+  * `Keyboard.Key code is down(leftKey or leftKey2)` OR
+  * `Gamepad Is button down` OR
+  * `Gamepad Axis` in threshold
+  * → **InputManager: Set down input** `"P1_left"` (and `Set up input` `"P1_right"` etc. for the opposite direction).
+* Similar groups exist for jump, attack, weapon, block, dash, pause, map, etc.
+
+So the pipeline is:
+
+1. Keyboard+Gamepad → “P1_left/right/up/down/jump/…“ (InputManager inputs).
+2. Player state sheet subscriptions (`Player - States`) use **`On input down / up` conditions** on these logical inputs (e.g. `jump_`) to change the player’s variables and call PlatformPlus actions.
+
+In Godot terms: this is roughly **InputMap actions → logical actions → actor-level flags**.
+
+---
+
+## 3. Movement logic from `Player - States`
+
+The `Player - States` sheet is where movement actually happens. It’s built around:
+
+* `deprecated_ACTOR_Player_1` instance variables.
+* `PlatformPlus` actions.
+* `InputManager On input down/up` for key events (jump, dash, etc.).
+* Several overlapping “modes”: ground, air, wall, ledge, pole, dash, fall-through.
+
+Below is the distilled behavior.
+
+### 3.1 Ground vs air state
+
+Key PlatformPlus calls found:
+
+* `Set acceleration(0)` and later `Set acceleration(640)`
+* `Set deceleration(640)`
+* `Set enabled(State 0/1)`
+* `Set vector X(PlatformPlus.VectorX * 1.5)`
+* `Set vector Y(0)`
+* `Fall through`
+* `Simulate control(Control = X)` (Left, Right, Jump, etc.)
+
+Key variable updates linked to these:
+
+* When on floor (PlatformPlus “is on floor / is landed / is on ground”):
+
+  ```text
+  JumpCount = 0
+  InTheAir  = false
+  Falling   = false
+  Airtime   = 0
+  HighFall  = false
+  canDoubleJump = true (or based on some condition)
+  ```
+
+* When not on floor:
+
+  ```text
+  InTheAir  = true
+  Airtime   += dt
+  Falling   = (PlatformPlus.VectorY > 0)
+  SpeedY    = PlatformPlus.VectorY
+  SpeedYABS = abs(SpeedY)
+  SpeedX    = PlatformPlus.VectorX
+  SpeedXABS = abs(SpeedX)
+  ```
+
+* If `Airtime` and `SpeedY` exceed some thresholds, `HighFall` is set true and a separate landing reaction is triggered.
+
+> Godot translation: this becomes a canonical `is_on_floor()` check with vertical velocity thresholds and a `fall_time` accumulator.
+
+### 3.2 Facing and input direction
+
+For each frame / tick, based on InputManager state (or derived from platform velocity):
+
+* `InputDirectionX` = -1, 0, 1.
+* `InputDirectionY` = -1, 0, 1.
+* If `InputDirectionX ≠ 0`:
+
+  * `Facing` = `InputDirectionX`.
+
+There is also `MovingAtSpeed`, which is set to 1 when `SpeedXABS` exceeds some minimum threshold, else 0. This is used by animation/state logic to know if Michio is “actually moving” vs just pressed a key.
+
+> Godot translation: maintain `input_dir.x` / `input_dir.y`, `facing` and a “is_moving” flag in your Actor context.
+
+### 3.3 Jump & double jump
+
+The critical pieces:
+
+* **Jump input**: event block:
+
+  ```xml
+  <condition type="InputManager" name="On input down">
+      <param name="Input">jump_</param>
+  </condition>
+  <condition type="deprecated_ACTOR_Player_1" name="Is boolean instance variable set">
+      <param>Enabled</param>
+  </condition>
+  <condition type="deprecated_ACTOR_Player_1" ...>Alive</condition>
+  ... plus checks on InTheAir, Climbing etc.
+  ```
+
+* If **on ground** (`InTheAir` false, PlatformPlus on floor):
+
+  * First jump:
+
+    * `Jumping = true`
+    * `JumpCount = 1`
+    * `PlatformPlus.Simulate control(Jump)` or `Set vector Y(negative jump speed)`
+    * `canDoubleJump = true` (if ability available).
+
+* If **in air** and `canDoubleJump` and `JumpCount == 1`:
+
+  * Double jump:
+
+    * `JumpCount = 2`
+    * `canDoubleJump = false`
+    * `PlatformPlus.Set vector Y(...)` to a controlled second jump impulse, often resetting downward speed then applying upward.
+    * `InTheAir` remains true.
+    * Visual effect uses the `"DoubleJump"` image point.
+
+* `jumpReleased` variable: used to prevent holding the button from triggering immediate re-jumps; there are conditions:
+
+  * `Compare variable jumpReleased == 1` gating new jumps.
+  * When jump key is released (`InputManager On input up jump_`), `jumpReleased = 1`.
+  * When jump is consumed, set back to 0.
+
+> Godot translation:
+>
+> * `if is_on_floor() and jump_pressed and jump_cooldown_ok:` → first jump.
+> * `elif !is_on_floor() and extra_jumps > 0 and jump_pressed and jump_released_since_last_jump:` → double jump.
+> * Manage `jump_released` as “must release before another jump” flag.
+
+### 3.4 Wall detection & wall jump
+
+From the variables and conditions:
+
+* Conditions like:
+
+  ```xml
+  <condition behavior="PlatformPlus" name="Is by wall" ... type="deprecated_ACTOR_Player_1" />
+  <condition ... name="Is overlapping at offset" Object="PLATFORM_Logs" OffsetY=10 />
+  ```
+
+* Logic:
+
+  * If in air and near a wall and not climbing/ledging:
+
+    * `canWallJump = true`
+    * `WallJumpSide = -1 or 1` depending on which side the wall is.
+  * On jump input while `canWallJump`:
+
+    * `WallJumping = true`
+    * `JumpCount` reset or specially handled.
+    * `PlatformPlus.Set vector Y(negative wall jump force)`
+    * `PlatformPlus.Set vector X` to push away from the wall (`WallJumpSide * someSpeed`).
+    * `Facing` may flip to opposite of `WallJumpSide`.
+
+> Godot translation:
+>
+> * Detect wall contact via `is_on_wall()` or raycasts left/right.
+> * Maintain `wall_side` (-1, 1).
+> * On jump while `is_on_wall` and falling, set `velocity.y = -wall_jump_power`, `velocity.x = wall_side * wall_jump_push`.
+> * Set state `WALL_JUMP` for the FSM.
+
+### 3.5 Ledge / pole / climbing
+
+There are instance vars: `Ledge`, `Pole`, `Climbing`. Combined with image points:
+
+* `"Climb"` image point on the player body.
+* Some environment actors (ledges, poles) are overlapped via “Is overlapping at offset” conditions.
+
+Behavior:
+
+* When overlapping a special climbable area and certain conditions:
+
+  * `Climbing = true`
+  * `PlatformPlus.Set enabled(0)` (freeze normal platform physics).
+  * `PlatformPlus.Set vector Y(0)` (cancel fall).
+  * Use `InputDirectionY` to move along the climb path or up onto the ledge.
+  * When at top or bottom, or on jump / drop, re-enable PlatformPlus (`Set enabled(1)`) and clear `Climbing`.
+
+> Godot translation:
+>
+> * Use a separate **climb/ledge state** in your FSM that:
+>
+>   * Zeroes `velocity`.
+>   * Disables gravity and regular horizontal control.
+>   * Uses `input_dir.y` and anchors like “Climb” to move.
+>   * Exits back to `IDLE` / `FALL` when conditions satisfied.
+
+### 3.6 Dash & double–tap logic
+
+Controls sheet tracks per-player double-tap timers; Player state uses:
+
+* `DoubleTapLeft`, `DoubleTapRight` booleans.
+* `Dashing` bool and `canMove`, `MovingAtSpeed`.
+
+A typical pattern (inferred from events and variable names):
+
+1. InputManager “On input down” for left/right sets a **timer** or checks `doubletapTimer`.
+2. If a second press occurs within that window:
+
+   * `DoubleTapLeft` (or `DoubleTapRight`) = true.
+3. In Player - States:
+
+   * When `DoubleTapLeft`/`Right` gets set and the player is:
+
+     * `Alive`, `Enabled`, `ControlsEnabled`,
+     * `!Restrained`, `!Ducking`, `!Climbing`, etc.
+   * Then:
+
+     * `Dashing = true`
+     * `canMove` may be set to a special value (e.g. “only dash/roll”).
+     * `PlatformPlus.Set acceleration(0)` (so velocity doesn’t ramp, it snaps).
+     * `PlatformPlus.Set vector X` to a large value in facing direction (or directly to left/right).
+     * A timer or distance condition eventually:
+
+       * `Dashing = false`
+       * `PlatformPlus.Set acceleration(640)` and `Set deceleration(640)` to return to normal walking.
+
+> Godot translation:
+>
+> * Detect double-tap using your own timer per direction or let Godot’s input event timing do it.
+> * When dash triggers:
+>
+>   * Enter `DASH` state.
+>   * Set `velocity.x = dash_speed * facing`.
+>   * Disable standard horizontal input until dash ends (by timer or obstacles).
+> * After dash, revert to `RUN`/`IDLE`, reset `velocity.x` to clamped speed.
+
+### 3.7 Drop-through / fall-through platforms
+
+At least one clear snippet:
+
+```xml
+<action behavior="PlatformPlus" id="12" name="Fall through" ... />
+<action type="deprecated_ACTOR_Player_1" name="Set boolean">
+    <param>FallingThrough</param>
+    <param>1</param>
+</action>
+```
+
+This is triggered when:
+
+* Down input + jump (or a dedicated drop input), while:
+
+  * On a one-way platform (`PLATFORM_Logs` or similar),
+  * Not already falling through.
+
+Behavior:
+
+* Call `PlatformPlus.Fall through` to allow the body to pass down through one-way platforms.
+* Set `FallingThrough = true` for a short duration to prevent re-grab.
+* After some time or once off the platform, reset `FallingThrough = false`.
+
+> Godot translation:
+>
+> * Temporarily disable collision with one-way platforms (e.g., by toggling collision layers/masks or calling `platform_one_way_collision = false` for a short window).
+
+* Use a `fallthrough_timer` to re-enable.
+
+### 3.8 Rolling, ducking, sneaking
+
+These flags are toggled in response to:
+
+* Down input + attack / jump etc. on ground.
+* Movement speed thresholds.
+
+Likely behavior:
+
+* `Ducking = true`:
+
+  * Zero horizontal acceleration, clamp maximum speed low.
+  * Change collision shape / animation.
+* `Rolling = true`:
+
+  * Similar to dash but with “crouched” posture and possibly invulnerability/low profile; uses `Set vector X(VectorX*1.5)` or a constant.
+* `Sneaking = true`:
+
+  * Lower `MovingAtSpeed` threshold, slower acceleration/maximum speed.
+
+These interact with `canMove` and `ControlsEnabled` to switch between locomotion modes.
+
+> Godot translation:
+>
+> * Represent them as **separate FSM states** (CROUCH, ROLL, SNEAK) that override movement parameters and possibly collision shapes.
+
+---
+
+## 4. Plugins and Godot equivalents
+
+### 4.1 InputManager plugin
+
+* C2: named inputs, “On input down/up”, gamepad/keyboard abstraction.
+* **Godot/Densetsu equivalent:**
+
+  * Use `InputMap` and a light wrapper that exposes:
+
+    * `is_action_just_pressed("jump")`, `is_action_pressed("move_left")`, etc.
+  * Add an intermediate “Input Manager” module that:
+
+    * Aggregates keyboard/gamepad,
+    * Handles double-tap detection,
+    * Exposes events or flags into the **Actor’s context** instead of directly mutating physics.
+
+### 4.2 PlatformPlus
+
+* C2 features used:
+
+  * `Set enabled(state)`
+  * `Set acceleration(value)`
+  * `Set deceleration(value)`
+  * `Set gravity` (seen in some snippets, not central to current dump)
+  * `Set max jump count`
+  * `Set vector X/Y`
+  * `Simulate control(control index)`
+  * `Fall through`
+
+* **Godot/Densetsu equivalent:**
+
+  * Use `CharacterBody2D` with:
+
+    * `velocity.x`, `velocity.y`, `move_and_slide()`.
+  * Map:
+
+    * **Acceleration/Deceleration** → `ground_accel`, `ground_decel` values in a movement config (from Statskeeper).
+    * **Set vector X/Y** → directly assign to `velocity.x/y`.
+    * **Enabled** → freeze body or skip movement step.
+    * **Fall through** → adjust collision masks or platform flags.
+    * **Max jump count** → `extra_jumps` or a stat in Statskeeper.
+
+### 4.3 Rex_pushOutSolid
+
+* Used to keep the player from overlapping solid tiles.
+* Godot: use proper collision shapes and `move_and_slide()` with correct floor, wall, and ceiling checks; you don’t need a dedicated plugin.
+
+### 4.4 AnpurStateMachine
+
+* Not really driven via events in this project (no clear external state actions).
+* In Densetsu Engine, you already have your own FSM system. This replaces it entirely.
+
+---
+
+## 5. How to rebuild this in Godot / Densetsu Engine
+
+Here is a direct mapping you can give Codex (or use yourself) to reconstruct the behavior, leaving room for FSM & Statskeeper.
+
+### 5.1 Node & data layout
+
+**Scene: `ActorPlayer` (CharacterBody2D)**
+
+Children:
+
+* `Sprite2D` / `AnimatedSprite2D` → Michio visuals.
+* `CollisionShape2D` → main collision.
+* Markers as `Node2D`:
+
+  * `PlayerPin` (for attaching Michio sprite / camera follow).
+  * `Climb` (reference for climbing snaps).
+  * `CameraAnchor`.
+  * `DoubleJumpAnchor`.
+  * `FloorSensor` (optional raycast for floor softness).
+
+**Script: `actor_player.gd`**
+
+* Holds:
+
+  ```gdscript
+  var stats             # reference to Statskeeper
+  var fsm               # reference to FSM (Idle, Run, Jump, etc.)
+  var flags = {
+      "controls_enabled": true,
+      "can_move": 1,
+      "enabled": true,
+      "alive": true,
+      "restrained": false,
+      "in_air": false,
+      "jumping": false,
+      "jump_count": 0,
+      "can_double_jump": true,
+      "falling": false,
+      "airtime": 0.0,
+      "high_fall": false,
+      "wall_jumping": false,
+      "can_wall_jump": false,
+      "wall_jump_side": 0,
+      "ledge": false,
+      "pole": false,
+      "climbing": false,
+      "double_tap_left": false,
+      "double_tap_right": false,
+      "dashing": false,
+      "falling_through": false,
+      "rolling": false,
+      "ducking": false,
+      "sneaking": false,
+      "moving_at_speed": false,
+      "in_combat": false,
+      "facing": 1,
+  }
+
+  var input_dir := Vector2.ZERO
+  var velocity  := Vector2.ZERO
+  ```
+
+### 5.2 Movement update function (engine-agnostic outline)
+
+Pseudo-code:
+
+```gdscript
+func _physics_process(delta: float) -> void:
+    if !flags.enabled or !flags.alive:
+        return
+
+    _read_input()
+    _update_ground_air_state(delta)
+    _handle_jumps(delta)
+    _handle_wall_and_climb(delta)
+    _handle_dash_and_roll(delta)
+    _apply_horizontal_movement(delta)
+    _apply_vertical_movement(delta)
+
+    # Replace with move_and_slide etc.
+    velocity = move_and_slide(velocity, Vector2.UP)
+
+    _update_speed_metrics()
+    fsm.update(delta, self)
+```
+
+#### `_read_input()`
+
+* Read from your InputManager wrapper (`Input.is_action_pressed(...)` or your future system).
+* Set:
+
+  ```gdscript
+  input_dir.x = int(Input.is_action_pressed("move_right")) - int(Input.is_action_pressed("move_left"))
+  input_dir.y = int(Input.is_action_pressed("move_down")) - int(Input.is_action_pressed("move_up"))
+
+  if input_dir.x != 0:
+      flags.facing = input_dir.x
+  ```
+
+#### `_update_ground_air_state(delta)`
+
+* Equivalent to PlatformPlus “is on floor / landed” vs “in the air”:
+
+  ```gdscript
+  if is_on_floor():
+      if flags.in_air:
+          # just landed
+          flags.in_air = false
+          flags.falling = false
+          flags.airtime = 0.0
+          flags.jump_count = 0
+          flags.can_double_jump = stats.can_double_jump
+          if flags.high_fall:
+              # trigger high fall reaction
+              flags.high_fall = false
+      else:
+          flags.airtime = 0.0
+  else:
+      flags.in_air = true
+      flags.airtime += delta
+      flags.falling = velocity.y > 0.0
+  ```
+
+#### `_handle_jumps(delta)`
+
+* Use jump_pressed & jump_released flags (like `jumpReleased` in C2):
+
+  ```gdscript
+  var jump_pressed := Input.is_action_just_pressed("jump")
+  var jump_released := Input.is_action_just_released("jump")
+
+  if jump_released:
+      flags.jump_released = true
+
+  if jump_pressed and flags.controls_enabled and flags.can_move != 0:
+      if is_on_floor():
+          _do_jump(first = true)
+      elif flags.can_double_jump and flags.jump_count == 1 and flags.jump_released:
+          _do_jump(first = false)
+      elif flags.can_wall_jump:
+          _do_wall_jump()
+  ```
+
+* `_do_jump(first: bool)`:
+
+  * Set `flags.jumping = true`, `flags.in_air = true`.
+  * `flags.jump_count += 1`.
+  * `velocity.y = -stats.jump_power` (first jump) or `-stats.double_jump_power`.
+  * For double jump, set `flags.can_double_jump = false`.
+  * `flags.jump_released = false`.
+
+#### `_handle_wall_and_climb(delta)`
+
+* Detect wall contact:
+
+  ```gdscript
+  var on_wall_left  = is_on_wall() and velocity.x <= 0
+  var on_wall_right = is_on_wall() and velocity.x >= 0
+  flags.can_wall_jump = !is_on_floor() and (on_wall_left or on_wall_right)
+  flags.wall_jump_side = on_wall_left ? -1 : (on_wall_right ? 1 : 0)
+  ```
+
+* Climb/ledge:
+
+  * Use area/raycast near `Climb` marker to detect climbable surfaces.
+
+  * If found and conditions allow:
+
+    ```gdscript
+    flags.climbing = true
+    velocity = Vector2.ZERO
+    ```
+
+  * While climbing, don’t apply gravity or standard horizontal control; instead:
+
+    ```gdscript
+    if flags.climbing:
+        if input_dir.y != 0:
+            # move along ledge/pole
+        if Input.is_action_just_pressed("jump") or Input.is_action_just_pressed("down"):
+            flags.climbing = false
+    ```
+
+#### `_handle_dash_and_roll(delta)`
+
+* Dash trigger from your double-tap manager:
+
+  ```gdscript
+  if input_manager.just_double_tapped("move_left") or input_manager.just_double_tapped("move_right"):
+      _start_dash()
+  ```
+
+* `_start_dash()`:
+
+  ```gdscript
+  flags.dashing = true
+  flags.can_move = 0   # disable regular walk/jump if desired
+  velocity.x = stats.dash_speed * flags.facing
+  dash_timer = stats.dash_duration
+  ```
+
+* In update:
+
+  ```gdscript
+  if flags.dashing:
+      dash_timer -= delta
+      if dash_timer <= 0:
+          flags.dashing = false
+          flags.can_move = 1
+  ```
+
+* Rolling/ducking can reuse this pattern with different speeds and bodies (lower collision shape, invulnerability, etc.).
+
+#### `_apply_horizontal_movement(delta)`
+
+* If not dashing/climbing:
+
+  ```gdscript
+  if flags.can_move != 0 and !flags.climbing:
+      var target_speed = input_dir.x * stats.move_speed
+
+      var accel = flags.in_air ? stats.air_accel : stats.ground_accel
+      var decel = flags.in_air ? stats.air_decel : stats.ground_decel
+
+      if sign(target_speed) == sign(velocity.x) or target_speed == 0:
+          var a = (target_speed == 0) ? decel : accel
+          velocity.x = move_toward(velocity.x, target_speed, a * delta)
+      else:
+          # turning around: strong decel first
+          velocity.x = move_toward(velocity.x, target_speed, (accel + decel) * delta)
+  ```
+
+This models PlatformPlus’s acceleration/deceleration pattern.
+
+#### `_apply_vertical_movement(delta)`
+
+* Apply gravity when not climbing:
+
+  ```gdscript
+  if !flags.climbing:
+      velocity.y += stats.gravity * delta
+  ```
+
+* Fall-through:
+
+  ```gdscript
+  if Input.is_action_just_pressed("down") and Input.is_action_pressed("jump") and is_on_floor():
+      _start_fallthrough()
+  ```
+
+  `_start_fallthrough()` toggles a mask / one-way collision to mimic `PlatformPlus.Fall through`.
+
+#### `_update_speed_metrics()`
+
+* Update the equivalents of `SpeedXABS`, `SpeedYABS`, `MovingAtSpeed`:
+
+  ```gdscript
+  flags.speed_x_abs = absf(velocity.x)
+  flags.speed_y_abs = absf(velocity.y)
+  flags.moving_at_speed = flags.speed_x_abs >= stats.move_threshold
+  ```
+
+This is what the original project uses to pick animations and certain states.
+
+---
+
+## 6. Hooking into FSM and Statskeeper
+
+* **FSM**:
+
+  * Use the flags (`in_air`, `jumping`, `falling`, `dashing`, `climbing`, `rolling`, etc.) as **context** for your `State.gd` (`Idle`, `Run`, `Jump`, `Fall`, `Dash`, `Climb`, `Roll`, `Hurt`, etc.).
+  * Movement code can either:
+
+    * Live in shared helper functions that states call, or
+    * Be mostly state-local, with flags updated centrally.
+
+* **Statskeeper**:
+
+  * Replace the hard-coded numbers (640 accel/decel, jump power, dash speed, high-fall threshold) with stat-driven values:
+
+    * `stats.move_speed`, `stats.jump_power`, `stats.double_jump_power`, `stats.dash_speed`, `stats.dash_duration`, `stats.gravity`, `stats.high_fall_speed_threshold`, `stats.high_fall_time_threshold`.
+  * This allows Michio vs other characters to share logic but differ numerically.
