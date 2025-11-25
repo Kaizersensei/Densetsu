@@ -4,6 +4,8 @@
 
 This repository contains the ongoing development of the **Densetsu Engine**, support tools, experimental systems, and prototype gameplay elements for the world of **Densetsu**. It serves as a central place to organize engine logic, testing modules, documentation, and research powering the larger Densetsu project.
 
+The ***DENSETSU ENGINE*** will reside here. it is free for everyone, forever. The games made in it further along the way, however, **won't** .
+
 ---
 
 ## About This Project
@@ -22,7 +24,7 @@ The goals of this repository include:
 
 ## Personal Contribution Statement
 
-This repository reflects a vast amount of iterative work, testing, and experimentation — but the code itself is not authored by me.
+This repository reflects a vast amount of iterative work, testing, and experimentation — but the code itself is 99% ChatGPT - I'm a game designer, not a coder.
 
 ### **What I did:**
 
