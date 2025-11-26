@@ -1,0 +1,128 @@
+[gd_scene load_steps=5 format=3 uid="uid://editor_overlay"]
+
+[ext_resource type="Script" path="res://engine/editor/EditorOverlay.gd" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="1"]
+bg_color = Color(0.1, 0.1, 0.1, 0.7)
+
+[node name="EditorOverlay" type="CanvasLayer"]
+script = ExtResource("1")
+layer = 128
+
+[node name="Ribbon" type="Panel" parent="."]
+anchor_right = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 40.0
+custom_styles/panel = SubResource("1")
+
+[node name="StatusLabel" type="Label" parent="Ribbon"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 180.0
+offset_bottom = 30.0
+text = "EDITOR MODE"
+
+[node name="SelectionLabel" type="Label" parent="Ribbon"]
+offset_left = 200.0
+offset_top = 8.0
+offset_right = 520.0
+offset_bottom = 30.0
+text = "None"
+
+[node name="SnapToggle" type="CheckBox" parent="Ribbon"]
+offset_left = 540.0
+offset_top = 8.0
+offset_right = 620.0
+offset_bottom = 30.0
+text = "Snap"
+
+[node name="SnapSize" type="LineEdit" parent="Ribbon"]
+offset_left = 630.0
+offset_top = 8.0
+offset_right = 700.0
+offset_bottom = 30.0
+text = "8"
+editable = true
+max_length = 4
+caret_caret_blink = true
+
+[node name="SidebarLeft" type="Panel" parent="."]
+anchor_right = 0.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 40.0
+offset_right = 200.0
+offset_bottom = 0.0
+custom_styles/panel = SubResource("1")
+
+[node name="Inspector" type="VBoxContainer" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -240.0
+offset_top = 40.0
+offset_right = -20.0
+offset_bottom = 320.0
+custom_minimum_size = Vector2(220, 280)
+visible = true
+theme_override_constants/separation = 6
+
+[node name="InspectorTitle" type="Label" parent="Inspector"]
+text = "Inspector"
+
+[node name="PosRow" type="HBoxContainer" parent="Inspector"]
+
+[node name="PosXLabel" type="Label" parent="Inspector/PosRow"]
+text = "Pos X"
+
+[node name="PosX" type="LineEdit" parent="Inspector/PosRow"]
+custom_minimum_size = Vector2(120, 0)
+
+[node name="PosXApply" type="Button" parent="Inspector/PosRow"]
+text = "Apply"
+
+[node name="PosYRow" type="HBoxContainer" parent="Inspector"]
+
+[node name="PosYLabel" type="Label" parent="Inspector/PosYRow"]
+text = "Pos Y"
+
+[node name="PosY" type="LineEdit" parent="Inspector/PosYRow"]
+custom_minimum_size = Vector2(120, 0)
+
+[node name="PosYApply" type="Button" parent="Inspector/PosYRow"]
+text = "Apply"
+
+[node name="RotRow" type="HBoxContainer" parent="Inspector"]
+
+[node name="RotLabel" type="Label" parent="Inspector/RotRow"]
+text = "Rot"
+
+[node name="Rot" type="LineEdit" parent="Inspector/RotRow"]
+custom_minimum_size = Vector2(120, 0)
+
+[node name="RotApply" type="Button" parent="Inspector/RotRow"]
+text = "Apply"
+
+[node name="ScaleXRow" type="HBoxContainer" parent="Inspector"]
+
+[node name="ScaleXLabel" type="Label" parent="Inspector/ScaleXRow"]
+text = "Scale X"
+
+[node name="ScaleX" type="LineEdit" parent="Inspector/ScaleXRow"]
+custom_minimum_size = Vector2(120, 0)
+
+[node name="ScaleXApply" type="Button" parent="Inspector/ScaleXRow"]
+text = "Apply"
+
+[node name="ScaleYRow" type="HBoxContainer" parent="Inspector"]
+
+[node name="ScaleYLabel" type="Label" parent="Inspector/ScaleYRow"]
+text = "Scale Y"
+
+[node name="ScaleY" type="LineEdit" parent="Inspector/ScaleYRow"]
+custom_minimum_size = Vector2(120, 0)
+
+[node name="ScaleYApply" type="Button" parent="Inspector/ScaleYRow"]
+text = "Apply"

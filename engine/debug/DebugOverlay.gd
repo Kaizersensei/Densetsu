@@ -4,10 +4,13 @@ extends Node2D
 
 var _show_debug := false
 var _player: CharacterBody2D
+@onready var _label: Label = $Label
 
 func _ready() -> void:
 	_player = get_node_or_null(player_path)
 	set_process(false)
+	if _label:
+		_label.visible = false
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -20,6 +23,14 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(_delta: float) -> void:
+	if _label:
+		_label.visible = _show_debug
+		if _show_debug and is_instance_valid(_player):
+			var state := ""
+			if _player.has_method("get_debug_state"):
+				state = str(_player.get_debug_state())
+			var vel := _player.velocity
+			_label.text = "state: %s\nvel: (%.1f, %.1f)" % [state, vel.x, vel.y]
 	queue_redraw()
 
 

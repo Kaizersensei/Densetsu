@@ -1,8 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://d2rrhkmanwo4g"]
+[gd_scene load_steps=14 format=3 uid="uid://d2rrhkmanwo4g"]
 
 [ext_resource type="Script" uid="uid://kpq713sgkyl1" path="res://engine/actors/ActorCharacter2D.gd" id="1"]
 [ext_resource type="Script" uid="uid://b5ukyq8bv8gdn" path="res://engine/core/ActorInterface.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://s356uh1hcntn" path="res://assets/placeholder_enemy.tres" id="3"]
+[ext_resource type="Script" path="res://engine/fsm/StateMachine.gd" id="4"]
+[ext_resource type="Script" path="res://engine/stats/StatsComponent.gd" id="5"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorIdle.gd" id="6"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorRun.gd" id="7"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorJump.gd" id="8"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorFall.gd" id="9"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorLand.gd" id="10"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorHurt.gd" id="11"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorDeath.gd" id="12"]
 
 [sub_resource type="CapsuleShape2D" id="1"]
 radius = 8.0
@@ -43,3 +52,31 @@ shape = SubResource("2")
 
 [node name="ActorInterface" type="Node" parent="."]
 script = ExtResource("2")
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("4")
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("6")
+
+[node name="Run" type="Node" parent="StateMachine"]
+script = ExtResource("7")
+
+[node name="Jump" type="Node" parent="StateMachine"]
+script = ExtResource("8")
+
+[node name="Fall" type="Node" parent="StateMachine"]
+script = ExtResource("9")
+
+[node name="Land" type="Node" parent="StateMachine"]
+script = ExtResource("10")
+
+[node name="Hurt" type="Node" parent="StateMachine"]
+script = ExtResource("11")
+
+[node name="Death" type="Node" parent="StateMachine"]
+script = ExtResource("12")
+
+[node name="StatsComponent" type="Node" parent="."]
+script = ExtResource("5")

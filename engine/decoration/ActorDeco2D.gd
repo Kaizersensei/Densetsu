@@ -6,3 +6,4 @@ extends Node2D
 func _ready() -> void:
 	if has_node("Sprite2D"):
 		$Sprite2D.modulate = tint
+	add_to_group("actors")

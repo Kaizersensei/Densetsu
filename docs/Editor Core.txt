@@ -1,0 +1,319 @@
+Understood.
+What you’re describing is the **Phase One Editor Core**, and we can absolutely integrate it early — it’s the correct move, and doing it *now* will prevent major architectural mistakes later.
+
+Below is the **first draft of the Editor Phase One Plan**, written in the same style as the Engine Phases — structured, concise, fully actionable for Codex or any VS Code AI assistant.
+
+This is **not** the full editor — only the *foundation* on which future tools (entity editors, scene editors, timeline editors, gadget editors, etc.) will be built.
+
+---
+
+# **Densetsu Engine — Phase One Editor Specification**
+
+*(Draft Overview)*
+
+---
+
+# **1. Editor Activation & Mode Switching**
+
+### **1.1 Activation Key**
+
+* Default toggle: **F12**
+* (Optional later: configurable keybind)
+* Toggle must not be dependent on PlayerInputController
+  → It belongs to a **global EditorManager** (autoload).
+
+### **1.2 Mode State**
+
+Editor has two states:
+
+* **editor_mode = false** → Game runs normally
+* **editor_mode = true** → Game freezes gameplay logic except physics & rendering
+
+### **1.3 When Editor Mode is activated**
+
+1. Player input is disabled
+2. Camera is detached into **EditorCamera** mode
+3. UI overlays appear (top ribbon and left sidebar)
+4. Entity selection and placement are enabled
+5. All actors switch to **Passive** mode automatically to reduce CPU load and avoid interfering AI/combat
+
+---
+
+# **2. Editor Camera System**
+
+### **2.1 Free Camera Movement**
+
+Two control styles are supported (configurable later):
+
+#### **Mode A — Keyboard Camera**
+
+* WASD/Arrow keys → move
+* Q/E → zoom in/out
+* Shift → accelerate camera speed
+* Camera movement is continuous while holding keys
+
+#### **Mode B — Mouse Edge-Pan Camera**
+
+* Mouse movement controls camera
+* Speed = distance of cursor from screen center
+* Circular deadzone around center (64 px radius)
+* When cursor enters deadzone → camera stops
+* Mouse wheel controls zoom
+
+### **2.2 Camera Implementation Notes**
+
+* Use a specialized Camera2D node with smoothing disabled
+* Editor camera should NOT modify the gameplay camera node
+* When exiting editor mode, restore gameplay camera seamlessly
+
+---
+
+# **3. Editor UI Framework (Overlay Layer)**
+
+The editor UI overlays are rendered through a **dedicated CanvasLayer** so they never interact with gameplay layers.
+
+### **3.1 Top Ribbon**
+
+A fixed bar at the top:
+
+* Display: **EDITOR MODE**
+* Small buttons:
+
+  * Play (resume game)
+  * Save Scene
+  * Load Scene
+  * Undo / Redo (Phase Two)
+  * Settings (Phase Two)
+
+### **3.2 Left Sidebar**
+
+A collapsible panel containing:
+
+* Tabs for entity categories:
+
+  * Tiles / terrain
+  * Actors (player/enemy/NPC)
+  * Items
+  * Decorations
+  * Traps
+  * Utilities
+  * (Later: gadgets, triggers, event nodes)
+* A scrollable grid/list of available prefabs
+* Hovering an entity preview shows metadata (from its `.tscn` header via custom metadata keys)
+
+### **3.3 Right Sidebar (Inspector Panel)**
+
+Appears when selecting an instance:
+
+* Displays editable properties of selected entity
+* Structured in categories:
+
+  * Transform (position / scale / rotation)
+  * Actor Settings (AI enabled?, stats, behavior)
+  * Collision settings
+  * Custom script-exported properties
+* Real-time reactivity (changes propagate instantly to the instance)
+
+---
+
+# **4. Entity Placement Workflow**
+
+### **4.1 Selection & Dragging**
+
+* Left mouse click = select entity
+* Dragging = move entity
+* Snap-to-grid option (toggle in top ribbon)
+* Rotation with R / Shift+R or via inspector
+* Scaling with S / Shift+S (if allowed)
+
+### **4.2 Placement Modes**
+
+Two official placement modes:
+
+#### **Stamp Mode (Click-to-place)**
+
+* Click → instance new entity
+* Rapid clicking allows fast tile or decoration placement
+* Useful for tile-based work or placing small props
+
+#### **Drag-Drop Mode (Hold & drop)**
+
+* Drag from sidebar into the scene
+* Drag existing entity to reposition
+
+### **4.3 Deletion & Clipboard Operations**
+
+Right-click entity → context menu:
+
+* Delete
+* Duplicate
+* Cut
+* Copy
+* Paste (pastes at mouse position)
+* Group (Phase Two)
+* Add Component (Phase Two+)
+* Edit Script (Phase Three, opens external editor)
+
+---
+
+# **5. Context Menu & Properties Inspector**
+
+### **5.1 Context Menu Trigger**
+
+Right-click on:
+
+* Entity instance
+* Blank space (for scene-level actions like “Add Layer”)
+
+### **5.2 Context Menu Items**
+
+**For entities:**
+
+* Delete
+* Duplicate
+* Copy / Cut / Paste
+* Edit Properties → opens inspector
+* Open Scene (edits the prefab in its own subview) (Phase Two+)
+* Replace with… (select another prefab of same category)
+
+**For blank space:**
+
+* Add New Layer
+* Global Scene Settings
+* Camera to View
+* Grid Settings
+
+---
+
+# **6. Editor Interaction Model**
+
+### **6.1 Input Handling**
+
+Editor input must override PlayerInputController completely:
+
+* Mouse click = selection
+* Mouse drag = move
+* Scroll wheel = zoom
+* Middle mouse = pan
+* R/S/G = rotate/scale/grab (optional future additions)
+
+### **6.2 Entity Manipulation Modes (Phase One)**
+
+Two manipulation modes:
+
+* **Translate (default)**
+* **Select** (multi-select optional in Phase Two)
+
+Transform gizmos are optional for now; mouse-based dragging suffices.
+
+---
+
+# **7. Editor Scene Representation**
+
+### **7.1 Scene = Real Godot Scene**
+
+When editing:
+
+* The working scene is the *actual* `.tscn`
+* Entities are real engine actors, not editor proxies
+* Editor mode simply changes how they behave (passive mode)
+
+### **7.2 Persistence**
+
+Phase One persistence supports:
+
+* Saving scene to disk
+* Loading scene from disk
+* Maintaining hierarchy structure:
+
+```
+RootScene
+ ├── TileMap
+ ├── Actors
+ ├── Items
+ ├── Decorations
+```
+
+### **7.3 Metadata**
+
+Each prefab should have metadata keys:
+
+```
+editor.category = "enemy"
+editor.icon = "res://icons/bat.png"
+editor.description = "Basic flying enemy"
+```
+
+Used for sidebar display.
+
+---
+
+# **8. Additional Editor Features (Optional but Recommended)**
+
+### **8.1 Grid & Snapping Tools**
+
+* Toggle grid visibility
+* Snap to X/Y increments
+* Snap rotation to 15° increments
+
+### **8.2 Layers & Visibility Controls**
+
+* Toggle visibility of:
+
+  * Tiles
+  * Actors
+  * Collisions
+  * Decorations
+  * Gadgets
+
+This mirrors Open Surge’s layer filters.
+
+### **8.3 Live Actor Preview (Phase One Lite Version)**
+
+Actors should be *frozen* (semi-active) but appear animated if possible (idle loop only).
+
+---
+
+# **9. Compatibility With Phase One Engine Systems**
+
+The editor must be compatible with:
+
+* ActorInterface
+* FSM
+* Stats
+* Combat
+* Animation
+* Input (disabled)
+* AI (disabled)
+* Debug overlay (can be shown during editing)
+
+This ensures the editor is not “special-cased” — it uses the same engine actors.
+
+---
+
+# **10. Summary**
+
+The Phase One Editor delivers:
+
+### ✔ An in-game editor toggle (F12)
+
+### ✔ Free camera movement
+
+### ✔ Entity selection, placement, dragging
+
+### ✔ Context menu with manipulation tools
+
+### ✔ Left panel for prefab selection
+
+### ✔ Right panel for editable properties
+
+### ✔ Scene saving/loading
+
+This lays the foundation for:
+
+* Visual FSM editor
+* Trigger/quest editor
+* Cutscene/timeline tools
+* Dialogue editor
+* Gadget configuration
+* Full Mario Maker–style scene builder

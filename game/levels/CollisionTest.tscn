@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://b0dkwftvi47ab"]
+[gd_scene load_steps=20 format=3 uid="uid://b0dkwftvi47ab"]
 
 [ext_resource type="PackedScene" uid="uid://bs3o6hkufssrb" path="res://engine/actors/ActorCharacter2D.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://deco" path="res://engine/decoration/ActorDeco2D.tscn" id="2"]
@@ -30,6 +30,9 @@ size = Vector2(400, 20)
 
 [sub_resource type="RectangleShape2D" id="6"]
 size = Vector2(16, 64)
+
+[sub_resource type="RectangleShape2D" id="7"]
+size = Vector2(256, 16)
 
 [node name="CollisionTest" type="Node2D"]
 script = ExtResource("6")
@@ -150,3 +153,14 @@ shape = SubResource("6")
 [node name="Polygon2D" type="Polygon2D" parent="WallRight"]
 color = Color(0.18, 0.18, 0.18, 1)
 polygon = PackedVector2Array(-8, -32, 8, -32, 8, 32, -8, 32)
+
+[node name="CeilingLow" type="StaticBody2D" parent="."]
+position = Vector2(0, -96)
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CeilingLow"]
+shape = SubResource("7")
+
+[node name="Polygon2D" type="Polygon2D" parent="CeilingLow"]
+color = Color(0.18, 0.18, 0.18, 1)
+polygon = PackedVector2Array(-128, -8, 128, -8, 128, 8, -128, 8)

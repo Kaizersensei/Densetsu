@@ -1,8 +1,19 @@
-[gd_scene load_steps=6 format=3 uid="uid://bs3o6hkufssrb"]
+[gd_scene load_steps=17 format=3 uid="uid://bs3o6hkufssrb"]
 
 [ext_resource type="Script" uid="uid://kpq713sgkyl1" path="res://engine/actors/ActorCharacter2D.gd" id="1"]
 [ext_resource type="Script" uid="uid://b5ukyq8bv8gdn" path="res://engine/core/ActorInterface.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://cl30mlx6o5dhm" path="res://assets/placeholder_player.tres" id="3"]
+[ext_resource type="Script" uid="uid://c2d4tbwgy4eqw" path="res://engine/fsm/StateMachine.gd" id="4"]
+[ext_resource type="Script" uid="uid://d4cfif6puoan7" path="res://engine/fsm/states/ActorIdle.gd" id="5"]
+[ext_resource type="Script" uid="uid://r128s4eqbo86" path="res://engine/stats/StatsComponent.gd" id="6"]
+[ext_resource type="Script" uid="uid://cwgvbbuqenk06" path="res://engine/fsm/states/ActorRun.gd" id="7"]
+[ext_resource type="Script" uid="uid://xdptniwfon8m" path="res://engine/fsm/states/ActorJump.gd" id="8"]
+[ext_resource type="Script" uid="uid://bk1us330fsky" path="res://engine/fsm/states/ActorFall.gd" id="9"]
+[ext_resource type="Script" uid="uid://b02d10wg6s285" path="res://engine/fsm/states/ActorLand.gd" id="10"]
+[ext_resource type="Script" uid="uid://c370ai0q863jg" path="res://engine/fsm/states/ActorHurt.gd" id="11"]
+[ext_resource type="Script" uid="uid://cnsrbg70eyj00" path="res://engine/fsm/states/ActorDeath.gd" id="12"]
+[ext_resource type="Script" uid="uid://cf4f53ylasonx" path="res://engine/fsm/states/ActorWalk.gd" id="13"]
+[ext_resource type="Script" uid="uid://baycmiveuccel" path="res://engine/fsm/states/ActorSprint.gd" id="14"]
 
 [sub_resource type="CapsuleShape2D" id="1"]
 radius = 8.0
@@ -42,3 +53,37 @@ shape = SubResource("2")
 
 [node name="ActorInterface" type="Node" parent="."]
 script = ExtResource("2")
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("4")
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("5")
+
+[node name="Run" type="Node" parent="StateMachine"]
+script = ExtResource("7")
+
+[node name="Walk" type="Node" parent="StateMachine"]
+script = ExtResource("13")
+
+[node name="Sprint" type="Node" parent="StateMachine"]
+script = ExtResource("14")
+
+[node name="Jump" type="Node" parent="StateMachine"]
+script = ExtResource("8")
+
+[node name="Fall" type="Node" parent="StateMachine"]
+script = ExtResource("9")
+
+[node name="Land" type="Node" parent="StateMachine"]
+script = ExtResource("10")
+
+[node name="Hurt" type="Node" parent="StateMachine"]
+script = ExtResource("11")
+
+[node name="Death" type="Node" parent="StateMachine"]
+script = ExtResource("12")
+
+[node name="StatsComponent" type="Node" parent="."]
+script = ExtResource("6")

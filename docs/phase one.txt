@@ -1,0 +1,2076 @@
+﻿Phase One — Engine Foundations
+Section 1 — Actor Interface Layer Specification
+1.1 Purpose
+The Actor Interface Layer is the universal component attached to all actor types in the Densetsu Engine. It provides:
+* A consistent identity and tagging system
+
+* Integration points for FSM, Stats, Combat, Inventory, AI
+
+* Actor lifecycle events
+
+* Access to common utility functions
+
+* A communication hub via the EventBus
+
+This layer does not replace the specialized Actor base nodes (CharacterBody2D, Area2D, StaticBody2D). It unifies them under a shared conceptual API.
+________________
+
+
+1.2 Node Structure
+The Actor Interface Layer is a child node added inside each actor scene:
+ActorRoot (CharacterBody2D / Area2D / StaticBody2D)
+└── ActorInterface (Node)
+
+
+The root node defines physics. ActorInterface defines behavioral capability.
+________________
+
+
+1.3 Actor Data Model
+ActorInterface stores and exposes common actor metadata:
+Core Identification
+   * actor_id: int — unique runtime instance ID
+
+   * actor_type: String — e.g. "character", "projectile", "trap", "item", "deco"
+
+   * tags: Array[String] — arbitrary labels such as "enemy", "boss", "water_type", etc.
+
+   * active_state: String — one of:
+
+      * "active"
+
+      * "semi_active"
+
+      * "passive"
+
+Internal References
+         * owner_root: Node — reference to actor root
+
+         * fsm: Node — state machine driver
+
+         * stats: Node — stats component (if applicable)
+
+         * combat: Node — combat handler
+
+         * inventory: Node — inventory handler (player only)
+
+         * ai: Node — AI controller (enemies)
+
+________________
+
+
+1.4 Required Signals
+All actor types must expose the following signals via ActorInterface:
+            * signal actor_initialized(actor)
+
+            * signal actor_state_changed(new_state: String)
+
+            * signal actor_tag_added(tag: String)
+
+            * signal actor_tag_removed(tag: String)
+
+            * signal actor_damaged(amount: int, source_id: int)
+
+            * signal actor_died(source_id: int)
+
+These signals allow the EventBus, UI, and debugging tools to subscribe to actor activity.
+________________
+
+
+1.5 Initialization Process
+ActorInterface performs the following when the actor spawns:
+               1. Cache references to root, child components, hitboxes, etc.
+
+               2. Register itself into the EventBus as an actor participant.
+
+               3. Assign a unique actor_id if one doesn’t exist.
+
+               4. Determine actor_type based on root node class or metadata.
+
+               5. Emit actor_initialized(self).
+
+               6. Invoke FSM initialization (fsm.initialize(self)).
+
+               7. Initialize stats, AI, and other modules.
+
+________________
+
+
+1.6 Lifecycle Hooks
+ActorInterface defines the following methods, optionally overridden by components:
+                  * on_actor_ready() — after initial setup
+
+                  * on_actor_update(delta) — per-frame logic
+
+                  * on_actor_physics(delta) — per-physics-step logic
+
+                  * on_actor_hit(hit_info) — when the actor receives a hit
+
+                  * on_actor_death() — when HP ≤ 0
+
+                  * on_actor_respawn() — optional for player revival
+
+ActorRoot will forward physics and frame updates into the ActorInterface.
+________________
+
+
+1.7 Tag & Metadata Management
+Tags define what the actor represents:
+Add Tag
+func add_tag(tag: String):
+    if not tags.has(tag):
+        tags.append(tag)
+        emit_signal("actor_tag_added", tag)
+
+
+Remove Tag
+func remove_tag(tag: String):
+    if tags.has(tag):
+        tags.erase(tag)
+        emit_signal("actor_tag_removed", tag)
+
+
+Has Tag
+func has_tag(tag: String) -> bool:
+    return tag in tags
+
+
+________________
+
+
+1.8 Active/Semi-active/Passive Mode
+ActorInterface manages the actor activity level according to the Four States rule:
+                     * Active: full logic + physics + AI + animation
+
+                     * Semi-active: basic logic + animation, but limited AI or interactions
+
+                     * Passive: decorative or far-away actors; no AI or physics updates
+
+Switching example:
+func set_active_state(new_state: String):
+    active_state = new_state
+    emit_signal("actor_state_changed", new_state)
+
+
+This will later tie into performance optimizations.
+________________
+
+
+1.9 EventBus Integration
+ActorInterface automatically registers the actor with the EventBus:
+                        * Subscribes to global events
+
+                        * Publishes:
+
+                           * damage events
+
+                           * death events
+
+                           * state changes
+
+                           * interaction events
+
+This allows all systems (combat, AI, UI, quests) to interact without tight coupling.
+________________
+
+
+1.10 Required Utility API
+ActorInterface exposes universal helper functions:
+Getters
+                              * get_actor_id()
+
+                              * get_actor_type()
+
+                              * get_root()
+
+                              * get_stats()
+
+                              * get_fsm()
+
+Combat Helpers
+                                 * apply_damage(amount, source_id)
+
+                                 * apply_knockback(vec)
+
+                                 * apply_status_effect(effect_id)
+
+State Helpers
+                                    * change_state(state_name) (redirects to FSM)
+
+                                    * is_state(state_name)
+
+Spatial Helpers
+                                       * distance_to(other_actor)
+
+                                       * direction_to(other_actor)
+
+________________
+
+
+1.11 Required Debug Support
+ActorInterface must provide debug overlays:
+                                          * Show actor_id
+
+                                          * Show actor_type
+
+                                          * Show current FSM state
+
+                                          * Highlight hitbox/hurtbox nodes
+
+These overlays can be toggled using the global debug flag.
+________________
+
+
+1.12 Notes
+                                             * ActorInterface is the glue that turns specialized node types into engine-standardized actors.
+
+                                             * All upper-level systems (FSM, Combat, AI, Stats, Inventory) attach through this layer.
+
+                                             * This allows us to avoid inheritance bloat and maintain a clean, modular architecture.
+________________
+Section 2 — FSM Integration Layer Specification
+2.1 Purpose
+The Finite State Machine (FSM) Integration Layer transforms static actors into behaving ones. It provides:
+                                                * A standardized state model
+
+                                                * A predictable flow of Enter → Process → Exit
+
+                                                * A clean separation between logic, movement, animation, and events
+
+                                                * Precise frame control for combat and hitbox timing
+
+                                                * Modular states that can be swapped per character or enemy
+
+This is where the Actor System becomes alive.
+________________
+
+
+2.2 FSM Architecture Model
+The FSM is a component node attached to ActorInterface:
+ActorRoot
+├── ActorInterface
+└── FSM (Node)
+    ├── States (folder)
+    └── State scripts
+
+
+The FSM is not tied to any specific actor type. Characters, enemies, projectiles (optional), and items can all use states.
+________________
+
+
+2.3 State Structure
+Each state is defined by a separate GDScript class:
+                                                   * enter(msg)
+
+                                                   * exit()
+
+                                                   * process(delta)
+
+                                                   * physics(delta)
+
+                                                   * handle_event(event)
+
+Minimal State API:
+class_name State
+extends Node
+var owner
+
+
+func enter(msg): pass
+func exit(): pass
+func process(delta): pass
+func physics(delta): pass
+func handle_event(event): pass
+
+
+owner is the ActorInterface reference provided by the FSM.
+________________
+
+
+2.4 FSM Core Logic
+FSM has one active state at a time.
+Key responsibilities:
+                                                      * Load all available states
+
+                                                      * Track the current state
+
+                                                      * Handle state transitions
+
+                                                      * Relay ActorInterface callbacks to states
+
+                                                      * Relay animation and combat triggers
+
+                                                      * Expose hooks to ActorCharacter2D movement
+
+Example Flow:
+func change_state(name, msg=null):
+    if current_state:
+        current_state.exit()
+    current_state = states[name]
+    current_state.owner = actor
+    current_state.enter(msg)
+
+
+________________
+
+
+2.5 Required Built‑In States (Phase One)
+The following base states must be included for all characters and enemies:
+Character Movement States
+                                                         * Idle
+
+                                                         * Run
+
+                                                         * Jump
+
+                                                         * Fall
+
+                                                         * Land
+
+Character Combat States
+                                                            * Attack (simple melee)
+
+                                                            * Hurt
+
+                                                            * Death
+
+Enemy AI States
+                                                               * EnemyIdle
+
+                                                               * EnemyPatrol
+
+                                                               * EnemyChase
+
+                                                               * EnemyAttack
+
+                                                               * EnemyDeath
+
+These form the Phase One minimum viable behavior set.
+________________
+
+
+2.6 Event Routing
+FSM must be subscribed to:
+                                                                  * Combat events (damage, hit confirm)
+
+                                                                  * Animation events (frame tags)
+
+                                                                  * Input events (for player characters)
+
+Event Flow:
+ActorInterface → FSM → ActiveState
+
+
+Events should never be sent directly to states.
+Everything goes through FSM → current_state.
+________________
+
+
+2.7 Animation Integration
+Each state defines animation requirements:
+                                                                     * On enter() → play animation
+
+                                                                     * On process() → update blend parameters
+
+                                                                     * On exit() → cleanup or transitions
+
+FSM must provide helper functions like:
+func play_anim(name):
+    if anim_player:
+        anim_player.play(name)
+
+
+States use these helpers, not the animation player directly.
+________________
+
+
+2.8 Movement Routing
+Movement should be routed as follows:
+ActorRoot → ActorInterface → FSM → CurrentState → Movement handlers
+
+
+Example (Jump state):
+func physics(delta):
+    owner.apply_vertical_velocity()
+    owner.move()
+
+
+The state does not directly call move_and_slide(); only the ActorRoot handles final movement.
+________________
+
+
+2.9 State Transitions
+Transitions must be:
+                                                                        * Explicit
+
+                                                                        * Predictable
+
+                                                                        * Logged in debug mode
+
+Example transitions:
+                                                                           * Idle → Run (movement input)
+
+                                                                           * Run → Idle (input zero)
+
+                                                                           * Jump → Fall (velocity downward)
+
+                                                                           * Attack → Idle (animation finished or frame tag)
+
+                                                                           * Hurt → Idle (after recovery time)
+
+                                                                           * Any → Death (HP ≤ 0)
+
+________________
+
+
+2.10 State Messages
+FSM may pass optional messages to states:
+fsm.change_state("Attack", {"direction": owner.facing})
+
+
+States must expect:
+                                                                              * msg == null
+
+                                                                              * Dictionary contents may vary per transition
+
+________________
+
+
+2.11 Debug Requirements
+FSM must expose:
+                                                                                 * Current state name
+
+                                                                                 * Previous state name
+
+                                                                                 * Transition logs
+
+                                                                                 * Frame event logs
+
+                                                                                 * Per‑state runtime exceptions
+
+Debug visualization is handled by ActorInterface but printed by FSM.
+________________
+
+
+2.12 Summary
+FSM Integration Layer is the backbone of Phase One:
+                                                                                    * Connects character logic with movement, AI, and combat
+
+                                                                                    * Standardizes behavior across all actor types
+
+                                                                                    * Makes actors predictable, testable, and extensible
+
+This section completes the structural definition for the FSM component before implementing real states in later phases.
+________________
+
+
+Section 3 — Stats & Attributes System Specification
+3.1 Purpose
+The Stats & Attributes System defines all numerical properties that influence:
+                                                                                       * Combat
+
+                                                                                       * Movement
+
+                                                                                       * XP & leveling
+
+                                                                                       * Skill usage
+
+                                                                                       * Damage formulas
+
+                                                                                       * Enemy scaling
+
+                                                                                       * Player growth at rest points
+
+This system must be modular, actor-agnostic, and data-driven, allowing different actors (players, enemies, NPCs, projectiles) to share the same underlying logic.
+________________
+
+
+3.2 Node Structure
+Each actor that requires stats will include the following component:
+ActorRoot
+├── ActorInterface
+└── StatsComponent (Node)
+
+
+StatsComponent contains all logic for:
+                                                                                          * Core stats
+
+                                                                                          * Derived stats
+
+                                                                                          * Runtime modifiers
+
+                                                                                          * Damage handling
+
+                                                                                          * Life cycle (HP, MP, stamina, etc.)
+
+Actors without stats (decorations, most items, most projectiles) simply omit the component.
+________________
+
+
+3.3 Core Stats
+Phase One implements the following base stats (from your canonical list):
+Primary Stats (fixed or grown by XP)
+                                                                                             * Level
+
+                                                                                             * HP Max
+
+                                                                                             * MP Max
+
+                                                                                             * Strength
+
+                                                                                             * Defense
+
+                                                                                             * Agility
+
+                                                                                             * Intelligence
+
+                                                                                             * Luck
+
+                                                                                             * XP Value (reward upon defeat)
+
+Values may be integers or floats depending on the stat.
+Combat Skill Categories (Phase One uses placeholders)
+                                                                                                * Unarmed
+
+                                                                                                * Armed
+
+                                                                                                * Ranged
+
+                                                                                                * Finesse
+
+                                                                                                * Stealth
+
+These are numeric and influence attack performance.
+Elemental Affinities
+                                                                                                   * Earth
+
+                                                                                                   * Water
+
+                                                                                                   * Wind
+
+                                                                                                   * Fire
+
+                                                                                                   * Light
+
+                                                                                                   * Dark
+
+                                                                                                   * Thunder
+
+                                                                                                   * Gaea
+
+                                                                                                   * Timespace
+
+Each affinity is a modifier applied in advanced combat calculations (Phase Two+).
+________________
+
+
+3.4 Runtime Stats
+Runtime stats are copies of base stats, modified by:
+                                                                                                      * Temporary effects (buffs/debuffs)
+
+                                                                                                      * Environmental modifiers
+
+                                                                                                      * Equipment bonuses (Phase Two)
+
+                                                                                                      * Status conditions
+
+Example:
+runtime.hp = min(base.hp_max, runtime.hp + healing)
+runtime.strength = base.strength + buffs.strength_mod
+
+
+Runtime values must never overwrite base values.
+________________
+
+
+3.5 Stat Initialization
+On actor spawn:
+                                                                                                         1. Load base stats (from exported variables or data table)
+
+                                                                                                         2. Create runtime copies
+
+                                                                                                         3. Register with ActorInterface
+
+                                                                                                         4. Emit signal stats_initialized(self)
+
+This ensures other systems (combat, AI, UI) can interact immediately.
+________________
+
+
+3.6 Damage Flow Integration
+Damage calculation (Phase One simple model):
+damage = max(1, attack_power - defense)
+runtime.hp -= damage
+
+
+If HP <= 0:
+                                                                                                            * Emit actor_died
+
+                                                                                                            * Notify FSM → transition to Death state
+
+                                                                                                            * Return XP value to the killer
+
+Later phases introduce:
+                                                                                                               * Elemental multipliers
+
+                                                                                                               * Crit chance (based on Luck)
+
+                                                                                                               * Stagger thresholds
+
+                                                                                                               * Armor/shield layers
+
+________________
+
+
+3.7 Status Effects (Phase One Minimal)
+Core support for:
+                                                                                                                  * Invulnerability window
+
+                                                                                                                  * Temporary stat modifiers
+
+                                                                                                                  * Hitstun duration
+
+Advanced conditions (poison, burn, slow, freeze, etc.) are part of Phase Two.
+________________
+
+
+3.8 Leveling System
+XP is awarded only at rest points, not during combat.
+XP Flow:
+                                                                                                                     1. Actor kills enemy → gain temporary XP
+
+                                                                                                                     2. XP stored in session pool
+
+                                                                                                                     3. Player reaches rest point
+
+                                                                                                                     4. Player meditates → XP converts to Level
+
+                                                                                                                     5. Stats grow (based on a growth table)
+
+Growth tables are data-driven:
+level_up_growth = {
+    "hp_max":  +10,
+    "strength": +2,
+    "defense":  +2,
+    "agility":  +1,
+    "intelligence": +1
+}
+
+
+These are placeholders until we define the final system.
+________________
+
+
+3.9 Signals
+StatsComponent must expose:
+                                                                                                                        * signal hp_changed(current, max)
+
+                                                                                                                        * signal mp_changed(current, max)
+
+                                                                                                                        * signal stat_modified(stat_name, new_value)
+
+                                                                                                                        * signal actor_leveled_up(new_level)
+
+Interface layers and UI will subscribe.
+________________
+
+
+3.10 Serialization
+Stats must support:
+                                                                                                                           * Saving base + runtime
+
+                                                                                                                           * Loading values on respawn
+
+Phase One uses simple dictionary save/restore.
+________________
+
+
+3.11 Debug Requirements
+Debug overlay must show:
+                                                                                                                              * Current HP / Max HP
+
+                                                                                                                              * Current Level
+
+                                                                                                                              * Strength, Defense, Agility
+
+                                                                                                                              * Current active modifiers (buffs/debuffs)
+
+All printed through ActorInterface debug hooks.
+________________
+
+
+3.12 Summary
+The Stats & Attributes System in Phase One provides:
+                                                                                                                                 * Full stat model
+
+                                                                                                                                 * Damage & HP management
+
+                                                                                                                                 * Leveling framework
+
+                                                                                                                                 * Signals for UI/debug/integration
+
+It is intentionally simple but fully extensible for future phases (combat depth, equipment, elemental scaling, temporal effects).
+________________
+
+
+Section 4 — Combat System Integration Specification
+4.1 Purpose
+The Combat System Integration Layer establishes a functional, testable combat loop for all actors capable of dealing or receiving damage.
+Phase One focuses on fundamentals only: collision‑driven hits, simple formulas, clear damage routing, hit reactions, and death handling.
+This phase deliberately avoids:
+                                                                                                                                    * Advanced combo systems
+
+                                                                                                                                    * Weapon data definitions
+
+                                                                                                                                    * Elemental damage multipliers
+
+                                                                                                                                    * Techniques or special moves
+
+Those come in later phases.
+________________
+
+
+4.2 Combat Component Node Structure
+Actors requiring combat use:
+ActorRoot
+├── ActorInterface
+└── CombatComponent (Node)
+
+
+Responsibilities:
+                                                                                                                                       * Hit/hurtbox activation control
+
+                                                                                                                                       * Damage calculation and routing
+
+                                                                                                                                       * Knockback application
+
+                                                                                                                                       * Invulnerability windows
+
+                                                                                                                                       * Signals for feedback
+
+                                                                                                                                       * Integration with FSM states
+
+CombatComponent does not perform movement or animation.
+________________
+
+
+4.3 Hitbox & Hurtbox Model
+Combat relies on two Area2D nodes:
+Hitbox  (Area2D) → delivers damage
+Hurtbox (Area2D) → receives damage
+
+
+Both nodes:
+                                                                                                                                          * Must have CollisionLayer set according to the Collision Matrix (Phase Zero)
+
+                                                                                                                                          * Must emit area_entered or body_entered signals
+
+Hitbox Requirements
+                                                                                                                                             * Disabled unless an attack state requests activation
+
+                                                                                                                                             * Contains damage, knockback vector, and metadata
+
+                                                                                                                                             * Defines who it belongs to (actor_id)
+
+Hurtbox Requirements
+                                                                                                                                                * Always active unless actor is invulnerable
+
+                                                                                                                                                * Sends hit events to CombatComponent
+
+________________
+
+
+4.4 Damage Routing Flow
+Canonical flow:
+Hitbox → Hurtbox → Hurtbox Owner (ActorInterface) → CombatComponent → StatsComponent
+
+
+This ensures:
+                                                                                                                                                   * Clean decoupling
+
+                                                                                                                                                   * Predictable combat logic
+
+                                                                                                                                                   * Correct integration with FSM and Stats
+
+Step-by-step
+                                                                                                                                                      1. Hitbox overlaps Hurtbox
+
+                                                                                                                                                      2. Hitbox emits hit event
+
+                                                                                                                                                      3. CombatComponent validates:
+
+                                                                                                                                                         * Is target alive?
+
+                                                                                                                                                         * Same faction? (friendly-fire rules later)
+
+                                                                                                                                                         * Invulnerable?
+
+                                                                                                                                                            4. Valid hit → compute damage
+
+                                                                                                                                                            5. Apply knockback
+
+                                                                                                                                                            6. Apply damage to StatsComponent
+
+                                                                                                                                                            7. Notify FSM for hit reaction
+
+                                                                                                                                                            8. IF HP <= 0 → Death process
+
+________________
+
+
+4.5 Phase One Damage Formula
+Simple, understandable, transparent:
+damage = max(1, (attacker_strength + attack_power) - target_defense)
+
+
+Definitions:
+                                                                                                                                                               * attack_power comes from hitbox metadata
+
+                                                                                                                                                               * strength/defense come from StatsComponent
+
+Later phases will optionally add:
+                                                                                                                                                                  * Crit chance (Luck)
+
+                                                                                                                                                                  * Element multipliers
+
+                                                                                                                                                                  * Backstab/positional modifiers
+
+                                                                                                                                                                  * Combo multipliers
+
+________________
+
+
+4.6 Knockback Handling
+Knockback is applied by CombatComponent but executed by ActorRoot:
+func apply_knockback(force_vector):
+    knockback_velocity = force_vector
+    # ActorRoot applies it in physics process
+
+
+Knockback must:
+                                                                                                                                                                     * Override movement for the hit duration
+
+                                                                                                                                                                     * Respect slopes and collisions
+
+                                                                                                                                                                     * Transition to a recovery or fall state afterward
+
+________________
+
+
+4.7 Invulnerability & Hit Reactions
+A minimal system includes:
+                                                                                                                                                                        * invuln_time timer
+
+                                                                                                                                                                        * Flashing or tint feedback (optional)
+
+                                                                                                                                                                        * FSM transition to Hurt state on valid hit
+
+Invuln Rules
+                                                                                                                                                                           * Damage ignored during invulnerability
+
+                                                                                                                                                                           * Hurtbox disabled or ignored
+
+                                                                                                                                                                           * After recovery, FSM returns to normal state (usually Idle)
+
+________________
+
+
+4.8 Attack State Integration (FSM)
+The CombatComponent does not decide when to attack.
+The FSM does.
+ A valid attack state must:
+                                                                                                                                                                              1. Enable hitbox
+
+                                                                                                                                                                              2. Play attack animation
+
+                                                                                                                                                                              3. Notify CombatComponent about attack power/direction
+
+                                                                                                                                                                              4. Disable hitbox at end of animation or frame tag
+
+                                                                                                                                                                              5. Trigger cooldown (simple timer)
+
+This ensures:
+                                                                                                                                                                                 * Predictable timing
+
+                                                                                                                                                                                 * Reusable attack logic
+
+                                                                                                                                                                                 * Consistent combat behavior
+
+________________
+
+
+4.9 Death Handling
+When StatsComponent detects HP ≤ 0:
+                                                                                                                                                                                    1. Emit actor_died
+
+                                                                                                                                                                                    2. FSM transitions to Death state
+
+                                                                                                                                                                                    3. Disable hitbox and hurtbox
+
+                                                                                                                                                                                    4. Disable AI (if enemy)
+
+                                                                                                                                                                                    5. Remove or fade actor after animation
+
+Player-specific
+                                                                                                                                                                                       * Notify game manager for respawn logic (Phase Two)
+
+                                                                                                                                                                                       * Freeze input
+
+________________
+
+
+4.10 Signals and Events
+Combat events emitted by the component:
+                                                                                                                                                                                          * signal hit_landed(target_id, damage)
+
+                                                                                                                                                                                          * signal got_hit(source_id, damage)
+
+                                                                                                                                                                                          * signal killed_actor(target_id)
+
+These feed into:
+                                                                                                                                                                                             * XP awarding
+
+                                                                                                                                                                                             * Sound/visual effects
+
+                                                                                                                                                                                             * Debug UI
+
+                                                                                                                                                                                             * Combo systems (later phases)
+
+________________
+
+
+4.11 Debug Requirements
+Toggleable debug overlay must show:
+                                                                                                                                                                                                * Hitbox shapes
+
+                                                                                                                                                                                                * Hurtbox shapes
+
+                                                                                                                                                                                                * Active/inactive hitbox states
+
+                                                                                                                                                                                                * Damage values
+
+                                                                                                                                                                                                * Knockback vectors
+
+                                                                                                                                                                                                * FSM state changes on hit
+
+This is essential for verifying early combat.
+________________
+
+
+4.12 Summary
+The Phase One Combat System establishes:
+                                                                                                                                                                                                   * Hitbox/hurtbox standards
+
+                                                                                                                                                                                                   * Damage routing
+
+                                                                                                                                                                                                   * Hit reactions
+
+                                                                                                                                                                                                   * Death logic
+
+                                                                                                                                                                                                   * Knockback
+
+                                                                                                                                                                                                   * Attack states
+
+This provides a clean, scalable foundation for deeper combat systems in future phases (weapons, combos, elements, techniques, gadgets).
+________________
+
+
+Section 5 — Animation System Integration Specification
+5.1 Purpose
+The Animation System Integration Layer connects visual feedback with actor behavior, movement, and combat.
+It ensures:
+                                                                                                                                                                                                      * Every state has a matching animation
+
+                                                                                                                                                                                                      * Transitions are consistent and predictable
+
+                                                                                                                                                                                                      * Hitboxes and hurtboxes activate at correct frames
+
+                                                                                                                                                                                                      * Movement blends smoothly
+
+                                                                                                                                                                                                      * Enemies and players share a unified system
+
+This phase creates a minimal but complete animation pipeline.
+________________
+
+
+5.2 Required Node Structure
+Actors requiring animation use:
+ActorRoot
+├── ActorInterface
+├── FSM
+└── AnimationComponent (Node)
+    ├── AnimationPlayer
+    └── (optional) AnimationTree / BlendSpace
+
+
+AnimationComponent Responsibilities
+                                                                                                                                                                                                         * Play animations on request
+
+                                                                                                                                                                                                         * Relay animation events to FSM
+
+                                                                                                                                                                                                         * Manage blendspace parameters
+
+                                                                                                                                                                                                         * Emit animation-complete events
+
+                                                                                                                                                                                                         * Provide references for hitbox control
+
+________________
+
+
+5.3 Animation Resources
+Phase One requires the following animations for all playable characters and basic enemies:
+Movement Animations
+                                                                                                                                                                                                            * idle
+
+                                                                                                                                                                                                            * run
+
+                                                                                                                                                                                                            * jump
+
+                                                                                                                                                                                                            * fall
+
+                                                                                                                                                                                                            * land
+
+Combat Animations
+                                                                                                                                                                                                               * attack
+
+                                                                                                                                                                                                               * hurt
+
+                                                                                                                                                                                                               * death
+
+Animations may be placeholders but must exist.
+________________
+
+
+5.4 Animation-to-FSM Integration
+AnimationComponent exposes a clear API:
+func play(anim_name: String):
+func stop():
+func is_playing(anim_name: String) -> bool:
+func get_current_frame() -> int:
+
+
+FSM uses:
+                                                                                                                                                                                                                  * enter() → play animation
+
+                                                                                                                                                                                                                  * exit() → stop or blend out
+
+                                                                                                                                                                                                                  * process() → update blend parameters
+
+Example:
+fsm.play_anim("run")
+
+
+This abstraction prevents states from accessing AnimationPlayer directly.
+________________
+
+
+5.5 Animation Events & Frame Tags
+Attack timing, hit detection, and state transitions may depend on animation frames.
+AnimationPlayer supports string markers (call method tracks).
+AnimationComponent must:
+                                                                                                                                                                                                                     * Listen to these markers
+
+                                                                                                                                                                                                                     * Convert them into signals
+
+                                                                                                                                                                                                                     * Forward them to FSM
+
+Required Events
+                                                                                                                                                                                                                        * frame_tag (string marker)
+
+                                                                                                                                                                                                                        * animation_finished(anim_name)
+
+These allow:
+                                                                                                                                                                                                                           * Attack hitbox on/off timing
+
+                                                                                                                                                                                                                           * Transition from Attack → Idle
+
+                                                                                                                                                                                                                           * Death end → cleanup
+
+________________
+
+
+5.6 Blendspaces (Optional in Phase One)
+If using AnimationTree:
+                                                                                                                                                                                                                              * Movement velocity → determines blend value
+
+                                                                                                                                                                                                                              * FSM states provide direction/speed
+
+A minimal blendspace (if implemented):
+                                                                                                                                                                                                                                 * Idle ↔ Run
+
+Jump/fall typically remain separate animations.
+Blendspaces are optional and may be added in Phase Two depending on complexity.
+________________
+
+
+5.7 Sprite Orientation & Facing
+Actors must flip based on movement or target direction.
+Standard approach:
+func set_facing(horizontal_dir: float):
+    sprite.scale.x = sign(horizontal_dir)
+
+
+FSM or ActorInterface provides final facing direction.
+Enemies may flip based on player location.
+________________
+
+
+5.8 State→Animation Mapping Table
+Phase One uses a fixed mapping:
+FSM State
+	Animation
+	Idle
+	idle
+	Run
+	run
+	Jump
+	jump
+	Fall
+	fall
+	Land
+	land
+	Attack
+	attack
+	Hurt
+	hurt
+	Death
+	death
+	EnemyPatrol
+	run or walk
+	EnemyChase
+	run
+	EnemyAttack
+	attack
+	EnemyDeath
+	death
+	Customization possible in later phases.
+________________
+
+
+5.9 Animation Priority Rules
+To avoid conflicts:
+                                                                                                                                                                                                                                    1. Death overrides all.
+
+                                                                                                                                                                                                                                    2. Hurt overrides movement.
+
+                                                                                                                                                                                                                                    3. Attack overrides idle/run but not death/hurt.
+
+                                                                                                                                                                                                                                    4. Movement transitions only play if no higher priority state is active.
+
+FSM enforces these rules during transitions.
+________________
+
+
+5.10 Debug Requirements
+Debug overlay must display:
+                                                                                                                                                                                                                                       * Current animation name
+
+                                                                                                                                                                                                                                       * Current frame
+
+                                                                                                                                                                                                                                       * Active frame tags
+
+                                                                                                                                                                                                                                       * Mismatches between FSM state and animation (warnings)
+
+Useful for ensuring alignment between logic & visuals.
+________________
+
+
+5.11 Summary
+Phase One Animation Integration provides:
+                                                                                                                                                                                                                                          * A unified animation pipeline
+
+                                                                                                                                                                                                                                          * State-driven animation control
+
+                                                                                                                                                                                                                                          * Frame tag events
+
+                                                                                                                                                                                                                                          * Hitbox synchronization
+
+                                                                                                                                                                                                                                          * Facing & blendspace support
+
+This ensures that all future combat, AI, and player mechanics have solid visual grounding.
+________________
+Section 6 — Input → Character Controller Layer Specification
+6.1 Purpose
+The Input → Character Controller Layer decouples raw input (keyboard / gamepad) from actor behavior.
+It ensures:
+                                                                                                                                                                                                                                             * Input is mapped to abstract actions (move, jump, attack, interact)
+
+                                                                                                                                                                                                                                             * Multiple players can be supported (local multiplayer)
+
+                                                                                                                                                                                                                                             * Input can be recorded, replayed, or simulated (for AI/testing)
+
+                                                                                                                                                                                                                                             * FSM and movement code receive clean, high-level commands
+
+This layer is mandatory for player-controlled actors and optional for AI.
+________________
+
+
+6.2 Architecture Overview
+Input is handled by a dedicated controller node, not by ActorCharacter2D directly.
+PlayerRoot (Node)
+├── ActorRoot (CharacterBody2D)
+│   ├── ActorInterface
+│   ├── FSM
+│   └── AnimationComponent
+└── PlayerInputController (Node)
+
+
+                                                                                                                                                                                                                                                * PlayerInputController reads input from Godot’s InputMap
+
+                                                                                                                                                                                                                                                * Translates it into commands
+
+                                                                                                                                                                                                                                                * Sends commands to ActorInterface / FSM
+
+This approach allows:
+                                                                                                                                                                                                                                                   * Swapping input sources (AI, replay)
+
+                                                                                                                                                                                                                                                   * Binding different controllers to different players
+
+________________
+
+
+6.3 Input Actions (Phase One)
+Standardized InputMap actions:
+Movement
+                                                                                                                                                                                                                                                      * move_left
+
+                                                                                                                                                                                                                                                      * move_right
+
+                                                                                                                                                                                                                                                      * (Optional) move_up, move_down for ladders/menus later
+
+Core Actions
+                                                                                                                                                                                                                                                         * jump
+
+                                                                                                                                                                                                                                                         * attack
+
+                                                                                                                                                                                                                                                         * interact
+
+System / Debug
+                                                                                                                                                                                                                                                            * pause
+
+                                                                                                                                                                                                                                                            * debug_toggle
+
+Bindings (example only; configured in project settings):
+                                                                                                                                                                                                                                                               * Keyboard arrows / WASD
+
+                                                                                                                                                                                                                                                               * Gamepad left stick / D-pad
+
+                                                                                                                                                                                                                                                               * Buttons A/B/X/Y or equivalents
+
+________________
+
+
+6.4 Player Input Controller Responsibilities
+PlayerInputController must:
+                                                                                                                                                                                                                                                                  1. Read InputMap actions each frame
+
+                                                                                                                                                                                                                                                                  2. Compute input vector (e.g., horizontal axis)
+
+                                                                                                                                                                                                                                                                  3. Call:
+
+                                                                                                                                                                                                                                                                     * ActorInterface.set_move_input(axis_x)
+
+                                                                                                                                                                                                                                                                     * FSM event hooks (request_jump, request_attack, etc.)
+
+                                                                                                                                                                                                                                                                        4. Handle input buffering for tight responsiveness:
+
+                                                                                                                                                                                                                                                                           * e.g., short “coyote time” after leaving platforms
+
+                                                                                                                                                                                                                                                                              5. Support input disabling (cutscenes, menus, death)
+
+________________
+
+
+6.5 Input → FSM Event Model
+Input is never handled directly by states via InputEvent.
+Instead, controller sends semantic commands to FSM.
+Example API:
+func _process(delta):
+    var axis := Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+    actor_interface.set_move_input(axis)
+
+
+    if Input.is_action_just_pressed("jump"):
+        fsm.handle_input("jump")
+
+
+    if Input.is_action_just_pressed("attack"):
+        fsm.handle_input("attack")
+
+
+FSM translates these commands into state transitions.
+________________
+
+
+6.6 Local Multiplayer Support (2–4 Players)
+To support multiple players:
+                                                                                                                                                                                                                                                                                 * Duplicate InputMaps with suffixes:
+
+                                                                                                                                                                                                                                                                                    * p1_move_left, p1_jump, p1_attack, ...
+
+                                                                                                                                                                                                                                                                                    * p2_move_left, p2_jump, p2_attack, ...
+
+                                                                                                                                                                                                                                                                                       * Each PlayerInputController is configured with a player index:
+
+                                                                                                                                                                                                                                                                                          * Determines which input actions to read
+
+Example
+var player_index := 1
+var move_left_action := "p% d_move_left" % player_index
+
+
+This makes the system ready for local multiplayer without refactoring.
+________________
+
+
+6.7 Input Abstraction Interface
+To allow AI, replay, or scripted control to reuse the same pipeline, define an abstraction:
+Command Interface
+Commands are simple strings or enums:
+                                                                                                                                                                                                                                                                                             * "move" with parameters {axis_x}
+
+                                                                                                                                                                                                                                                                                             * "jump"
+
+                                                                                                                                                                                                                                                                                             * "attack"
+
+                                                                                                                                                                                                                                                                                             * "interact"
+
+PlayerInputController implements:
+func issue_command(cmd: String, params: Dictionary = {}):
+    match cmd:
+        "move":
+            actor_interface.set_move_input(params.get("axis_x", 0.0))
+        "jump":
+            fsm.handle_input("jump")
+        "attack":
+            fsm.handle_input("attack")
+        "interact":
+            fsm.handle_input("interact")
+
+
+Later, AI controllers can call issue_command() instead of reading Input.
+________________
+
+
+6.8 Input Disable / Override Logic
+There must be a centralized way to disable or override input when:
+                                                                                                                                                                                                                                                                                                * Player is in a cutscene
+
+                                                                                                                                                                                                                                                                                                * Game is paused
+
+                                                                                                                                                                                                                                                                                                * Player is dead
+
+                                                                                                                                                                                                                                                                                                * A menu is open
+
+PlayerInputController maintains a flag:
+                                                                                                                                                                                                                                                                                                   * input_enabled: bool
+
+When false, it reads input but does not forward commands.
+Cutscene or UI managers can toggle this.
+________________
+
+
+6.9 Debug Requirements
+For debugging, the controller should:
+                                                                                                                                                                                                                                                                                                      * Print the final axis_x value
+
+                                                                                                                                                                                                                                                                                                      * Print issued commands (jump, attack, etc.) when debug overlay is on
+
+                                                                                                                                                                                                                                                                                                      * Show which player index it is bound to
+
+This helps diagnose control issues early.
+________________
+
+
+6.10 Summary
+The Input → Character Controller Layer in Phase One:
+                                                                                                                                                                                                                                                                                                         * Cleanly separates input from actor logic
+
+                                                                                                                                                                                                                                                                                                         * Feeds FSM and movement with abstract commands
+
+                                                                                                                                                                                                                                                                                                         * Supports future AI and replay integration
+
+                                                                                                                                                                                                                                                                                                         * Lays groundwork for 2–4 player local multiplayer
+
+This layer is essential to keep the actor system modular and testable as the project scales.
+________________
+Section 7 — Basic Enemy AI System (Phase One Edition)
+7.1 Purpose
+The Basic Enemy AI System provides minimal, functional enemy behavior for testing the core actor, FSM, combat, and animation systems.
+It is intentionally simple and modular, designed to be expanded in later phases.
+This system supports:
+                                                                                                                                                                                                                                                                                                            * Patrolling
+
+                                                                                                                                                                                                                                                                                                            * Player detection
+
+                                                                                                                                                                                                                                                                                                            * Chasing
+
+                                                                                                                                                                                                                                                                                                            * Performing a basic attack
+
+                                                                                                                                                                                                                                                                                                            * Returning to patrol
+
+                                                                                                                                                                                                                                                                                                            * Dying cleanly
+
+No complex pathfinding, advanced tactics, or boss AI logic is included here.
+________________
+
+
+7.2 Architecture Overview
+Enemy AI is implemented as a component-based FSM-driven system.
+EnemyRoot (ActorRoot: CharacterBody2D)
+├── ActorInterface
+├── FSM
+├── StatsComponent
+├── CombatComponent
+├── AnimationComponent
+└── EnemyAIController (Node)
+
+
+Responsibilities
+                                                                                                                                                                                                                                                                                                               * Reads environment (player visibility, collisions)
+
+                                                                                                                                                                                                                                                                                                               * Issues AI commands to FSM
+
+                                                                                                                                                                                                                                                                                                               * Supplies movement vectors
+
+                                                                                                                                                                                                                                                                                                               * Handles basic behavior selection
+
+The actual movement, combat, and animations are controlled by ActorRoot, Stats, Combat, and FSM.
+________________
+
+
+7.3 Behavior States (Phase One Mandatory)
+Enemy FSM must include the following states:
+1. EnemyIdle
+                                                                                                                                                                                                                                                                                                                  * Stand still
+
+                                                                                                                                                                                                                                                                                                                  * Transition to Patrol when timer expires
+
+                                                                                                                                                                                                                                                                                                                  * Transition to Chase if player detected
+
+2. EnemyPatrol
+                                                                                                                                                                                                                                                                                                                     * Move left/right or follow a predefined path
+
+                                                                                                                                                                                                                                                                                                                     * Flip at patrol boundaries
+
+                                                                                                                                                                                                                                                                                                                     * Transition to Idle periodically
+
+                                                                                                                                                                                                                                                                                                                     * Transition to Chase when player detected
+
+3. EnemyChase
+                                                                                                                                                                                                                                                                                                                        * Move toward player
+
+                                                                                                                                                                                                                                                                                                                        * Maintain horizontal pursuit
+
+                                                                                                                                                                                                                                                                                                                        * Transition to EnemyAttack when in range
+
+                                                                                                                                                                                                                                                                                                                        * Transition to Patrol/Idle when player lost
+
+4. EnemyAttack
+                                                                                                                                                                                                                                                                                                                           * Trigger attack animation
+
+                                                                                                                                                                                                                                                                                                                           * Enable hitbox at correct frame
+
+                                                                                                                                                                                                                                                                                                                           * Transition back to Chase or Idle
+
+5. EnemyDeath
+                                                                                                                                                                                                                                                                                                                              * Disable AI and collisions
+
+                                                                                                                                                                                                                                                                                                                              * Play death animation
+
+                                                                                                                                                                                                                                                                                                                              * Cleanup
+
+These states are driven by the FSM; AI only decides which state to enter.
+________________
+
+
+7.4 Player Detection System
+Minimal detection system using either:
+                                                                                                                                                                                                                                                                                                                                 * Raycasts (line-of-sight)
+
+                                                                                                                                                                                                                                                                                                                                 * Detection Area2D (proximity)
+
+Phase One requirement (simple and reliable):
+DetectionArea2D → emits body_entered / body_exited
+
+
+Detection Rules
+                                                                                                                                                                                                                                                                                                                                    * Only detect actors tagged with “player”
+
+                                                                                                                                                                                                                                                                                                                                    * Chase immediately on detect
+
+                                                                                                                                                                                                                                                                                                                                    * Disengage when player leaves the area for a brief time (0.5–1 second)
+
+Optional Advanced (Phase Two+)
+                                                                                                                                                                                                                                                                                                                                       * Peripheral vision
+
+                                                                                                                                                                                                                                                                                                                                       * Sound-based detection (stealth system)
+
+                                                                                                                                                                                                                                                                                                                                       * Group behavior
+
+________________
+
+
+7.5 Patrol Behavior
+Patrol methods:
+Option A — Waypoint-Based
+Enemy follows a list of patrol points.
+Option B — Boundary-Based
+Enemy walks between two X positions.
+Both require:
+                                                                                                                                                                                                                                                                                                                                          * Flip sprite/facing direction on turn-around
+
+                                                                                                                                                                                                                                                                                                                                          * Minimal terrain awareness
+
+Patrol Movement
+AI computes:
+axis_x = -1 or 1
+
+
+And sends command:
+issue_command("move", {"axis_x": axis_x})
+
+
+Movement is handled by ActorCharacter2D.
+________________
+
+
+7.6 Chase Behavior
+When the enemy detects the player:
+                                                                                                                                                                                                                                                                                                                                             1. Compute direction to player:
+
+axis_x = sign(player.position.x - enemy.position.x)
+
+
+                                                                                                                                                                                                                                                                                                                                                2. Issue movement command via AI controller
+
+                                                                                                                                                                                                                                                                                                                                                3. FSM transitions into Chase state
+
+                                                                                                                                                                                                                                                                                                                                                4. Keep player targeted until:
+
+                                                                                                                                                                                                                                                                                                                                                   * Player out of detection zone for grace period
+
+                                                                                                                                                                                                                                                                                                                                                   * Line-of-sight lost (optional, Phase Two)
+
+________________
+
+
+7.7 Attack Behavior
+Simple melee attack using existing combat system.
+Conditions to attack:
+                                                                                                                                                                                                                                                                                                                                                      * Player within attack range (Area2D or distance check)
+
+                                                                                                                                                                                                                                                                                                                                                      * Enemy not already in Attack, Hurt, or Death states
+
+FSM controls the actual attack animation and hitbox activation.
+After attack:
+                                                                                                                                                                                                                                                                                                                                                         * If player still in range → attack again
+
+                                                                                                                                                                                                                                                                                                                                                         * Otherwise → return to chase
+
+________________
+
+
+7.8 Death Behavior
+Triggered via StatsComponent when HP <= 0.
+AIController must:
+                                                                                                                                                                                                                                                                                                                                                            1. Stop issuing commands
+
+                                                                                                                                                                                                                                                                                                                                                            2. Disable detection area and patrol logic
+
+                                                                                                                                                                                                                                                                                                                                                            3. Allow FSM to enter Death state
+
+                                                                                                                                                                                                                                                                                                                                                            4. Ensure enemy cleanup after animation
+
+________________
+
+
+7.9 AI Command Interface
+AI uses the same command interface as PlayerInputController:
+issue_command("move", {"axis_x": axis_x})
+issue_command("attack")
+
+
+This ensures:
+                                                                                                                                                                                                                                                                                                                                                               * Reusable behavior logic
+
+                                                                                                                                                                                                                                                                                                                                                               * Shared movement/combat system
+
+                                                                                                                                                                                                                                                                                                                                                               * Clean future upgrade path (stealth, ranged enemies, techniques)
+
+________________
+
+
+7.10 Cooldown & Timing Management
+AI must track:
+                                                                                                                                                                                                                                                                                                                                                                  * Patrol wait timers
+
+                                                                                                                                                                                                                                                                                                                                                                  * Attack cooldowns
+
+                                                                                                                                                                                                                                                                                                                                                                  * Chase disengage timer
+
+All controlled within the AIController.
+________________
+
+
+7.11 Required Debug Hooks
+Debug overlay must show:
+                                                                                                                                                                                                                                                                                                                                                                     * Current AI mode (Idle / Patrol / Chase / Attack / Death)
+
+                                                                                                                                                                                                                                                                                                                                                                     * Player detection status
+
+                                                                                                                                                                                                                                                                                                                                                                     * Patrol boundaries / waypoints
+
+                                                                                                                                                                                                                                                                                                                                                                     * Attack range indicator
+
+                                                                                                                                                                                                                                                                                                                                                                     * Movement axis
+
+This is essential for early engine validation.
+________________
+
+
+7.12 Summary
+The Basic Enemy AI System in Phase One provides:
+                                                                                                                                                                                                                                                                                                                                                                        * Patrol → Chase → Attack loop
+
+                                                                                                                                                                                                                                                                                                                                                                        * Player detection
+
+                                                                                                                                                                                                                                                                                                                                                                        * Death handling
+
+                                                                                                                                                                                                                                                                                                                                                                        * AI-to-FSM command routing
+
+                                                                                                                                                                                                                                                                                                                                                                        * Unified behavior flow using command interface
+
+This delivers a complete minimal enemy that interacts with movement, FSM, stats, combat, and animation systems — the core of gameplay tests in Phase One.
+
+
+________________
+
+
+Section 8 — Debug & Developer Tools (Phase One)
+8.1 Purpose
+The Debug & Developer Tools Layer provides essential visibility into the internal state of the Densetsu Engine during Phase One:
+                                                                                                                                                                                                                                                                                                                                                                           * Actor internals (FSM, stats, combat)
+
+                                                                                                                                                                                                                                                                                                                                                                           * Collision and hit detection
+
+                                                                                                                                                                                                                                                                                                                                                                           * AI decisions
+
+                                                                                                                                                                                                                                                                                                                                                                           * Performance-impacting behaviors
+
+The goal is to make engine behavior inspectable and testable in real time, especially while tuning movement, combat, and AI.
+________________
+
+
+8.2 Architecture Overview
+Debug features are controlled by a global debug flag and a small set of utility nodes:
+DebugManager (Autoload / Singleton)
+├── Global flags
+└── Helper methods (register actor, log events, draw overlays)
+
+
+Per-Actor Debug Overlay (optional child node)
+
+
+DebugManager Responsibilities
+                                                                                                                                                                                                                                                                                                                                                                              * Store global debug enable/disable state
+
+                                                                                                                                                                                                                                                                                                                                                                              * Route debug events (logs, overlays)
+
+                                                                                                                                                                                                                                                                                                                                                                              * Provide API to toggle categories (FSM, AI, Combat, Collisions, Audio)
+
+________________
+
+
+8.3 Global Debug Flag & Categories
+Centralized settings in DebugManager:
+                                                                                                                                                                                                                                                                                                                                                                                 * debug_enabled: bool
+
+                                                                                                                                                                                                                                                                                                                                                                                 * debug_show_fsm: bool
+
+                                                                                                                                                                                                                                                                                                                                                                                 * debug_show_stats: bool
+
+                                                                                                                                                                                                                                                                                                                                                                                 * debug_show_ai: bool
+
+                                                                                                                                                                                                                                                                                                                                                                                 * debug_show_collisions: bool
+
+                                                                                                                                                                                                                                                                                                                                                                                 * debug_show_combat: bool
+
+These can be toggled via:
+                                                                                                                                                                                                                                                                                                                                                                                    * Input action (e.g., debug_toggle)
+
+                                                                                                                                                                                                                                                                                                                                                                                    * Console command (Phase Two+)
+
+________________
+
+
+8.4 Per-Actor Debug Overlay
+Each Actor can optionally own a light-weight overlay node:
+ActorRoot
+└── DebugOverlay (Node2D or Control)
+
+
+Overlay Responsibilities
+                                                                                                                                                                                                                                                                                                                                                                                       * Display text labels: actor_id, type, current FSM state
+
+                                                                                                                                                                                                                                                                                                                                                                                       * Show HP bar (for test builds)
+
+                                                                                                                                                                                                                                                                                                                                                                                       * Visualize AI mode (Idle/Patrol/Chase/Attack/Death)
+
+                                                                                                                                                                                                                                                                                                                                                                                       * Indicate hit/last damage (brief color flash)
+
+The overlay is enabled only when debug_enabled is true.
+________________
+
+
+8.5 Collision & Hitbox Visualization
+Use engine’s built-in collision debug (Project Settings) PLUS:
+                                                                                                                                                                                                                                                                                                                                                                                          * Optional outlines for hitboxes (Hitbox Area2D)
+
+                                                                                                                                                                                                                                                                                                                                                                                          * Optional outlines for hurtboxes
+
+                                                                                                                                                                                                                                                                                                                                                                                          * Color coding:
+
+                                                                                                                                                                                                                                                                                                                                                                                             * Green → hurtbox
+
+                                                                                                                                                                                                                                                                                                                                                                                             * Red → active hitbox
+
+                                                                                                                                                                                                                                                                                                                                                                                             * Yellow → inactive hitbox but present
+
+These outlines are drawn either by dedicated debug nodes or by using built-in collision shape visualization.
+________________
+
+
+8.6 FSM Debug Information
+FSM must expose, via DebugManager:
+                                                                                                                                                                                                                                                                                                                                                                                                * Current state name
+
+                                                                                                                                                                                                                                                                                                                                                                                                * Previous state name
+
+                                                                                                                                                                                                                                                                                                                                                                                                * Pending transitions
+
+                                                                                                                                                                                                                                                                                                                                                                                                * Last input command received
+
+Displayed in the overlay or printed to the console/log when debug is enabled.
+________________
+
+
+8.7 AI Debug Information
+For enemies:
+                                                                                                                                                                                                                                                                                                                                                                                                   * Current AI mode (Idle / Patrol / Chase / Attack / Death)
+
+                                                                                                                                                                                                                                                                                                                                                                                                   * Player detection status (Detected / Lost / Searching)
+
+                                                                                                                                                                                                                                                                                                                                                                                                   * Patrol boundaries or waypoints
+
+                                                                                                                                                                                                                                                                                                                                                                                                   * Attack range (visualized as a circle/box)
+
+This helps verify AI behavior and tuning.
+________________
+
+
+8.8 Combat Debug Information
+CombatComponent should log, when debug is on:
+                                                                                                                                                                                                                                                                                                                                                                                                      * Each successful hit: source_id → target_id, damage
+
+                                                                                                                                                                                                                                                                                                                                                                                                      * Knockback vector
+
+                                                                                                                                                                                                                                                                                                                                                                                                      * Death events
+
+Optionally, provide a simple on-screen history for the last N combat events.
+________________
+
+
+8.9 Performance Considerations
+Debug overlay and logs must:
+                                                                                                                                                                                                                                                                                                                                                                                                         * Be disabled by default in release builds
+
+                                                                                                                                                                                                                                                                                                                                                                                                         * Use simple drawing operations
+
+                                                                                                                                                                                                                                                                                                                                                                                                         * Avoid heavy per-frame allocations
+
+This ensures that enabling debug during development does not hide performance problems under artificial overhead.
+________________
+
+
+8.10 Integration with Phase Zero Tests
+Debug tools must support Phase Zero collision tests by:
+                                                                                                                                                                                                                                                                                                                                                                                                            * Showing collision shapes
+
+                                                                                                                                                                                                                                                                                                                                                                                                            * Showing actor IDs
+
+                                                                                                                                                                                                                                                                                                                                                                                                            * Showing velocity and knockback vectors
+
+This reuses the same DebugManager rather than separate systems.
+________________
+
+
+8.11 Summary
+Phase One Debug & Developer Tools provide:
+                                                                                                                                                                                                                                                                                                                                                                                                               * Global debug toggles
+
+                                                                                                                                                                                                                                                                                                                                                                                                               * Per-actor overlays
+
+                                                                                                                                                                                                                                                                                                                                                                                                               * Collision and hitbox visualization
+
+                                                                                                                                                                                                                                                                                                                                                                                                               * FSM, AI, and combat introspection
+
+With these tools, tuning movement, combat, and AI becomes much faster and less error-prone, and regression in later phases becomes easier to detect.
+________________
+
+
+Section 9 — Integration Tests & Validation Pass
+9.1 Purpose
+The Integration Tests & Validation Pass for Phase One ensures that:
+                                                                                                                                                                                                                                                                                                                                                                                                                  * All foundational systems (Actors, FSM, Stats, Combat, Animation, Input, AI, Debug) work together as intended.
+
+                                                                                                                                                                                                                                                                                                                                                                                                                  * No critical regressions were introduced compared to Phase Zero (movement/collisions).
+
+                                                                                                                                                                                                                                                                                                                                                                                                                  * The engine is ready to support Phase Two features without structural rewrites.
+
+This section defines what must be tested, how, and what conditions must be met before Phase One is considered complete.
+________________
+
+
+9.2 Test Environment Requirements
+Create a dedicated Phase One Test Scene (or small set of scenes) containing:
+                                                                                                                                                                                                                                                                                                                                                                                                                     * A test level with:
+
+                                                                                                                                                                                                                                                                                                                                                                                                                        * Flat ground
+
+                                                                                                                                                                                                                                                                                                                                                                                                                        * Slopes
+
+                                                                                                                                                                                                                                                                                                                                                                                                                        * Small platforms
+
+                                                                                                                                                                                                                                                                                                                                                                                                                        * Walls
+
+                                                                                                                                                                                                                                                                                                                                                                                                                           * One fully configured player actor using:
+
+                                                                                                                                                                                                                                                                                                                                                                                                                              * ActorInterface
+
+                                                                                                                                                                                                                                                                                                                                                                                                                              * FSM
+
+                                                                                                                                                                                                                                                                                                                                                                                                                              * StatsComponent
+
+                                                                                                                                                                                                                                                                                                                                                                                                                              * CombatComponent
+
+                                                                                                                                                                                                                                                                                                                                                                                                                              * AnimationComponent
+
+                                                                                                                                                                                                                                                                                                                                                                                                                              * PlayerInputController
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                 * At least two enemy types using:
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                    * ActorInterface
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                    * FSM (with EnemyIdle/Patrol/Chase/Attack/Death)
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                    * StatsComponent
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                    * CombatComponent
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                    * AnimationComponent
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                    * EnemyAIController
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                       * Debug overlay enabled via global toggle.
+
+This environment is used exclusively for engine verification, not as a game level.
+________________
+
+
+9.3 Player Control Validation
+Checklist for player behavior:
+                                                                                                                                                                                                                                                                                                                                                                                                                                          1. Movement
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                             * Smooth left/right movement
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                             * Correct acceleration and friction
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                             * Proper handling on slopes
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                             * No unintended sliding or jittering
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                2. Jumping
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                   * Single jump works reliably
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                   * Jump only allowed when grounded (no infinite jumps)
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                   * Proper transition Jump → Fall → Land
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                      3. Collision
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                         * No tunneling through ground
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                         * Correct interaction with walls and ceilings
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                         * No getting stuck in corners
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            4. Input Mapping
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                               * All core actions (move, jump, attack, interact) respond correctly
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                               * Input can be disabled (e.g., via a debug toggle) and re-enabled
+
+________________
+
+
+9.4 FSM Behavior Validation
+Checklist for FSM:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                  * States change as expected:
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * Idle ↔ Run
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * Run → Jump → Fall → Land → Idle
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * Any → Hurt → Idle
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * Any → Death
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        * No orphan states (states that cannot be reached or exited)
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        * Transitions log correctly when debug FSM is enabled
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                        * Animation names match state mappings
+
+Any misalignment between state and animation should be visible in debug output.
+________________
+
+
+9.5 Stats & Damage Validation
+Checklist for StatsComponent:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                           * HP and MP initialize to correct values
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                           * Damage reduces HP as per formula
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                           * HP never exceeds Max HP
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                           * HP reaching 0 triggers Death state exactly once
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                           * XP rewards from killing enemies are accumulated correctly (even if not yet spent at rest points)
+
+Runtime vs base stats must remain distinct.
+________________
+
+
+9.6 Combat Loop Validation
+Checklist for CombatComponent and hit/hurtboxes:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * Player attacks correctly spawn active hitboxes
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * Hitboxes only deal damage when active
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * Enemies take damage when hit and show Hurt state
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * Knockback is applied and respects collisions
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * Invulnerability frames prevent repeated instant hits
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * Death disables combat and hitboxes for the dead actor
+
+Debug overlay should show:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * Which hitboxes are active
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * Damage values
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * Kill events
+
+________________
+
+
+9.7 Enemy AI Behavior Validation
+Checklist for EnemyAIController:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    * Idle → Patrol transitions work as expected
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    * Patrol routes behave correctly (boundaries or waypoints)
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    * Enemies detect player within detection area
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    * Enemies chase player and respect terrain
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    * Enemies attack when in range
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    * Enemies return to patrol/idle when player leaves detection area
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    * Enemies enter Death state when HP = 0 and are cleaned up afterward
+
+Debug overlay should show current AI mode and detection status.
+________________
+
+
+9.8 Animation Integration Validation
+Checklist for AnimationComponent:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * Animations correctly play per FSM state (Idle, Run, Jump, Fall, Land, Attack, Hurt, Death)
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * Attack animations fire frame tags at correct timing for hitbox activation
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * Death animation completes before cleanup
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * Facing direction (sprite flip) matches movement / target direction
+
+Any missing or incorrect animation mapping should be clearly logged.
+________________
+
+
+9.9 Debug & Tooling Validation
+Checklist for DebugManager and overlays:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * Global debug toggle works (on/off)
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * FSM debug shows correct state names
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * AI debug shows correct modes
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * Combat debug correctly logs hits and deaths
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * Collision/hitbox visualization is legible and aligned with shapes
+
+Debug must be non-intrusive when disabled and efficient enough for normal use when enabled.
+________________
+
+
+9.10 Regression Check Against Phase Zero
+Ensure that Phase One changes did not break:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             * Basic movement stability
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             * Collision response from Phase Zero
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             * TileMap collision behavior
+
+If any regression appears, fix collision/movement first before layering more logic.
+________________
+
+
+9.11 Success Criteria for Phase One Completion
+Phase One is considered complete when:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                1. Player and at least two enemy types fully function in the test scene:
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   * Move
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   * Attack
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   * Take damage
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   * Die
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      2. FSM, Stats, Combat, AI, Animation, Input, and Debug systems work together without fatal errors.
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      3. No major regressions remain from Phase Zero collision behavior.
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      4. The test scene can run continuously for an extended period without errors or severe performance issues.
+
+________________
+
+
+9.12 Summary
+The Integration Tests & Validation Pass formalizes how Phase One is verified as stable and ready for expansion.
+Once all criteria are met, the engine has a solid, battle-tested foundation for:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         * Advanced combat systems
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         * Complex AI
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         * Gadgets & items
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         * Quests and narrative events
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         * Temporal anomaly mechanics
+
+Phase Two will build directly on this validated core without revisiting foundational architecture.

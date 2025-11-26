@@ -1,0 +1,3701 @@
+﻿COMPLETE SYSTEM PLANNING DOCUMENT - OpenBOR-Style Action Game in Godot
+Status: Planning Phase - All Systems Mapped
+Target: Designer-friendly, code-free workflow
+Philosophy: Data-driven building blocks, OpenBOR mechanics preservation
+________________
+
+
+TABLE OF CONTENTS
+1. Core Architecture Overview
+2. Plugin Stack
+3. StatsKeeper System
+4. FSM (Finite State Machine) System
+5. OpenBOR State Mappings
+6. Building Block System
+7. AttackData & Frame System
+8. Combat & Hitbox System
+9. Level Structure & Collision
+10. Future Level Editor
+11. System Integration Map
+12. Designer Workflow Examples
+13. Things to Consider
+________________
+
+
+CORE ARCHITECTURE OVERVIEW
+Design Pillars
+1. Zero-Code for Designers
+* All entity configuration via Inspector dropdowns/checkboxes
+* All state logic via Resource building blocks
+* All combat via frame data resources
+2. OpenBOR Mechanics Preservation
+* Exact state names and transition logic
+* Frame-based hitbox activation
+* Tight, responsive controls
+* Battle-tested state flow
+3. Modular Component System
+* Each system is an attachable Node
+* Systems communicate via signals
+* Resources define all data
+* Future level editor can manipulate everything
+4. Data-Driven Everything
+* DataTable stores templates
+* Resources configure behaviors
+* No hardcoded entity logic
+* Serializable for level editor
+________________
+
+
+PLUGIN STACK
+Confirmed Plugins
+MOVEMENT & PLATFORMING:
+✅ Ultimate Platformer Controller 2D
+   - Base movement physics
+   - Jump mechanics, coyote time, buffering
+   - Will be adapted to work with custom FSM
+
+
+STATS & RPG:
+✅ EnhancedStat
+   - Reactive stat system
+   - Modifier aggregation
+   - Integrates with StatsKeeper
+
+
+COMBAT - HITBOXES:
+✅ 2d-hitbox-godot-plugin
+   - Basic hitbox/hurtbox management
+   - Hit detection signals
+   - Foundation for HitboxManager
+
+
+INVENTORY (Later Phase):
+✅ GLoot or Wyvernbox
+   - Item management
+   - Equipment system
+   - To be integrated after combat is stable
+
+
+DATABASE:
+✅ DataTable
+   - Character templates
+   - Attack definitions
+   - Item/skill databases
+   - Entity categorization for level editor
+```
+
+
+### Custom Systems (To Build)
+```
+CORE SYSTEMS:
+⚠️ Custom FSM - Lightweight state machine matching OpenBOR logic
+⚠️ StateBehavior Resources - Data-driven state definitions
+⚠️ AttackData Resources - Frame data system
+⚠️ Building Block Evaluator - Interprets condition/action enums
+⚠️ AnimationController - Bridges AnimationPlayer + FSM + frame events
+
+
+COMBAT:
+⚠️ AttackDataManager - Spawns hitboxes per frame
+⚠️ CombatController - Damage calculation, reactions
+⚠️ HitboxManager Extensions - Frame-based activation
+
+
+SUPPORT:
+⚠️ ModifierManager - Buff/debuff tracking (future)
+⚠️ EntityRegistry - Categorization for level editor
+⚠️ GameObject - Reactive object behaviors (future)
+
+
+LEVEL EDITOR (Future):
+⚠️ Layout Tab - Tilemap + object placement
+⚠️ Collision Tab - Polygon drawing + solid prefab marking
+⚠️ Entity Tab - Entity placement + parameter editing
+⚠️ Logic Template System - Assign behaviors to entities
+________________
+
+
+STATSKEEPER SYSTEM
+Purpose
+Manages all numerical stats, progression, and vital state for game entities (players, NPCs, enemies, hazards).
+Core Responsibilities
+DOES Handle:
+* ✅ Core stats (HP, MP, Str, Def, Agi, Int, Lck)
+* ✅ Runtime values (current_hp, current_mp, current_level, current_xp)
+* ✅ Calculated bonuses (asks ModifierManager for totals)
+* ✅ Effective stats (base + bonus, with caps applied)
+* ✅ State flags (is_dead, is_invincible)
+* ✅ Stat operations (take_damage, heal, add_xp, level_up)
+* ✅ Serialization (save/load)
+DOES NOT Handle:
+* ❌ Modifier management (timers, stacking) → ModifierManager
+* ❌ Combat formulas (damage calculation) → CombatController
+* ❌ State machine behavior → FSM
+* ❌ UI rendering → UI Components
+Data Structure
+gdscript
+class_name StatsKeeper
+extends Node
+
+
+# Loaded from DataTable or Save File
+var character_id: String
+var entity_template: EntityTemplate
+
+
+# Base Stats (from template, can be modified by leveling/training)
+var base_hp_max: int
+var base_mp_max: int
+var base_strength: int
+var base_defense: int
+var base_agility: int
+var base_intelligence: int
+var base_luck: int
+
+
+# Runtime Values
+var current_hp: int
+var current_mp: int
+var current_level: int
+var current_xp: int
+
+
+# State Flags
+var is_dead: bool = false
+var is_invincible: bool = false
+
+
+# Computed Properties (getters)
+func get_max_hp() -> int:
+    return current_level + base_defense + 10
+
+
+func get_max_mp() -> int:
+    return base_intelligence + (current_level / 5)
+
+
+func get_effective_strength() -> int:
+    var bonus = ModifierManager.get_stat_bonus("strength")
+    var effective = base_strength + bonus
+    # Apply hard caps if needed
+    return effective
+
+
+# Similar for other stats...
+```
+
+
+### Progression System
+
+
+**XP Requirements:**
+- Default Formula: `XP_needed = Level × (10 + Level)`
+- Custom formula override available per character
+- Example:
+  - Level 1→2: 11 XP
+  - Level 2→3: 24 XP
+  - Level 3→4: 39 XP
+
+
+**Level Up Effects:**
+- Level increases by 1 (hard cap: 100)
+- MaxHP recalculated: `Level + Defense + 10` (soft cap: 1000)
+- MaxMP recalculated: `Intelligence + (Level / 5)` (soft cap: 1000)
+- Base stats (Str/Def/Agi/Int/Lck) NOT affected
+  - These increase through use/training (separate system)
+
+
+**Stat Caps:**
+
+
+Soft Caps (base stats before modifiers):
+- Skills: 100 each
+- MaxHP: 1000
+- MaxMP: 1000
+- Modifiers CAN push beyond soft caps
+
+
+Hard Caps (effective stats after modifiers):
+- Level: 100 (absolute, no modifiers apply)
+
+
+### Death & Revival
+
+
+**When HP <= 0:**
+1. Set `is_dead = true`
+2. Emit `died()` signal
+3. FSM transitions to "dead" state
+4. Input blocked while `is_dead == true`
+
+
+**On Game Over (Player):**
+- Load last checkpoint/save point
+- Restore all stats from save
+- Reset `is_dead = false`
+
+
+**On Respawn (Enemy):**
+- Entity removed/freed
+- If spawned again, loads fresh from DataTable
+
+
+### Save/Load Priority
+```
+Load Order:
+1. Save File Data (if exists) ← HIGHEST PRIORITY
+2. DataTable Base Values (fallback for new/fresh spawns)
+
+
+Save File Contains:
+- character_id (links to DataTable)
+- current_level, current_hp, current_mp, current_xp
+- is_dead flag
+- base stats (if modified from training/permanent upgrades)
+Signals
+gdscript
+signal hp_changed(current: int, maximum: int)
+signal mp_changed(current: int, maximum: int)
+signal died()
+signal revived()
+signal leveled_up(new_level: int)
+signal xp_gained(amount: int, current: int, needed: int)
+signal stat_changed(stat_name: String, old_value: int, new_value: int)
+signal stat_bonus_changed(stat_name: String, new_bonus: int)
+Integration Points
+With FSM:
+* FSM queries: Can enter state? (MP cost, HP threshold checks)
+* FSM listens: died() → force transition to "dead" state
+* States can: CONSUME_MP, DAMAGE_SELF, HEAL_SELF via actions
+With CombatController:
+* CombatController calls: take_damage(amount), heal(amount)
+* CombatController reads: get_effective_strength(), get_effective_defense()
+With ModifierManager:
+* StatsKeeper asks: "What's my current strength bonus?"
+* ModifierManager returns: Sum of all active modifiers
+With UI:
+* UI listens: hp_changed, mp_changed, leveled_up
+* Updates health bars, stat displays, level-up animations
+________________
+
+
+FSM (FINITE STATE MACHINE) SYSTEM
+Purpose
+Lightweight custom state machine that replicates OpenBOR's state logic exactly. Manages entity states, transitions, and behavior execution.
+Architecture
+Custom FSM (Not Plugin-Based)
+* Reason: Full control over OpenBOR transition logic
+* Simple implementation (~50-100 lines)
+* No plugin overhead = maximum responsiveness
+* Perfect for replicating battle-tested mechanics
+Core Components
+gdscript
+class_name StateMachine
+extends Node
+
+
+var current_state: State
+var states: Dictionary = {}  # state_name -> State instance
+var entity: Node  # owner entity
+
+
+func add_state(state_name: String, state: State):
+    states[state_name] = state
+    state.state_machine = self
+    state.entity = entity
+    add_child(state)
+
+
+func change_state(new_state_name: String, force: bool = false):
+    if current_state and not force:
+        if not current_state.can_exit():
+            return  # Transition blocked
+        current_state.exit()
+    
+    current_state = states[new_state_name]
+    current_state.enter()
+
+
+func _process(delta):
+    if current_state:
+        current_state.update(delta)
+        _check_transitions()
+
+
+func _physics_process(delta):
+    if current_state:
+        current_state.physics_update(delta)
+
+
+func _check_transitions():
+    # Check current state's transitions
+    for transition in current_state.get_transitions():
+        if transition.evaluate():
+            change_state(transition.target_state)
+            break  # First valid transition wins
+State Base Class
+gdscript
+class_name State
+extends Node
+
+
+var state_machine: StateMachine
+var entity: Node
+var behavior: StateBehavior  # Loaded from resource
+
+
+func enter():
+    # Execute enter actions from behavior
+    for action in behavior.enter_actions:
+        execute_action(action)
+
+
+func exit():
+    # Execute exit actions from behavior
+    for action in behavior.exit_actions:
+        execute_action(action)
+
+
+func update(delta):
+    # Per-frame logic
+    pass
+
+
+func physics_update(delta):
+    # Physics frame logic
+    pass
+
+
+func can_exit() -> bool:
+    # Check if state allows interruption
+    return behavior.can_be_interrupted
+
+
+func get_transitions() -> Array[StateTransition]:
+    return behavior.transitions
+
+
+func execute_action(action: StateAction):
+    # Interpret building block actions
+    match action.action_type:
+        ActionType.PLAY_ANIMATION:
+            entity.get_node("AnimationController").play(action.parameter)
+        ActionType.SPAWN_HITBOX:
+            entity.get_node("HitboxManager").spawn(action.parameter)
+        # ... etc
+```
+
+
+---
+
+
+## OPENBOR STATE MAPPINGS
+
+
+### Complete OpenBOR Animation/State List
+
+
+Based on OpenBOR source code (`openbor.h` and documentation):
+
+
+#### **Movement States**
+```
+IDLE (ANI_IDLE)
+├── Default standing state
+├── Loops animation
+├── Can transition to: Walk, Run, Jump, Attack, Duck, Block
+└── Properties: can_move=false, can_turn=true, is_vulnerable=true
+
+
+WALK (ANI_WALK)
+├── Moving at base speed
+├── Multiple variants supported (WALK2, WALK3...)
+├── Can transition to: Idle, Run, Jump, Attack
+└── Properties: can_move=true, can_turn=true, is_vulnerable=true
+
+
+BACKWALK (ANI_BACKWALK)
+├── Walking backward
+├── Can reverse WALK animation if BACKWALK not defined
+└── Properties: can_move=true, can_turn=false, is_vulnerable=true
+
+
+RUN (ANI_RUN)
+├── Moving at increased speed
+├── Can transition to: Idle, Walk, RunJump, RunJumpAttack
+└── Properties: can_move=true, can_turn=true, is_vulnerable=true
+
+
+UP (ANI_UP) / DOWN (ANI_DOWN)
+├── Z-axis movement (quasi-3D depth)
+├── Note: Your game skips depth axis
+└── Can ignore or repurpose for slopes
+```
+
+
+#### **Jump States**
+```
+JUMP (ANI_JUMP)
+├── Neutral jump
+├── Can transition to: Fall, JumpAttack, Land
+└── Properties: is_airborne=true, can_turn=limited, is_vulnerable=true
+
+
+FORWARDJUMP
+├── Directional jump with horizontal momentum
+└── Properties: is_airborne=true, can_turn=false
+
+
+RUNJUMP
+├── Jump initiated while running
+├── Greater horizontal speed
+└── Properties: is_airborne=true, can_turn=false
+
+
+FALL (animation state, not hit reaction)
+├── Descending after jump apex
+├── Can transition to: Land, JumpAttack
+└── Properties: is_airborne=true, is_vulnerable=true
+
+
+LAND (ANI_LAND)
+├── Landing recovery frames
+├── Brief transition to Idle
+└── Properties: is_grounded=true, can_move=false, short duration
+
+
+WALKOFF
+├── Walking off ledge edge
+├── Transitions to Fall
+└── Properties: is_airborne=true
+```
+
+
+#### **Attack States**
+```
+ATTACK1 / ATTACK (ANI_ATTACK1)
+├── First attack in chain
+├── Default combo: ATTACK1 → ATTACK1 → ATTACK2 → ATTACK3
+├── Can transition to: Attack2 (on hit + input), Idle (on finish), Pain (if hit)
+└── Properties: is_attacking=true, can_move=false, can_turn=false
+
+
+ATTACK2 (ANI_ATTACK2)
+├── Second attack in chain
+├── Requires hitting target with previous attack + input buffer
+└── Properties: is_attacking=true, can_move=false, can_turn=false
+
+
+ATTACK3 (ANI_ATTACK3)
+├── Third attack in chain
+└── Properties: is_attacking=true, can_move=false, can_turn=false
+
+
+ATTACK4+
+├── Additional attacks via maxattacks setting
+├── OpenBOR supports extensible attack count
+└── Properties: is_attacking=true, can_move=false
+
+
+ATTACKBACKWARD
+├── Back + Attack input
+├── Context-specific attack
+├── Players only (AI needs script)
+└── Properties: is_attacking=true, can_move=false, can_turn=false
+
+
+ATTACKBOTH
+├── Attack + Jump pressed simultaneously
+├── If ajspecial not enabled
+├── Players only
+└── Properties: is_attacking=true, is_airborne=depends
+
+
+CHARGEATTACK
+├── Hold Attack for ~3 seconds, then release
+├── Replaces last attack in default chain
+├── chargetime configurable per character
+└── Properties: is_attacking=true, can_move=false, charged=true
+
+
+UPPER (anti-air)
+├── AI-only by default
+├── Triggered when: idle + airborne target in range
+├── Players need script to access
+└── Properties: is_attacking=true, targets_airborne=true
+
+
+RISEATTACK (ANI_RISEATTACK)
+├── Attack while getting up from knockdown
+├── Input: Up + Attack while in FALL (knockdown) state
+├── AI automatically uses if targets in range
+└── Properties: is_attacking=true, is_rising=true, invincible_frames=some
+```
+
+
+#### **Jump Attack States**
+```
+JUMPATTACK (ANI_JUMPATTACK)
+├── Attack while airborne
+├── Can have multiple variants (JUMPATTACK2, JUMPATTACK3)
+└── Properties: is_attacking=true, is_airborne=true
+
+
+RUNJUMPATTACK
+├── Attack during running jump
+├── Greater momentum than JUMPATTACK
+└── Properties: is_attacking=true, is_airborne=true, high_momentum=true
+```
+
+
+#### **Special Moves**
+```
+SPECIAL (ANI_SPECIAL)
+├── Character-specific special move
+├── May consume MP
+├── Input-dependent (varies per implementation)
+└── Properties: is_attacking=true, consumes_mp=maybe
+
+
+FREESPECIAL (ANI_FREESPECIAL)
+├── Special move with no resource cost
+├── AI uses at random when target in range
+├── Expandable (FREESPECIAL2, FREESPECIAL3...)
+└── Properties: is_attacking=true, no_cost=true
+```
+
+
+#### **Grappling States**
+```
+GET
+├── Initiating grab/pickup
+├── Transition to GRAB if successful
+└── Properties: is_attacking=true, can_grab=true
+
+
+GRAB (ANI_GRAB)
+├── Holding opponent
+├── Can transition to: GrabAttack, Throw, release
+└── Properties: is_grabbing=true, target_held=true
+
+
+GRABATTACK (ANI_GRABATTACK)
+├── Attacking held opponent
+├── Can chain (GRABATTACK2)
+├── Ends with throw unless GRABATTACK2 exists
+└── Properties: is_attacking=true, is_grabbing=true
+
+
+THROW (ANI_THROW)
+├── Releasing opponent with force
+├── Applies knockback/knockdown to target
+└── Properties: is_attacking=true, throws_target=true
+
+
+GRABBED
+├── Being held by opponent
+├── Can struggle/escape
+└── Properties: is_vulnerable=true, is_held=true, can_move=false
+```
+
+
+#### **Defensive States**
+```
+BLOCK (ANI_BLOCK)
+├── Holding block input
+├── Reduces damage, prevents knockback
+├── Can transition to: BlockPain (if hit), Idle (release)
+└── Properties: is_blocking=true, can_move=false, damage_reduction=active
+
+
+BLOCKRELEASE
+├── Transition out of block
+├── Brief recovery
+└── Properties: can_move=false, is_vulnerable=true
+
+
+BLOCKPAIN
+├── Hit while blocking
+├── Minimal hitstun, no knockback
+└── Properties: is_blocking=true, reduced_stun=true
+
+
+DUCK (ANI_DUCK)
+├── Crouching state
+├── Avoids high attacks
+├── Can transition to: Rise, DuckAttack (if exists)
+└── Properties: is_ducking=true, can_move=false, hitbox_lowered=true
+
+
+DUCKING
+├── Transition into duck
+├── Brief animation
+└── Properties: transitioning=true
+```
+
+
+#### **Hit Reaction States**
+```
+PAIN (ANI_PAIN)
+├── Light hit reaction
+├── Brief hitstun, no knockdown
+├── Duration based on attack's hitstun_frames
+└── Properties: in_hitstun=true, can_move=false, is_vulnerable=true
+
+
+FALL (ANI_FALL) [knockdown]
+├── Heavy hit, knocked to ground
+├── Airborne falling state after knockdown
+├── Transitions to: Rise (after landing + delay)
+└── Properties: is_falling=true, is_vulnerable=true, drop=true
+
+
+SHOCK (ANI_SHOCK)
+├── Electric-type knockdown
+├── Special visual effect
+└── Properties: is_falling=true, attack_type=electric
+
+
+BURN (ANI_BURN)
+├── Fire-type knockdown
+├── Special visual effect, may deal DOT
+└── Properties: is_falling=true, attack_type=fire
+
+
+SHOCKPAIN
+├── Electric hit stun (not knockdown)
+├── Different animation from PAIN
+└── Properties: in_hitstun=true, attack_type=electric, stun_extended=true
+```
+
+
+#### **Recovery States**
+```
+RISE (ANI_RISE)
+├── Getting up from knockdown
+├── Brief invincibility frames
+├── Transitions to: Idle, RiseAttack (if input)
+└── Properties: is_rising=true, is_invincible=partial, can_move=false
+```
+
+
+#### **Other States**
+```
+SPAWN (ANI_SPAWN)
+├── Entity appearing in level
+├── Plays once on entity creation
+├── Invincible during spawn
+└── Properties: is_spawning=true, is_invincible=true
+
+
+DIE (ANI_DIE)
+├── Death animation
+├── Plays when HP reaches 0
+├── Entity removed after animation
+└── Properties: is_dead=true, is_invincible=true, no_input=true
+
+
+PICK
+├── Character select idle animation
+├── Menu/UI state, not gameplay
+└── Properties: display_only=true
+
+
+SLEEP
+├── Extended idle reaction
+├── Flavor animation for long inactivity
+└── Properties: is_idle=true, long_duration=true
+
+
+CHARGE
+├── Charging MP
+├── Input: Special + Jump (hold)
+├── Restores MP over time
+└── Properties: is_charging=true, can_move=false, restores_mp=true
+
+
+FAINT
+├── Low HP idle variant
+├── Visual indicator of critical health
+└── Properties: is_idle=true, low_hp=true
+OpenBOR Entity Flags
+From openbor.h source, these flags control behavior:
+c
+// Map to Godot state properties
+dead           → is_dead (StatsKeeper)
+jumping        → is_airborne (FSM state property)
+idling         → current_state == "idle"
+walking        → current_state in ["walk", "run", "backwalk"]
+drop           → is_knockdown (state flag)
+falling        → is_airborne && descending
+frozen         → can_move = false (state property)
+getting        → current_state == "get"
+grabwalking    → is_grabbing && can_move
+inpain         → current_state in ["pain", "blockpain", "shockpain"]
+inbackpain     → knockback direction check
+attacking      → is_attacking (state property)
+turning        → is_turning (animation flag)
+charging       → current_state == "charge"
+```
+
+
+### Transition Logic Patterns
+
+
+**Attack Combo Chain:**
+```
+if current_state == ATTACK1:
+    if hit_landed && input_buffered:
+        transition_to(ATTACK2)
+    elif animation_finished:
+        transition_to(IDLE)
+    elif was_hit:
+        transition_to(PAIN)
+```
+
+
+**Hit Reaction:**
+```
+if was_hit && not blocking:
+    if knockdown_force > threshold:
+        transition_to(FALL)
+        set_flag("drop", true)
+    else:
+        transition_to(PAIN)
+        set_flag("inpain", true)
+```
+
+
+**Rise from Knockdown:**
+```
+if drop && grounded && rise_delay_finished:
+    if input_up && input_attack:
+        transition_to(RISEATTACK)
+    else:
+        transition_to(RISE)
+________________
+
+
+BUILDING BLOCK SYSTEM
+Purpose
+Designer-friendly, Inspector-editable condition and action system. No code required to define state behaviors.
+Core Philosophy
+* States are configured via Resources
+* Behaviors defined by enum-based building blocks
+* FSM evaluates building blocks at runtime
+* All editable in Godot Inspector
+Resource Types
+1. EntityTemplate
+Location: DataTable
+Purpose: Defines character/entity type
+gdscript
+class_name EntityTemplate
+extends Resource
+
+
+@export_group("Identity")
+@export var entity_id: String = ""
+@export var display_name: String = ""
+@export_enum("Player", "Enemy", "NPC", "Object", "Hazard") var entity_type: String = "Enemy"
+
+
+@export_group("Stats")
+@export var base_hp_max: int = 50
+@export var base_mp_max: int = 10
+@export var base_strength: int = 6
+@export var base_defense: int = 6
+@export var base_agility: int = 8
+@export var base_intelligence: int = 5
+@export var base_luck: int = 7
+@export var starting_level: int = 1
+
+
+@export_group("Progression")
+@export var can_level_up: bool = true
+@export var xp_formula_override: String = ""  # Empty = use default
+@export var xp_drop_value: int = 50  # For enemies
+
+
+@export_group("Visuals")
+@export var sprite_sheet: Texture2D
+@export var portrait: Texture2D
+@export var animation_set_path: String = ""
+
+
+@export_group("Available States")
+@export var state_list: Array[String] = ["idle", "walk", "jump", "attack1", "pain", "dead"]
+2. StateBehavior
+Location: res://data/states/
+ Purpose: Defines single state's complete behavior
+gdscript
+class_name StateBehavior
+extends Resource
+
+
+@export_group("State Identity")
+@export var state_name: String = ""
+@export var animation_name: String = ""
+@export var priority: int = 0  # Higher = overrides lower
+
+
+@export_group("State Properties (OpenBOR Flags)")
+@export var can_move: bool = false
+@export var can_turn: bool = true
+@export var can_jump: bool = false
+@export var is_attacking: bool = false
+@export var is_vulnerable: bool = true
+@export var is_airborne: bool = false
+@export var locks_input: bool = false
+@export var animation_loops: bool = true
+@export var can_be_interrupted: bool = true
+
+
+@export_group("Enter Conditions")
+@export var enter_conditions: Array[StateCondition] = []
+
+
+@export_group("Transitions")
+@export var transitions: Array[StateTransition] = []
+
+
+@export_group("Actions")
+@export var enter_actions: Array[StateAction] = []
+@export var exit_actions: Array[StateAction] = []
+@export var frame_events: Array[FrameEvent] = []
+
+
+@export_group("Combo Properties")
+@export var combo_window_start: int = 0
+@export var combo_window_end: int = 0
+@export var can_cancel_into: Array[String] = []
+
+
+@export_group("Attack Reference")
+@export var attack_data_path: String = ""  # Links to AttackData resource
+3. StateCondition
+Purpose: Defines WHEN a condition is met
+gdscript
+class_name StateCondition
+extends Resource
+
+
+enum ConditionType {
+    # Input
+    INPUT_PRESSED,
+    INPUT_RELEASED,
+    INPUT_HELD,
+    INPUT_JUST_PRESSED,
+    
+    # Physics/Movement
+    IS_GROUNDED,
+    IS_AIRBORNE,
+    IS_MOVING,
+    IS_IDLE,
+    FACING_DIRECTION,
+    VELOCITY_CHECK,
+    
+    # Stats
+    HP_BELOW,
+    HP_ABOVE,
+    MP_BELOW,
+    MP_ABOVE,
+    STAT_COMPARE,
+    
+    # Animation
+    ANIMATION_FINISHED,
+    ANIMATION_FRAME,
+    ANIMATION_FRAME_RANGE,
+    ANIMATION_PLAYING,
+    
+    # Combat
+    HIT_LANDED,
+    WAS_HIT,
+    IS_ATTACKING,
+    IS_BLOCKING,
+    COMBO_COUNT,
+    TARGET_IN_RANGE,
+    
+    # State
+    NOT_IN_STATE,
+    IN_STATE_GROUP,
+    TIMER_EXPIRED,
+    CUSTOM_FLAG,
+    
+    # Compound
+    AND,
+    OR,
+    NOT
+}
+
+
+@export var condition_type: ConditionType
+@export var parameter: Variant  # String, int, float, or nested conditions
+@export var comparison: String = "=="  # For numeric comparisons
+4. StateAction
+Purpose: Defines WHAT happens
+gdscript
+class_name StateAction
+extends Resource
+
+
+enum ActionType {
+    # Animation
+    PLAY_ANIMATION,
+    STOP_ANIMATION,
+    SET_ANIMATION_SPEED,
+    PLAY_SOUND,
+    
+    # Movement
+    SET_VELOCITY,
+    ADD_VELOCITY,
+    STOP_MOVEMENT,
+    ENABLE_MOVEMENT,
+    DISABLE_MOVEMENT,
+    APPLY_KNOCKBACK,
+    
+    # Combat
+    SPAWN_HITBOX,
+    DESPAWN_HITBOX,
+    SPAWN_PROJECTILE,
+    ENABLE_HURTBOX,
+    DISABLE_HURTBOX,
+    
+    # State
+    SET_INVINCIBLE,
+    REMOVE_INVINCIBLE,
+    SET_FLAG,
+    CLEAR_FLAG,
+    FORCE_STATE_CHANGE,
+    
+    # Input
+    CLEAR_INPUT_BUFFER,
+    ENABLE_INPUT,
+    DISABLE_INPUT,
+    BUFFER_INPUT,
+    
+    # Stats
+    DAMAGE_SELF,
+    HEAL_SELF,
+    CONSUME_MP,
+    RESTORE_MP,
+    ADD_XP,
+    
+    # Visual
+    PLAY_PARTICLE,
+    SCREEN_SHAKE,
+    FLASH_SPRITE,
+    SPAWN_VFX,
+    
+    # Other
+    EMIT_SIGNAL,
+    CALL_FUNCTION
+}
+
+
+@export var action_type: ActionType
+@export var parameter: Variant
+@export var delay_frames: int = 0  # Execute after X frames
+5. StateTransition
+Purpose: Links condition to target state
+gdscript
+class_name StateTransition
+extends Resource
+
+
+@export var condition: StateCondition
+@export var target_state: String
+@export var priority: int = 0  # Higher checked first
+@export var can_interrupt: bool = true
+@export var force: bool = false  # Ignore can_exit check
+6. FrameEvent
+Purpose: Defines events on specific animation frames
+gdscript
+class_name FrameEvent
+extends Resource
+
+
+@export var frame_number: int = 0
+@export var action: StateAction
+@export var condition: StateCondition = null  # Optional: only fire if condition met
+Building Block Evaluator
+The FSM interprets building blocks at runtime:
+gdscript
+# In State class
+func evaluate_condition(condition: StateCondition) -> bool:
+    match condition.condition_type:
+        ConditionType.INPUT_JUST_PRESSED:
+            return Input.is_action_just_pressed(condition.parameter)
+        
+        ConditionType.IS_GROUNDED:
+            return entity.is_on_floor()
+        
+        ConditionType.HP_BELOW:
+            var stats = entity.get_node("StatsKeeper")
+            return stats.current_hp < condition.parameter
+        
+        ConditionType.ANIMATION_FINISHED:
+            var anim = entity.get_node("AnimationController")
+            return not anim.is_playing()
+        
+        ConditionType.AND:
+            # parameter is Array[StateCondition]
+            for subcondition in condition.parameter:
+                if not evaluate_condition(subcondition):
+                    return false
+            return true
+        
+        # ... etc for all condition types
+
+
+func execute_action(action: StateAction):
+    match action.action_type:
+        ActionType.PLAY_ANIMATION:
+            entity.get_node("AnimationController").play(action.parameter)
+        
+        ActionType.SPAWN_HITBOX:
+            var attack_data = load(action.parameter) as AttackData
+            entity.get_node("AttackDataManager").spawn_hitbox(attack_data)
+        
+        ActionType.CONSUME_MP:
+            var stats = entity.get_node("StatsKeeper")
+            stats.current_mp -= action.parameter
+        
+        ActionType.SET
+Retry
+Claude does not have the ability to run the code it generates yet.
+H
+Continue
+_FLAG: entity.set_meta(action.parameter[0], action.parameter[1])
+   ActionType.APPLY_KNOCKBACK:
+        entity.velocity = action.parameter as Vector2
+    
+    # ... etc for all action types
+
+
+---
+
+
+## ATTACKDATA & FRAME SYSTEM
+
+
+### Purpose
+Frame-accurate attack definitions matching OpenBOR's frame data structure. Defines hitboxes, damage, and timing per frame.
+
+
+### AttackData Resource
+
+
+Location: `res://data/attacks/`  
+Purpose: Complete attack definition
+```gdscript
+class_name AttackData
+extends Resource
+
+
+@export_group("Attack Identity")
+@export var attack_id: String = ""
+@export var attack_name: String = ""
+@export var animation_reference: String = ""
+
+
+@export_group("Damage Properties")
+@export var base_damage: int = 10
+@export_enum("Normal", "Fire", "Ice", "Electric", "Poison", "Wind") var damage_type: String = "Normal"
+@export var knockback_force: Vector2 = Vector2(150, -50)
+@export_enum("None", "Light", "Heavy", "Knockdown", "Launch") var knockback_type: String = "Light"
+@export var hitstun_frames: int = 12
+@export var can_juggle: bool = false
+@export var breaks_block: bool = false
+
+
+@export_group("Frame Data")
+@export var frames: Array[AttackFrame] = []
+
+
+@export_group("Hit Effects")
+@export var hit_sound: AudioStream
+@export var hit_particle: PackedScene
+@export var screen_shake_intensity: float = 0.1
+@export var hit_freeze_frames: int = 2
+@export var hit_spark_color: Color = Color.WHITE
+
+
+@export_group("Combo Properties")
+@export var chains_into: Array[String] = []  # Attack IDs that can follow
+@export var chain_window_start: int = 0
+@export var chain_window_end: int = 0
+@export var cancel_priority: int = 0
+
+
+@export_group("Resource Costs")
+@export var mp_cost: int = 0
+@export var stamina_cost: int = 0
+
+
+@export_group("Special Properties")
+@export var is_projectile: bool = false
+@export var projectile_scene: PackedScene
+@export var creates_hazard: bool = false
+@export var hazard_scene: PackedScene
+```
+
+
+### AttackFrame Resource
+
+
+Purpose: Per-frame hitbox definition
+```gdscript
+class_name AttackFrame
+extends Resource
+
+
+@export var frame_number: int = 0
+
+
+@export_group("Hitbox Properties")
+@export var hitbox_active: bool = false
+@export var hitbox_position: Vector2 = Vector2.ZERO  # Relative to entity
+@export var hitbox_size: Vector2 = Vector2(50, 30)
+@export var hitbox_offset: Vector2 = Vector2.ZERO  # Facing direction adjustment
+
+
+@export_group("Multi-Hit")
+@export var hitbox_count: int = 1  # For multi-hit attacks
+@export var hitbox_spacing: Vector2 = Vector2(20, 0)
+
+
+@export_group("Frame Properties")
+@export var can_cancel: bool = false
+@export var invincible: bool = false
+@export var super_armor: bool = false
+@export var movement_multiplier: float = 1.0  # Slow/speed up during frame
+
+
+@export_group("Sound/VFX")
+@export var frame_sound: AudioStream = null
+@export var frame_particle: PackedScene = null
+```
+
+
+### Frame Data Timing
+
+
+OpenBOR frame terminology mapped to Godot:
+```
+Attack Animation Phases:
+
+
+STARTUP (frames 0-2):
+├── No hitbox active
+├── Character preparing attack
+├── Vulnerable, can be interrupted (unless super armor)
+└── AttackFrame.hitbox_active = false
+
+
+ACTIVE (frames 3-5):
+├── Hitbox spawned and detecting hits
+├── Damage applies on collision
+├── Can have multiple active frames
+└── AttackFrame.hitbox_active = true
+
+
+RECOVERY (frames 6-10):
+├── Hitbox despawned
+├── Character returning to neutral
+├── Vulnerable, limited movement
+├── Cancel window may be active here
+└── AttackFrame.hitbox_active = false
+
+
+TOTAL FRAMES: 11 (0-10)
+```
+
+
+### Example: Michio's Attack1
+```gdscript
+# res://data/attacks/michio_attack1.tres
+
+
+attack_id: "michio_attack1"
+attack_name: "Quick Punch"
+animation_reference: "michio_attack_1"
+
+
+base_damage: 10
+damage_type: "Normal"
+knockback_force: Vector2(150, -50)
+knockback_type: "Light"
+hitstun_frames: 12
+
+
+frames: [
+    # Frame 0 - Startup
+    {
+        frame_number: 0,
+        hitbox_active: false
+    },
+    # Frame 1 - Startup
+    {
+        frame_number: 1,
+        hitbox_active: false
+    },
+    # Frame 2 - Startup
+    {
+        frame_number: 2,
+        hitbox_active: false
+    },
+    # Frame 3 - Active (first frame)
+    {
+        frame_number: 3,
+        hitbox_active: true,
+        hitbox_position: Vector2(40, -20),
+        hitbox_size: Vector2(50, 30),
+        frame_sound: [swoosh.wav]
+    },
+    # Frame 4 - Active
+    {
+        frame_number: 4,
+        hitbox_active: true,
+        hitbox_position: Vector2(45, -20),
+        hitbox_size: Vector2(50, 30)
+    },
+    # Frame 5 - Active (last frame) + Cancel Window Opens
+    {
+        frame_number: 5,
+        hitbox_active: true,
+        hitbox_position: Vector2(50, -20),
+        hitbox_size: Vector2(50, 30),
+        can_cancel: true
+    },
+    # Frame 6 - Recovery (hitbox gone)
+    {
+        frame_number: 6,
+        hitbox_active: false,
+        can_cancel: true
+    },
+    # Frames 7-9 - Recovery (cancel window still open)
+    {
+        frame_number: 7,
+        hitbox_active: false,
+        can_cancel: true
+    },
+    # Frame 10 - Recovery end (cancel window closes)
+    {
+        frame_number: 10,
+        hitbox_active: false,
+        can_cancel: false
+    }
+]
+
+
+chains_into: ["michio_attack2"]
+chain_window_start: 5
+chain_window_end: 9
+```
+
+
+---
+
+
+## COMBAT & HITBOX SYSTEM
+
+
+### Component Breakdown
+
+
+#### **AttackDataManager**
+
+
+Purpose: Bridges AttackData resources with runtime hitbox spawning
+```gdscript
+class_name AttackDataManager
+extends Node
+
+
+var current_attack: AttackData = null
+var active_hitboxes: Array[Area2D] = []
+var current_frame: int = 0
+
+
+signal hit_landed(attacker: Node, target: Node, attack_data: AttackData)
+
+
+func start_attack(attack_data: AttackData):
+    current_attack = attack_data
+    current_frame = 0
+    
+    # Connect to AnimationController frame signals
+    var anim_controller = get_parent().get_node("AnimationController")
+    if not anim_controller.frame_changed.is_connected(_on_frame_changed):
+        anim_controller.frame_changed.connect(_on_frame_changed)
+
+
+func _on_frame_changed(frame_number: int):
+    current_frame = frame_number
+    
+    if current_attack == null:
+        return
+    
+    # Find frame data for this frame
+    for frame_data in current_attack.frames:
+        if frame_data.frame_number == frame_number:
+            _process_frame(frame_data)
+
+
+func _process_frame(frame: AttackFrame):
+    # Spawn hitbox if active
+    if frame.hitbox_active:
+        spawn_hitbox(frame)
+    else:
+        despawn_hitboxes()
+    
+    # Execute frame events
+    if frame.frame_sound:
+        AudioManager.play_sound(frame.frame_sound)
+    if frame.frame_particle:
+        spawn_particle(frame.frame_particle)
+
+
+func spawn_hitbox(frame: AttackFrame):
+    despawn_hitboxes()  # Clear old hitboxes first
+    
+    for i in range(frame.hitbox_count):
+        var hitbox = Area2D.new()
+        var shape = CollisionShape2D.new()
+        var rect = RectangleShape2D.new()
+        
+        rect.size = frame.hitbox_size
+        shape.shape = rect
+        hitbox.add_child(shape)
+        
+        # Position relative to entity + facing direction
+        var offset = frame.hitbox_position
+        if get_parent().scale.x < 0:  # Facing left
+            offset.x *= -1
+        
+        hitbox.position = offset + frame.hitbox_offset
+        
+        # Setup collision layers
+        hitbox.collision_layer = 0
+        hitbox.collision_mask = get_target_mask()
+        
+        # Connect hit signal
+        hitbox.area_entered.connect(_on_hitbox_entered.bind(hitbox))
+        
+        get_parent().add_child(hitbox)
+        active_hitboxes.append(hitbox)
+
+
+func despawn_hitboxes():
+    for hitbox in active_hitboxes:
+        hitbox.queue_free()
+    active_hitboxes.clear()
+
+
+func _on_hitbox_entered(target: Area2D, hitbox: Area2D):
+    # Validate target (hurtbox)
+    if not target.is_in_group("hurtbox"):
+        return
+    
+    var target_entity = target.get_parent()
+    
+    # Emit hit signal
+    hit_landed.emit(get_parent(), target_entity, current_attack)
+    
+    # Play hit effects
+    play_hit_effects(target.global_position)
+
+
+func get_target_mask() -> int:
+    # Return appropriate collision mask based on attacker type
+    var entity = get_parent()
+    if entity.is_in_group("player"):
+        return 1 << 4  # Enemy hurtbox layer
+    else:
+        return 1 << 3  # Player hurtbox layer
+```
+
+
+#### **CombatController**
+
+
+Purpose: Damage calculation, reaction determination
+```gdscript
+class_name CombatController
+extends Node
+
+
+func _ready():
+    # Listen to hit signals from all entities
+    get_tree().call_group("entities", "_connect_combat_signals", self)
+
+
+func _on_hit_landed(attacker: Node, target: Node, attack_data: AttackData):
+    # Calculate damage
+    var attacker_stats = attacker.get_node("StatsKeeper")
+    var target_stats = target.get_node("StatsKeeper")
+    
+    var raw_damage = attack_data.base_damage
+    var strength = attacker_stats.get_effective_strength()
+    var defense = target_stats.get_effective_defense()
+    
+    var final_damage = calculate_damage_formula(raw_damage, strength, defense)
+    
+    # Apply damage
+    target_stats.take_damage(final_damage)
+    
+    # Determine reaction
+    if target_stats.is_dead:
+        return  # FSM will handle death transition
+    
+    var reaction = determine_reaction(attack_data, target)
+    apply_reaction(target, reaction, attack_data)
+    
+    # Visual/audio feedback
+    play_hit_feedback(target.global_position, attack_data)
+
+
+func calculate_damage_formula(base: int, strength: int, defense: int) -> int:
+    # Formula: (base + strength) - (defense / 2)
+    var damage = (base + strength) - (defense / 2)
+    return max(1, damage)  # Minimum 1 damage
+
+
+func determine_reaction(attack_data: AttackData, target: Node) -> String:
+    var target_state = target.get_node("StateMachine").current_state
+    
+    # Check if blocking
+    if target_state.behavior.state_name == "block":
+        if attack_data.breaks_block:
+            return "blockbreak"
+        else:
+            return "blockpain"
+    
+    # Check knockback type
+    match attack_data.knockback_type:
+        "None":
+            return "pain"
+        "Light":
+            return "pain"
+        "Heavy":
+            return "pain"  # Could be stronger pain animation
+        "Knockdown":
+            return "fall"
+        "Launch":
+            return "launched"
+    
+    return "pain"
+
+
+func apply_reaction(target: Node, reaction: String, attack_data: AttackData):
+    var fsm = target.get_node("StateMachine")
+    
+    # Force state transition
+    fsm.change_state(reaction, true)
+    
+    # Apply knockback
+    if attack_data.knockback_force != Vector2.ZERO:
+        var knockback = attack_data.knockback_force
+        
+        # Flip knockback based on hit direction
+        if target.global_position.x < get_parent().global_position.x:
+            knockback.x *= -1
+        
+        target.velocity = knockback
+    
+    # Set hitstun timer
+    target.set_meta("hitstun_frames", attack_data.hitstun_frames)
+
+
+func play_hit_feedback(position: Vector2, attack_data: AttackData):
+    # Screen shake
+    if attack_data.screen_shake_intensity > 0:
+        CameraController.shake(attack_data.screen_shake_intensity)
+    
+    # Hit freeze (pause frames)
+    if attack_data.hit_freeze_frames > 0:
+        get_tree().paused = true
+        await get_tree().create_timer(attack_data.hit_freeze_frames / 60.0).timeout
+        get_tree().paused = false
+    
+    # Particle effect
+    if attack_data.hit_particle:
+        var particle = attack_data.hit_particle.instantiate()
+        particle.global_position = position
+        get_tree().root.add_child(particle)
+    
+    # Sound effect
+    if attack_data.hit_sound:
+        AudioManager.play_sound_at(attack_data.hit_sound, position)
+```
+
+
+#### **HitboxManager** (Extensions to 2d-hitbox-plugin)
+
+
+Purpose: Manages hurtboxes, integrates with frame system
+```gdscript
+class_name HitboxManager
+extends Node
+
+
+var hurtbox: Area2D
+var hurtbox_enabled: bool = true
+
+
+func _ready():
+    setup_hurtbox()
+
+
+func setup_hurtbox():
+    # Create entity's hurtbox (body collision)
+    hurtbox = Area2D.new()
+    hurtbox.name = "Hurtbox"
+    hurtbox.add_to_group("hurtbox")
+    
+    var shape = CollisionShape2D.new()
+    var rect = RectangleShape2D.new()
+    rect.size = Vector2(40, 80)  # Default character size
+    shape.shape = rect
+    
+    hurtbox.add_child(shape)
+    
+    # Set collision layers
+    var entity = get_parent()
+    if entity.is_in_group("player"):
+        hurtbox.collision_layer = 1 << 3  # Player hurtbox layer
+    elif entity.is_in_group("enemy"):
+        hurtbox.collision_layer = 1 << 4  # Enemy hurtbox layer
+    
+    hurtbox.collision_mask = 0  # Doesn't detect anything (hitboxes find us)
+    
+    get_parent().add_child(hurtbox)
+
+
+func enable_hurtbox():
+    hurtbox_enabled = true
+    hurtbox.monitoring = true
+
+
+func disable_hurtbox():
+    hurtbox_enabled = false
+    hurtbox.monitoring = false
+
+
+func set_hurtbox_size(size: Vector2):
+    var shape = hurtbox.get_node("CollisionShape2D").shape as RectangleShape2D
+    shape.size = size
+
+
+func set_hurtbox_offset(offset: Vector2):
+    hurtbox.position = offset
+```
+
+
+---
+
+
+## LEVEL STRUCTURE & COLLISION
+
+
+### Hybrid Collision System
+
+
+Based on analysis: **TileMap + Manual CollisionPolygon2D** approach
+
+
+#### **Level Scene Structure**
+```
+Level (Node2D)
+├── Background (ParallaxBackground)
+│   ├── SkyLayer (ParallaxLayer)
+│   ├── MountainsLayer (ParallaxLayer)
+│   └── CloudsLayer (ParallaxLayer)
+│
+├── Tilemap (TileMap)
+│   ├── GroundLayer (tile collision enabled)
+│   ├── PlatformsLayer (tile collision enabled)
+│   └── DecorationLayer (no collision)
+│
+├── CollisionExtras (Node2D) ← For manual polygons
+│   ├── SlopePoly1 (StaticBody2D + CollisionPolygon2D)
+│   ├── CliffPoly (StaticBody2D + CollisionPolygon2D)
+│   └── RockFormation (StaticBody2D + CollisionPolygon2D)
+│
+├── Objects (Node2D) ← Prefabs with built-in collision
+│   ├── Crate (StaticBody2D + CollisionShape2D) [solid_prefab]
+│   ├── Rock (StaticBody2D + CollisionShape2D) [solid_prefab]
+│   └── Lantern (Node2D) [decoration only]
+│
+├── Entities (Node2D)
+│   ├── Player (CharacterBody2D)
+│   ├── Enemy1 (CharacterBody2D)
+│   └── NPC1 (CharacterBody2D)
+│
+└── Camera (Camera2D)
+```
+
+
+#### **Collision Workflow**
+
+
+**For Regular Terrain:**
+- Use TileMap with collision shapes assigned to tiles
+- Fast, grid-aligned, performant
+- Batch-rendered by Godot
+
+
+**For Organic/Special Shapes:**
+- Draw CollisionPolygon2D manually over artwork
+- Place under CollisionExtras group
+- Few large polygons > many small ones (better performance)
+
+
+**For Solid Prefabs:**
+- Mark with metadata or group tag: `solid_prefab = true`
+- Built-in collision, no manual polygon needed
+- Level editor recognizes and skips polygon drawing
+
+
+#### **Level Data Serialization**
+
+
+For future level editor:
+```json
+{
+    "level_id": "forest_stage_1",
+    "tilemap": {
+        "tileset": "res://tilesets/forest.tres",
+        "layers": [
+            {
+                "name": "ground",
+                "tiles": [[x, y, tile_id], ...]
+            }
+        ]
+    },
+    "collision_polygons": [
+        {
+            "type": "slope",
+            "vertices": [[0, 512], [512, 480], [512, 512], [0, 512]]
+        }
+    ],
+    "objects": [
+        {
+            "type": "Crate",
+            "scene_path": "res://objects/crate.tscn",
+            "position": [100, 480],
+            "solid": true
+        }
+    ],
+    "entities": [
+        {
+            "template_id": "goblin_basic",
+            "position": [500, 450],
+            "facing": "left"
+        }
+    ],
+    "spawn_point": [50, 450],
+    "camera_bounds": {"left": 0, "right": 2000, "top": 0, "bottom": 600}
+}
+```
+
+
+#### **Physics Layers Setup**
+
+
+Project Settings → Layer Names → 2D Physics:
+```
+Layer 1: world (tilemap, static collision)
+Layer 2: player_body
+Layer 3: player_hurtbox
+Layer 4: enemy_hurtbox
+Layer 5: player_hitbox
+Layer 6: enemy_hitbox
+Layer 7: items
+Layer 8: interactables
+Layer 9: hazards
+Layer 10: triggers
+```
+
+
+---
+
+
+## FUTURE LEVEL EDITOR
+
+
+### Overview
+
+
+**Integrated Godot-based level editor** that can run:
+- As standalone tool (separate Godot project)
+- OR in-game as "Edit Mode" (toggle with hotkey)
+
+
+**Designer-friendly interface:**
+- Tabs for different editing contexts
+- Drag-and-drop placement
+- Inspector panel for parameters
+- Instant playtest integration
+
+
+### Tab Structure
+
+
+#### **1. Layout Tab**
+
+
+Purpose: Visual level design
+
+
+Features:
+- TileMap painting tools
+  - Brush, fill, line, rectangle
+  - Tile picker palette
+  - Layer selection (ground, platforms, decoration)
+  - Eraser
+- Background placement
+  - Parallax layer editor
+  - Sprite placement for non-tiled backgrounds
+- Object placement
+  - Palette of prefabs (crates, rocks, decorations)
+  - Drag from palette → drop in scene
+  - Move, rotate, scale selected objects
+- Grid snap toggle
+- Zoom/pan controls
+
+
+UI Elements:
+```
+┌─────────────────────────────────────────────────────┐
+│ [Layout] Collision  Entity  Settings  Test          │
+├─────────────────────────────────────────────────────┤
+│ ┌─Tilemap─┐  ┌─Objects Palette──────────────────┐  │
+│ │ Ground  │  │ 🪨 Rock   📦 Crate  🏮 Lantern   │  │
+│ │ Platform│  │ 🌳 Tree   🪵 Log    ⚓ Anchor    │  │
+│ │ Decor   │  └─────────────────────────────────┘  │
+│ └─────────┘                                         │
+│                                                     │
+│           [Level Canvas - Visual View]              │
+│                                                     │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+
+#### **2. Collision Tab**
+
+
+Purpose: Define solid regions and physics
+
+
+Features:
+- Polygon drawing tool
+  - Click to place vertices
+  - Double-click to close polygon
+  - Edit existing vertices (drag to move)
+  - Delete vertices/polygons
+- Collision preview overlay
+  - Toggle to show all collision shapes
+  - Color-coded by type (solid, platform, hazard)
+- Solid prefab marking
+  - Right-click object → "Mark as Solid"
+  - Metadata flag: `solid_by_default = true`
+  - Editor skips manual collision for marked objects
+- One-way platform toggle
+- Collision layer assignment
+
+
+UI Elements:
+```
+┌─────────────────────────────────────────────────────┐
+│ Layout [Collision] Entity  Settings  Test           │
+├─────────────────────────────────────────────────────┤
+│ Tools:                    ┌─Properties──────────┐   │
+│ [Draw Poly] [Edit] [Erase]│ Type: Solid        │   │
+│ [Show Preview: ✓]         │ Layer: World       │   │
+│                           │ One-way: ☐         │   │
+│ Solid Prefabs:            └────────────────────┘   │
+│ ☑ Crate ☑ Rock ☐ Barrel                           │
+│                                                     │
+│        [Level Canvas - Collision Overlay]           │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+
+#### **3. Entity Tab**
+
+
+Purpose: Place characters, enemies, NPCs, spawn points
+
+
+Features:
+- Entity palette
+  - Categorized by type (Player, Enemy, NPC, Object)
+  - Thumbnails with names
+  - Drag to place
+- Selection & editing
+  - Click entity → opens parameter inspector
+  - Move, rotate entity
+  - Delete entity
+- Parameter inspector
+  - Shows entity's exported properties
+  - Template selection dropdown
+  - Stats override (if needed)
+  - AI behavior selection (for enemies)
+  - Facing direction toggle
+- Logic template assignment
+  - Dropdown: Select behavior template
+  - Templates define AI/reaction patterns
+  - Parameters auto-populate based on template
+- Spawn point marking
+  - Player start position
+  - Enemy spawn zones
+  - Checkpoint placement
+
+
+UI Elements:
+```
+┌─────────────────────────────────────────────────────┐
+│ Layout  Collision [Entity] Settings  Test           │
+├─────────────────────────────────────────────────────┤
+│ ┌─Entities Palette───┐  ┌─Inspector───────────────┐│
+│ │ Player:            │  │ Selected: Goblin        ││
+│ │  🥷 Michio         │  │                         ││
+│ │ Enemies:           │  │ Template: goblin_basic  ││
+│ │  👹 Goblin         │  │ HP Override: [   ]      ││
+│ │  🧟 Zombie         │  │ Facing: [Left ▼]        ││
+│ │ NPCs:              │  │ AI Template: [Patrol ▼] ││
+│ │  🧙 Shopkeeper     │  │ Aggro Range: 150        ││
+│ │  👤 Villager       │  │                         ││
+│ └────────────────────┘  └─────────────────────────┘│
+│                                                     │
+│           [Level Canvas - Entity View]              │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+
+#### **4. Settings Tab**
+
+
+Purpose: Level-wide configuration
+
+
+Features:
+- Level metadata
+  - Level name, ID
+  - Description
+  - Author
+  - Difficulty rating
+- Camera settings
+  - Bounds (left, right, top, bottom)
+  - Follow mode (smooth, instant, confined)
+  - Zoom level
+- Lighting/ambiance
+  - Background color
+  - Ambient light color
+  - Weather effects toggle
+- Music/audio
+  - Background music selection
+  - Ambient sound selection
+- Gameplay settings
+  - Time limit
+  - Victory conditions
+  - Defeat conditions
+
+
+UI Elements:
+```
+┌─────────────────────────────────────────────────────┐
+│ Layout  Collision  Entity [Settings] Test           │
+├─────────────────────────────────────────────────────┤
+│ Level Info:                                         │
+│ Name: [Forest Clearing              ]               │
+│ ID:   [forest_stage_1               ]               │
+│                                                     │
+│ Camera:                                             │
+│ Bounds: Left[0  ] Right[2000] Top[0  ] Bottom[600] │
+│ Follow: [Smooth Follow ▼]                          │
+│                                                     │
+│ Audio:                                              │
+│ BGM: [forest_theme.ogg ▼] [▶ Preview]              │
+│ Ambient: [birds.ogg ▼]                             │
+│                                                     │
+│ Gameplay:                                           │
+│ Time Limit: [None ▼]                               │
+│ Win Condition: [Reach Exit ▼]                      │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+
+#### **5. Test Tab**
+
+
+Purpose: Instant playtest without leaving editor
+
+
+Features:
+- Play button
+  - Saves current state (temp or persistent)
+  - Switches to gameplay mode
+  - Loads level with player control enabled
+- Test options
+  - Start from spawn point OR current camera position
+  - Invincibility toggle (for testing level design)
+  - Noclip mode toggle
+  - Fast-forward time
+- Debug overlay
+  - FPS counter
+  - Collision shapes visible
+  - Entity stats display
+  - State machine current state display
+- Stop/return to editor
+  - Returns to edit mode at same view position
+
+
+UI Elements:
+```
+┌─────────────────────────────────────────────────────┐
+│ Layout  Collision  Entity  Settings [Test]          │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  ┌─Test Options─────────────────────────────────┐  │
+│  │ Start Position: [Spawn Point ▼]              │  │
+│  │ Debug Options:                                │  │
+│  │   ☑ Show Collision    ☑ Show Stats           │  │
+│  │   ☐ Invincibility     ☐ Noclip               │  │
+│  │                                               │  │
+│  │        [▶ PLAY TEST]   [⏸ Pause]   [⏹ Stop]  │  │
+│  └───────────────────────────────────────────────┘  │
+│                                                     │
+│  Status: Ready to test                              │
+│                                                     │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+
+### Logic Template System
+
+
+**Purpose:** Allow designers to assign behaviors to entities without scripting
+
+
+**Templates Define:**
+- AI decision patterns (patrol, chase, flee)
+- Reaction behaviors (hit, block, counter)
+- Attack patterns (combo preferences, special move usage)
+- Movement patterns (wander, guard, follow)
+
+
+**Implementation:**
+```gdscript
+class_name LogicTemplate
+extends Resource
+
+
+@export var template_id: String = ""
+@export var template_name: String = ""
+@export_enum("AI", "Reaction", "Hybrid") var template_type: String = "AI"
+
+
+@export_group("AI Behavior")
+@export var decision_tree: BehaviorTree = null  # Optional: use behavior tree plugin
+@export var patrol_pattern: Array[Vector2] = []
+@export var aggro_range: float = 150.0
+@export var attack_range: float = 80.0
+@export var retreat_threshold_hp: float = 0.3
+
+
+@export_group("Attack Patterns")
+@export var preferred_attacks: Array[String] = []  # Attack state names
+@export var combo_frequency: float = 0.7  # 0-1, how often to continue combos
+@export var special_move_chance: float = 0.2
+
+
+@export_group("Defensive")
+@export var block_chance: float = 0.3
+@export var dodge_chance: float = 0.2
+@export var counter_attack_enabled: bool = false
+```
+
+
+**In Entity Tab:**
+- Select entity
+- Inspector shows: "Logic Template: [dropdown]"
+- Choose from available templates
+- Template parameters auto-fill inspector
+- Designer can override individual parameters if needed
+
+
+### Level Editor Architecture
+
+
+#### **Option A: Standalone Tool**
+```
+Separate Godot project:
+res://
+├── editor/
+│   ├── main_editor.tscn (editor interface)
+│   ├── tab_layout.gd
+│   ├── tab_collision.gd
+│   ├── tab_entity.gd
+│   ├── tab_settings.gd
+│   └── tab_test.gd
+├── shared/
+│   ├── resources/ (EntityTemplate, AttackData, etc.)
+│   ├── scripts/ (building blocks, evaluators)
+│   └── assets/ (sprites, sounds)
+└── levels/ (exported level data)
+```
+
+
+**Workflow:**
+1. Designer opens editor project
+2. Designs level using tabs
+3. Exports level data (JSON or .tscn)
+4. Main game project imports level data
+5. Runtime loads and instantiates level
+
+
+#### **Option B: In-Game Editor Mode**
+```
+Main game project with editor mode:
+res://
+├── game/
+│   ├── gameplay.tscn
+│   ├── player.tscn
+│   └── levels/
+├── editor/
+│   ├── editor_overlay.tscn (UI overlay)
+│   ├── editor_mode.gd (toggle edit/play)
+│   └── tools/
+└── shared/ (resources, scripts, assets)
+```
+
+
+**Workflow:**
+1. Run game
+2. Press F2 (or button) to enter Edit Mode
+3. Gameplay pauses, editor overlay appears
+4. Design level
+5. Press "Test" → seamlessly switch to play mode
+6. Press F2 again → return to editor at same position
+
+
+**Implementation:**
+```gdscript
+Retry
+Claude does not have the ability to run the code it generates yet.
+H
+Continue
+autoload singleton: EditorMode.gd
+extends Node
+var editor_active: bool = false var editor_overlay: Control = null var game_state_saved: Dictionary = {}
+func _ready(): # Load editor overlay scene (but don't show yet) var overlay_scene = load("res://editor/editor_overlay.tscn") editor_overlay = overlay_scene.instantiate() editor_overlay.visible = false add_child(editor_overlay)
+# Connect to input
+process_mode = Node.PROCESS_MODE_ALWAYS
+func _input(event: InputEvent): if event.is_action_pressed("toggle_editor"): # F2 toggle_editor()
+func toggle_editor(): editor_active = not editor_active
+if editor_active:
+    enter_edit_mode()
+else:
+    exit_edit_mode()
+func enter_edit_mode(): # Pause gameplay get_tree().paused = true
+# Save game state
+game_state_saved = save_game_state()
+
+
+# Show editor UI
+editor_overlay.visible = true
+
+
+# Disable player input
+var player = get_tree().get_first_node_in_group("player")
+if player:
+    player.set_process_input(false)
+
+
+# Enable editor tools
+editor_overlay.activate()
+func exit_edit_mode(): # Hide editor UI editor_overlay.visible = false editor_overlay.deactivate()
+# Restore game state (if designer wants to undo changes)
+# Or keep changes if saving
+
+
+# Resume gameplay
+get_tree().paused = false
+
+
+# Re-enable player input
+var player = get_tree().get_first_node_in_group("player")
+if player:
+    player.set_process_input(true)
+func test_level(): # Called from editor's Test button exit_edit_mode()
+# Optionally reload level from saved data
+# Or continue from current state
+func save_level(filepath: String): var level_data = serialize_current_level() var file = FileAccess.open(filepath, FileAccess.WRITE) file.store_string(JSON.stringify(level_data, "\t")) file.close()
+func load_level(filepath: String): var file = FileAccess.open(filepath, FileAccess.READ) var json = JSON.parse_string(file.get_as_text()) file.close()
+deserialize_level(json)
+
+
+### EntityRegistry System
+
+
+**Purpose:** Categorize all placeable entities for level editor palette
+```gdscript
+# autoload singleton: EntityRegistry.gd
+
+
+extends Node
+
+
+enum Category {
+    PLAYER,
+    ENEMY,
+    NPC,
+    LEVEL_OBJECT,
+    BACKGROUND_OBJECT,
+    INTERACTABLE,
+    HAZARD,
+    TRIGGER
+}
+
+
+# Maps category to available entities
+var entity_catalog: Dictionary = {
+    Category.PLAYER: [],
+    Category.ENEMY: [],
+    Category.NPC: [],
+    Category.LEVEL_OBJECT: [],
+    Category.BACKGROUND_OBJECT: [],
+    Category.INTERACTABLE: [],
+    Category.HAZARD: [],
+    Category.TRIGGER: []
+}
+
+
+func _ready():
+    _register_all_entities()
+
+
+func register_entity(
+    category: Category,
+    scene_path: String,
+    display_name: String,
+    icon: Texture2D = null,
+    template_id: String = ""
+):
+    entity_catalog[category].append({
+        "scene": scene_path,
+        "name": display_name,
+        "icon": icon,
+        "template_id": template_id,
+        "category": category
+    })
+
+
+func _register_all_entities():
+    # Players
+    register_entity(
+        Category.PLAYER,
+        "res://scenes/characters/michio.tscn",
+        "Michio",
+        load("res://assets/icons/michio_icon.png"),
+        "michio"
+    )
+    
+    # Enemies
+    register_entity(
+        Category.ENEMY,
+        "res://scenes/characters/goblin.tscn",
+        "Goblin",
+        load("res://assets/icons/goblin_icon.png"),
+        "goblin_basic"
+    )
+    
+    register_entity(
+        Category.ENEMY,
+        "res://scenes/characters/zombie.tscn",
+        "Zombie",
+        load("res://assets/icons/zombie_icon.png"),
+        "zombie_basic"
+    )
+    
+    # Objects
+    register_entity(
+        Category.LEVEL_OBJECT,
+        "res://scenes/objects/crate.tscn",
+        "Crate",
+        load("res://assets/icons/crate_icon.png")
+    )
+    
+    register_entity(
+        Category.LEVEL_OBJECT,
+        "res://scenes/objects/rock.tscn",
+        "Rock",
+        load("res://assets/icons/rock_icon.png")
+    )
+    
+    # Interactables
+    register_entity(
+        Category.INTERACTABLE,
+        "res://scenes/objects/chest.tscn",
+        "Chest",
+        load("res://assets/icons/chest_icon.png")
+    )
+    
+    # Hazards
+    register_entity(
+        Category.HAZARD,
+        "res://scenes/hazards/spike_trap.tscn",
+        "Spike Trap",
+        load("res://assets/icons/spikes_icon.png")
+    )
+
+
+func get_entities_by_category(category: Category) -> Array:
+    return entity_catalog[category]
+
+
+func get_entity_info(template_id: String) -> Dictionary:
+    for category in entity_catalog.values():
+        for entity in category:
+            if entity.template_id == template_id:
+                return entity
+    return {}
+```
+
+
+### Level Serialization Format
+
+
+**Complete level data structure:**
+```json
+{
+    "format_version": "1.0",
+    "level_id": "forest_stage_1",
+    "level_name": "Forest Clearing",
+    "author": "Designer Name",
+    "created_date": "2024-10-18",
+    
+    "metadata": {
+        "description": "Tutorial level introducing basic combat",
+        "difficulty": "Easy",
+        "estimated_time": 180
+    },
+    
+    "tilemap": {
+        "tileset_path": "res://tilesets/forest.tres",
+        "cell_size": [16, 16],
+        "layers": [
+            {
+                "name": "ground",
+                "z_index": 0,
+                "tiles": [
+                    {"x": 0, "y": 32, "tile_id": 5},
+                    {"x": 1, "y": 32, "tile_id": 5}
+                ]
+            },
+            {
+                "name": "platforms",
+                "z_index": 1,
+                "tiles": [
+                    {"x": 5, "y": 20, "tile_id": 12}
+                ]
+            }
+        ]
+    },
+    
+    "collision_polygons": [
+        {
+            "name": "slope_1",
+            "type": "solid",
+            "vertices": [[0, 512], [512, 480], [512, 512], [0, 512]]
+        },
+        {
+            "name": "cliff_wall",
+            "type": "solid",
+            "vertices": [[1500, 0], [1520, 0], [1520, 600], [1500, 600]]
+        }
+    ],
+    
+    "objects": [
+        {
+            "instance_id": "obj_001",
+            "scene_path": "res://scenes/objects/crate.tscn",
+            "template_id": "",
+            "position": [100, 480],
+            "rotation": 0,
+            "scale": [1, 1],
+            "solid": true,
+            "metadata": {
+                "destructible": true,
+                "drop_item": "health_potion"
+            }
+        },
+        {
+            "instance_id": "obj_002",
+            "scene_path": "res://scenes/objects/rock.tscn",
+            "position": [300, 490],
+            "rotation": 15,
+            "scale": [1.2, 1.2],
+            "solid": true
+        }
+    ],
+    
+    "entities": [
+        {
+            "instance_id": "ent_001",
+            "template_id": "goblin_basic",
+            "position": [500, 450],
+            "facing": "left",
+            "logic_template": "patrol_basic",
+            "parameters": {
+                "patrol_points": [[400, 450], [600, 450]],
+                "aggro_range": 150,
+                "hp_override": null
+            }
+        },
+        {
+            "instance_id": "ent_002",
+            "template_id": "npc_shopkeeper",
+            "position": [800, 450],
+            "facing": "right",
+            "logic_template": "idle_shopkeeper",
+            "parameters": {
+                "dialogue_id": "shop_intro"
+            }
+        }
+    ],
+    
+    "spawn_point": {
+        "position": [50, 450],
+        "facing": "right"
+    },
+    
+    "camera": {
+        "bounds": {
+            "left": 0,
+            "right": 2000,
+            "top": 0,
+            "bottom": 600
+        },
+        "follow_mode": "smooth",
+        "zoom": 1.0,
+        "offset": [0, -50]
+    },
+    
+    "audio": {
+        "bgm": "res://audio/music/forest_theme.ogg",
+        "ambient": "res://audio/ambient/birds.ogg",
+        "bgm_volume": -10,
+        "ambient_volume": -20
+    },
+    
+    "gameplay": {
+        "time_limit": 0,
+        "win_condition": "reach_exit",
+        "exit_position": [1900, 450],
+        "defeat_condition": "player_death",
+        "checkpoints": [
+            {"position": [500, 450], "id": "checkpoint_1"},
+            {"position": [1200, 450], "id": "checkpoint_2"}
+        ]
+    },
+    
+    "triggers": [
+        {
+            "trigger_id": "trig_001",
+            "type": "area",
+            "shape": "rectangle",
+            "position": [700, 400],
+            "size": [100, 200],
+            "event": "spawn_enemies",
+            "parameters": {
+                "enemy_group": "ambush_1",
+                "entities": ["goblin_basic", "goblin_basic"]
+            },
+            "one_shot": true
+        }
+    ]
+}
+```
+
+
+### Level Loading System
+```gdscript
+class_name LevelLoader
+extends Node
+
+
+func load_level_from_file(filepath: String) -> Node2D:
+    var file = FileAccess.open(filepath, FileAccess.READ)
+    if not file:
+        push_error("Failed to open level file: " + filepath)
+        return null
+    
+    var json_text = file.get_as_text()
+    file.close()
+    
+    var level_data = JSON.parse_string(json_text)
+    if not level_data:
+        push_error("Failed to parse level JSON")
+        return null
+    
+    return build_level_from_data(level_data)
+
+
+func build_level_from_data(data: Dictionary) -> Node2D:
+    var level = Node2D.new()
+    level.name = data.level_id
+    
+    # Build tilemap
+    if data.has("tilemap"):
+        var tilemap = build_tilemap(data.tilemap)
+        level.add_child(tilemap)
+    
+    # Build collision polygons
+    if data.has("collision_polygons"):
+        var collision_root = Node2D.new()
+        collision_root.name = "CollisionExtras"
+        for poly_data in data.collision_polygons:
+            var poly = build_collision_polygon(poly_data)
+            collision_root.add_child(poly)
+        level.add_child(collision_root)
+    
+    # Instantiate objects
+    if data.has("objects"):
+        var objects_root = Node2D.new()
+        objects_root.name = "Objects"
+        for obj_data in data.objects:
+            var obj = build_object(obj_data)
+            objects_root.add_child(obj)
+        level.add_child(objects_root)
+    
+    # Instantiate entities
+    if data.has("entities"):
+        var entities_root = Node2D.new()
+        entities_root.name = "Entities"
+        for ent_data in data.entities:
+            var ent = build_entity(ent_data)
+            entities_root.add_child(ent)
+        level.add_child(entities_root)
+    
+    # Setup camera
+    if data.has("camera"):
+        var camera = build_camera(data.camera)
+        level.add_child(camera)
+    
+    # Setup audio
+    if data.has("audio"):
+        setup_audio(data.audio)
+    
+    return level
+
+
+func build_tilemap(data: Dictionary) -> TileMap:
+    var tilemap = TileMap.new()
+    var tileset = load(data.tileset_path) as TileSet
+    tilemap.tile_set = tileset
+    
+    for layer_data in data.layers:
+        var layer_id = tilemap.get_layers_count()
+        tilemap.add_layer(layer_id)
+        tilemap.set_layer_name(layer_id, layer_data.name)
+        tilemap.set_layer_z_index(layer_id, layer_data.z_index)
+        
+        for tile in layer_data.tiles:
+            tilemap.set_cell(
+                layer_id,
+                Vector2i(tile.x, tile.y),
+                0,  # source_id
+                Vector2i(tile.tile_id, 0)
+            )
+    
+    return tilemap
+
+
+func build_collision_polygon(data: Dictionary) -> StaticBody2D:
+    var body = StaticBody2D.new()
+    body.name = data.name
+    
+    var collision = CollisionPolygon2D.new()
+    var points = PackedVector2Array()
+    for vertex in data.vertices:
+        points.append(Vector2(vertex[0], vertex[1]))
+    collision.polygon = points
+    
+    body.add_child(collision)
+    return body
+
+
+func build_object(data: Dictionary) -> Node:
+    var scene = load(data.scene_path) as PackedScene
+    var obj = scene.instantiate()
+    
+    obj.position = Vector2(data.position[0], data.position[1])
+    obj.rotation_degrees = data.get("rotation", 0)
+    obj.scale = Vector2(data.scale[0], data.scale[1]) if data.has("scale") else Vector2.ONE
+    
+    # Apply metadata
+    if data.has("metadata"):
+        for key in data.metadata:
+            obj.set_meta(key, data.metadata[key])
+    
+    # Mark as solid if needed
+    if data.get("solid", false):
+        obj.add_to_group("solid_prefab")
+    
+    return obj
+
+
+func build_entity(data: Dictionary) -> CharacterBody2D:
+    # Load entity from template
+    var template = DataTable.get_character(data.template_id)
+    var scene_path = EntityRegistry.get_entity_info(data.template_id).scene
+    var scene = load(scene_path) as PackedScene
+    var entity = scene.instantiate() as CharacterBody2D
+    
+    entity.position = Vector2(data.position[0], data.position[1])
+    
+    # Set facing direction
+    if data.facing == "left":
+        entity.scale.x *= -1
+    
+    # Apply logic template
+    if data.has("logic_template"):
+        var logic = load("res://data/logic_templates/" + data.logic_template + ".tres")
+        entity.set_meta("logic_template", logic)
+    
+    # Apply parameter overrides
+    if data.has("parameters"):
+        for param in data.parameters:
+            if data.parameters[param] != null:
+                entity.set(param, data.parameters[param])
+    
+    return entity
+
+
+func build_camera(data: Dictionary) -> Camera2D:
+    var camera = Camera2D.new()
+    camera.limit_left = data.bounds.left
+    camera.limit_right = data.bounds.right
+    camera.limit_top = data.bounds.top
+    camera.limit_bottom = data.bounds.bottom
+    camera.position_smoothing_enabled = (data.follow_mode == "smooth")
+    camera.zoom = Vector2(data.zoom, data.zoom)
+    camera.offset = Vector2(data.offset[0], data.offset[1])
+    return camera
+```
+
+
+---
+
+
+## SYSTEM INTEGRATION MAP
+
+
+### Complete Data Flow Diagram
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                         GAME ENTITY                                  │
+│                      (CharacterBody2D)                               │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  ╔══════════════╗                    ╔══════════════╗                │
+│  ║ StatsKeeper  ║◄──────signals─────►║     FSM      ║                │
+│  ║              ║                    ║              ║                │
+│  ║ • HP/MP      ║   died()           ║ • States     ║                │
+│  ║ • Stats      ║──────────────────► ║ • Transitions║                │
+│  ║ • Level/XP   ║                    ║ • Evaluator  ║                │
+│  ║ • is_dead    ║   query MP/HP      ║              ║                │
+│  ║              ║◄──────────────────║              ║                │
+│  ╚══════╤═══════╝                    ╚══════╤═══════╝                │
+│         │                                   │                        │
+│         │ get_effective_stat()              │ loads                  │
+│         │                                   │                        │
+│         ▼                                   ▼                        │
+│  ╔══════════════╗                    ╔══════════════╗                │
+│  ║ModifierMgr   ║                    ║StateBehavior ║                │
+│  ║              ║                    ║  (Resource)  ║                │
+│  ║ • Buffs      ║                    ║              ║                │
+│  ║ • Debuffs    ║                    ║ • Conditions ║                │
+│  ║ • Timers     ║                    ║ • Actions    ║                │
+│  ║              ║                    ║ • Properties ║                │
+│  ╚══════════════╝                    ╚══════╤═══════╝                │
+│                                             │                        │
+│                                             │ references             │
+│  ╔══════════════╗                           │                        │
+│  ║AnimController║◄──────────────────────────┘                        │
+│  ║              ║                                                    │
+│  ║ • Plays anims║        ╔══════════════╗                            │
+│  ║ • Emits frame║◄───────║ AttackData   ║                            │
+│  ║   signals    ║        ║  (Resource)  ║                            │
+│  ╚══════╤═══════╝        ║              ║                            │
+│         │                ║ • Frames     ║                            │
+│         │ frame_changed  ║ • Hitboxes   ║                            │
+│         │                ║ • Damage     ║                            │
+│         ▼                ╚══════════════╝                            │
+│  ╔══════════════╗                                                    │
+│  ║AttackDataMgr ║        ╔══════════════╗                            │
+│  ║              ║◄───────║  DataTable   ║                            │
+│  ║ • Spawns     ║        ║              ║                            │
+│  ║   hitboxes   ║        ║ • Templates  ║                            │
+│  ║ • Frame logic║        ║ • Attacks    ║                            │
+│  ╚══════╤═══════╝        ╚══════════════╝                            │
+│         │                                                            │
+│         │ spawn_hitbox()                                             │
+│         ▼                                                            │
+│  ╔══════════════╗                                                    │
+│  ║HitboxManager ║                                                    │
+│  ║              ║                                                    │
+│  ║ • Hitboxes   ║                                                    │
+│  ║ • Hurtboxes  ║                                                    │
+│  ║ • Detection  ║                                                    │
+│  ╚══════╤═══════╝                                                    │
+│         │                                                            │
+│         │ hit_landed()                                               │
+│         ▼                                                            │
+│  ╔══════════════╗                                                    │
+│  ║CombatCtrl    ║                                                    │
+│  ║              ║                                                    │
+│  ║ • Damage calc║                                                    │
+│  ║ • Knockback  ║                                                    │
+│  ║ • Reactions  ║                                                    │
+│  ╚══════════════╝                                                    │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+
+            ▲                          │
+            │                          │
+            │ query templates          │ load level data
+            │                          ▼
+            
+     ╔═══════════════╗          ╔═══════════════╗
+     ║EntityRegistry ║          ║  LevelLoader  ║
+     ║               ║          ║               ║
+     ║ • Categories  ║          ║ • Deserialize ║
+     ║ • Palettes    ║          ║ • Instantiate ║
+     ╚═══════════════╝          ╚═══════════════╝
+            ▲                          ▲
+            │                          │
+            │                          │
+            └──────────────┬───────────┘
+                           │
+                    ╔═══════════════╗
+                    ║ Level Editor  ║
+                    ║               ║
+                    ║ • Layout Tab  ║
+                    ║ • Collision   ║
+                    ║ • Entity Tab  ║
+                    ║ • Test Tab    ║
+                    ╚═══════════════╝
+```
+
+
+### Signal Flow Example: Player Attacks Enemy
+```
+1. Player presses Attack button
+   │
+   ├─► FSM.current_state checks enter_conditions
+   │   └─► Condition: INPUT_JUST_PRESSED("attack")
+   │       Condition: IS_GROUNDED (queries CharacterBody2D)
+   │       Condition: NOT_IN_STATE("attack1")
+   │   └─► ALL TRUE → FSM.change_state("attack1")
+   │
+2. Attack1 State enters
+   │
+   ├─► Executes enter_actions:
+   │   ├─► PLAY_ANIMATION("michio_attack_1")
+   │   │   └─► AnimController.play("michio_attack_1")
+   │   ├─► CLEAR_INPUT_BUFFER
+   │   └─► PLAY_SOUND(swoosh.wav)
+   │
+   ├─► Loads AttackData: "res://data/attacks/michio_attack1.tres"
+   │   └─► AttackDataManager.start_attack(attack_data)
+   │
+3. AnimController plays animation
+   │
+   ├─► Frame 0 → emits frame_changed(0)
+   │   └─► AttackDataManager checks frame 0 data
+   │       └─► hitbox_active = false → do nothing
+   │
+   ├─► Frame 3 → emits frame_changed(3)
+   │   └─► AttackDataManager checks frame 3 data
+   │       └─► hitbox_active = true
+   │           └─► AttackDataManager.spawn_hitbox(frame_3_data)
+   │               └─► HitboxManager creates Area2D at position
+   │
+4. Hitbox overlaps enemy hurtbox
+   │
+   ├─► HitboxManager.hitbox.area_entered signal
+   │   └─► HitboxManager._on_hitbox_entered(enemy_hurtbox)
+   │       └─► Validates target is hurtbox
+   │           └─► emit hit_landed(player, enemy, attack_data)
+   │
+5. CombatController receives hit_landed signal
+   │
+   ├─► Reads player.StatsKeeper.get_effective_strength() → 8
+   ├─► Reads attack_data.base_damage → 10
+   ├─► Reads enemy.StatsKeeper.get_effective_defense() → 6
+   ├─► Calculates: final_damage = (10 + 8) - 6 = 12
+   │
+   ├─► Calls enemy.StatsKeeper.take_damage(12)
+   │   └─► StatsKeeper: current_hp -= 12
+   │       └─► emit hp_changed(38, 50)
+   │           └─► UI listens → updates health bar
+   │
+   ├─► Determines reaction: knockback_type = "Light" → "pain" state
+   │
+   └─► Calls enemy.FSM.change_state("pain", force=true)
+       └─► Enemy FSM interrupts current state
+           └─► Transitions to "pain" state
+               └─► Pain state applies knockback velocity
+                   └─► Enemy.velocity = Vector2(150, -50)
+   │
+6. Player animation continues
+   │
+   ├─► Frame 5 → Player presses Attack again (buffered)
+   │   └─► Attack1 checks: frame 5 in combo_window (5-9)?
+   │       └─► YES → Attack1.input_buffer = "attack"
+   │
+   ├─► Frame 6 → AttackDataManager checks frame 6 data
+   │   └─► hitbox_active = false
+   │       └─► HitboxManager.despawn_hitboxes()
+   │
+   ├─► Frame 10 → Animation finished
+   │   └─► Attack1 checks transitions:
+   │       └─► input_buffer == "attack" AND can_cancel_into = ["attack2"]
+   │           └─► FSM.change_state("attack2")
+   │               └─► Combo continues!
+```
+
+
+---
+
+
+## DESIGNER WORKFLOW EXAMPLES
+
+
+### Example 1: Creating a New Character (No Code)
+
+
+**Goal:** Add a new playable character "Ryu"
+
+
+**Steps:**
+
+
+1. **Create Character Template**
+   - Right-click in Project → New Resource → EntityTemplate
+   - Save as `res://data/templates/ryu.tres`
+   - Configure in Inspector:
+```
+     entity_id: "ryu"
+     display_name: "Ryu Hayabusa"
+     entity_type: Player
+     
+     base_hp_max: 60
+     base_mp_max: 15
+     base_strength: 8
+     base_defense: 5
+     base_agility: 10
+     base_intelligence: 6
+     base_luck: 7
+     
+     can_level_up: true
+     sprite_sheet: [select ryu_spritesheet.png]
+     
+     state_list: ["idle", "walk", "run", "jump", "attack1", "attack2", "attack3"]
+```
+
+
+2. **Create Character Scene**
+   - Scene → New Scene → CharacterBody2D
+   - Add child nodes:
+     - StatsKeeper
+     - FSM
+     - AnimationController (with AnimationPlayer)
+     - HitboxManager
+     - AttackDataManager
+     - CombatController
+     - Sprite2D
+   - Save as `res://scenes/characters/ryu.tscn`
+
+
+3. **Configure StatsKeeper**
+   - Select StatsKeeper node
+   - Inspector:
+```
+     character_id: "ryu"
+```
+   - StatsKeeper auto-loads from DataTable
+
+
+4. **Setup Animations**
+   - Select AnimationPlayer
+   - Import animations from sprite sheet
+   - Name animations: "idle", "walk", "attack_1", etc.
+
+
+5. **Create Attack States**
+   - For each attack (attack1, attack2, attack3):
+     - Right-click → New Resource → StateBehavior
+     - Save as `res://data/states/ryu_attack1.tres`
+     - Configure (example for attack1):
+```
+       state_name: "attack1"
+       animation_name: "ryu_attack_1"
+       
+       can_move: false
+       can_turn: false
+       is_attacking: true
+       
+       enter_conditions:
+         [0] INPUT_JUST_PRESSED, "attack"
+         [1] IS_GROUNDED, true
+       
+       transitions:
+         [0] ANIMATION_FINISHED → "idle"
+         [1] INPUT_BUFFERED + ANIMATION_FRAME_RANGE(5,10) → "attack2"
+       
+       enter_actions:
+         [0] PLAY_ANIMATION, "ryu_attack_1"
+       
+       attack_data_path: "res://data/attacks/ryu_attack1.tres"
+```
+
+
+6. **Create Attack Data**
+   - Right-click → New Resource → AttackData
+   - Save as `res://data/attacks/ryu_attack1.tres`
+   - Configure:
+```
+     attack_id: "ryu_attack1"
+     base_damage: 12
+     knockback_force: Vector2(180, -60)
+     
+     frames:
+       [0] frame_number: 3, hitbox_active: true, position: (45, -25), size: (55, 35)
+       [1] frame_number: 4, hitbox_active: true
+       [2] frame_number: 5, hitbox_active: true, can_cancel: true
+     
+     chains_into: ["ryu_attack2"]
+```
+
+
+7. **Register in EntityRegistry**
+   - Open `res://autoloads/entity_registry.gd`
+   - Add to `_register_all_entities()`:
+```gdscript
+     register_entity(
+         Category.PLAYER,
+         "res://scenes/characters/ryu.tscn",
+         "Ryu",
+         load("res://assets/icons/ryu_icon.png"),
+         "ryu"
+     )
+```
+
+
+8. **Done!** Ryu is now playable and appears in level editor palette.
+
+
+---
+
+
+### Example 2: Creating a New Enemy (No Code)
+
+
+**Goal:** Create "Orc Warrior" enemy
+
+
+**Steps:**
+
+
+1. **Create EntityTemplate**
+   - New Resource → EntityTemplate
+   - Save as `res://data/templates/orc_warrior.tres`
+```
+   entity_id: "orc_warrior"
+   entity_type: Enemy
+   
+   base_hp_max: 40
+   base_strength: 10
+   base_defense: 8
+   
+   can_level_up: false
+   xp_drop_value: 75
+   
+   state_list: ["idle", "walk", "attack1", "pain", "dead"]
+```
+
+
+2. **Create Logic Template (AI Behavior)**
+   - New Resource → LogicTemplate
+   - Save as `res://data/logic_templates/orc_aggro.tres`
+template_id: "orc_aggro
+Retry
+Claude does not have the ability to run the code it generates yet.
+H
+Continue
+_basic" template_name: "Orc Aggressive AI" template_type: AI
+aggro_range: 200.0 attack_range: 80.0 retreat_threshold_hp: 0.0 # Never retreats
+preferred_attacks: ["attack1"] combo_frequency: 0.3 # 30% chance to continue combos special_move_chance: 0.0 # No special moves
+block_chance: 0.1 # 10% chance to block dodge_chance: 0.0 # Never dodges
+
+
+3. **Create Character Scene**
+   - Same structure as player (CharacterBody2D + standard nodes)
+   - Save as `res://scenes/characters/orc_warrior.tscn`
+   - Configure StatsKeeper with `character_id: "orc_warrior"`
+
+
+4. **Create States & Attacks**
+   - Same process as player character
+   - Create StateBehavior resources for idle, walk, attack1, pain, dead
+   - Create AttackData for attack moves
+
+
+5. **Register in EntityRegistry**
+```gdscript
+   register_entity(
+       Category.ENEMY,
+       "res://scenes/characters/orc_warrior.tscn",
+       "Orc Warrior",
+       load("res://assets/icons/orc_icon.png"),
+       "orc_warrior"
+   )
+```
+
+
+6. **Use in Level Editor**
+   - Open level editor
+   - Switch to Entity tab
+   - Orc Warrior appears in Enemy palette
+   - Drag into level
+   - Inspector shows:
+```
+     Template: orc_warrior (auto-filled)
+     Facing: [Left ▼]
+     AI Template: [orc_aggro_basic ▼]
+     Aggro Range: 200 (editable override)
+     HP Override: [empty] (uses template default)
+```
+
+
+7. **Done!** Enemy fully functional with AI behavior.
+
+
+---
+
+
+### Example 3: Modifying Damage Balance (No Code)
+
+
+**Goal:** Nerf Michio's attack1 damage from 10 → 8
+
+
+**Steps:**
+
+
+1. Navigate to `res://data/attacks/michio_attack1.tres`
+2. Open in Inspector
+3. Change `base_damage: 10` → `base_damage: 8`
+4. Save (Ctrl+S)
+5. **Done!** All instances of this attack now deal 8 damage.
+
+
+**No scene reloading, no code changes, instant.**
+
+
+---
+
+
+### Example 4: Creating a Combo Chain (No Code)
+
+
+**Goal:** Make Attack3 chain into a Special Move
+
+
+**Steps:**
+
+
+1. Open `res://data/states/michio_attack3.tres`
+2. In Inspector, find `can_cancel_into` array
+3. Add array element: `"special1"`
+4. Adjust `combo_window_start: 8` and `combo_window_end: 15`
+5. Save
+6. **Done!** During frames 8-15 of attack3, pressing Special button chains into special1.
+
+
+---
+
+
+### Example 5: Designing a Level (No Code)
+
+
+**Goal:** Create "Forest Stage 2" with enemies and hazards
+
+
+**Steps:**
+
+
+1. **Open Level Editor** (in-game: press F2, or standalone tool)
+
+
+2. **Layout Tab:**
+   - Select Ground tileset layer
+   - Paint ground tiles across bottom
+   - Select Platform layer
+   - Paint floating platforms at various heights
+   - Drag "Rock" prefab from palette → place decoratively
+   - Drag "Tree" prefab → place in background
+
+
+3. **Collision Tab:**
+   - Toggle "Show Preview" on
+   - See tilemap collision (auto-generated from tiles)
+   - Draw polygon for sloped hill section:
+     - Click tool: "Draw Poly"
+     - Click vertices: (0,512) → (300,450) → (300,512) → (0,512)
+     - Double-click to close
+   - Mark "Rock" prefabs as solid:
+     - Right-click rock → "Mark as Solid"
+     - Collision polygon skipped (uses prefab collision)
+
+
+4. **Entity Tab:**
+   - Drag "Michio" from Player palette → spawn point (50, 450)
+   - Drag "Orc Warrior" from Enemy palette → (500, 450)
+     - Inspector: AI Template = "patrol_basic"
+     - Set patrol points: [(400,450), (600,450)]
+   - Drag "Goblin" → (800, 450)
+     - Inspector: AI Template = "idle_guard"
+   - Drag "Chest" from Interactable palette → (900, 450)
+     - Inspector: Contains = "health_potion"
+
+
+5. **Settings Tab:**
+   - Level Name: "Forest Valley"
+   - Level ID: "forest_stage_2"
+   - Camera Bounds: Left=0, Right=1500, Top=0, Bottom=600
+   - BGM: Select "forest_combat_theme.ogg"
+
+
+6. **Test Tab:**
+   - Click "▶ PLAY TEST"
+   - Editor saves temp state
+   - Switches to gameplay mode
+   - Play through level
+   - Find enemy too strong? Press F2 to return to editor
+   - Entity Tab → Select Orc → HP Override: 30 (down from 40)
+   - Test again
+
+
+7. **Save Level:**
+   - File → Save Level
+   - Filename: "forest_stage_2.json"
+   - Level data exported to `res://levels/forest_stage_2.json`
+
+
+8. **Done!** Level is playable and can be loaded in main game.
+
+
+---
+
+
+### Example 6: Adding a Status Effect (Future - No Code)
+
+
+**Goal:** Create "Poison" debuff that damages over time
+
+
+**Steps:**
+
+
+1. **Create Modifier Resource**
+   - New Resource → StatusModifier
+   - Save as `res://data/modifiers/poison.tres`
+```
+   modifier_id: "poison"
+   modifier_name: "Poison"
+   modifier_type: Debuff
+   
+   stat_changes:
+     defense: -2
+   
+   damage_over_time: 2  # 2 damage per second
+   duration: 5.0  # 5 seconds
+   
+   visual_effect: [select poison_bubbles.tscn]
+   icon: [select poison_icon.png]
+   
+   stacks: true
+   max_stacks: 3
+```
+
+
+2. **Assign to Attack**
+   - Open `res://data/attacks/poison_dagger.tres`
+   - Add to `on_hit_effects` array:
+```
+     [0] Apply Modifier: "poison"
+```
+
+
+3. **Done!** Attacks with this weapon now apply poison debuff.
+
+
+**ModifierManager (future system) handles:**
+- Tracking active modifiers
+- Ticking damage over time
+- Removing expired modifiers
+- Stacking rules
+- Visual indicators
+
+
+---
+
+
+## THINGS TO CONSIDER
+
+
+### Critical Questions (Must Answer Before Implementation)
+
+
+#### **1. Combat Feel & Responsiveness** [PRIORITY: CRITICAL]
+
+
+**Question:** How do we ensure frame-perfect input response like OpenBOR?
+- Input buffering window size (frames)?
+- Cancel window implementation (per-state or per-attack)?
+- Hit-freeze/hit-stop duration balance?
+- Animation blending vs instant transitions?
+
+
+**Impact:** Core to gameplay feel. OpenBOR's tight controls are a key feature.
+
+
+**Recommendation:** 
+- Implement input buffer (5-frame window by default)
+- Cancel windows defined per-attack in AttackData
+- Hit-freeze as optional per-attack (2-4 frames typical)
+- Instant transitions for combat states (no blending for attacks)
+
+
+---
+
+
+#### **2. Z-Axis Depth (Quasi-3D Movement)** [PRIORITY: HIGH]
+
+
+**Question:** You mentioned skipping depth axis, but OpenBOR heavily uses it. Reconsider?
+- Many beat-em-ups need players to move "into/out of" screen
+- Affects collision detection (can miss attacks if on different Z plane)
+- Depth sorting for visual layering
+
+
+**Impact:** Determines genre limitations. Without Z-axis:
+- ✅ Pure side-scrolling platformer (Castlevania, Mega Man)
+- ❌ Beat-em-up (Streets of Rage, Final Fight)
+
+
+**Options:**
+- A) Full 2.5D with Z-axis (like OpenBOR)
+- B) Fake Z-axis (visual only, no gameplay impact)
+- C) No Z-axis (pure 2D sidescroller)
+
+
+**Recommendation:** Decide early. Affects collision system, state logic, and level design.
+
+
+---
+
+
+#### **3. AI Decision System** [PRIORITY: HIGH]
+
+
+**Question:** How do enemies decide when to attack, block, dodge?
+- State machine handles execution, but who decides WHEN?
+- Simple distance checks? Behavior trees? Utility AI?
+
+
+**Options:**
+- A) Simple FSM + distance/timer checks (easiest, less flexible)
+- B) Behavior Tree integration (LimboAI/Beehave plugin)
+- C) Custom "AI Brain" component with decision rules
+
+
+**Impact:** Determines enemy intelligence ceiling and designer control.
+
+
+**Recommendation:** Start with A (simple), add B (behavior trees) later for complex bosses.
+
+
+---
+
+
+#### **4. Modifier Stacking Rules** [PRIORITY: MEDIUM]
+
+
+**Question:** When multiple buffs/debuffs of same type are active:
+- Do they stack additively? (+5 str, +5 str = +10 str)
+- Do they stack multiplicatively? (×1.2 str, ×1.2 str = ×1.44 str)
+- Do they refresh duration? (new application resets timer)
+- Do they have max stack count?
+
+
+**Impact:** Affects balance and ModifierManager complexity.
+
+
+**Recommendation:** 
+- Default: Additive stacking with max stack limit
+- Duration: Highest duration active (not refresh)
+- Designer-configurable per modifier type
+
+
+---
+
+
+#### **5. Save System Scope** [PRIORITY: MEDIUM]
+
+
+**Question:** What gets saved and when?
+- Auto-save on checkpoints?
+- Manual save points only?
+- Save entire level state (enemy positions, destructibles)?
+- Or just player stats + level ID?
+
+
+**Impact:** Affects save file size and "game feel" (rogue-like vs traditional).
+
+
+**Recommendation:**
+- Save player stats (HP, MP, level, XP, inventory)
+- Save level completion flags
+- Save checkpoint position
+- DO NOT save enemy states (respawn fresh on reload)
+- Checkpoint = auto-save, manual saves at save points
+
+
+---
+
+
+#### **6. Animation Import Workflow** [PRIORITY: MEDIUM]
+
+
+**Question:** How do designers import sprite sheets and define animations?
+- Manual frame-by-frame in AnimationPlayer?
+- Automated import tool?
+- External tool (Aseprite) integration?
+
+
+**Impact:** Determines artist/designer iteration speed.
+
+
+**Recommendation:**
+- Use Godot's sprite sheet import (grid-based)
+- Create "Animation Importer" tool: reads sprite sheet + JSON metadata
+- JSON defines: frame durations, hitbox positions, sound cues
+- Tool auto-generates AnimationPlayer + AttackData resources
+
+
+---
+
+
+#### **7. Projectile System** [PRIORITY: MEDIUM]
+
+
+**Question:** How do projectiles work?
+- Separate scene instances?
+- Pooled for performance?
+- AttackData references projectile scene?
+- Hit detection via Area2D?
+
+
+**Impact:** Affects ranged combat, special moves, enemy attacks.
+
+
+**Recommendation:**
+- Projectile = separate scene (e.g., `fireball.tscn`)
+- Contains: Sprite, Area2D (hitbox), movement script
+- AttackData has `is_projectile: bool` and `projectile_scene: PackedScene`
+- When spawned, inherits damage/knockback from AttackData
+- Simple pooling for common projectiles (bullets, arrows)
+
+
+---
+
+
+#### **8. Grab/Throw System** [PRIORITY: LOW-MEDIUM]
+
+
+**Question:** OpenBOR has grappling (GRAB, GRABATTACK, THROW states). Include?
+- Adds depth to combat
+- Requires "grabbed" state for victims
+- Struggle/escape mechanics
+
+
+**Impact:** Significant combat mechanic, moderate complexity.
+
+
+**Recommendation:**
+- Phase 2 feature (after basic combat working)
+- Create GRAB, GRABATTACK, THROW, GRABBED states
+- Grabbed entity: disable FSM transitions, follow grabber position
+- Escape via button mashing (fills escape meter)
+
+
+---
+
+
+#### **9. Level Editor: Standalone vs In-Game** [PRIORITY: MEDIUM]
+
+
+**Question:** Which implementation first?
+- Standalone = cleaner separation, easier development
+- In-game = seamless testing, better for end users
+
+
+**Impact:** Development workflow and modding accessibility.
+
+
+**Recommendation:**
+- Start with **standalone** (easier to debug, iterate faster)
+- Port to **in-game** later (use same UI code, just different context)
+- Standalone doubles as "dev tool," in-game becomes "creative mode" for players
+
+
+---
+
+
+#### **10. Tileset Collision Assignment** [PRIORITY: LOW]
+
+
+**Question:** How are tile collisions defined?
+- Per-tile in tileset editor (Godot's TileSet editor)?
+- Auto-generated from tile alpha channel?
+- Manually drawn per level?
+
+
+**Impact:** Level designer workflow speed.
+
+
+**Recommendation:**
+- Use Godot's TileSet editor for standard tiles (platforms, ground)
+- Assign collision shapes in tileset (one-time setup per tileset)
+- Tiles inherit collision automatically when placed
+- Manual polygons only for non-tiled geometry
+
+
+---
+
+
+#### **11. Performance Budget** [PRIORITY: LOW]
+
+
+**Question:** Target platform and performance constraints?
+- PC only? Console? Mobile?
+- Max entities on screen simultaneously?
+- Max hitboxes active at once?
+
+
+**Impact:** Determines optimization needs.
+
+
+**Recommendation:**
+- Primary target: PC (Steam/itch.io)
+- Secondary: Console (Switch, etc.)
+- Budget: 20+ entities on screen, 10+ active hitboxes
+- Use object pooling if needed (unlikely with Godot's efficiency)
+
+
+---
+
+
+#### **12. Localization** [PRIORITY: LOW]
+
+
+**Question:** Multi-language support planned?
+- Affects UI text, dialogue, tutorials
+- EntityTemplate display names
+- Attack names, item descriptions
+
+
+**Impact:** Architecture decisions (string IDs vs hardcoded text).
+
+
+**Recommendation:**
+- Plan for it: Use Godot's localization system (CSV/PO files)
+- All strings in resources use keys: `"ATTACK1_NAME"` → translation system
+- Low priority for initial implementation, but easy to add later if planned
+
+
+---
+
+
+### Design Decisions Needed
+
+
+#### **13. Player Death Penalty** [PRIORITY: MEDIUM]
+
+
+**Options:**
+- A) Lose XP on death
+- B) Reset to checkpoint, keep XP
+- C) Lives system (limited retries)
+- D) Permadeath (hardcore mode)
+
+
+**Recommendation:** B (checkpoint reset, keep XP) - most player-friendly for action games.
+
+
+---
+
+
+#### **14. Combo Counter UI** [PRIORITY: LOW]
+
+
+**Question:** Display hit count during combos?
+- Visual feedback for players
+- Encourages aggressive play
+- Affects UI design
+
+
+**Recommendation:** Yes, include. Simple counter in corner, stylized font, fades after combo ends.
+
+
+---
+
+
+#### **15. Enemy Respawn Logic** [PRIORITY: MEDIUM]
+
+
+**Question:** Do enemies respawn when player dies?
+- A) Respawn all enemies (full level reset)
+- B) Keep killed enemies dead (checkpoint preserves progress)
+- C) Hybrid (mini-bosses stay dead, grunts respawn)
+
+
+**Recommendation:** A for early levels (practice), C for later levels (progress preservation).
+
+
+---
+
+
+### Technical Considerations
+
+
+#### **16. Resource File Organization** [PRIORITY: LOW]
+
+
+**Question:** Folder structure conventions?
+- Naming conventions for states, attacks, templates?
+- Grouping by character or by type?
+
+
+**Current proposal:**
+res:// 
+├── data/ │ ├── templates/ │ │ ├── michio.tres │ │ └── goblin_basic.tres │ ├── states/ │ │ ├── michio_attack1.tres │ │ ├── michio_idle.tres │ │ └── shared_pain.tres │ ├── attacks/ │ │ ├── michio_attack1.tres │ │ └── goblin_slash.tres │ ├── logic_templates/ │ │ ├── patrol_basic.tres │ │ └── boss_aggressive.tres │ └── modifiers/ │ ├── poison.tres │ └── strength_up.tres
+
+
+**Recommendation:** Approve structure or suggest changes.
+
+
+---
+
+
+#### **17. Version Control for Level Files** [PRIORITY: LOW]
+
+
+**Question:** Level data format for git-friendly diffs?
+- JSON (human-readable, good diffs)
+- Binary resource files (smaller, faster, bad diffs)
+- TSCN text format (Godot native, decent diffs)
+
+
+**Recommendation:** JSON for levels (designer-editable, VCS-friendly). Resources (.tres) for templates/attacks.
+
+
+---
+
+
+#### **18. Error Handling in Building Blocks** [PRIORITY: MEDIUM]
+
+
+**Question:** What happens when condition/action fails?
+- Missing animation name?
+- Invalid state transition?
+- Null resource reference?
+
+
+**Impact:** Designer experience and debugging.
+
+
+**Recommendation:**
+- Console warnings (not crashes)
+- Fallback behaviors (missing animation → play "idle")
+- Editor validation tool: "Check Level for Errors" button
+- Highlight invalid references in Inspector
+
+
+---
+
+
+### Future Expansion Questions
+
+
+#### **19. Multiplayer/Co-op** [PRIORITY: VERY LOW]
+
+
+**Question:** Plan for it architecturally?
+- Local co-op (same screen)?
+- Online multiplayer?
+
+
+**Impact:** Major architecture implications if added later.
+
+
+**Recommendation:** Not planned for initial release. Architecture doesn't prevent it, but don't optimize for it yet.
+
+
+---
+
+
+#### **20. Mod Support** [PRIORITY: LOW]
+
+
+**Question:** Allow players to create and share content?
+- Custom characters?
+- Custom levels?
+- Steam Workshop integration?
+
+
+**Impact:** Documentation needs, export/import tools.
+
+
+**Recommendation:** In-game level editor already enables modding. Add "Export Mod" feature (bundles level + custom assets). Steam Workshop integration later.
+
+
+---
+
+
+## SUMMARY & NEXT STEPS
+
+
+### What We Have Planned
+
+
+✅ **Complete system architecture** - All components mapped  
+✅ **Zero-code designer workflow** - Inspector-based configuration  
+✅ **OpenBOR mechanics preserved** - Exact state/transition logic  
+✅ **Building block system designed** - Condition/action enums  
+✅ **Frame data system** - Attack timing and hitboxes  
+✅ **Level editor specification** - Tab structure and workflow  
+✅ **Integration map** - How all systems communicate  
+✅ **Plugin stack confirmed** - What to use vs build  
+
+
+### What Needs Decisions
+
+
+**Before Implementation:**
+1. Z-axis depth system (yes/no/fake?)
+2. AI decision architecture (simple vs behavior trees)
+3. Animation import workflow (manual vs tool)
+4. Level editor priority (standalone first vs in-game)
+5. Grab/throw system (include in v1 or later?)
+
+
+**Before Launch:**
+6. Modifier stacking rules
+7. Save system scope
+8. Death penalty design
+9. Enemy respawn logic
+
+
+### Implementation Priority
+
+
+**Phase 1: Core Combat (Minimum Viable Product)**
+1. Custom FSM
+2. StatsKeeper
+3. Building block evaluator
+4. StateBehavior resources
+5. AttackData + frame system
+6. HitboxManager
+7. CombatController
+8. Basic player character (Michio with 3 attacks)
+9. Basic enemy (Goblin)
+
+
+**Phase 2: Level System**
+10. Level loading
+11. Collision system (tilemap + polygons)
+12. Camera system
+13. 2-3 playable test levels
+
+
+**Phase 3: Editor (Standalone)**
+14. Layout tab (tilemap + objects)
+15. Collision tab (polygon drawing)
+16. Entity tab (placement + parameters)
+17. Settings tab
+18. Test tab (instant playtest)
+
+
+**Phase 4: Content Expansion**
+19. More characters, enemies, attacks
+20. Status effects (ModifierManager)
+21. Items & inventory
+22. Progression system polish
+
+
+**Phase 5: Polish & Editor Integration**
+23. In-game editor mode
+24. Mod export/import
+25. Tutorials & documentation
+
+
+---
+
+
+## READY FOR IMPLEMENTATION
+
+
+This document contains:
+- ✅ Complete architecture
+- ✅ All system specifications
+- ✅ Designer workflow examples
+- ✅ Integration diagrams
+- ✅ Resource structures
+- ✅ Code architecture (for AI assistance)
+- ✅ Level editor design
+- ✅ Prioritized implementation phases
+
+
+**You can now:**
+1. **Make decisions** on open questions (Things to Consider section)
+2. **Begin implementation** starting with Phase 1
+3. **Use this document** as reference throughout development
+4. **Return to planning** when adding new systems
+
+
+**When you say "start coding," I'll begin with Phase 1, System 1 (Custom FSM).**
+
+
+---
+
+
+*End of Complete System Planning Document*
+
+
+**Document Version:** 1.0  
+**Status:** Planning Complete, Awaiting Implementation Authorization  
+**Last Updated:** 2025-01-XX
