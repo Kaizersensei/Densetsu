@@ -1,3 +1,4 @@
+res://engine/editor/EditorManager.gd
 res://game/levels/CollisionTest.tscn
 res://assets/placeholder_enemy_projectile.tres
 res://assets/placeholder_player.tres
@@ -6,4 +7,5 @@ res://assets/placeholder_deco.tres
 res://assets/placeholder_trap.tres
 res://assets/placeholder_item.tres
 res://assets/placeholder_projectile.tres
-res://engine/editor/EditorManager.gd
+res://engine/actors/ActorCharacter2D.gd
+res://engine/editor/EditorCamera2D.gd

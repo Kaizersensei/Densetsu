@@ -11,6 +11,7 @@ signal selection_changed(node)
 @export var zoom_step := 0.2
 @export var zoom_min := 0.2
 @export var zoom_max := 3.0
+@export var camera_pan_speed := 400.0
 var editor_mode := false
 var editor_camera: Camera2D
 var _game_camera: Camera2D
@@ -60,6 +61,8 @@ func _ready() -> void:
 	set_process_unhandled_key_input(true)
 	_ensure_toggle_action()
 	_ensure_hitbox_toggle_action()
+	_ensure_editor_camera_actions()
+	_sanitize_input_maps()
 	print("EditorManager ready. Toggle action:", toggle_action)
 	_overlay = preload("res://engine/editor/EditorOverlay.tscn").instantiate()
 	_overlay.visible = false
@@ -213,11 +216,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if editor_mode and event is InputEventMouseButton and editor_camera:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			var ctrl_down: bool = event.ctrl_pressed if "ctrl_pressed" in event else false
-			var ctrl_key := Input.is_key_pressed(KEY_CTRL)
-			print("Wheel (unhandled) btn:", event.button_index, "pressed:", event.pressed, "ctrl_down:", ctrl_down, "ctrl_key:", ctrl_key, "zoom:", editor_camera.zoom)
-			if ctrl_down or ctrl_key:
-				_handle_zoom(event)
-				get_viewport().set_input_as_handled()
+			var ctrl_key: bool = Input.is_key_pressed(KEY_CTRL)
+			if not ctrl_down and not ctrl_key:
+				return
+			_handle_zoom(event)
+			get_viewport().set_input_as_handled()
 
 
 func _input(event: InputEvent) -> void:
@@ -236,16 +239,6 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 	if not editor_mode:
 		return
-	# Zoom only when Ctrl is held
-	if event is InputEventMouseButton and editor_camera:
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			var ctrl_down: bool = event.ctrl_pressed if "ctrl_pressed" in event else false
-			var ctrl_key := Input.is_key_pressed(KEY_CTRL)
-			print("Wheel (input) btn:", event.button_index, "pressed:", event.pressed, "ctrl_down:", ctrl_down, "ctrl_key:", ctrl_key, "zoom:", editor_camera.zoom)
-			if ctrl_down or ctrl_key:
-				_handle_zoom(event)
-				get_viewport().set_input_as_handled()
-			return
 	if event is InputEventMouseButton:
 		_handle_mouse_button(event)
 	elif event is InputEventMouseMotion and _dragging:
@@ -263,10 +256,10 @@ func _enter_editor_mode() -> void:
 	if editor_camera:
 		editor_camera.global_position = _game_camera.global_position if _game_camera else Vector2.ZERO
 		editor_camera.zoom = _game_camera.zoom if _game_camera else Vector2.ONE
-		editor_camera.make_current()
 		editor_camera.enabled = true
 		editor_camera.visible = true
 		editor_camera.process_mode = Node.PROCESS_MODE_ALWAYS
+		editor_camera.make_current()
 	if _game_camera:
 		_game_camera.enabled = false
 	if _grid and _grid is Node2D:
@@ -372,6 +365,7 @@ func _process(delta: float) -> void:
 		_toggle_lock = max(_toggle_lock - delta, 0.0)
 	if not editor_mode:
 		return
+	_handle_editor_camera_move(delta)
 	if _dragging:
 		_drag_selection()
 	elif _inspector_dirty and _overlay:
@@ -413,6 +407,54 @@ func _ensure_hitbox_toggle_action() -> void:
 		var ev := InputEventKey.new()
 		ev.keycode = KEY_H
 		InputMap.action_add_event(action, ev)
+
+
+func _ensure_editor_camera_actions() -> void:
+	var cam_actions := {
+		"editor_cam_left": KEY_LEFT,
+		"editor_cam_right": KEY_RIGHT,
+		"editor_cam_up": KEY_UP,
+		"editor_cam_down": KEY_DOWN,
+	}
+	for action in cam_actions.keys():
+		if not InputMap.has_action(action):
+			InputMap.add_action(action)
+		var keycode: int = cam_actions[action]
+		var exists := false
+		for ev in InputMap.action_get_events(action):
+			if ev is InputEventKey and ev.keycode == keycode:
+				exists = true
+				break
+		if not exists:
+			var ev := InputEventKey.new()
+			ev.keycode = keycode
+			InputMap.action_add_event(action, ev)
+
+
+func _sanitize_input_maps() -> void:
+	# Restrict player move actions to WASD + arrow keys as intended
+	_restrict_action_keys("move_left", [KEY_A, KEY_LEFT])
+	_restrict_action_keys("move_right", [KEY_D, KEY_RIGHT])
+	_restrict_action_keys("move_up", [KEY_W, KEY_UP])
+	_restrict_action_keys("move_down", [KEY_S, KEY_DOWN])
+	# Ensure editor camera actions only use arrows
+	_restrict_action_keys("editor_cam_left", [KEY_LEFT])
+	_restrict_action_keys("editor_cam_right", [KEY_RIGHT])
+	_restrict_action_keys("editor_cam_up", [KEY_UP])
+	_restrict_action_keys("editor_cam_down", [KEY_DOWN])
+
+
+func _restrict_action_keys(action: String, allowed: Array) -> void:
+	if not InputMap.has_action(action):
+		return
+	var to_remove: Array = []
+	for ev in InputMap.action_get_events(action):
+		if ev is InputEventKey:
+			var key: int = ev.keycode
+			if not allowed.has(key):
+				to_remove.append(ev)
+	for ev in to_remove:
+		InputMap.action_erase_event(action, ev)
 
 
 func _update_snap_from_overlay() -> void:
@@ -1049,3 +1091,20 @@ func _handle_zoom(event: InputEventMouseButton) -> void:
 		_overlay.update()
 	_update_snap_from_overlay()
 	print("Zoom applied. Button:", event.button_index, "New zoom:", editor_camera.zoom, "is_current:", editor_camera.is_current())
+
+
+func _handle_editor_camera_move(delta: float) -> void:
+	if editor_camera == null:
+		return
+	var dir := Vector2.ZERO
+	if Input.is_action_pressed("editor_cam_left"):
+		dir.x -= 1.0
+	if Input.is_action_pressed("editor_cam_right"):
+		dir.x += 1.0
+	if Input.is_action_pressed("editor_cam_up"):
+		dir.y -= 1.0
+	if Input.is_action_pressed("editor_cam_down"):
+		dir.y += 1.0
+	if dir != Vector2.ZERO:
+		dir = dir.normalized()
+		editor_camera.global_position += dir * camera_pan_speed * delta

@@ -49,6 +49,9 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _is_editor_mode():
+		velocity = Vector2.ZERO
+		return
 	if use_player_input:
 		_process_input(delta)
 	_update_drop_through(delta)
@@ -254,6 +257,13 @@ func _update_drop_through(delta: float) -> void:
 		if _drop_timer <= 0.0:
 			_dropping_through = false
 			collision_mask = _original_mask
+
+
+func _is_editor_mode() -> bool:
+	var mgr := get_tree().root.get_node_or_null("EditorManager")
+	if mgr and "editor_mode" in mgr:
+		return mgr.editor_mode
+	return false
 
 
 func _link_fsm() -> void:
