@@ -29,3 +29,8 @@ func _on_body_entered(body: Node) -> void:
 func _give_to(body: Node) -> void:
 	print("Item picked:", item_id, "x", amount, "by", body)
 	queue_free()
+
+
+func reset_base_position() -> void:
+	_base_position = position
+	_float_time = 0.0

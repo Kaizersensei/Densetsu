@@ -31,17 +31,52 @@ offset_right = 520.0
 offset_bottom = 30.0
 text = "None"
 
-[node name="SnapToggle" type="CheckBox" parent="Ribbon"]
+[node name="Undo" type="Button" parent="Ribbon"]
 offset_left = 540.0
 offset_top = 8.0
-offset_right = 620.0
+offset_right = 600.0
+offset_bottom = 30.0
+text = "Undo"
+
+[node name="Redo" type="Button" parent="Ribbon"]
+offset_left = 610.0
+offset_top = 8.0
+offset_right = 670.0
+offset_bottom = 30.0
+text = "Redo"
+
+[node name="Save" type="Button" parent="Ribbon"]
+offset_left = 680.0
+offset_top = 8.0
+offset_right = 740.0
+offset_bottom = 30.0
+text = "Save"
+
+[node name="Load" type="Button" parent="Ribbon"]
+offset_left = 750.0
+offset_top = 8.0
+offset_right = 810.0
+offset_bottom = 30.0
+text = "Load"
+
+[node name="Reload" type="Button" parent="Ribbon"]
+offset_left = 820.0
+offset_top = 8.0
+offset_right = 900.0
+offset_bottom = 30.0
+text = "Reload"
+
+[node name="SnapToggle" type="CheckBox" parent="Ribbon"]
+offset_left = 920.0
+offset_top = 8.0
+offset_right = 1000.0
 offset_bottom = 30.0
 text = "Snap"
 
 [node name="SnapSize" type="LineEdit" parent="Ribbon"]
-offset_left = 630.0
+offset_left = 1010.0
 offset_top = 8.0
-offset_right = 700.0
+offset_right = 1070.0
 offset_bottom = 30.0
 text = "8"
 editable = true
@@ -68,6 +103,10 @@ theme_override_constants/separation = 6
 
 [node name="PrefabTitle" type="Label" parent="SidebarLeft/PrefabList"]
 text = "Prefabs"
+
+[node name="DeleteButton" type="Button" parent="SidebarLeft/PrefabList"]
+text = "DELETE"
+theme_override_colors/font_color = Color(1, 0, 0, 1)
 
 [node name="PrefabButtons" type="VBoxContainer" parent="SidebarLeft/PrefabList"]
 anchor_right = 0.0

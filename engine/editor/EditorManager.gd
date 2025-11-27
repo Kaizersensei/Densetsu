@@ -20,6 +20,18 @@ var _drag_offset := Vector2.ZERO
 var _highlight: Line2D
 var _inspector_dirty := false
 var _stamp_prefab: String = ""
+var _cursor_select: Resource
+var _cursor_plus: Resource
+var _cursor_cross: Resource
+var _delete_mode := false
+var _undo_stack: Array = []
+var _redo_stack: Array = []
+var _drag_start_state: Dictionary = {}
+var _drag_start_node: Node2D
+var _baseline_snapshot: PackedScene
+const HISTORY_TRANSFORM := "transform"
+const HISTORY_CREATE := "create"
+const HISTORY_DELETE := "delete"
 
 func _ready() -> void:
 	set_process_input(true)
@@ -47,6 +59,121 @@ func _ready() -> void:
 	_highlight.visible = false
 	_highlight.z_index = 1000
 	add_child(_highlight)
+	_cursor_select = preload("res://engine/editor/icons/cursor_select.png")
+	_cursor_plus = preload("res://engine/editor/icons/cursor_plus.png")
+	_cursor_cross = preload("res://engine/editor/icons/cursor_cross.png")
+	_baseline_snapshot = _make_scene_snapshot()
+
+
+func _capture_transform(n: Node2D) -> Dictionary:
+	return {
+		"position": n.position,
+		"rotation": n.rotation,
+		"scale": n.scale,
+	}
+
+
+func _transform_equals(a: Dictionary, b: Dictionary) -> bool:
+	return a.get("position", Vector2.ZERO).is_equal_approx(b.get("position", Vector2.ZERO)) \
+		and is_equal_approx(a.get("rotation", 0.0), b.get("rotation", 0.0)) \
+		and a.get("scale", Vector2.ONE).is_equal_approx(b.get("scale", Vector2.ONE))
+
+
+func _apply_transform_state(n: Node2D, state: Dictionary) -> void:
+	if "position" in state:
+		n.position = state["position"]
+	if "rotation" in state:
+		n.rotation = state["rotation"]
+	if "scale" in state:
+		n.scale = state["scale"]
+	if n.has_method("reset_base_position"):
+		n.reset_base_position()
+	_update_highlight()
+	if _overlay and _overlay.has_method("populate_inspector"):
+		_overlay.populate_inspector(_selected)
+
+
+func _pack_node(node: Node) -> PackedScene:
+	if node == null:
+		return null
+	var owner_backup := {}
+	_set_owner_recursive(node, node, owner_backup)
+	var packed := PackedScene.new()
+	var result := packed.pack(node)
+	_restore_owner_recursive(owner_backup)
+	if result == OK:
+		return packed
+	return null
+
+
+func _set_owner_recursive(node: Node, owner: Node, backup: Dictionary) -> void:
+	backup[node] = node.owner
+	node.owner = owner
+	for child in node.get_children():
+		if child is Node:
+			_set_owner_recursive(child, owner, backup)
+
+
+func _restore_owner_recursive(backup: Dictionary) -> void:
+	for key in backup.keys():
+		var n: Node = key
+		if n:
+			n.owner = backup[key]
+
+
+func _push_history_entry(entry: Dictionary) -> void:
+	if entry.is_empty():
+		return
+	_undo_stack.append(entry)
+	_redo_stack.clear()
+
+
+func _make_transform_entry(node: Node2D, before: Dictionary, after: Dictionary) -> Dictionary:
+	if _transform_equals(before, after):
+		return {}
+	var entry: Dictionary = {
+		"kind": HISTORY_TRANSFORM,
+		"path": node.get_path(),
+		"before": before,
+		"after": after,
+	}
+	return entry
+
+
+func _make_create_entry(node: Node) -> Dictionary:
+	if node == null or node.get_parent() == null:
+		return {}
+	var packed := _pack_node(node)
+	if packed == null:
+		push_warning("Could not pack node for create history: %s" % node.name)
+		return {}
+	var entry: Dictionary = {
+		"kind": HISTORY_CREATE,
+		"path": node.get_path(),
+		"parent_path": node.get_parent().get_path(),
+		"index": node.get_index(),
+		"name": node.name,
+		"packed": packed,
+	}
+	return entry
+
+
+func _make_delete_entry(node: Node) -> Dictionary:
+	if node == null or node.get_parent() == null:
+		return {}
+	var packed := _pack_node(node)
+	if packed == null:
+		push_warning("Could not pack node for delete history: %s" % node.name)
+		return {}
+	var entry: Dictionary = {
+		"kind": HISTORY_DELETE,
+		"path": node.get_path(),
+		"parent_path": node.get_parent().get_path(),
+		"index": node.get_index(),
+		"name": node.name,
+		"packed": packed,
+	}
+	return entry
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -85,6 +212,8 @@ func _enter_editor_mode() -> void:
 	if editor_mode:
 		return
 	editor_mode = true
+	if _baseline_snapshot == null:
+		_baseline_snapshot = _make_scene_snapshot()
 	_game_camera = _find_current_camera()
 	if editor_camera:
 		editor_camera.global_position = _game_camera.global_position if _game_camera else Vector2.ZERO
@@ -106,6 +235,7 @@ func _enter_editor_mode() -> void:
 			_overlay.set_editor_mode(true)
 	_set_all_actors_passive()
 	emit_signal("editor_entered")
+	_set_cursor_select()
 
 
 func _exit_editor_mode() -> void:
@@ -128,6 +258,7 @@ func _exit_editor_mode() -> void:
 			_overlay.set_editor_mode(false)
 	_clear_passive_flag()
 	emit_signal("editor_exited")
+	_set_cursor_select()
 
 
 func _find_current_camera() -> Camera2D:
@@ -237,6 +368,9 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 			var ui_hit: Control = get_viewport().gui_get_hovered_control()
 			if ui_hit != null:
 				return
+			if _delete_mode:
+				_delete_at_mouse()
+				return
 			if _stamp_prefab != "":
 				_place_prefab_at_mouse()
 			else:
@@ -245,10 +379,21 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 				if node:
 					_dragging = true
 					_drag_offset = node.global_position - _get_mouse_world_pos()
+					if node is Node2D:
+						_drag_start_node = node
+						_drag_start_state = _capture_transform(node)
 		else:
+			if _dragging and _drag_start_node and is_instance_valid(_drag_start_node):
+				var end_state := _capture_transform(_drag_start_node)
+				var entry := _make_transform_entry(_drag_start_node, _drag_start_state, end_state)
+				_push_history_entry(entry)
 			_dragging = false
+			_drag_start_node = null
+			_drag_start_state = {}
 	elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		_stamp_prefab = ""
+		_delete_mode = false
+		_set_cursor_select()
 
 
 func _pick_node_at_mouse() -> Node:
@@ -325,8 +470,21 @@ func _drag_selection() -> void:
 		target.x = snapped(target.x, snap_size)
 		target.y = snapped(target.y, snap_size)
 	_selected.global_position = target
+	if _selected and _selected.has_method("reset_base_position"):
+		_selected.reset_base_position()
 	_update_highlight()
 	_inspector_dirty = true
+
+
+func _delete_at_mouse() -> void:
+	var node := _pick_node_at_mouse()
+	if node and node.get_parent():
+		var entry := _make_delete_entry(node)
+		if node == _selected:
+			_selected = null
+			_highlight.visible = false
+		_push_history_entry(entry)
+		node.queue_free()
 
 
 func _get_mouse_world_pos() -> Vector2:
@@ -346,7 +504,29 @@ func _find_collision_shape(node: Node) -> CollisionShape2D:
 
 
 func _on_prefab_selected(kind: String) -> void:
+	if kind == "undo":
+		_undo()
+		return
+	if kind == "redo":
+		_redo()
+		return
+	if kind == "save":
+		_save_scene()
+		return
+	if kind == "load":
+		_load_scene()
+		return
+	if kind == "reload":
+		_reload_scene()
+		return
+	if kind == "delete":
+		_delete_mode = true
+		_stamp_prefab = ""
+		_set_cursor_cross()
+		return
+	_delete_mode = false
 	_stamp_prefab = kind
+	_set_cursor_plus()
 
 
 func _place_prefab_at_mouse() -> void:
@@ -360,8 +540,12 @@ func _place_prefab_at_mouse() -> void:
 	get_tree().current_scene.add_child(scene)
 	if _stamp_prefab == "enemy":
 		_attach_enemy_spawner(scene)
+	if scene and scene.has_method("reset_base_position"):
+		scene.reset_base_position()
+	var entry := _make_create_entry(scene)
+	_push_history_entry(entry)
 	set_selection(scene)
-	_stamp_prefab = ""
+	_set_cursor_plus()
 
 
 func _attach_enemy_spawner(enemy: Node) -> void:
@@ -398,6 +582,25 @@ func _get_prefab_scene(kind: String) -> PackedScene:
 			return preload("res://engine/platforms/PlatformSlopeRight.tscn")
 		_:
 			return null
+
+
+func _set_cursor_cross() -> void:
+	if _cursor_cross:
+		Input.set_custom_mouse_cursor(_cursor_cross, Input.CURSOR_ARROW, Vector2(8, 8))
+
+
+func _set_cursor_select() -> void:
+	if _cursor_select:
+		Input.set_custom_mouse_cursor(_cursor_select, Input.CURSOR_ARROW, Vector2(8, 8))
+	else:
+		Input.set_custom_mouse_cursor(null)
+
+
+func _set_cursor_plus() -> void:
+	if _cursor_plus:
+		Input.set_custom_mouse_cursor(_cursor_plus, Input.CURSOR_ARROW, Vector2(8, 8))
+	else:
+		Input.set_custom_mouse_cursor(null)
 
 
 func _update_highlight() -> void:
@@ -448,6 +651,7 @@ func _on_inspector_changed(value: String) -> void:
 	if _selected == null or not (_selected is Node2D):
 		return
 	var n := _selected as Node2D
+	var before := _capture_transform(n)
 	match value:
 		"pos_x":
 			n.position.x = float(_overlay._pos_x.text)
@@ -462,7 +666,146 @@ func _on_inspector_changed(value: String) -> void:
 		"scale_y":
 			var sy := float(_overlay._scale_y.text)
 			n.scale.y = sy
+	var after := _capture_transform(n)
+	var entry := _make_transform_entry(n, before, after)
+	_push_history_entry(entry)
 	_inspector_dirty = false
 	_update_highlight()
+	if _selected and _selected.has_method("reset_base_position"):
+		_selected.reset_base_position()
 	if _overlay and _overlay.has_method("populate_inspector"):
 		_overlay.populate_inspector(_selected)
+
+
+func _apply_history_entry(entry: Dictionary, undo: bool) -> void:
+	var kind: String = entry.get("kind", "")
+	if kind == HISTORY_TRANSFORM:
+		var node_path: NodePath = entry.get("path", NodePath("")) as NodePath
+		var node := get_tree().current_scene.get_node_or_null(node_path)
+		if node and node is Node2D:
+			var state: Dictionary
+			if undo:
+				state = entry.get("before", {}) as Dictionary
+			else:
+				state = entry.get("after", {}) as Dictionary
+			_selected = node
+			_apply_transform_state(node, state)
+	elif kind == HISTORY_CREATE:
+		if undo:
+			var node_path: NodePath = entry.get("path", NodePath("")) as NodePath
+			var node := get_tree().current_scene.get_node_or_null(node_path)
+			if node:
+				if node == _selected:
+					set_selection(null)
+				node.queue_free()
+		else:
+			var parent_path: NodePath = entry.get("parent_path", NodePath("")) as NodePath
+			var parent := get_tree().current_scene.get_node_or_null(parent_path)
+			var packed: PackedScene = entry.get("packed") as PackedScene
+			if parent and packed:
+				var inst := packed.instantiate()
+				if inst:
+					inst.name = entry.get("name", inst.name)
+					parent.add_child(inst)
+					var idx: int = clamp(int(entry.get("index", parent.get_child_count())), 0, parent.get_child_count() - 1)
+					parent.move_child(inst, idx)
+					if inst.get_owner() == null:
+						inst.set_owner(parent.get_owner())
+					if inst.has_method("reset_base_position"):
+						inst.reset_base_position()
+					set_selection(inst)
+	elif kind == HISTORY_DELETE:
+		if undo:
+			var parent_path: NodePath = entry.get("parent_path", NodePath("")) as NodePath
+			var parent := get_tree().current_scene.get_node_or_null(parent_path)
+			var packed: PackedScene = entry.get("packed") as PackedScene
+			if parent and packed:
+				var inst := packed.instantiate()
+				if inst:
+					inst.name = entry.get("name", inst.name)
+					parent.add_child(inst)
+					var idx: int = clamp(int(entry.get("index", parent.get_child_count())), 0, parent.get_child_count() - 1)
+					parent.move_child(inst, idx)
+					if inst.get_owner() == null:
+						inst.set_owner(parent.get_owner())
+					if inst.has_method("reset_base_position"):
+						inst.reset_base_position()
+					set_selection(inst)
+		else:
+			var node_path_del: NodePath = entry.get("path", NodePath("")) as NodePath
+			var to_del := get_tree().current_scene.get_node_or_null(node_path_del)
+			if to_del:
+				if to_del == _selected:
+					set_selection(null)
+				to_del.queue_free()
+
+
+func _undo() -> void:
+	if _undo_stack.is_empty():
+		return
+	var entry: Dictionary = _undo_stack.pop_back() as Dictionary
+	_apply_history_entry(entry, true)
+	_redo_stack.append(entry)
+
+
+func _redo() -> void:
+	if _redo_stack.is_empty():
+		return
+	var entry: Dictionary = _redo_stack.pop_back() as Dictionary
+	_apply_history_entry(entry, false)
+	_undo_stack.append(entry)
+
+
+func _make_scene_snapshot() -> PackedScene:
+	var packed := PackedScene.new()
+	if get_tree().current_scene and packed.pack(get_tree().current_scene) == OK:
+		return packed
+	return null
+
+
+func _replace_current_scene(snapshot: PackedScene) -> void:
+	if snapshot == null:
+		return
+	var inst := snapshot.instantiate()
+	if inst == null:
+		return
+	var tree := get_tree()
+	var old_scene := tree.current_scene
+	tree.root.add_child(inst)
+	tree.current_scene = inst
+	if old_scene:
+		old_scene.queue_free()
+	set_selection(null)
+	_undo_stack.clear()
+	_redo_stack.clear()
+
+
+func _save_scene() -> void:
+	var snap := _make_scene_snapshot()
+	if snap == null:
+		print("Save skipped: unable to snapshot scene.")
+		return
+	var path := "user://editor_save.tscn"
+	var err := ResourceSaver.save(snap, path)
+	if err != OK:
+		push_error("Failed to save scene to %s (err %d)" % [path, err])
+	else:
+		print("Scene saved to", path)
+		_baseline_snapshot = snap
+
+
+func _load_scene() -> void:
+	var path := "user://editor_save.tscn"
+	if not ResourceLoader.exists(path):
+		push_warning("No saved scene found at %s" % path)
+		return
+	var packed: PackedScene = ResourceLoader.load(path)
+	if packed:
+		_replace_current_scene(packed)
+		_baseline_snapshot = _make_scene_snapshot()
+
+
+func _reload_scene() -> void:
+	if _baseline_snapshot == null:
+		_baseline_snapshot = _make_scene_snapshot()
+	_replace_current_scene(_baseline_snapshot)

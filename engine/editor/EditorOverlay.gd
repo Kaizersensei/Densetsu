@@ -6,6 +6,11 @@ extends CanvasLayer
 @onready var _selection: Label = $Ribbon/SelectionLabel
 @onready var _snap_toggle: CheckBox = $Ribbon/SnapToggle
 @onready var _snap_size: LineEdit = $Ribbon/SnapSize
+@onready var _undo_button: Button = $Ribbon/Undo
+@onready var _redo_button: Button = $Ribbon/Redo
+@onready var _save_button: Button = $Ribbon/Save
+@onready var _load_button: Button = $Ribbon/Load
+@onready var _reload_button: Button = $Ribbon/Reload
 @onready var _pos_x: LineEdit = $Inspector/PosRow/PosX
 @onready var _pos_y: LineEdit = $Inspector/PosYRow/PosY
 @onready var _rot: LineEdit = $Inspector/RotRow/Rot
@@ -25,6 +30,7 @@ extends CanvasLayer
 @onready var _place_wall: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceWall
 @onready var _place_slope_left: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceSlopeLeft
 @onready var _place_slope_right: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceSlopeRight
+@onready var _delete_button: Button = $SidebarLeft/PrefabList/DeleteButton
 
 var _inspector_signal_block := false
 var _prefab_handler: Callable = Callable()
@@ -100,6 +106,8 @@ func connect_inspector(handler: Callable) -> void:
 
 func connect_prefab_buttons(handler: Callable) -> void:
 	_prefab_handler = handler
+	if _delete_button:
+		_delete_button.pressed.connect(handler.bind("delete"))
 	if _place_player:
 		_place_player.pressed.connect(handler.bind("player"))
 	if _place_enemy:
@@ -118,3 +126,13 @@ func connect_prefab_buttons(handler: Callable) -> void:
 		_place_slope_left.pressed.connect(handler.bind("slope_left"))
 	if _place_slope_right:
 		_place_slope_right.pressed.connect(handler.bind("slope_right"))
+	if _undo_button:
+		_undo_button.pressed.connect(handler.bind("undo"))
+	if _redo_button:
+		_redo_button.pressed.connect(handler.bind("redo"))
+	if _save_button:
+		_save_button.pressed.connect(handler.bind("save"))
+	if _load_button:
+		_load_button.pressed.connect(handler.bind("load"))
+	if _reload_button:
+		_reload_button.pressed.connect(handler.bind("reload"))
