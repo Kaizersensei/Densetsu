@@ -19,6 +19,7 @@ var _dragging := false
 var _drag_offset := Vector2.ZERO
 var _highlight: Line2D
 var _inspector_dirty := false
+var _stamp_prefab: String = ""
 
 func _ready() -> void:
 	set_process_input(true)
@@ -31,6 +32,8 @@ func _ready() -> void:
 	add_child(_overlay)
 	if _overlay and _overlay.has_method("connect_inspector"):
 		_overlay.connect_inspector(_on_inspector_changed)
+	if _overlay and _overlay.has_method("connect_prefab_buttons"):
+		_overlay.connect_prefab_buttons(_on_prefab_selected)
 	editor_camera = preload("res://engine/editor/EditorCamera2D.tscn").instantiate()
 	editor_camera.enabled = false
 	editor_camera.visible = false
@@ -195,6 +198,8 @@ func _process(delta: float) -> void:
 		if _overlay.has_method("populate_inspector"):
 			_overlay.populate_inspector(_selected)
 			_inspector_dirty = false
+	elif _selected and _selected is CharacterBody2D:
+		_update_highlight()
 
 
 func _ensure_toggle_action() -> void:
@@ -232,13 +237,18 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 			var ui_hit: Control = get_viewport().gui_get_hovered_control()
 			if ui_hit != null:
 				return
-			var node := _pick_node_at_mouse()
-			set_selection(node)
-			if node:
-				_dragging = true
-				_drag_offset = node.global_position - _get_mouse_world_pos()
+			if _stamp_prefab != "":
+				_place_prefab_at_mouse()
+			else:
+				var node := _pick_node_at_mouse()
+				set_selection(node)
+				if node:
+					_dragging = true
+					_drag_offset = node.global_position - _get_mouse_world_pos()
 		else:
 			_dragging = false
+	elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		_stamp_prefab = ""
 
 
 func _pick_node_at_mouse() -> Node:
@@ -333,6 +343,61 @@ func _find_collision_shape(node: Node) -> CollisionShape2D:
 		if found:
 			return found
 	return null
+
+
+func _on_prefab_selected(kind: String) -> void:
+	_stamp_prefab = kind
+
+
+func _place_prefab_at_mouse() -> void:
+	var pos := _get_mouse_world_pos()
+	var packed: PackedScene = _get_prefab_scene(_stamp_prefab)
+	if packed == null:
+		return
+	var scene := packed.instantiate()
+	if scene is Node2D:
+		scene.global_position = pos
+	get_tree().current_scene.add_child(scene)
+	if _stamp_prefab == "enemy":
+		_attach_enemy_spawner(scene)
+	set_selection(scene)
+	_stamp_prefab = ""
+
+
+func _attach_enemy_spawner(enemy: Node) -> void:
+	if enemy == null or not (enemy is Node):
+		return
+	var spawner := preload("res://engine/projectiles/ProjectileSpawner.tscn").instantiate()
+	spawner.owner_path = NodePath("..")
+	spawner.projectile_scene = preload("res://engine/projectiles/EnemyProjectile2D.tscn")
+	spawner.speed = 250.0
+	spawner.direction = -1.0
+	spawner.fire_interval = 2.0
+	enemy.add_child(spawner)
+
+
+func _get_prefab_scene(kind: String) -> PackedScene:
+	match kind:
+		"player":
+			return preload("res://engine/actors/ActorCharacter2D.tscn")
+		"enemy":
+			return preload("res://engine/actors/EnemyDummy.tscn")
+		"deco":
+			return preload("res://engine/decoration/ActorDeco2D.tscn")
+		"trap":
+			return preload("res://engine/traps/ActorTrap2D.tscn")
+		"item":
+			return preload("res://engine/items/ActorItem2D.tscn")
+		"ground":
+			return preload("res://engine/platforms/PlatformGround.tscn")
+		"wall":
+			return preload("res://engine/platforms/PlatformWall.tscn")
+		"slope_left":
+			return preload("res://engine/platforms/PlatformSlopeLeft.tscn")
+		"slope_right":
+			return preload("res://engine/platforms/PlatformSlopeRight.tscn")
+		_:
+			return null
 
 
 func _update_highlight() -> void:

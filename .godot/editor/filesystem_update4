@@ -1,9 +1,11 @@
 res://game/levels/CollisionTest.tscn
+res://assets/placeholder_enemy_projectile.tres
 res://assets/placeholder_player.tres
+res://assets/placeholder_enemy.tres
 res://assets/placeholder_deco.tres
 res://assets/placeholder_trap.tres
 res://assets/placeholder_item.tres
 res://assets/placeholder_projectile.tres
-res://assets/placeholder_enemy.tres
-res://assets/placeholder_enemy_projectile.tres
 res://engine/editor/EditorManager.gd
+res://engine/editor/EditorOverlay.gd
+res://engine/editor/EditorOverlay.tscn

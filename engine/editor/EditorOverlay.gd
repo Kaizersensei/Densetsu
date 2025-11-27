@@ -16,8 +16,18 @@ extends CanvasLayer
 @onready var _rot_apply: Button = $Inspector/RotRow/RotApply
 @onready var _scale_x_apply: Button = $Inspector/ScaleXRow/ScaleXApply
 @onready var _scale_y_apply: Button = $Inspector/ScaleYRow/ScaleYApply
+@onready var _place_player: Button = $SidebarLeft/PrefabList/PrefabButtons/PlacePlayer
+@onready var _place_enemy: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceEnemy
+@onready var _place_deco: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceDeco
+@onready var _place_trap: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceTrap
+@onready var _place_item: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceItem
+@onready var _place_ground: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceGround
+@onready var _place_wall: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceWall
+@onready var _place_slope_left: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceSlopeLeft
+@onready var _place_slope_right: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceSlopeRight
 
 var _inspector_signal_block := false
+var _prefab_handler: Callable = Callable()
 
 func set_editor_mode(active: bool) -> void:
 	visible = active
@@ -87,3 +97,24 @@ func connect_inspector(handler: Callable) -> void:
 		_scale_y.focus_exited.connect(handler.bind("scale_y", _scale_y.text))
 	if _scale_y_apply:
 		_scale_y_apply.pressed.connect(handler.bind("scale_y"))
+
+func connect_prefab_buttons(handler: Callable) -> void:
+	_prefab_handler = handler
+	if _place_player:
+		_place_player.pressed.connect(handler.bind("player"))
+	if _place_enemy:
+		_place_enemy.pressed.connect(handler.bind("enemy"))
+	if _place_deco:
+		_place_deco.pressed.connect(handler.bind("deco"))
+	if _place_trap:
+		_place_trap.pressed.connect(handler.bind("trap"))
+	if _place_item:
+		_place_item.pressed.connect(handler.bind("item"))
+	if _place_ground:
+		_place_ground.pressed.connect(handler.bind("ground"))
+	if _place_wall:
+		_place_wall.pressed.connect(handler.bind("wall"))
+	if _place_slope_left:
+		_place_slope_left.pressed.connect(handler.bind("slope_left"))
+	if _place_slope_right:
+		_place_slope_right.pressed.connect(handler.bind("slope_right"))

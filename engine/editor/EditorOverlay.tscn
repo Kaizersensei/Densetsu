@@ -57,6 +57,49 @@ offset_right = 200.0
 offset_bottom = 0.0
 custom_styles/panel = SubResource("1")
 
+[node name="PrefabList" type="VBoxContainer" parent="SidebarLeft"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+theme_override_constants/separation = 6
+
+[node name="PrefabTitle" type="Label" parent="SidebarLeft/PrefabList"]
+text = "Prefabs"
+
+[node name="PrefabButtons" type="VBoxContainer" parent="SidebarLeft/PrefabList"]
+anchor_right = 0.0
+anchor_bottom = 0.0
+
+[node name="PlacePlayer" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
+text = "Place Player"
+
+[node name="PlaceEnemy" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
+text = "Place Enemy"
+
+[node name="PlaceDeco" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
+text = "Place Deco"
+
+[node name="PlaceTrap" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
+text = "Place Trap"
+
+[node name="PlaceItem" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
+text = "Place Item"
+
+[node name="PlaceGround" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
+text = "Place Ground"
+
+[node name="PlaceWall" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
+text = "Place Wall"
+
+[node name="PlaceSlopeLeft" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
+text = "Place Slope Left"
+
+[node name="PlaceSlopeRight" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
+text = "Place Slope Right"
+
 [node name="Inspector" type="VBoxContainer" parent="."]
 anchor_left = 1.0
 anchor_right = 1.0
