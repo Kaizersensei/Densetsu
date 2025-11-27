@@ -59,6 +59,25 @@ offset_right = 810.0
 offset_bottom = 30.0
 text = "Load"
 
+[node name="SaveDialog" type="FileDialog" parent="."]
+access = 2
+file_mode = 2
+filters = PackedStringArray("*.tscn ; Scenes")
+current_path = "res://editor_saves/last_scene.tscn"
+current_file = "last_scene.tscn"
+close_button_visible = true
+ok_button_text = "Save"
+hide_on_ok = true
+
+[node name="LoadDialog" type="FileDialog" parent="."]
+access = 2
+file_mode = 0
+filters = PackedStringArray("*.tscn ; Scenes")
+current_path = "res://editor_saves/"
+close_button_visible = true
+ok_button_text = "Load"
+hide_on_ok = true
+
 [node name="Reload" type="Button" parent="Ribbon"]
 offset_left = 820.0
 offset_top = 8.0
@@ -106,6 +125,7 @@ text = "Prefabs"
 
 [node name="DeleteButton" type="Button" parent="SidebarLeft/PrefabList"]
 text = "DELETE"
+focus_mode = 0
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 
 [node name="PrefabTabs" type="TabContainer" parent="SidebarLeft/PrefabList"]
@@ -116,42 +136,48 @@ tab_alignment = 0
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="PlaceGround" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
-text = "Ground"
-
-[node name="PlaceWall" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
-text = "Wall"
+[node name="PlaceSolid" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
+text = "Solid"
+focus_mode = 0
 
 [node name="PlaceOneWay" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "One-Way"
+focus_mode = 0
 
 [node name="PlaceSlopeLeft" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Slope Left"
+focus_mode = 0
 
 [node name="PlaceSlopeRight" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Slope Right"
+focus_mode = 0
 
 [node name="PlaceDeco" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Deco"
+focus_mode = 0
 
 [node name="PlaceDecoSolid" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Solid Deco"
+focus_mode = 0
 
 [node name="Actors" type="VBoxContainer" parent="SidebarLeft/PrefabList/PrefabTabs"]
-visible = false
 theme_override_constants/separation = 4
 
 [node name="PlacePlayer" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "Player"
+focus_mode = 0
 
 [node name="PlaceEnemy" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "Enemy"
+focus_mode = 0
 
 [node name="PlaceTrap" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "Trap"
+focus_mode = 0
 
 [node name="PlaceItem" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "Item"
+focus_mode = 0
 
 [node name="Inspector" type="VBoxContainer" parent="."]
 anchor_left = 1.0
@@ -222,3 +248,15 @@ custom_minimum_size = Vector2(120, 0)
 
 [node name="ScaleYApply" type="Button" parent="Inspector/ScaleYRow"]
 text = "Apply"
+
+[node name="ProjRow" type="HBoxContainer" parent="Inspector"]
+
+[node name="ProjLabel" type="Label" parent="Inspector/ProjRow"]
+text = "Proj Collide"
+
+[node name="ProjCollide" type="CheckBox" parent="Inspector/ProjRow"]
+focus_mode = 0
+
+[node name="ProjApply" type="Button" parent="Inspector/ProjRow"]
+text = "Apply"
+focus_mode = 0

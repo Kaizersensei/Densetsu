@@ -29,15 +29,22 @@ var _redo_stack: Array = []
 var _drag_start_state: Dictionary = {}
 var _drag_start_node: Node2D
 var _baseline_snapshot: PackedScene
+var _save_path_primary := "res://editor_saves/last_scene.tscn"
+var _save_path_fallback := "user://editor_save.tscn"
 const HISTORY_TRANSFORM := "transform"
 const HISTORY_CREATE := "create"
 const HISTORY_DELETE := "delete"
+var _last_pick_hits: Array = []
+var _last_pick_pos: Vector2 = Vector2.ZERO
+var _last_pick_cycle: int = 0
+var show_hitboxes := false
 
 func _ready() -> void:
 	set_process_input(true)
 	set_process_unhandled_input(true)
 	set_process_unhandled_key_input(true)
 	_ensure_toggle_action()
+	_ensure_hitbox_toggle_action()
 	print("EditorManager ready. Toggle action:", toggle_action)
 	_overlay = preload("res://engine/editor/EditorOverlay.tscn").instantiate()
 	_overlay.visible = false
@@ -194,6 +201,10 @@ func _input(event: InputEvent) -> void:
 		_toggle_editor()
 		print("Editor toggle via _input; editor_mode now:", editor_mode)
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("toggle_hitboxes"):
+		show_hitboxes = not show_hitboxes
+		_set_hitboxes_visible(show_hitboxes)
+		get_viewport().set_input_as_handled()
 	elif event is InputEventKey:
 		if event.keycode == KEY_F12 or event.physical_keycode == KEY_F12:
 			_toggle_editor()
@@ -234,6 +245,7 @@ func _enter_editor_mode() -> void:
 		if _overlay.has_method("set_editor_mode"):
 			_overlay.set_editor_mode(true)
 	_set_all_actors_passive()
+	_set_hitboxes_visible(show_hitboxes)
 	emit_signal("editor_entered")
 	_set_cursor_select()
 
@@ -329,7 +341,8 @@ func _process(delta: float) -> void:
 		if _overlay.has_method("populate_inspector"):
 			_overlay.populate_inspector(_selected)
 			_inspector_dirty = false
-	elif _selected and _selected is CharacterBody2D:
+	# Keep highlight in sync even when physics or history move things
+	if _selected:
 		_update_highlight()
 
 
@@ -347,6 +360,21 @@ func _ensure_toggle_action() -> void:
 		var ev := InputEventKey.new()
 		ev.keycode = KEY_F12
 		InputMap.action_add_event(toggle_action, ev)
+
+
+func _ensure_hitbox_toggle_action() -> void:
+	var action := "toggle_hitboxes"
+	if not InputMap.has_action(action):
+		InputMap.add_action(action)
+	var has_binding := false
+	for ev in InputMap.action_get_events(action):
+		if ev is InputEventKey and ev.keycode == KEY_H:
+			has_binding = true
+			break
+	if not has_binding:
+		var ev := InputEventKey.new()
+		ev.keycode = KEY_H
+		InputMap.action_add_event(action, ev)
 
 
 func _update_snap_from_overlay() -> void:
@@ -397,69 +425,109 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 
 
 func _pick_node_at_mouse() -> Node:
-	var space_state = get_viewport().get_world_2d().direct_space_state
-	var pos = _get_mouse_world_pos()
-	var params := PhysicsPointQueryParameters2D.new()
-	params.position = pos
-	params.collide_with_areas = true
-	params.collide_with_bodies = true
-	var results = space_state.intersect_point(params)
-	for res in results:
-		if res.has("collider") and res.collider:
-			var collider: Node = res.collider
-			# Prefer grouped "actors" nodes
-			if collider.is_in_group("actors"):
-				return collider
-			if collider.get_parent() and collider.get_parent().is_in_group("actors"):
-				return collider.get_parent()
-			# Fallback: return the collider itself (solid/scenery)
-			return collider
-	# If nothing with colliders, try visuals (Sprite2D/Polygon2D)
-	var visual := _pick_visual_node(pos)
-	if visual:
-		return visual
-	return null
+	var pos := _get_mouse_world_pos()
+	# Reset cycling if mouse moved significantly
+	if _last_pick_hits.size() == 0 or pos.distance_to(_last_pick_pos) > 0.5:
+		_last_pick_hits = _gather_pick_candidates(pos)
+		_last_pick_cycle = 0
+		_last_pick_pos = pos
+	if _last_pick_hits.size() == 0:
+		return null
+	var node: Node = _last_pick_hits[_last_pick_cycle % _last_pick_hits.size()]
+	_last_pick_cycle += 1
+	return node
 
 
-func _pick_visual_node(world_pos: Vector2) -> Node:
-	var best: Node = null
-	var best_dist: float = INF
-	var stack: Array = [get_tree().root]
+func _gather_pick_candidates(world_pos: Vector2) -> Array:
+	var hits: Array = []
+	var stack: Array = [get_tree().current_scene]
 	while stack.size() > 0:
-		var node = stack.pop_back()
-		if node is Sprite2D:
-			if _sprite_contains_point(node, world_pos):
-				var d: float = node.global_position.distance_to(world_pos)
-				if d < best_dist:
-					best_dist = d
-					best = node
-		elif node is Polygon2D:
-			if _polygon_contains_point(node, world_pos):
-				var d: float = node.global_position.distance_to(world_pos)
-				if d < best_dist:
-					best_dist = d
-					best = node
-		for child in node.get_children():
-			if child is Node:
-				stack.append(child)
-	return best
+		var node_any: Node = stack.pop_back()
+		# If we hit visual/collision helpers, pick the parent Node2D instead.
+		if node_any is Sprite2D or node_any is Polygon2D or node_any is CollisionShape2D:
+			var parent := node_any.get_parent()
+			if parent is Node2D:
+				var parent_nd: Node2D = parent
+				if not _is_scene_root(parent_nd) and not _is_unselectable_node(parent_nd):
+					var aabb_parent := _get_node_aabb(parent_nd)
+					if aabb_parent.has_point(world_pos):
+						hits.append(parent_nd)
+			continue
+		if node_any is Node2D:
+			var n2d: Node2D = node_any as Node2D
+			if n2d == _overlay or n2d == _grid or n2d == _highlight:
+				continue
+			if _is_scene_root(n2d):
+				pass
+			elif _is_unselectable_node(n2d):
+				continue
+			else:
+				var aabb := _get_node_aabb(n2d)
+				if aabb.has_point(world_pos):
+					hits.append(n2d)
+		for child in node_any.get_children():
+			var child_node: Node = child
+			if child_node:
+				stack.append(child_node)
+	# Sort: higher z_index first, then closer to click
+	hits.sort_custom(func(a: Node2D, b: Node2D) -> bool:
+		if a.z_index == b.z_index:
+			return a.global_position.distance_to(world_pos) < b.global_position.distance_to(world_pos)
+		return a.z_index > b.z_index)
+	return hits
 
 
-func _sprite_contains_point(sprite: Sprite2D, world_pos: Vector2) -> bool:
-	if sprite.texture == null:
-		return false
-	var local := sprite.to_local(world_pos)
-	var tex_size: Vector2 = sprite.texture.get_size() * sprite.scale
-	if sprite.centered:
-		var half := tex_size * 0.5
-		return absf(local.x) <= half.x and absf(local.y) <= half.y
-	else:
-		return local.x >= 0.0 and local.y >= 0.0 and local.x <= tex_size.x and local.y <= tex_size.y
-
-
-func _polygon_contains_point(poly: Polygon2D, world_pos: Vector2) -> bool:
-	var local := poly.to_local(world_pos)
-	return Geometry2D.is_point_in_polygon(local, poly.polygon)
+func _get_node_aabb(node: Node2D) -> Rect2:
+	# Prefer visual bounds
+	if node is Sprite2D:
+		var s := node as Sprite2D
+		if s.texture:
+			var size := s.texture.get_size() * s.scale
+			var half := size * 0.5
+			var pts := [
+				Vector2(-half.x, -half.y),
+				Vector2(half.x, -half.y),
+				Vector2(half.x, half.y),
+				Vector2(-half.x, half.y),
+			]
+			var world_pts := pts.map(func(p): return s.global_transform * p)
+			return Rect2(world_pts[0], Vector2.ZERO).expand(world_pts[1]).expand(world_pts[2]).expand(world_pts[3])
+	if node is Polygon2D:
+		var p := node as Polygon2D
+		if p.polygon.size() > 0:
+			var world_pts: Array = []
+			for v in p.polygon:
+				world_pts.append(p.global_transform * v)
+			var rect := Rect2(world_pts[0], Vector2.ZERO)
+			for i in range(1, world_pts.size()):
+				rect = rect.expand(world_pts[i])
+			return rect
+	# Fallback to collision shape bounds
+	var cs := _find_collision_shape(node)
+	if cs and cs.shape:
+		if cs.shape is RectangleShape2D:
+			var r := cs.shape as RectangleShape2D
+			var half := r.size * 0.5
+			var pts := [
+				Vector2(-half.x, -half.y),
+				Vector2(half.x, -half.y),
+				Vector2(half.x, half.y),
+				Vector2(-half.x, half.y),
+			]
+			var world_pts := pts.map(func(p): return cs.global_transform * p)
+			var rect := Rect2(world_pts[0], Vector2.ZERO)
+			for i in range(1, world_pts.size()):
+				rect = rect.expand(world_pts[i])
+			return rect
+		elif cs.shape is ConvexPolygonShape2D:
+			var poly := (cs.shape as ConvexPolygonShape2D).points
+			if poly.size() > 0:
+				var rect := Rect2(cs.global_transform * poly[0], Vector2.ZERO)
+				for i in range(1, poly.size()):
+					rect = rect.expand(cs.global_transform * poly[i])
+				return rect
+	# Default small box
+	return Rect2(node.global_position - Vector2(8, 8), Vector2(16, 16))
 
 
 func _drag_selection() -> void:
@@ -495,6 +563,8 @@ func _get_mouse_world_pos() -> Vector2:
 
 func _find_collision_shape(node: Node) -> CollisionShape2D:
 	if node is CollisionShape2D:
+		if node.name.begins_with("Editor") or node.is_in_group("editor_only") or node.is_in_group("editor_selector"):
+			return null
 		return node
 	for child in node.get_children():
 		var found := _find_collision_shape(child)
@@ -503,7 +573,50 @@ func _find_collision_shape(node: Node) -> CollisionShape2D:
 	return null
 
 
-func _on_prefab_selected(kind: String) -> void:
+func _is_unselectable_node(n: Node2D) -> bool:
+	if n == _overlay or n == _grid or n == _highlight:
+		return true
+	if n.name == "DebugOverlay":
+		return true
+	if n.name.begins_with("Editor"):
+		return true
+	if n.name == "SpriteRoot":
+		return true
+	if n.is_in_group("editor_only") or n.is_in_group("editor_selector"):
+		return true
+	var lname := n.name.to_lower()
+	if lname == "damagearea":
+		return true
+	if lname.find("hitbox") != -1 or lname.find("hurtbox") != -1:
+		return true
+	if lname == "hitboxes":
+		return true
+	return false
+
+
+func _is_scene_root(n: Node2D) -> bool:
+	return get_tree().current_scene != null and n == get_tree().current_scene
+
+
+func _set_hitboxes_visible(flag: bool) -> void:
+	for node_any in get_tree().get_nodes_in_group("hitboxes"):
+		if node_any is Node2D:
+			node_any.visible = flag
+	# Fallback: toggle by name
+	var stack: Array = [get_tree().current_scene]
+	while stack.size() > 0:
+		var n: Node = stack.pop_back()
+		if n is Node2D:
+			var nd: Node2D = n
+			var lname := nd.name.to_lower()
+			if lname.find("hitbox") != -1 or lname == "hitboxes":
+				nd.visible = flag
+		for child in n.get_children():
+			if child is Node:
+				stack.append(child)
+
+
+func _on_prefab_selected(kind: String, data: Variant = null) -> void:
 	if kind == "undo":
 		_undo()
 		return
@@ -513,8 +626,14 @@ func _on_prefab_selected(kind: String) -> void:
 	if kind == "save":
 		_save_scene()
 		return
+	if kind == "save_path":
+		_save_scene(String(data))
+		return
 	if kind == "load":
 		_load_scene()
+		return
+	if kind == "load_path":
+		_load_scene(String(data))
 		return
 	if kind == "reload":
 		_reload_scene()
@@ -538,8 +657,6 @@ func _place_prefab_at_mouse() -> void:
 	if scene is Node2D:
 		scene.global_position = pos
 	get_tree().current_scene.add_child(scene)
-	if _stamp_prefab == "enemy":
-		_attach_enemy_spawner(scene)
 	if scene and scene.has_method("reset_base_position"):
 		scene.reset_base_position()
 	var entry := _make_create_entry(scene)
@@ -574,10 +691,8 @@ func _get_prefab_scene(kind: String) -> PackedScene:
 			return preload("res://engine/traps/ActorTrap2D.tscn")
 		"item":
 			return preload("res://engine/items/ActorItem2D.tscn")
-		"ground":
-			return preload("res://engine/platforms/PlatformGround.tscn")
-		"wall":
-			return preload("res://engine/platforms/PlatformWall.tscn")
+		"solid", "ground", "wall", "ceiling":
+			return preload("res://engine/platforms/PlatformSolid.tscn")
 		"one_way":
 			return preload("res://engine/platforms/PlatformOneWay.tscn")
 		"slope_left":
@@ -612,29 +727,22 @@ func _update_highlight() -> void:
 		return
 	if _selected and _selected is Node2D:
 		var n := _selected as Node2D
-		var cs := _find_collision_shape(n)
-		var points := PackedVector2Array()
-		if cs and cs.shape:
-			if cs.shape is RectangleShape2D:
-				var rect := cs.shape as RectangleShape2D
-				var half := rect.size * 0.5
-				var local_points := [
-					Vector2(-half.x, -half.y),
-					Vector2(half.x, -half.y),
-					Vector2(half.x, half.y),
-					Vector2(-half.x, half.y),
-					Vector2(-half.x, -half.y),
-				]
-				for p in local_points:
-					points.append(cs.global_transform * p)
-			elif cs.shape is ConvexPolygonShape2D:
-				var poly := (cs.shape as ConvexPolygonShape2D).points
-				for p in poly:
-					points.append(cs.global_transform * p)
-				if poly.size() > 0:
-					points.append(cs.global_transform * poly[0])
-		if points.size() == 0:
-			var half := Vector2(8, 8)
+		var points := _get_highlight_points(n)
+		_highlight.global_position = Vector2.ZERO
+		_highlight.points = points
+		_highlight.visible = true
+	else:
+		_highlight.visible = false
+
+
+func _get_highlight_points(n: Node2D) -> PackedVector2Array:
+	var pts := PackedVector2Array()
+	# Use visual geometry if available
+	if n is Sprite2D:
+		var s := n as Sprite2D
+		if s.texture:
+			var size := s.texture.get_size() * s.scale
+			var half := size * 0.5
 			var local_points := [
 				Vector2(-half.x, -half.y),
 				Vector2(half.x, -half.y),
@@ -643,12 +751,50 @@ func _update_highlight() -> void:
 				Vector2(-half.x, -half.y),
 			]
 			for p in local_points:
-				points.append(n.global_transform * p)
-		_highlight.global_position = Vector2.ZERO
-		_highlight.points = points
-		_highlight.visible = true
-	else:
-		_highlight.visible = false
+				pts.append(s.global_transform * p)
+			return pts
+	if n is Polygon2D:
+		var p := n as Polygon2D
+		if p.polygon.size() > 0:
+			for v in p.polygon:
+				pts.append(p.global_transform * v)
+			pts.append(p.global_transform * p.polygon[0])
+			return pts
+	# Fallback to collision shape
+	var cs := _find_collision_shape(n)
+	if cs and cs.shape:
+		if cs.shape is RectangleShape2D:
+			var rect := cs.shape as RectangleShape2D
+			var half := rect.size * 0.5
+			var local_points := [
+				Vector2(-half.x, -half.y),
+				Vector2(half.x, -half.y),
+				Vector2(half.x, half.y),
+				Vector2(-half.x, half.y),
+				Vector2(-half.x, -half.y),
+			]
+			for p in local_points:
+				pts.append(cs.global_transform * p)
+			return pts
+		elif cs.shape is ConvexPolygonShape2D:
+			var poly := (cs.shape as ConvexPolygonShape2D).points
+			for p in poly:
+				pts.append(cs.global_transform * p)
+			if poly.size() > 0:
+				pts.append(cs.global_transform * poly[0])
+			return pts
+	# Default tiny box
+	var half := Vector2(8, 8)
+	var local_points := [
+		Vector2(-half.x, -half.y),
+		Vector2(half.x, -half.y),
+		Vector2(half.x, half.y),
+		Vector2(-half.x, half.y),
+		Vector2(-half.x, -half.y),
+	]
+	for p in local_points:
+		pts.append(n.global_transform * p)
+	return pts
 
 
 func _on_inspector_changed(value: String) -> void:
@@ -665,11 +811,12 @@ func _on_inspector_changed(value: String) -> void:
 			var ang := deg_to_rad(float(_overlay._rot.text))
 			n.rotation = ang
 		"scale_x":
-			var sx := float(_overlay._scale_x.text)
-			n.scale.x = sx
+			n.scale.x = float(_overlay._scale_x.text)
 		"scale_y":
-			var sy := float(_overlay._scale_y.text)
-			n.scale.y = sy
+			n.scale.y = float(_overlay._scale_y.text)
+		"proj_collide":
+			if "allow_projectile_collision" in n:
+				n.set("allow_projectile_collision", _overlay._proj_collide.button_pressed)
 	var after := _capture_transform(n)
 	var entry := _make_transform_entry(n, before, after)
 	_push_history_entry(entry)
@@ -784,29 +931,46 @@ func _replace_current_scene(snapshot: PackedScene) -> void:
 	_redo_stack.clear()
 
 
-func _save_scene() -> void:
+func _save_scene(path_override: String = "") -> void:
 	var snap := _make_scene_snapshot()
 	if snap == null:
 		print("Save skipped: unable to snapshot scene.")
 		return
-	var path := "user://editor_save.tscn"
-	var err := ResourceSaver.save(snap, path)
-	if err != OK:
-		push_error("Failed to save scene to %s (err %d)" % [path, err])
+	var save_path := path_override.strip_edges()
+	if save_path == "":
+		save_path = _save_path_primary
+	if save_path.begins_with("res://editor_saves") == false:
+		DirAccess.make_dir_recursive_absolute("res://editor_saves")
+	var save_err := ResourceSaver.save(snap, save_path)
+	if save_err != OK:
+		push_warning("Failed to save to %s (err %d); trying fallback." % [save_path, save_err])
+		save_err = ResourceSaver.save(snap, _save_path_fallback)
+		if save_err != OK:
+			push_error("Save failed to %s and fallback %s (err %d)" % [save_path, _save_path_fallback, save_err])
+			return
+		else:
+			print("Scene saved to fallback", _save_path_fallback)
 	else:
-		print("Scene saved to", path)
-		_baseline_snapshot = snap
+		print("Scene saved to", save_path)
+	_baseline_snapshot = snap
 
 
-func _load_scene() -> void:
-	var path := "user://editor_save.tscn"
-	if not ResourceLoader.exists(path):
-		push_warning("No saved scene found at %s" % path)
-		return
-	var packed: PackedScene = ResourceLoader.load(path)
+func _load_scene(path_override: String = "") -> void:
+	var packed: PackedScene = null
+	var load_path := path_override.strip_edges()
+	if load_path != "":
+		if ResourceLoader.exists(load_path):
+			packed = ResourceLoader.load(load_path)
+	else:
+		if ResourceLoader.exists(_save_path_primary):
+			packed = ResourceLoader.load(_save_path_primary)
+		elif ResourceLoader.exists(_save_path_fallback):
+			packed = ResourceLoader.load(_save_path_fallback)
 	if packed:
 		_replace_current_scene(packed)
 		_baseline_snapshot = _make_scene_snapshot()
+	else:
+		push_warning("No saved scene found at %s%s%s" % [_save_path_primary, " or " if _save_path_fallback != "" else "", _save_path_fallback])
 
 
 func _reload_scene() -> void:

@@ -1,20 +1,16 @@
-[gd_scene load_steps=20 format=3 uid="uid://b0dkwftvi47ab"]
+[gd_scene load_steps=15 format=3 uid="uid://b0dkwftvi47ab"]
 
 [ext_resource type="PackedScene" uid="uid://bs3o6hkufssrb" path="res://engine/actors/ActorCharacter2D.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://deco" path="res://engine/decoration/ActorDeco2D.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://engine/decoration/ActorDeco2D_Static.tscn" id="3"]
-[ext_resource type="Texture2D" uid="uid://h43o6kh5ar1v" path="res://assets/placeholder_deco.tres" id="3_ddpy1"]
 [ext_resource type="PackedScene" uid="uid://trap" path="res://engine/traps/ActorTrap2D.tscn" id="4"]
 [ext_resource type="PackedScene" uid="uid://item" path="res://engine/items/ActorItem2D.tscn" id="5"]
 [ext_resource type="Script" uid="uid://bp4nbrrx7n2jj" path="res://game/levels/CollisionTest.gd" id="6"]
 [ext_resource type="PackedScene" path="res://engine/debug/DebugOverlay.tscn" id="7"]
 [ext_resource type="Script" uid="uid://ducujtrkyat5y" path="res://game/levels/KillZone.gd" id="8"]
 [ext_resource type="PackedScene" uid="uid://d2rrhkmanwo4g" path="res://engine/actors/EnemyDummy.tscn" id="9"]
-[ext_resource type="PackedScene" path="res://engine/projectiles/ProjectileSpawner.tscn" id="10"]
-[ext_resource type="PackedScene" path="res://engine/projectiles/EnemyProjectile2D.tscn" id="11"]
-
-[sub_resource type="RectangleShape2D" id="1"]
-size = Vector2(256, 16)
+[ext_resource type="PackedScene" path="res://engine/platforms/PlatformOneWay.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://engine/platforms/PlatformSolid.tscn" id="13"]
 
 [sub_resource type="ConvexPolygonShape2D" id="3"]
 points = PackedVector2Array(-64, -32, -64, 0, 64, 0)
@@ -22,17 +18,8 @@ points = PackedVector2Array(-64, -32, -64, 0, 64, 0)
 [sub_resource type="ConvexPolygonShape2D" id="2"]
 points = PackedVector2Array(-64, 0, 64, 0, 64, -32)
 
-[sub_resource type="RectangleShape2D" id="4"]
-size = Vector2(64, 12)
-
 [sub_resource type="RectangleShape2D" id="5"]
 size = Vector2(400, 20)
-
-[sub_resource type="RectangleShape2D" id="6"]
-size = Vector2(16, 64)
-
-[sub_resource type="RectangleShape2D" id="7"]
-size = Vector2(256, 16)
 
 [node name="CollisionTest" type="Node2D"]
 script = ExtResource("6")
@@ -43,25 +30,12 @@ position = Vector2(0, -32)
 [node name="Enemy" parent="." instance=ExtResource("9")]
 position = Vector2(140, -32)
 
-[node name="EnemySpawner" parent="Enemy" instance=ExtResource("10")]
-projectile_scene = ExtResource("11")
-owner_path = NodePath("..")
-speed = 250.0
-
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -64)
 
-[node name="Ground" type="StaticBody2D" parent="."]
+[node name="SolidGround" parent="." instance=ExtResource("13")]
 position = Vector2(0, 24)
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
-position = Vector2(0, 8)
-shape = SubResource("1")
-
-[node name="Polygon2D" type="Polygon2D" parent="Ground"]
-color = Color(0.2, 0.2, 0.2, 1)
-polygon = PackedVector2Array(-128, 0, 128, 0, 128, 16, -128, 16)
+scale = Vector2(4, 0.25)
 
 [node name="SlopeLeft" type="StaticBody2D" parent="."]
 position = Vector2(-192, 56)
@@ -85,20 +59,8 @@ shape = SubResource("2")
 color = Color(0.25, 0.25, 0.25, 1)
 polygon = PackedVector2Array(-64, 0, 0.606064, 0, 64, 0, 64, -32)
 
-[node name="OneWayPlatform" type="StaticBody2D" parent="."]
+[node name="PlatformOneWay" parent="." instance=ExtResource("12")]
 position = Vector2(-75, -17)
-collision_layer = 128
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="OneWayPlatform"]
-shape = SubResource("4")
-one_way_collision = true
-one_way_collision_margin = 4.0
-
-[node name="Polygon2D" type="Polygon2D" parent="OneWayPlatform"]
-color = Color(0.3, 0.3, 0.3, 1)
-texture = ExtResource("3_ddpy1")
-polygon = PackedVector2Array(-32, -6, 32, -6, 32, 6, -32, 6)
 
 [node name="DecoStatic" parent="." instance=ExtResource("3")]
 position = Vector2(-97, 13)
@@ -132,35 +94,14 @@ scale = Vector2(3, 1)
 color = Color(0.1, 0, 0, 0.5)
 polygon = PackedVector2Array(-200, -10, 200, -10, 200, 10, -200, 10)
 
-[node name="WallLeft" type="StaticBody2D" parent="."]
+[node name="SolidWallLeft" parent="." instance=ExtResource("13")]
 position = Vector2(-220, -8)
-collision_mask = 2
+scale = Vector2(0.25, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WallLeft"]
-shape = SubResource("6")
-
-[node name="Polygon2D" type="Polygon2D" parent="WallLeft"]
-color = Color(0.18, 0.18, 0.18, 1)
-polygon = PackedVector2Array(-8, -32, 8, -32, 8, 32, -8, 32)
-
-[node name="WallRight" type="StaticBody2D" parent="."]
+[node name="SolidWallRight" parent="." instance=ExtResource("13")]
 position = Vector2(230, -8)
-collision_mask = 2
+scale = Vector2(0.25, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WallRight"]
-shape = SubResource("6")
-
-[node name="Polygon2D" type="Polygon2D" parent="WallRight"]
-color = Color(0.18, 0.18, 0.18, 1)
-polygon = PackedVector2Array(-8, -32, 8, -32, 8, 32, -8, 32)
-
-[node name="CeilingLow" type="StaticBody2D" parent="."]
+[node name="SolidCeiling" parent="." instance=ExtResource("13")]
 position = Vector2(0, -96)
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CeilingLow"]
-shape = SubResource("7")
-
-[node name="Polygon2D" type="Polygon2D" parent="CeilingLow"]
-color = Color(0.18, 0.18, 0.18, 1)
-polygon = PackedVector2Array(-128, -8, 128, -8, 128, 8, -128, 8)
+scale = Vector2(4, 0.25)

@@ -35,6 +35,9 @@ var _jump_buffer := 0.0
 var _jump_held := false
 var _drop_timer := 0.0
 var _dropping_through := false
+var _original_mask := 0
+const ONE_WAY_LAYER_BIT := 0
+const PLAYER_FALLBACK_LAYER_BIT := 2
 
 func _ready() -> void:
 	_cache_nodes()
@@ -181,9 +184,12 @@ func _can_jump() -> bool:
 func _start_drop_through() -> void:
 	if _dropping_through:
 		return
+	_original_mask = collision_mask
 	_dropping_through = true
 	_drop_timer = drop_through_time
-	set_collision_mask_value(8, false)
+	# Disable collision with one-way platforms (layer 1)
+	var clear_bits := (1 << ONE_WAY_LAYER_BIT) | (1 << PLAYER_FALLBACK_LAYER_BIT)
+	collision_mask = _original_mask & ~clear_bits
 	if velocity.y < 0.0:
 		velocity.y = 0.0
 	velocity.y += 50.0
@@ -247,7 +253,7 @@ func _update_drop_through(delta: float) -> void:
 		_drop_timer -= delta
 		if _drop_timer <= 0.0:
 			_dropping_through = false
-			set_collision_mask_value(8, true)
+			collision_mask = _original_mask
 
 
 func _link_fsm() -> void:
