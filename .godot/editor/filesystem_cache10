@@ -1,16 +1,16 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1764263357
+::res://::1764265686
 icon.svg::CompressedTexture2D/CompressedTexture2D::8628337075502139453::1764088422::1764088745::1::::<><><>0<>0<>73389a15339cd5a46a5231836784f7b1<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
-README.md::TextFile/TextFile::-1::1764104577::0::1::::<><><>0<>0<><>::
+README.md::TextFile/TextFile::-1::1764263830::0::1::::<><><>0<>0<><>::
 ::res://addons/::1764091492
-::res://assets/::1764263121
-placeholder_deco.tres::GradientTexture2D::552915581276146957::1764263120::0::1::::<><><>0<>0<><>::
-placeholder_enemy.tres::GradientTexture2D::1323079694463705799::1764263120::0::1::::<><><>0<>0<><>::
-placeholder_enemy_projectile.tres::GradientTexture2D::6682747842725829768::1764263119::0::1::::<><><>0<>0<><>::
-placeholder_item.tres::GradientTexture2D::4725290373835713626::1764263121::0::1::::<><><>0<>0<><>::
-placeholder_player.tres::GradientTexture2D::5604261193579995254::1764263119::0::1::::<><><>0<>0<><>::
-placeholder_projectile.tres::GradientTexture2D::6461275362961420982::1764263121::0::1::::<><><>0<>0<><>::
-placeholder_trap.tres::GradientTexture2D::8057128624940666828::1764263120::0::1::::<><><>0<>0<><>::
+::res://assets/::1764265576
+placeholder_deco.tres::GradientTexture2D::552915581276146957::1764265576::0::1::::<><><>0<>0<><>::
+placeholder_enemy.tres::GradientTexture2D::1323079694463705799::1764265575::0::1::::<><><>0<>0<><>::
+placeholder_enemy_projectile.tres::GradientTexture2D::6682747842725829768::1764265575::0::1::::<><><>0<>0<><>::
+placeholder_item.tres::GradientTexture2D::4725290373835713626::1764265576::0::1::::<><><>0<>0<><>::
+placeholder_player.tres::GradientTexture2D::5604261193579995254::1764265575::0::1::::<><><>0<>0<><>::
+placeholder_projectile.tres::GradientTexture2D::6461275362961420982::1764265576::0::1::::<><><>0<>0<><>::
+placeholder_trap.tres::GradientTexture2D::8057128624940666828::1764265576::0::1::::<><><>0<>0<><>::
 ::res://autoload/::1764170910
 EventBus.gd::GDScript/GDScript::5260470903693051881::1764170834::0::1::::<>Node<><>0<>0<><>::
 InputManager.gd::GDScript/GDScript::5412327402161393522::1764170847::0::1::::<>Node<><>0<>0<><>::
@@ -24,10 +24,10 @@ movement analysis.txt::TextFile/TextFile::-1::1764094121::0::1::::<><><>0<>0<><>
 phase one.txt::TextFile/TextFile::-1::1764170279::0::1::::<><><>0<>0<><>::
 sysplan old GDD.txt::TextFile/TextFile::-1::1764167584::0::1::::<><><>0<>0<><>::
 ::res://editor_saves/::1764263201
-default_scene.tscn::PackedScene::-1::1764263201::0::1::::<><><>0<>0<><>::res://game/levels/CollisionTest.gd<>res://engine/actors/ActorCharacter2D.tscn<>res://engine/actors/ActorCharacter2D.gd<>res://engine/actors/EnemyDummy.tscn<>res://engine/projectiles/ProjectileSpawner.tscn<>res://engine/projectiles/ProjectileSpawner.gd<>res://engine/projectiles/EnemyProjectile2D.tscn<>res://assets/placeholder_deco.tres<>res://engine/decoration/ActorDeco2D_Static.tscn<>res://engine/decoration/ActorDeco2D.gd<>res://engine/decoration/ActorDeco2D.tscn<>res://engine/traps/ActorTrap2D.tscn<>res://engine/traps/ActorTrap2D.gd<>res://engine/items/ActorItem2D.tscn<>res://engine/items/ActorItem2D.gd<>res://engine/debug/DebugOverlay.tscn<>res://engine/debug/DebugOverlay.gd<>res://game/levels/KillZone.gd
+default_scene.tscn::PackedScene/PackedScene::-1::1764263201::0::1::::<><><>0<>0<><>::res://game/levels/CollisionTest.gd<>res://engine/actors/ActorCharacter2D.tscn<>res://engine/actors/ActorCharacter2D.gd<>res://engine/actors/EnemyDummy.tscn<>res://engine/projectiles/ProjectileSpawner.tscn<>res://engine/projectiles/ProjectileSpawner.gd<>res://engine/projectiles/EnemyProjectile2D.tscn<>res://assets/placeholder_deco.tres<>res://engine/decoration/ActorDeco2D_Static.tscn<>res://engine/decoration/ActorDeco2D.gd<>res://engine/decoration/ActorDeco2D.tscn<>res://engine/traps/ActorTrap2D.tscn<>res://engine/traps/ActorTrap2D.gd<>res://engine/items/ActorItem2D.tscn<>res://engine/items/ActorItem2D.gd<>res://engine/debug/DebugOverlay.tscn<>res://engine/debug/DebugOverlay.gd<>res://game/levels/KillZone.gd
 last_scene.tscn::PackedScene/PackedScene::-1::1764262056::0::1::::<><><>0<>0<><>::res://game/levels/CollisionTest.gd<>res://engine/actors/ActorCharacter2D.tscn<>res://engine/actors/ActorCharacter2D.gd<>res://engine/actors/EnemyDummy.tscn<>res://engine/projectiles/ProjectileSpawner.tscn<>res://engine/projectiles/ProjectileSpawner.gd<>res://engine/projectiles/EnemyProjectile2D.tscn<>res://assets/placeholder_deco.tres<>res://engine/decoration/ActorDeco2D_Static.tscn<>res://engine/decoration/ActorDeco2D.gd<>res://engine/decoration/ActorDeco2D.tscn<>res://engine/traps/ActorTrap2D.tscn<>res://engine/traps/ActorTrap2D.gd<>res://engine/items/ActorItem2D.tscn<>res://engine/items/ActorItem2D.gd<>res://engine/debug/DebugOverlay.tscn<>res://engine/debug/DebugOverlay.gd<>res://game/levels/KillZone.gd
 ::res://editor_saves/test saves/::1764263150
-test_save.tscn::PackedScene::-1::1764263150::0::1::::<><><>0<>0<><>::res://game/levels/CollisionTest.gd<>res://engine/actors/ActorCharacter2D.tscn<>res://engine/actors/ActorCharacter2D.gd<>res://engine/actors/EnemyDummy.tscn<>res://engine/platforms/PlatformSolid.tscn<>res://engine/platforms/PlatformOneWay.tscn<>res://engine/decoration/ActorDeco2D_Static.tscn<>res://engine/decoration/ActorDeco2D.gd<>res://engine/decoration/ActorDeco2D.tscn<>res://engine/traps/ActorTrap2D.tscn<>res://engine/traps/ActorTrap2D.gd<>res://engine/items/ActorItem2D.tscn<>res://engine/items/ActorItem2D.gd<>res://engine/debug/DebugOverlay.tscn<>res://engine/debug/DebugOverlay.gd<>res://game/levels/KillZone.gd
+test_save.tscn::PackedScene/PackedScene::-1::1764263150::0::1::::<><><>0<>0<><>::res://game/levels/CollisionTest.gd<>res://engine/actors/ActorCharacter2D.tscn<>res://engine/actors/ActorCharacter2D.gd<>res://engine/actors/EnemyDummy.tscn<>res://engine/platforms/PlatformSolid.tscn<>res://engine/platforms/PlatformOneWay.tscn<>res://engine/decoration/ActorDeco2D_Static.tscn<>res://engine/decoration/ActorDeco2D.gd<>res://engine/decoration/ActorDeco2D.tscn<>res://engine/traps/ActorTrap2D.tscn<>res://engine/traps/ActorTrap2D.gd<>res://engine/items/ActorItem2D.tscn<>res://engine/items/ActorItem2D.gd<>res://engine/debug/DebugOverlay.tscn<>res://engine/debug/DebugOverlay.gd<>res://game/levels/KillZone.gd
 ::res://engine/::1764240562
 ::res://engine/actors/::1764175553
 ActorCharacter2D.gd::GDScript/GDScript::733884129668344800::1764253153::0::1::::<>CharacterBody2D<><>0<>0<><>::
@@ -45,7 +45,7 @@ ActorDeco2D_Static.tscn::PackedScene/PackedScene::-1::1764173520::0::1::::<><><>
 ::res://engine/editor/::1764244242
 EditorCamera2D.gd::GDScript/GDScript::6617687716914119291::1764170965::0::1::::<>Camera2D<><>0<>0<><>::
 EditorCamera2D.tscn::PackedScene/PackedScene::-1::1764171081::0::1::::<><><>0<>0<><>::res://engine/editor/EditorCamera2D.gd
-EditorManager.gd::GDScript/GDScript::1274986858552652684::1764262370::0::1::::<>Node<><>0<>0<><>::
+EditorManager.gd::GDScript::1274986858552652684::1764265668::0::1::::<>Node<><>0<>0<><>::
 EditorOverlay.gd::GDScript/GDScript::1517429260681015944::1764263079::0::1::::<>CanvasLayer<><>0<>0<><>::
 EditorOverlay.tscn::PackedScene/PackedScene::-1::1764263070::0::1::::<><><>0<>0<><>::res://engine/editor/EditorOverlay.gd
 GridOverlay.gd::GDScript/GDScript::4234779333078259122::1764175526::0::1::::<>Node2D<><>0<>0<><>::
@@ -77,7 +77,7 @@ PlatformGround.tscn::PackedScene/PackedScene::-1::1764240794::0::1::::<><><>0<>0
 PlatformOneWay.tscn::PackedScene/PackedScene::-1::1764257711::0::1::::<><><>0<>0<><>::
 PlatformSlopeLeft.tscn::PackedScene/PackedScene::-1::1764241734::0::1::::<><><>0<>0<><>::
 PlatformSlopeRight.tscn::PackedScene/PackedScene::-1::1764241746::0::1::::<><><>0<>0<><>::
-PlatformSolid.tscn::PackedScene/PackedScene::-1::1764257701::0::1::::<><><>0<>0<><>::
+PlatformSolid.tscn::PackedScene/PackedScene::-1::1764264543::0::1::::<><><>0<>0<><>::
 PlatformWall.tscn::PackedScene/PackedScene::-1::1764240809::0::1::::<><><>0<>0<><>::
 ::res://engine/projectiles/::1764095332
 ActorProjectile2D.gd::GDScript/GDScript::7935991277277744429::1764100744::0::1::::<>Area2D<><>0<>0<><>::
@@ -92,8 +92,8 @@ StatsComponent.gd::GDScript/GDScript::1248583443878471169::1764167755::0::1::::S
 ActorTrap2D.gd::GDScript/GDScript::744704761273799592::1764168093::0::1::::<>StaticBody2D<><>0<>0<><>::
 ActorTrap2D.tscn::PackedScene/PackedScene::766443::1764167813::0::1::::<><><>0<>0<><>::uid://ku0gcqki2kse::::res://engine/traps/ActorTrap2D.gd<>res://assets/placeholder_trap.tres<>res://engine/fsm/StateMachine.gd<>res://engine/fsm/states/TrapArmed.gd<>res://engine/fsm/states/TrapTriggered.gd<>res://engine/core/ActorInterface.gd
 ::res://game/::1764088303
-::res://game/levels/::1764263119
+::res://game/levels/::1764265575
 CollisionTest.gd::GDScript/GDScript::3499912320078136751::1764100049::0::1::::<>Node2D<><>0<>0<><>::
-CollisionTest.tscn::PackedScene::4147981658233708361::1764263119::0::1::::<><><>0<>0<><>::uid://bs3o6hkufssrb::::res://engine/actors/ActorCharacter2D.tscn<>uid://deco::::res://engine/decoration/ActorDeco2D.tscn<>res://engine/decoration/ActorDeco2D_Static.tscn<>uid://trap::::res://engine/traps/ActorTrap2D.tscn<>uid://item::::res://engine/items/ActorItem2D.tscn<>uid://bp4nbrrx7n2jj::::res://game/levels/CollisionTest.gd<>res://engine/debug/DebugOverlay.tscn<>uid://ducujtrkyat5y::::res://game/levels/KillZone.gd<>uid://d2rrhkmanwo4g::::res://engine/actors/EnemyDummy.tscn<>res://engine/platforms/PlatformOneWay.tscn<>res://engine/platforms/PlatformSolid.tscn
+CollisionTest.tscn::PackedScene::4147981658233708361::1764265575::0::1::::<><><>0<>0<><>::uid://bs3o6hkufssrb::::res://engine/actors/ActorCharacter2D.tscn<>uid://deco::::res://engine/decoration/ActorDeco2D.tscn<>res://engine/decoration/ActorDeco2D_Static.tscn<>uid://trap::::res://engine/traps/ActorTrap2D.tscn<>uid://item::::res://engine/items/ActorItem2D.tscn<>uid://bp4nbrrx7n2jj::::res://game/levels/CollisionTest.gd<>res://engine/debug/DebugOverlay.tscn<>uid://ducujtrkyat5y::::res://game/levels/KillZone.gd<>uid://d2rrhkmanwo4g::::res://engine/actors/EnemyDummy.tscn<>res://engine/platforms/PlatformOneWay.tscn<>res://engine/platforms/PlatformSolid.tscn
 KillZone.gd::GDScript/GDScript::8568399116040320864::1764091163::0::1::::<>Area2D<><>0<>0<><>::
 ::res://game/prototypes/::1764088303

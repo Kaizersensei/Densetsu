@@ -8,6 +8,9 @@ signal selection_changed(node)
 @export var toggle_cooldown := 0.2
 @export var snap_enabled := false
 @export var snap_size := 8.0
+@export var zoom_step := 0.2
+@export var zoom_min := 0.2
+@export var zoom_max := 3.0
 var editor_mode := false
 var editor_camera: Camera2D
 var _game_camera: Camera2D
@@ -38,6 +41,18 @@ var _last_pick_hits: Array = []
 var _last_pick_pos: Vector2 = Vector2.ZERO
 var _last_pick_cycle: int = 0
 var show_hitboxes := false
+const PREFAB_NAMES := {
+	"solid": "Solid",
+	"one_way": "One-Way",
+	"slope_left": "Slope Left",
+	"slope_right": "Slope Right",
+	"deco": "Deco",
+	"deco_solid": "Solid Deco",
+	"trap": "Trap",
+	"item": "Item",
+	"enemy": "Enemy",
+	"player": "Player",
+}
 
 func _ready() -> void:
 	set_process_input(true)
@@ -194,6 +209,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_F12 or event.physical_keycode == KEY_F12:
 			_toggle_editor()
 			get_viewport().set_input_as_handled()
+	# Handle zoom early to avoid UI consuming it
+	if editor_mode and event is InputEventMouseButton and editor_camera:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			var ctrl_down: bool = event.ctrl_pressed if "ctrl_pressed" in event else false
+			var ctrl_key := Input.is_key_pressed(KEY_CTRL)
+			print("Wheel (unhandled) btn:", event.button_index, "pressed:", event.pressed, "ctrl_down:", ctrl_down, "ctrl_key:", ctrl_key, "zoom:", editor_camera.zoom)
+			if ctrl_down or ctrl_key:
+				_handle_zoom(event)
+				get_viewport().set_input_as_handled()
 
 
 func _input(event: InputEvent) -> void:
@@ -212,6 +236,16 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 	if not editor_mode:
 		return
+	# Zoom only when Ctrl is held
+	if event is InputEventMouseButton and editor_camera:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			var ctrl_down: bool = event.ctrl_pressed if "ctrl_pressed" in event else false
+			var ctrl_key := Input.is_key_pressed(KEY_CTRL)
+			print("Wheel (input) btn:", event.button_index, "pressed:", event.pressed, "ctrl_down:", ctrl_down, "ctrl_key:", ctrl_key, "zoom:", editor_camera.zoom)
+			if ctrl_down or ctrl_key:
+				_handle_zoom(event)
+				get_viewport().set_input_as_handled()
+			return
 	if event is InputEventMouseButton:
 		_handle_mouse_button(event)
 	elif event is InputEventMouseMotion and _dragging:
@@ -232,6 +266,9 @@ func _enter_editor_mode() -> void:
 		editor_camera.make_current()
 		editor_camera.enabled = true
 		editor_camera.visible = true
+		editor_camera.process_mode = Node.PROCESS_MODE_ALWAYS
+	if _game_camera:
+		_game_camera.enabled = false
 	if _grid and _grid is Node2D:
 		_grid.visible = snap_enabled and snap_size > 0.0
 		if "editor_camera" in _grid:
@@ -344,6 +381,7 @@ func _process(delta: float) -> void:
 	# Keep highlight in sync even when physics or history move things
 	if _selected:
 		_update_highlight()
+	_update_snap_from_overlay()
 
 
 func _ensure_toggle_action() -> void:
@@ -656,7 +694,26 @@ func _place_prefab_at_mouse() -> void:
 	var scene := packed.instantiate()
 	if scene is Node2D:
 		scene.global_position = pos
+	if scene:
+		var base := packed.resource_path.get_file().get_basename()
+		var desired_name := base
+		if PREFAB_NAMES.has(_stamp_prefab):
+			desired_name = PREFAB_NAMES[_stamp_prefab]
+		elif base != "":
+			desired_name = base
+		else:
+			desired_name = _stamp_prefab.capitalize()
+		if desired_name.begins_with("@") and scene.get_class() == "StaticBody2D" and _stamp_prefab == "solid":
+			desired_name = "Solid"
+		scene.name = desired_name
+		print("Placed prefab:", _stamp_prefab, "assigned name:", scene.name)
 	get_tree().current_scene.add_child(scene)
+	if scene:
+		# Reassert the desired name after parenting in case Godot altered it
+		if PREFAB_NAMES.has(_stamp_prefab):
+			scene.name = PREFAB_NAMES[_stamp_prefab]
+		elif packed.resource_path.get_file().get_basename() != "":
+			scene.name = packed.resource_path.get_file().get_basename()
 	if scene and scene.has_method("reset_base_position"):
 		scene.reset_base_position()
 	var entry := _make_create_entry(scene)
@@ -977,3 +1034,18 @@ func _reload_scene() -> void:
 	if _baseline_snapshot == null:
 		_baseline_snapshot = _make_scene_snapshot()
 	_replace_current_scene(_baseline_snapshot)
+
+
+func _handle_zoom(event: InputEventMouseButton) -> void:
+	if editor_camera == null:
+		return
+	var factor := 1.0 - zoom_step if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0 + zoom_step
+	var target := editor_camera.zoom * factor
+	target.x = clamp(target.x, zoom_min, zoom_max)
+	target.y = clamp(target.y, zoom_min, zoom_max)
+	editor_camera.zoom = target
+	editor_camera.queue_redraw()
+	if _overlay and _overlay.has_method("update"):
+		_overlay.update()
+	_update_snap_from_overlay()
+	print("Zoom applied. Button:", event.button_index, "New zoom:", editor_camera.zoom, "is_current:", editor_camera.is_current())
