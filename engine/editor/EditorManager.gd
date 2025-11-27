@@ -568,6 +568,8 @@ func _get_prefab_scene(kind: String) -> PackedScene:
 			return preload("res://engine/actors/EnemyDummy.tscn")
 		"deco":
 			return preload("res://engine/decoration/ActorDeco2D.tscn")
+		"deco_solid":
+			return preload("res://engine/decoration/ActorDeco2D_Static.tscn")
 		"trap":
 			return preload("res://engine/traps/ActorTrap2D.tscn")
 		"item":
@@ -576,6 +578,8 @@ func _get_prefab_scene(kind: String) -> PackedScene:
 			return preload("res://engine/platforms/PlatformGround.tscn")
 		"wall":
 			return preload("res://engine/platforms/PlatformWall.tscn")
+		"one_way":
+			return preload("res://engine/platforms/PlatformOneWay.tscn")
 		"slope_left":
 			return preload("res://engine/platforms/PlatformSlopeLeft.tscn")
 		"slope_right":

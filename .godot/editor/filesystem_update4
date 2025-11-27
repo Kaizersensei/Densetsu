@@ -7,3 +7,5 @@ res://assets/placeholder_deco.tres
 res://assets/placeholder_trap.tres
 res://assets/placeholder_item.tres
 res://assets/placeholder_projectile.tres
+res://engine/editor/EditorOverlay.gd
+res://engine/editor/EditorOverlay.tscn

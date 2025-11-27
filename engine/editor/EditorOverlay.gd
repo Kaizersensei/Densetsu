@@ -21,15 +21,17 @@ extends CanvasLayer
 @onready var _rot_apply: Button = $Inspector/RotRow/RotApply
 @onready var _scale_x_apply: Button = $Inspector/ScaleXRow/ScaleXApply
 @onready var _scale_y_apply: Button = $Inspector/ScaleYRow/ScaleYApply
-@onready var _place_player: Button = $SidebarLeft/PrefabList/PrefabButtons/PlacePlayer
-@onready var _place_enemy: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceEnemy
-@onready var _place_deco: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceDeco
-@onready var _place_trap: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceTrap
-@onready var _place_item: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceItem
-@onready var _place_ground: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceGround
-@onready var _place_wall: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceWall
-@onready var _place_slope_left: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceSlopeLeft
-@onready var _place_slope_right: Button = $SidebarLeft/PrefabList/PrefabButtons/PlaceSlopeRight
+@onready var _place_player: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlacePlayer
+@onready var _place_enemy: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlaceEnemy
+@onready var _place_trap: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlaceTrap
+@onready var _place_item: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlaceItem
+@onready var _place_ground: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceGround
+@onready var _place_wall: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceWall
+@onready var _place_one_way: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceOneWay
+@onready var _place_slope_left: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceSlopeLeft
+@onready var _place_slope_right: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceSlopeRight
+@onready var _place_deco: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceDeco
+@onready var _place_deco_solid: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceDecoSolid
 @onready var _delete_button: Button = $SidebarLeft/PrefabList/DeleteButton
 
 var _inspector_signal_block := false
@@ -114,6 +116,8 @@ func connect_prefab_buttons(handler: Callable) -> void:
 		_place_enemy.pressed.connect(handler.bind("enemy"))
 	if _place_deco:
 		_place_deco.pressed.connect(handler.bind("deco"))
+	if _place_deco_solid:
+		_place_deco_solid.pressed.connect(handler.bind("deco_solid"))
 	if _place_trap:
 		_place_trap.pressed.connect(handler.bind("trap"))
 	if _place_item:
@@ -122,6 +126,8 @@ func connect_prefab_buttons(handler: Callable) -> void:
 		_place_ground.pressed.connect(handler.bind("ground"))
 	if _place_wall:
 		_place_wall.pressed.connect(handler.bind("wall"))
+	if _place_one_way:
+		_place_one_way.pressed.connect(handler.bind("one_way"))
 	if _place_slope_left:
 		_place_slope_left.pressed.connect(handler.bind("slope_left"))
 	if _place_slope_right:

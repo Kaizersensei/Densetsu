@@ -108,36 +108,50 @@ text = "Prefabs"
 text = "DELETE"
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 
-[node name="PrefabButtons" type="VBoxContainer" parent="SidebarLeft/PrefabList"]
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="PrefabTabs" type="TabContainer" parent="SidebarLeft/PrefabList"]
+size_flags_vertical = 3
+tab_alignment = 0
 
-[node name="PlacePlayer" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
-text = "Place Player"
+[node name="Building" type="VBoxContainer" parent="SidebarLeft/PrefabList/PrefabTabs"]
+layout_mode = 2
+theme_override_constants/separation = 4
 
-[node name="PlaceEnemy" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
-text = "Place Enemy"
+[node name="PlaceGround" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
+text = "Ground"
 
-[node name="PlaceDeco" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
-text = "Place Deco"
+[node name="PlaceWall" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
+text = "Wall"
 
-[node name="PlaceTrap" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
-text = "Place Trap"
+[node name="PlaceOneWay" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
+text = "One-Way"
 
-[node name="PlaceItem" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
-text = "Place Item"
+[node name="PlaceSlopeLeft" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
+text = "Slope Left"
 
-[node name="PlaceGround" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
-text = "Place Ground"
+[node name="PlaceSlopeRight" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
+text = "Slope Right"
 
-[node name="PlaceWall" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
-text = "Place Wall"
+[node name="PlaceDeco" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
+text = "Deco"
 
-[node name="PlaceSlopeLeft" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
-text = "Place Slope Left"
+[node name="PlaceDecoSolid" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
+text = "Solid Deco"
 
-[node name="PlaceSlopeRight" type="Button" parent="SidebarLeft/PrefabList/PrefabButtons"]
-text = "Place Slope Right"
+[node name="Actors" type="VBoxContainer" parent="SidebarLeft/PrefabList/PrefabTabs"]
+visible = false
+theme_override_constants/separation = 4
+
+[node name="PlacePlayer" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
+text = "Player"
+
+[node name="PlaceEnemy" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
+text = "Enemy"
+
+[node name="PlaceTrap" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
+text = "Trap"
+
+[node name="PlaceItem" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
+text = "Item"
 
 [node name="Inspector" type="VBoxContainer" parent="."]
 anchor_left = 1.0
