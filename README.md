@@ -2,6 +2,9 @@
 
 ***I DON'T TAKE CREDIT FOR ANY CODE IN THIS REPO***
 
+<img width="1831" height="1009" alt="image" src="https://github.com/user-attachments/assets/0872ba97-9c5a-4517-95b0-b6ab9eac8c81" />
+
+
 This repository contains the ongoing development of the **Densetsu Engine**, support tools, experimental systems, and prototype gameplay elements for the world of **Densetsu**. It serves as a central place to organize engine logic, testing modules, documentation, and research powering the larger Densetsu project.
 
 The ***DENSETSU ENGINE*** will reside here. it is free for everyone, forever. The games made in it further along the way, however, **won't** .
