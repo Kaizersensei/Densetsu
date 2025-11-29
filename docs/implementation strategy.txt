@@ -1,0 +1,227 @@
+﻿Implementation Strategy Document 
+(v1.0)
+System Architecture, Development Framework, Production Plan
+  
+________________
+
+Section 1 – Introduction
+Purpose
+The Densetsu Implementation Strategy Document defines how the design and gameplay systems described in the Game Design Document (GDD) are realized in practice. It bridges creative intent and technical execution by detailing the structure, modular systems, and development workflow that form the foundation of the Densetsu Engine.
+Scope
+This document serves as a blueprint for developers, designers, and technical artists under Retraissance. It outlines how each gameplay feature is implemented, extended, and interconnected, while ensuring creative flexibility and long-term maintainability.
+________________
+
+
+________________
+Section 2 – Engine & Framework Overview
+Engine Selection
+Engine: Godot 4.2+
+Chosen for its open architecture, lightweight nature, and high modularity, which aligns with Densetsu’s philosophy of handcrafted systems and total creative control.
+Framework Philosophy
+The Densetsu Engine is designed as a modular ecosystem, where each element—from actors to gadgets—is self-contained yet interoperable. All systems are written in native GDScript or C#, following principles of clarity, reusability, and data independence.
+Every core feature (movement, combat, FSM, gadgets, etc.) will have tailor-made code, generated or expanded upon from design blueprints. Both AI agents and human programmers can safely modify or extend modules based on project needs.
+________________
+Framework Components
+* Core Runtime: Scene manager, time flow, persistence, save/load logic.
+
+* Actor System: Unified framework for all entities (characters, items, utilities, projectiles, traps, etc.).
+
+* Finite State Machine (FSM): Behavior definition layer controlling logic and animation states.
+
+* Combat Module: Modular skill-based combat with extensible attributes and effects.
+
+* Chronogardening Layer: Time-manipulation feedback system tied to Sage’s Gadgets and anomalies.
+
+* World & Environment System: Spatial streaming, physics, weather, and day/night control.
+
+* Narrative Hooks: Integration points for quests, dialogue, and branching story triggers.
+
+________________
+
+
+________________
+Section 3 – System Architecture
+Actor System
+The Actor System is the backbone of gameplay interaction. All objects in the world are treated as Actors.
+Core Principles
+   * Unified data structure across all gameplay entities.
+
+   * Lifecycle management through the Four States Rule: Active, Semi-Active, Passive, and Dormant.
+
+   * Supports both runtime and editor-driven spawning.
+
+   * Extensible through typed subclasses: Character, Utility, Item, Destructible, Trap, Projectile, and Creature.
+
+Key Links
+      * FSM System (behavior control)
+
+      * Combat System (hitbox & damage processing)
+
+      * Temporal Layer (time anomalies & reactions)
+
+      * Quest Hooks (state updates and triggers)
+
+________________
+
+
+________________
+Finite State Machine (FSM)
+The FSM governs every Actor’s behavior through modular state scripts (State.gd). Each state defines animation control, logic flow, and environmental interaction.
+Features
+         * Context-driven event handling
+
+         * Tag-based filtering for input, animation, and combat layers
+
+         * Group priority system for controlling concurrent states
+
+         * Extensible API for physics, AI, and effects
+
+Integration
+            * Core link between animation, control logic, and player responsiveness.
+
+            * Shared across all Actor subclasses.
+
+            * Compatible with both AI and player-controlled entities.
+
+________________
+
+
+________________
+Combat System
+The Combat System is fully modular, allowing designers to add or remove skills, effects, or entire combat types with minimal code changes.
+Core Architecture
+               * Skill definitions stored as reusable scripts or JSON data.
+
+               * Attack and defense modifiers processed through FSM hooks.
+
+               * Elemental and physical interactions resolved via tag logic.
+
+               * Animation-driven hitbox management and dynamic knockback.
+
+Future Expansion
+                  * Combo chaining and contextual attacks.
+
+                  * AI combat pattern integration.
+
+                  * Cooperative combat logic for multiplayer expansion.
+
+________________
+
+
+________________
+Quest & Dialogue System
+Currently at the proof-of-concept stage. Intended to be node-based and modular.
+Core Goals
+                     * Each conversation or mission is a self-contained unit.
+
+                     * Modular branching via flags and parameters.
+
+                     * Actor and World System integration for event-driven story states.
+
+Future Integration
+                        * Automated linking with Universe Document data.
+
+                        * Narrative scripting layer using simple markup or JSON.
+
+________________
+
+
+________________
+Gadget & Utility Framework
+Useable items and gadgets function as Actor subclasses, capable of interacting with anomalies and the environment.
+Examples
+                           * Gramoflower: Audio anomaly scanner.
+
+                           * Chronobloom: Area time instability detector.
+
+                           * Memory Lantern: Past echo visualizer.
+
+Core Architecture
+                              * Each gadget maintains its own logic and sensory functions.
+
+                              * Optional link to Chronogardening layer for advanced time feedback.
+
+                              * Can be recontextualized as world utilities or puzzle items.
+
+________________
+
+
+________________
+Section 4 – Development Workflow
+Collaboration Model
+The Retraissance team operates under an open collaborative structure where each member assists across disciplines when possible. Flexibility and shared ownership are prioritized over rigid hierarchy.
+Version Control
+Currently no centralized version control. Manual backups and shared versioning protocols are used. Migration to Git or Plastic SCM is planned for later production phases.
+Iteration Cycle
+                                 1. Design Pass: Core feature conceptualization & documentation.
+
+                                 2. Prototype Pass: Minimal implementation for testing mechanics.
+
+                                 3. Integration Pass: Connects feature to Actor System and world logic.
+
+                                 4. Polish Pass: Balancing, optimization, and aesthetic alignment.
+
+Narrative Integration
+Story and gameplay evolve concurrently. The Universe Document, GDD, and in-engine data must remain synchronized at all times.
+________________
+
+
+________________
+Section 5 – Implementation Phases
+Modular Rollout Plan
+                                    1. Foundation Layer: Actor System, FSM, core runtime.
+
+                                    2. Interaction Layer: Combat, world interactivity, basic NPC AI.
+
+                                    3. Narrative Layer: Quest, dialogue, anomaly systems.
+
+                                    4. Temporal Layer: Chronogardening and Sage’s Gadget integration.
+
+                                    5. Final Layer: Optimization, multiplayer, and optional expansions.
+
+Each module is developed in isolation, validated, and then merged with the master branch.
+________________
+
+
+________________
+Section 6 – Risk Management & Contingency
+Known Risks
+                                       * Manpower: Severely limited; small team size constrains output.
+
+                                       * Expertise: Uneven skill distribution; key areas (marketing, management) handled by single individuals.
+
+                                       * Funding: Scarce resources may limit tooling and production time.
+
+                                       * Motivation & Availability: Moderate; creative drive must be maintained through flexible schedules and clear milestones.
+
+Mitigation Strategies
+                                          * Leverage modular design to reduce dependency bottlenecks.
+
+                                          * Prioritize reusable tools and pipelines.
+
+                                          * Maintain morale through regular creative reviews and open contribution.
+
+                                          * Use AI-assisted generation for repetitive scripting and documentation tasks, followed by human review.
+
+________________
+
+
+________________
+Section 7 – Appendices
+A. Glossary
+                                             * Actor System: The core entity framework controlling all world objects.
+
+                                             * FSM: Finite State Machine managing actor behavior.
+
+                                             * Chronogardening: Bio-technological layer controlling time-based interactions.
+
+                                             * Gadget: Useable biotech tool enabling anomaly detection and interaction.
+
+                                             * Anomaly: Temporal disturbance that affects world logic and narrative flow.
+
+B. System Dependencies Overview
+                                                * FSM → Actor System → Combat → World
+
+                                                * Gadgets → Chronogardening → Anomalies → Narrative Hooks
+
+Each dependency is explicitly documented in the Densetsu Engine Reference Sheet (TBD).

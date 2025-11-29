@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script="res://engine/actors/resources/ActorData.gd" format=3]
+
+[resource]
+id = "BaseHostileActor"
+type = "Character"
+input_source = "AI"
+tags = PackedStringArray("npc", "hostile")
+lifecycle_state = "Active"
+scene = null
+group = "actors"
+initial_state = ""
+owner_id = -1
+team = ""
+faction_id = "hostile"
+hostility = 1.0
+behavior_profile_id = "aggressive"
+loot_table_id = "default_hostile"
+dialogue_id = ""
+inventory_template_id = ""
+patrol_path_id = ""
+schedule_id = ""
+spawn_respawn = false
+spawn_unique = false
+spawn_persistent = false
+spawn_radius = 0.0
+level = 1
+xp_value = 10
+ai_state_init = ""
+ai_params = {}
+position = Vector2(0, 0)
+rotation = 0.0
+scale = Vector2(1, 1)
+collision_layers = 1
+collision_mask = 1
+stats = {}
+resistances = {}
+abilities = []
+effects = []
+ai_profile = ""
+quest_hooks = {}
+persistence = false

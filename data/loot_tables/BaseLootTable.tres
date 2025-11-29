@@ -1,0 +1,4 @@
+[gd_resource type="Resource" script="res://engine/data/resources/LootTableData.gd" format=3]
+
+[resource]
+id = "BaseLootTable"

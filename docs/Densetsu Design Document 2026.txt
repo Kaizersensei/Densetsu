@@ -1,0 +1,510 @@
+﻿Densetsu Game Design Document
+2026 Edition – Canon
+  
+________________
+
+0: Work Policies
+AI Use and Collaboration
+Artificial intelligence serves as a tool to support creative and technical workflows, not to replace human design. AI assistance is approved for concept generation, structural organization, and code prototyping, under the following directives:
+AI Good
+* Idea development, conceptualization, structuring, organizing, planning.
+* Coding with clear directives and implementation plans.
+* Iterative brainstorming for narrative or mechanical alignment.
+
+AI Bad
+   * AI-generated content directly entering production without review.
+   * Final products containing >50% unreviewed AI output.
+   * Reliance on AI art or writing for final consumer-facing media.
+
+Final Thought: Use AI as much as necessary, as little as possible.
+Human review is mandatory for all assets and documentation.
+________________
+
+
+Deterministic Design
+
+
+Deterministic design is an engineering approach that minimizes or eliminates unknowns in a project by using a set of well-defined parameters to predict outcomes with certainty. Instead of relying on probability or random chance, it uses a scientific and fact-based method to achieve a predictable result, reducing risk and increasing efficiency. This method maps out a clear implementation plan and uses equations and algorithms to define how a system will function under specific conditions. 
+
+
+Key principles:
+      * Certainty over probability: It assumes no free will or randomness, aiming for a single, predictable outcome based on inputs, unlike probabilistic models that predict a range of possible outcomes.
+      * Scientific and risk-based: It merges the scientific method with business principles like risk assessment and scheduling.
+      * Reduced risk and complexity: By minimizing unknowns, it can simplify design, improve performance, and reduce costs.
+      * Clear plan: It involves mapping out a detailed solution path and implementation plan from the start. 
+1: Overview
+Game Identity
+Title: Densetsu
+Genre: Metroidvania / Narrative Action Adventure
+Core Engine: Densetsu Engine (Godot-based FSM & Actor System)
+Primary Themes: Balance, Memory, Time, Renewal.
+Tagline: “Swords, Sorcery and Shuriken”
+Narrative Premise
+A thousand years after the Great Eclipse divided the world into the eras Before Eclipse (BE) and After Eclipse (AE), the remnants of civilization persist among anomalies — fragments of time where history loops and grief refuses to fade. The player embodies Michio, a disciple of the Bonsai Sage, tasked with observing and healing these distortions without attempting to master them.
+The story explores humanity’s cyclical nature: our attempts to fix what should be accepted, and the consequences of trying to rewrite time.
+Core Design Vision
+Densetsu combines action-driven exploration with philosophical narrative design. Every mechanic reinforces reflection, balance, and natural consequence rather than domination. Combat, movement, progression, even the world and its inhabitants reflect the player’s actions in the universe..
+________________
+
+
+________________
+2: World Overview
+Historical Timeline
+Time in Densetsu is measured relative to the Great Eclipse, an event that fractured the continuum and reshaped reality.
+      * Before Eclipse (BE): The technological age; expansion, arrogance, and imbalance.
+      * After Eclipse (AE): The surviving age; spirituality, adaptation, and acceptance.
+Year 1326 AE marks the current timeline — over a millennium after the world’s collapse, where remnants of both ages coexist in fragile harmony.
+Geographic Structure
+The world consists of two major continents and isolated realms:
+      * Eastern Continent: 
+Home to Human cultures — Hirogawa, Seigetsu, Yukigami, and Crimson Dominion.
+      * Western Continent: 
+Hosts Eresh, Verdathal, Varthum, Galport, and Eddara.
+      * Independent Realms: 
+Mycomind Covenant (island nation) and other isolated sites.
+Each region’s culture evolved in response to its particular anomaly type, shaping society, belief, and survival.
+Factional Context
+         * Hirogawa: Neutral and prosperous, exporting natural resources.
+         * Seigetsu Empire: Militarized expansionist state under Okashira’s shadow.
+         * Crimson Dominion: Guarded isolationists; distrust foreigners and avoid conflict.
+         * Yukigami: Frozen wasteland; spiritual aftermath of annihilation.
+         * Eddara: Nature-bound pagan realm; equilibrium between spirit and instinct. Anthropomorphs of various animal species.
+         * Verdathal: Intellectual preservationists; memory and time scholars.
+         * Varthum: Land of eternal repetition; time loops imprison its citizens.
+         * Mycomind: Technobiotic society beyond time’s influence.
+         * Galport: Maritime kingdom bridging continents; core of modern trade and conflict.
+________________
+Notes on Factions:
+         * Kanmin is the new name for the predominant human culture. Kanmin (寒民) is a constructed term using kan (cold, frigid weather) and min (people/folk), which works for the "physically cold" interpretation of people who are bellic and distrustful.
+         * The lore-correct term for humans in Densetsu is Suhada (Naked skin). 
+         * Sarutami is a slur meaning "ape people" that other anthropomorphs use against humans in scenarios of racism and prejudice.
+________________
+
+
+Special: The Marella Caravans (Blackwater Tidebrokers)
+Hidden deep beneath the oceanic trade routes, the Marella are a confederation of Moray-like aquatic folk led by Manolo Marella, known among smugglers and sailors as the Tidebroker. Their underwater caravans navigate secret trench networks and bioluminescent waypoints invisible to surface trade.
+They exist outside Galport law, conducting high-risk commerce in relics, deep-sea minerals, and lost pre-Eclipse technologies. To Galportians, they are smugglers undermining maritime order; to Verdathal and Eddara, they are necessary intermediaries capable of reaching places surface dwellers cannot.
+Gameplay Role: Optional vendors and quest givers operating in hidden underwater markets. They trade contraband gear, rare materials, and unique relics in exchange for favors or rare currencies instead of gold.
+Narrative Role: Represent the moral gray area between survival and law. Their conflict with Galport forms a dynamic economic rivalry across the Western seas.
+
+
+Blackwater Markets and the Shadow Economy:
+While official trade is dominated by Galport’s Harbormaster Compact, a thriving black-market network runs parallel beneath the waves. The Marella Caravans use underwater tunnels and deep-sea caverns as mobile trading posts, connected by encrypted Ki resonance beacons.
+Players can discover and align with these hidden routes, gaining access to illicit goods and rare crafting components unavailable through legitimate merchants.
+________________
+
+
+Optional Questline – “The Depth Between Deals”
+In Galport, rumors spread of traders who appear and vanish beneath the tide. Investigating leads the player to a Marella contact, revealing a moral choice:
+         * Assist the Marella in smuggling banned Verdathal tech past Galport’s blockade.
+         * Report their location to Galport authorities to gain favor and trade privileges.
+Either choice influences Galport’s market stability and the availability of specific crafting resources in later acts.
+         * Gray choice - perpetuate monopoly or enable smuggling, optionally leave them be.
+         * Whichever side you assist has unique benefits and downsides, it’s not an “always win” scenario
+
+
+________________
+
+
+3: Core Gameplay Loop
+Player Pillars
+            1. Observation: Study anomalies, ecosystems, and NPC behavior.
+
+            2. Action: Engage with environments through platforming, combat, and gadget interaction.
+
+            3. Reflection: Rest and interpret events at safe points to consolidate experience.
+
+This triad ensures each gameplay moment has emotional and systemic weight.
+Core Loop Summary
+               1. Explore regions and uncover anomalies.
+
+               2. Engage through combat, puzzles, and environmental interaction.
+
+               3. Return to Rest Points to stabilize experience and progress.
+
+               4. Restore balance to world zones through understanding, not domination.
+
+Combat Philosophy
+Combat is responsive and expressive — a blend of precision and improvisation. Every action consumes stamina and intent, making reckless attacks risky.
+Combat is not the goal but the means through which the world communicates its instability.
+Exploration Philosophy
+Movement and curiosity drive discovery. Levels are interconnected but contextually meaningful.
+Environmental puzzles encourage using gadgets, elemental interaction, and observation rather than brute force.
+________________
+
+
+________________
+4: Exploration & Level Structure
+World Layout
+Densetsu’s world uses a hub-and-spoke layout centered around each country’s main location. For example, Hirogawa, has five major exits:
+                  * Forest to the Waterfall
+                  * Bamboo Forest
+                  * Mines
+                  * Hirogawa Town
+                  * Stone Bridge
+
+Players must complete regional quests before progressing to the Arc Closing Event, forming emotional ties with residents and locations.
+Regional Progression
+                     * Linear Progression: Up to Galport, (Western Continent) narrative control is favoured.
+                     * Free-Roam Expansion: After Galport’s arc, allowing return to previous regions for restoration and exploration.
+
+Environmental Mechanics
+                        * Anomaly Sites: Zones of corruption or distortion for observation and gadget use.
+                        * Day/Night Cycle: Influences gadget function and creature behavior, NPC cycles.
+                        * Rest Points: Meditation zones for leveling and world state updates.
+
+Quest Types
+                           * Narrative Quests: Drive the story, revealing character arcs and world secrets.
+
+                           * Restoration Quests: Repair anomalies or heal NPCs.
+
+                           * Exploration Quests: Unlock shortcuts, lore archives, or hidden relics.
+
+                           * Factional Quests: Reflect political and moral complexities of each nation.
+
+________________
+
+
+________________
+5: Combat & Skill Systems
+Combat Design
+Combat in Densetsu emphasizes expression, precision, and consequence. It integrates physics-driven reactions, hit prioritization, and timing mechanics based on player mastery.
+Player Stats & Skills
+                              * Core Stats: 
+Level, HP Max, MP Max, Strength, Defense, Agility, Intelligence, Luck, XP Value.
+                              * Combat Skills: 
+Unarmed, Armed, Ranged, Finesse, Stealth.
+                              * Elemental Affinities: 
+Earth, Water, Wind, Fire, Light, Dark, Thunder, Gaea, Timespace.
+Skill Expression
+Repeated use improves skill efficiency, subtly affecting animations and recovery timing. Combat remains grounded in weight and rhythm — every strike, block, or dodge matters.
+AI & Enemy Behavior
+Enemies are Actors governed by the FSM system. Their state logic follows group priorities, context flags, and frame events, ensuring dynamic interaction rather than scripted behavior.
+Enemies react to sound, light, environmental pressure, and player actions, allowing emergent combat scenarios.
+Flow of Engagement
+                                 1. Encounter initiated by proximity or world trigger.
+                                 2. The player observes and predicts enemy behavior.
+                                 3. Tactical use of gadgets or terrain advantages.
+                                 4. Resolution through defeat, evasion, or environmental collapse.
+
+Weapon & Equipment Scaling
+Weapons and tools scale dynamically with stat alignment rather than linear power curves, promoting personalized playstyles.
+________________
+________________
+
+
+SPECIAL ITEMS
+(Unique or faction-limited loot)
+Marella Trade Goods:
+                                    * Abyssal Pearl: Catalyst for high-tier enchantments; glows faintly when near time rifts.
+
+                                    * Luminescent Scalecloth: Lightweight armor material granting resistance to aquatic hazards.
+
+                                    * Forgotten Relic Core: Pre-Eclipse artifact of unknown function, used in late-game crafting.
+Marella Sea Horn
+Type: Utility Artifact
+Origin: Marella Caravans
+Description:
+ A horn-shaped shell crafted from the remains of an abyssal sea creature, polished smooth by generations of underwater currents. When blown, it produces a low, resonant sound reminiscent of a ship’s horn echoing through the deep.
+Function:
+ Can be used only at specific coastal or underwater resonance points. When activated in the correct location, the horn’s sound triggers a Ki-encoded signal through the Mycelium Neural Network and nearby Blackwater Channels, summoning a Marella Vendor to surface temporarily for trade.
+Usage Notes:
+                                       * Usable only in designated regions marked by subtle bioluminescent coral or sound-based cues.
+
+                                       * Summoned vendors offer contraband or deep-sea relics unavailable through surface merchants.
+
+                                       * Overuse or activation outside valid zones may draw the attention of Galport patrols or hostile sea life.
+
+Lore:
+ Said to be tuned to the pulse of the tide itself, the Sea Horn’s tone acts as both invitation and warning — the Marella appear only to those who understand discretion.
+“If you can hear the tide answer, you’re already being watched.” – Eddaran sailor’s proverb
+________________
+
+
+6: Sage's Gadgets & Temporal Tools
+The Bonsai Sage's inventions serve as the bridge between ancient bio-mechanical knowledge and modern gameplay function. Each gadget combines organic material with clockwork precision, giving the impression of a living technology bound by natural law. Their purpose is to assist Michio in understanding, diagnosing, and gently repairing the rifts caused by time anomalies across the world.
+Design Philosophy
+Sage's Gadgets are not weapons but instruments of perception and restoration. Each represents a principle of harmony: listening, observing, stabilizing, or repairing. They do not control time directly but interpret and interact with its distortions.
+Mechanically, gadgets serve three main purposes:
+                                          1. Detection – Revealing hidden anomalies, frequencies, or patterns.
+                                          2. Interpretation – Translating rift behavior into perceivable feedback.
+                                          3. Resolution – Assisting in stabilizing environments, entities, or timelines once their core disruption is understood.
+
+Core Gadgets 
+( Idea pool. Exact selection and functions tbd)
+                                             * Gramoflower – Detects and records sound-based anomalies.
+                                             * Chronobloom – Indicates time instability in its petal behavior.
+                                             * Memory Lantern – Projects visions of the past.
+                                             * Seed Scanner – Detects botanical relics and hidden objects.
+                                             * Pulse Reed – Reveals invisible rift paths through harmonics.
+                                             * Verdant Prism – Exposes hidden entities or frequencies.
+                                             * Wispcatcher Net – Captures riftspawn or spectral fragments.
+                                             * Spore Compass – Tilts toward nearby anomaly cores.
+                                             * Chronosap Vial – Resets corrupted ground temporarily.
+                                             * Timestitch Needle – Repairs small-scale timeline tears.
+                                             * Bloomvine Sling – Launches seeds for traversal or defense.
+                                             * Ocular Root – Sends remote sensory feedback to Michio.
+                                             * Petal Projector – Projects illusionary reconstructions.
+                                             * Sapdrip Totem – Detects nearby corruption.
+                                             * Fracture Harp – Emits tones revealing anomaly proximity.
+
+________________
+Usage and Limitation
+Gadgets depend on natural conditions — light, humidity, and grounding. They can malfunction in artificial or corrupted zones, encouraging adaptive gameplay.
+Lore Integration
+The Sage’s technology embodies harmony between time and life. These living instruments interpret flow rather than control it, reflecting Densetsu’s philosophy: “Time should be observed, not mastered.”
+Gameplay Connections
+                                                * Exploration: Reveal secrets and hidden stories.
+
+                                                * Puzzles: Logical and organic problem solving.
+
+                                                * Combat Support: Defensive or tactical use only.
+
+                                                * Anomaly Restoration: Central to time stabilization.
+
+________________
+
+
+________________
+7: Progression & Experience System
+Overview
+Character growth in Densetsu reflects internal understanding and mastery, not instantaneous power gain. Experience is earned naturally through action, reflection, and persistence, aligning with the game’s themes of balance and temporal consequence.
+Experience & Leveling
+Players earn Experience Points (XP) through actions governed by skills and core stats. Rather than instantly granting levels, XP accumulates until the player reaches a Rest Point: a place of meditation, reflection, or safety, where the gained experience can be consolidated.
+Level gains represent stabilization and mental alignment rather than an injection of strength. This creates a natural pacing where growth feels earned and tied to the world’s rhythm, not disconnected from it.
+XP converts into Level Gains at Rest Points, representing meditation and stabilization rather than instant increases.
+Core Stats
+                                                   * HP Max
+                                                   * MP Max
+                                                   * Strength
+                                                   * Defense
+                                                   * Agility
+                                                   * Intelligence
+                                                   * Luck
+                                                   * XP Value
+Combat Skills
+                                                   * Unarmed
+                                                   * Armed
+                                                   * Ranged
+                                                   * Finesse
+                                                   * Stealth
+________________
+Elemental Affinities
+Earth, Water, Wind, Fire, Light, Dark, Thunder, Gaea, and Timespace.
+These evolve through successful use just like any other skill.
+Player Reflection & Alignment
+Leveling occurs symbolically through reflection. The Infinitree represents this alignment — growth through harmony, not dominance.
+System Connections
+                                                   * Rest Points for consolidation
+                                                   * Skill Progression through repetition
+                                                   * Equipment scaling by alignment
+                                                   * Anomaly influence on XP rhythm
+________________
+
+
+________________
+8: Temporal Loops & Anomaly Quests
+Overview
+Temporal anomalies are the emotional and mechanical core of Densetsu. They occur where trauma or imbalance fractures time’s flow. Every loop is a self-contained reflection of cause and consequence.
+Varthum Case Study
+Varthum is the centerpiece of this mechanic. Its inhabitants relive fragments of their lives endlessly until the player intervenes through empathy and logic. Restoring these people frees the world one story at a time.
+Loop Design Structures
+                                                   1. Cycle of Cause – Change a single step in a repeating pattern.
+                                                   2. Reset Puzzle – Solve before the next temporal reset.
+                                                   3. Rotating Labyrinth – Shifting environments alter each cycle.
+                                                   4. Ripple Effect – Early actions determine future outcomes.
+                                                   5. Observer’s Log – Observation-based puzzle using insight timing.
+                                                   6. Unstable Geometry – Physically degrading spaces with urgency.
+Persistence of Unresolved Anomalies
+Some loops resist closure. These persist subconsciously, influencing world behavior and dialogue until the player gains insight or new tools.
+This mirrors human memory and reflection, making rediscovery a natural part of the journey.
+Narrative Integration
+Anomalies represent emotional wounds. Healing them restores balance rather than rewriting history. Each resolution reconnects threads of fate and human memory.
+Mechanical Integration
+                                                   * Detection via gadgets like Gramoflower and Chronobloom
+                                                   * Observation-driven problem solving
+                                                   * Resolution through understanding or symbolic action
+                                                   * Memory Feedback through Infinipedia entries
+________________
+
+
+________________
+9: World Structure & Anomaly Impact
+Overview
+The world of Densetsu is interconnected by scars of the Great Eclipse. Each land bears its own type of temporal distortion that defines its culture, challenges, and tone.
+Regional Overview
+Regional Table
+Region
+	Alignment
+	Defining Trait
+	Anomaly Type
+	Hirogawa
+	Neutral
+	Peaceful resource hub
+	Localized Rifts
+	Seigetsu Empire
+	Hostile
+	Militarized conquest state
+	Dimensional Breaches
+	Crimson Dominion
+	Neutral
+	Isolationist & distrustful
+	Atmospheric Distortions
+	Yukigami Ruins
+	Desolate
+	Frozen battlefield of ghosts
+	Ancestral Haunts
+	Eddara
+	Peaceful
+	Pagan harmony with nature
+	Life-Flow Reversals
+	Verdathal
+	Neutral
+	Memory preservation culture
+	Cognitive Loops
+	Varthum
+	Isolated
+	Land of endless cycles
+	Temporal Loops
+	Mycomind
+	Untouched
+	Biotech sanctuary
+	Chrono-Bloom Distortions
+	Galport
+	Dynamic
+	Maritime trade empire
+	Memory Echoes
+	________________
+World-State System
+The world evolves through states: Balanced, Distorted, Collapsed, Restored.
+Each is expressed visually and environmentally rather than through HUD elements.
+Environmental Influence
+                                                   * Weather, flora, and NPCs react to corruption.
+                                                   * Architecture reflects decay or restoration.
+                                                   * Each culture’s adaptation defines its identity.
+Progression Structure
+                                                   * Linear Phase: Hirogawa → Galport.
+                                                   * Free-Roam Phase: Full exploration after Galport’s arc.
+Ensures emotional grounding before open progression.
+Systemic Links
+                                                      * Exploration & quest flow affected by anomaly states.
+                                                      * Combat & AI behaviors shift dynamically.
+                                                      * Music and ambience tied to world harmony.
+
+
+________________
+
+
+________________
+10: Temporal Anomalies & World Restoration Systems
+10.1 Overview
+Temporal anomalies in Densetsu embody the consequences of imbalance — when natural flow, memory, or emotional resonance becomes fragmented. They are the foundation of the game’s world state and progression systems, blending lore, mechanics, and player reflection.
+Anomalies are not enemies but symptoms of the world’s emotional and historical wounds. Some can be healed immediately; others must persist until understanding catches up to capability. This supports the theme that time is not to be conquered, only harmonized.
+________________
+
+
+10.2 Nature of Anomalies
+Each anomaly is a distortion of continuity, creating layers where physical, spiritual, and psychological realities overlap. These distortions vary in scope:
+
+                                                      * Localized Rifts: Minor distortions within small zones (Hirogawa, Eddara).
+
+                                                      * Cascading Fractures: Large-scale destabilizations influencing weather or region-wide behavior (Seigetsu, Verdathal).
+
+                                                      * Temporal Loops: Self-contained repeating events or NPC behaviors (Varthum).
+
+                                                      * Ancestral Haunts: Manifestations of collective grief or lingering souls (Yukigami).
+
+                                                      * Chrono-Bloom Distortions: Living, botanical anomalies tied to bio-temporal flux (Mycomind).
+
+                                                      * Dimensional Breaches: Cross-reality disruptions directly tied to Okashira’s influence (Seigetsu, Final Arc).
+
+________________
+
+
+________________
+10.3 Detection and Feedback Systems
+Anomalies are sensed through natural and contextual cues. The Bonsai Sage’s gadgets act as interpreters of time’s dissonance rather than control devices.
+
+Feedback 
+	Description
+	Example
+	Visual
+	Distortion of light, inversion, suspended motion.
+	Ripples in air where time frays.
+	Auditory
+	Echoes, reversed whispers, melodic looping.
+	A melody repeats backwards near anomaly cores.
+	Kinetic
+	Altered gravity or slowed reaction.
+	Player motion feels heavy or fragmented.
+	Biological
+	Flora/fungi react unnaturally to unseen stimuli.
+	Trees tilt toward rift centers, roots glow faintly.
+	________________
+
+
+10.4 Persistence of Unresolved Anomalies
+Some anomalies resist resolution. They become latent — stored within the Infinitree’s collective subconscious and the player’s narrative memory.
+
+                                                         * Subconscious State: Logged but unresolved anomalies subtly alter dialogue, dreams, and regional ambience.
+                                                         * Evolving Memory: Revisiting areas later may reveal new insights or interactions that allow eventual resolution.
+                                                         * Emotional Parallel: Persistent anomalies mirror Michio’s state of mind, strengthening empathy and thematic immersion.
+
+This mechanic encourages reflection and patience, reinforcing the central narrative message that restoration is growth.
+________________
+
+
+10.5 Interaction & Resolution
+To resolve an anomaly, the player must interpret its cause and act accordingly — using observation, environment, and Sage tools. Mechanical and emotional actions coexist:
+
+                                                            * Mechanical: Correct environmental puzzles, purify terrain, or realign objects.
+                                                            * Emotional: Understand and symbolically release the trapped cause (grief, regret, obsession).
+                                                            * Symbolic Acts: Planting, lighting, or healing gestures bring closure, restoring harmony.
+
+Resolution transforms the surrounding area — flora regrow, lighting stabilizes, NPCs regain clarity.
+________________
+
+
+10.6 System Integration
+                                                               * World State Tracking: Every anomaly’s progress influences weather, NPC AI.
+                                                               * Environmental Systems: Areas shift from Distorted→Collapsed→Restored states.
+                                                               * Quest Logic: Certain quests hinge on anomaly recovery or latent reactivation.
+                                                               * Gadget Synergy: Gadgets interact directly with temporal frequencies.
+                                                               * Infinitree Connection: Metaphysical archive, reflecting the world’s progress.
+
+________________
+
+
+10.7 Restoration Flow
+Restoration occurs in four conceptual stages:
+
+                                                                  1. Recognition: The player receives hints through environmental signals.
+                                                                  2. Engagement: Gadgets or observation unlock paths toward understanding.
+                                                                  3. Acceptance: Not all distortions can be fixed immediately; the player learns patience.
+                                                                  4. Harmony: Resolution restores the natural rhythm of the world.
+
+The process is cyclical — restored regions can still fluctuate, symbolizing the fragility of balance.
+________________
+
+
+10.8 Fail States and Evolution
+Unstable anomalies can regress or evolve if neglected too long:
+
+                                                                     * Weather worsens, local hostility increases.
+                                                                     * Certain NPCs transform into corrupted echoes.
+                                                                     * Gadgets malfunction temporarily under excessive stress.
+
+Failure does not end the game; it reshapes the narrative tone. Restoration is always possible through renewed understanding.
+________________
+
+
+10.9 Endgame Significance
+                                                                        * Perfect Future Ending: Achieved when all anomalies achieve harmony.
+Fractured Ending: Triggered by partial restoration; remnants of corruption persist.
+                                                                        * Collapse Ending: Caused by reckless gadget misuse or narrative neglect of key distortions.
+
+Each ending reflects the player’s treatment of time as a living system, reinforcing that balance, not dominance, defines victory.
+________________
+
+
+See Universe Document §4.3–5.3 for canonical anomaly classifications and resolution principles.

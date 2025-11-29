@@ -1,0 +1,5 @@
+[gd_resource type="Resource" script="res://engine/data/resources/StatsData.gd" format=3]
+
+[resource]
+id = "BaseStats"
+stats = {}

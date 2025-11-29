@@ -1,9 +1,29 @@
-[gd_scene load_steps=5 format=3 uid="uid://editor_overlay"]
+[gd_scene load_steps=6 format=3 uid="uid://editor_overlay"]
 
 [ext_resource type="Script" path="res://engine/editor/EditorOverlay.gd" id="1"]
 
-[sub_resource type="StyleBoxFlat" id="1"]
-bg_color = Color(0.1, 0.1, 0.1, 0.7)
+[sub_resource type="StyleBoxFlat" id="bg_gradient"]
+bg_color = Color(0.08, 0.08, 0.08, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+
+[sub_resource type="StyleBoxFlat" id="input_dark"]
+bg_color = Color(0.25, 0.25, 0.25, 1)
+
+[sub_resource type="StyleBoxFlat" id="input_light"]
+bg_color = Color(0.4, 0.4, 0.4, 1)
+
+[sub_resource type="StyleBoxFlat" id="button_black"]
+bg_color = Color(0.05, 0.05, 0.05, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_left = 3
+corner_radius_bottom_right = 3
+
+[sub_resource type="StyleBoxFlat" id="list_panel"]
+bg_color = Color(0.12, 0.12, 0.12, 1)
 
 [node name="EditorOverlay" type="CanvasLayer"]
 script = ExtResource("1")
@@ -15,7 +35,7 @@ offset_left = 0.0
 offset_top = 0.0
 offset_right = 0.0
 offset_bottom = 40.0
-custom_styles/panel = SubResource("1")
+custom_styles/panel = SubResource("bg_gradient")
 
 [node name="StatusLabel" type="Label" parent="Ribbon"]
 offset_left = 8.0
@@ -37,6 +57,8 @@ offset_top = 8.0
 offset_right = 600.0
 offset_bottom = 30.0
 text = "Undo"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 
 [node name="Redo" type="Button" parent="Ribbon"]
 offset_left = 610.0
@@ -44,63 +66,90 @@ offset_top = 8.0
 offset_right = 670.0
 offset_bottom = 30.0
 text = "Redo"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 
 [node name="Save" type="Button" parent="Ribbon"]
-offset_left = 680.0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -330.0
 offset_top = 8.0
-offset_right = 740.0
+offset_right = -270.0
 offset_bottom = 30.0
 text = "Save"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 
 [node name="Load" type="Button" parent="Ribbon"]
-offset_left = 750.0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -270.0
+offset_top = 8.0
+offset_right = -210.0
+offset_bottom = 30.0
+text = "Load"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="Data" type="Button" parent="Ribbon"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -210.0
+offset_top = 8.0
+offset_right = -150.0
+offset_bottom = 30.0
+text = "Data"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="Templates" type="Button" parent="Ribbon"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 8.0
+offset_right = -80.0
+offset_bottom = 30.0
+text = "Templates"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="Reload" type="Button" parent="Ribbon"]
+offset_left = 600.0
+offset_top = 8.0
+offset_right = 680.0
+offset_bottom = 30.0
+text = "Reload"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="QuickLoad" type="OptionButton" parent="Ribbon"]
+offset_left = 900.0
+offset_top = 8.0
+offset_right = 1030.0
+offset_bottom = 30.0
+focus_mode = 0
+text = "Recent"
+custom_styles/normal = SubResource("input_dark")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="SnapToggle" type="CheckBox" parent="Ribbon"]
+offset_left = 730.0
 offset_top = 8.0
 offset_right = 810.0
 offset_bottom = 30.0
-text = "Load"
-
-[node name="SaveDialog" type="FileDialog" parent="."]
-access = 2
-file_mode = 2
-filters = PackedStringArray("*.tscn ; Scenes")
-current_path = "res://editor_saves/last_scene.tscn"
-current_file = "last_scene.tscn"
-close_button_visible = true
-ok_button_text = "Save"
-hide_on_ok = true
-
-[node name="LoadDialog" type="FileDialog" parent="."]
-access = 2
-file_mode = 0
-filters = PackedStringArray("*.tscn ; Scenes")
-current_path = "res://editor_saves/"
-close_button_visible = true
-ok_button_text = "Load"
-hide_on_ok = true
-
-[node name="Reload" type="Button" parent="Ribbon"]
-offset_left = 820.0
-offset_top = 8.0
-offset_right = 900.0
-offset_bottom = 30.0
-text = "Reload"
-
-[node name="SnapToggle" type="CheckBox" parent="Ribbon"]
-offset_left = 920.0
-offset_top = 8.0
-offset_right = 1000.0
-offset_bottom = 30.0
 text = "Snap"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 
 [node name="SnapSize" type="LineEdit" parent="Ribbon"]
-offset_left = 1010.0
+offset_left = 820.0
 offset_top = 8.0
-offset_right = 1070.0
+offset_right = 880.0
 offset_bottom = 30.0
 text = "8"
 editable = true
 max_length = 4
 caret_caret_blink = true
+custom_styles/normal = SubResource("input_light")
 
 [node name="SidebarLeft" type="Panel" parent="."]
 anchor_right = 0.0
@@ -109,7 +158,7 @@ offset_left = 0.0
 offset_top = 40.0
 offset_right = 200.0
 offset_bottom = 0.0
-custom_styles/panel = SubResource("1")
+custom_styles/panel = SubResource("bg_gradient")
 
 [node name="PrefabList" type="VBoxContainer" parent="SidebarLeft"]
 anchor_right = 1.0
@@ -127,10 +176,12 @@ text = "Prefabs"
 text = "DELETE"
 focus_mode = 0
 theme_override_colors/font_color = Color(1, 0, 0, 1)
+custom_styles/normal = SubResource("button_black")
 
 [node name="PrefabTabs" type="TabContainer" parent="SidebarLeft/PrefabList"]
 size_flags_vertical = 3
 tab_alignment = 0
+custom_styles/panel = SubResource("list_panel")
 
 [node name="Building" type="VBoxContainer" parent="SidebarLeft/PrefabList/PrefabTabs"]
 layout_mode = 2
@@ -139,26 +190,32 @@ theme_override_constants/separation = 4
 [node name="PlaceSolid" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Solid"
 focus_mode = 0
+custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceOneWay" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "One-Way"
 focus_mode = 0
+custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceSlopeLeft" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Slope Left"
 focus_mode = 0
+custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceSlopeRight" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Slope Right"
 focus_mode = 0
+custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceDeco" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Deco"
 focus_mode = 0
+custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceDecoSolid" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Solid Deco"
 focus_mode = 0
+custom_styles/normal = SubResource("button_black")
 
 [node name="Actors" type="VBoxContainer" parent="SidebarLeft/PrefabList/PrefabTabs"]
 theme_override_constants/separation = 4
@@ -166,18 +223,27 @@ theme_override_constants/separation = 4
 [node name="PlacePlayer" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "Player"
 focus_mode = 0
+custom_styles/normal = SubResource("button_black")
 
-[node name="PlaceEnemy" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
-text = "Enemy"
+[node name="PlaceActor" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
+text = "Actor"
 focus_mode = 0
+custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceTrap" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "Trap"
 focus_mode = 0
+custom_styles/normal = SubResource("button_black")
+
+[node name="PlaceSpawner" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
+text = "Actor Spawner"
+focus_mode = 0
+custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceItem" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "Item"
 focus_mode = 0
+custom_styles/normal = SubResource("button_black")
 
 [node name="Inspector" type="VBoxContainer" parent="."]
 anchor_left = 1.0
@@ -201,9 +267,14 @@ text = "Pos X"
 
 [node name="PosX" type="LineEdit" parent="Inspector/PosRow"]
 custom_minimum_size = Vector2(120, 0)
+custom_styles/normal = SubResource("input_light")
 
 [node name="PosXApply" type="Button" parent="Inspector/PosRow"]
 text = "Apply"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 
 [node name="PosYRow" type="HBoxContainer" parent="Inspector"]
 
@@ -212,9 +283,14 @@ text = "Pos Y"
 
 [node name="PosY" type="LineEdit" parent="Inspector/PosYRow"]
 custom_minimum_size = Vector2(120, 0)
+custom_styles/normal = SubResource("input_light")
 
 [node name="PosYApply" type="Button" parent="Inspector/PosYRow"]
 text = "Apply"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 
 [node name="RotRow" type="HBoxContainer" parent="Inspector"]
 
@@ -223,9 +299,19 @@ text = "Rot"
 
 [node name="Rot" type="LineEdit" parent="Inspector/RotRow"]
 custom_minimum_size = Vector2(120, 0)
+custom_styles/normal = SubResource("input_light")
 
 [node name="RotApply" type="Button" parent="Inspector/RotRow"]
 text = "Apply"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+
+[node name="RotReset" type="Button" parent="Inspector/RotRow"]
+text = "Reset"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
 
 [node name="ScaleXRow" type="HBoxContainer" parent="Inspector"]
 
@@ -234,9 +320,17 @@ text = "Scale X"
 
 [node name="ScaleX" type="LineEdit" parent="Inspector/ScaleXRow"]
 custom_minimum_size = Vector2(120, 0)
+custom_styles/normal = SubResource("input_light")
 
 [node name="ScaleXApply" type="Button" parent="Inspector/ScaleXRow"]
 text = "Apply"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+
+[node name="ScaleXReset" type="Button" parent="Inspector/ScaleXRow"]
+text = "Reset"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
 
 [node name="ScaleYRow" type="HBoxContainer" parent="Inspector"]
 
@@ -245,18 +339,292 @@ text = "Scale Y"
 
 [node name="ScaleY" type="LineEdit" parent="Inspector/ScaleYRow"]
 custom_minimum_size = Vector2(120, 0)
+custom_styles/normal = SubResource("input_light")
 
 [node name="ScaleYApply" type="Button" parent="Inspector/ScaleYRow"]
 text = "Apply"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+
+[node name="ScaleYReset" type="Button" parent="Inspector/ScaleYRow"]
+text = "Reset"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
 
 [node name="ProjRow" type="HBoxContainer" parent="Inspector"]
 
-[node name="ProjLabel" type="Label" parent="Inspector/ProjRow"]
-text = "Proj Collide"
-
 [node name="ProjCollide" type="CheckBox" parent="Inspector/ProjRow"]
-focus_mode = 0
+text = "Projectile Collide"
+visible = false
 
 [node name="ProjApply" type="Button" parent="Inspector/ProjRow"]
 text = "Apply"
-focus_mode = 0
+visible = false
+custom_styles/normal = SubResource("button_black")
+
+[node name="ModalBlocker" type="ColorRect" parent="."]
+visible = false
+color = Color(0, 0, 0, 0.45)
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+mouse_filter = 2
+
+[node name="SavePanel" type="Panel" parent="."]
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+custom_styles/panel = SubResource("bg_gradient")
+mouse_filter = 2
+
+[node name="SaveBg" type="ColorRect" parent="SavePanel"]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+color = Color(0.05, 0.05, 0.05, 1)
+mouse_filter = 2
+
+[node name="SaveRoot" type="VBoxContainer" parent="SavePanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="SaveTitle" type="Label" parent="SavePanel/SaveRoot"]
+text = "Save Scene"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="SavePathRow" type="HBoxContainer" parent="SavePanel/SaveRoot"]
+theme_override_constants/separation = 8
+
+[node name="SavePathLabel" type="Label" parent="SavePanel/SaveRoot/SavePathRow"]
+text = "Path"
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+
+[node name="SavePath" type="LineEdit" parent="SavePanel/SaveRoot/SavePathRow"]
+custom_minimum_size = Vector2(400, 0)
+theme_override_styles/normal = SubResource("input_dark")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="SaveFilenameRow" type="HBoxContainer" parent="SavePanel/SaveRoot"]
+theme_override_constants/separation = 8
+
+[node name="SaveFilenameLabel" type="Label" parent="SavePanel/SaveRoot/SaveFilenameRow"]
+text = "File"
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+
+[node name="SaveFilename" type="LineEdit" parent="SavePanel/SaveRoot/SaveFilenameRow"]
+custom_minimum_size = Vector2(280, 0)
+theme_override_styles/normal = SubResource("input_light")
+
+[node name="SaveList" type="ItemList" parent="SavePanel/SaveRoot"]
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("list_panel")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="SaveButtons" type="HBoxContainer" parent="SavePanel/SaveRoot"]
+theme_override_constants/separation = 10
+
+[node name="SaveConfirm" type="Button" parent="SavePanel/SaveRoot/SaveButtons"]
+text = "Save"
+custom_minimum_size = Vector2(90, 0)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+custom_styles/normal = SubResource("button_black")
+
+[node name="SaveCancel" type="Button" parent="SavePanel/SaveRoot/SaveButtons"]
+text = "Cancel"
+custom_minimum_size = Vector2(90, 0)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+custom_styles/normal = SubResource("button_black")
+
+[node name="LoadPanel" type="Panel" parent="."]
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+custom_styles/panel = SubResource("bg_gradient")
+mouse_filter = 2
+
+[node name="LoadBg" type="ColorRect" parent="LoadPanel"]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+color = Color(0.05, 0.05, 0.05, 1)
+mouse_filter = 2
+
+[node name="LoadRoot" type="VBoxContainer" parent="LoadPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="LoadTitle" type="Label" parent="LoadPanel/LoadRoot"]
+text = "Load Scene"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="LoadPathRow" type="HBoxContainer" parent="LoadPanel/LoadRoot"]
+theme_override_constants/separation = 8
+
+[node name="LoadPathLabel" type="Label" parent="LoadPanel/LoadRoot/LoadPathRow"]
+text = "Path"
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+
+[node name="LoadPath" type="LineEdit" parent="LoadPanel/LoadRoot/LoadPathRow"]
+custom_minimum_size = Vector2(400, 0)
+theme_override_styles/normal = SubResource("input_dark")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="LoadList" type="ItemList" parent="LoadPanel/LoadRoot"]
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("list_panel")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="LoadButtons" type="HBoxContainer" parent="LoadPanel/LoadRoot"]
+theme_override_constants/separation = 10
+
+[node name="LoadConfirm" type="Button" parent="LoadPanel/LoadRoot/LoadButtons"]
+text = "Load"
+custom_minimum_size = Vector2(90, 0)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+custom_styles/normal = SubResource("button_black")
+
+[node name="LoadCancel" type="Button" parent="LoadPanel/LoadRoot/LoadButtons"]
+text = "Cancel"
+custom_minimum_size = Vector2(90, 0)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+custom_styles/normal = SubResource("button_black")
+
+[node name="TemplatePanel" type="Panel" parent="."]
+visible = false
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+custom_styles/panel = SubResource("bg_gradient")
+mouse_filter = 2
+
+[node name="TemplateBg" type="ColorRect" parent="TemplatePanel"]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+color = Color(0.05, 0.05, 0.05, 1)
+mouse_filter = 2
+
+[node name="TemplateRoot" type="VBoxContainer" parent="TemplatePanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="TemplateTitle" type="Label" parent="TemplatePanel/TemplateRoot"]
+text = "Templates"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="TemplateTabs" type="TabContainer" parent="TemplatePanel/TemplateRoot"]
+size_flags_vertical = 3
+custom_styles/panel = SubResource("list_panel")
+
+[node name="TemplateTabActors" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
+theme_override_constants/separation = 6
+
+[node name="TemplateTabActorsLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabActors"]
+text = "Actors (template editing coming soon)"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="TemplateTabStats" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
+
+[node name="TemplateTabStatsLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabStats"]
+text = "Stats templates (coming soon)"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="TemplateTabFaction" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
+
+[node name="TemplateTabFactionLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabFaction"]
+text = "Factions (coming soon)"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="TemplateTabAIProfile" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
+
+[node name="TemplateTabAIProfileLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabAIProfile"]
+text = "AI Profiles (coming soon)"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="TemplateTabItem" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
+
+[node name="TemplateTabItemLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabItem"]
+text = "Items (coming soon)"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="TemplateTabProjectile" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
+
+[node name="TemplateTabProjectileLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabProjectile"]
+text = "Projectiles (coming soon)"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="TemplateTabTrap" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
+
+[node name="TemplateTabTrapLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabTrap"]
+text = "Traps (coming soon)"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="TemplateTabPlatform" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
+
+[node name="TemplateTabPlatformLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabPlatform"]
+text = "Platforms (coming soon)"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="TemplateTabLoot" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
+
+[node name="TemplateTabLootLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabLoot"]
+text = "Loot Tables (coming soon)"
+theme_override_colors/font_color = Color(1, 1, 1, 1)

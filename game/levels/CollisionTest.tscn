@@ -34,7 +34,7 @@ position = Vector2(140, -32)
 position = Vector2(0, -64)
 
 [node name="SolidGround" parent="." instance=ExtResource("13")]
-position = Vector2(0, 24)
+position = Vector2(22, 39)
 scale = Vector2(4, 0.25)
 
 [node name="SlopeLeft" type="StaticBody2D" parent="."]

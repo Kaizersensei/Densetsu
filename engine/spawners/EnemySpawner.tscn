@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://enemy_spawner"]
+
+[ext_resource type="Script" path="res://engine/spawners/EnemySpawner.gd" id="1"]
+[ext_resource type="Texture2D" path="res://engine/editor/icons/enemy_spawner.png" id="2"]
+
+[sub_resource type="CircleShape2D" id="1"]
+radius = 6.0
+
+[node name="ActorSpawner" type="Area2D"]
+collision_layer = 0
+collision_mask = 0
+monitorable = false
+monitoring = false
+script = ExtResource("1")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2")
+centered = true
+modulate = Color(1, 1, 1, 1)
+visible = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("1")

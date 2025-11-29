@@ -12,6 +12,7 @@ signal selection_changed(node)
 @export var zoom_min := 0.2
 @export var zoom_max := 3.0
 @export var camera_pan_speed := 400.0
+@export var select_parent_action := "editor_select_parent"
 var editor_mode := false
 var editor_camera: Camera2D
 var _game_camera: Camera2D
@@ -35,6 +36,7 @@ var _drag_start_node: Node2D
 var _baseline_snapshot: PackedScene
 var _save_path_primary := "res://editor_saves/last_scene.tscn"
 var _save_path_fallback := "user://editor_save.tscn"
+var _window_controller: Node = null
 const HISTORY_TRANSFORM := "transform"
 const HISTORY_CREATE := "create"
 const HISTORY_DELETE := "delete"
@@ -51,9 +53,11 @@ const PREFAB_NAMES := {
 	"deco_solid": "Solid Deco",
 	"trap": "Trap",
 	"item": "Item",
-	"enemy": "Enemy",
+	"actor": "Actor",
 	"player": "Player",
+	"spawner": "Actor Spawner",
 }
+var _data_editor: Node
 
 func _ready() -> void:
 	set_process_input(true)
@@ -62,6 +66,7 @@ func _ready() -> void:
 	_ensure_toggle_action()
 	_ensure_hitbox_toggle_action()
 	_ensure_editor_camera_actions()
+	_ensure_select_parent_action()
 	_sanitize_input_maps()
 	print("EditorManager ready. Toggle action:", toggle_action)
 	_overlay = preload("res://engine/editor/EditorOverlay.tscn").instantiate()
@@ -71,6 +76,11 @@ func _ready() -> void:
 		_overlay.connect_inspector(_on_inspector_changed)
 	if _overlay and _overlay.has_method("connect_prefab_buttons"):
 		_overlay.connect_prefab_buttons(_on_prefab_selected)
+	_window_controller = _ensure_window_controller()
+	if _window_controller:
+		_window_controller.set("top_margin", _get_ribbon_height())
+	if _overlay and _overlay.has_method("register_popups"):
+		_overlay.register_popups(_window_controller)
 	editor_camera = preload("res://engine/editor/EditorCamera2D.tscn").instantiate()
 	editor_camera.enabled = false
 	editor_camera.visible = false
@@ -78,6 +88,10 @@ func _ready() -> void:
 	_grid = preload("res://engine/editor/GridOverlay.gd").new()
 	_grid.visible = false
 	add_child(_grid)
+	_data_editor = preload("res://engine/editor/DataEditor.tscn").instantiate()
+	_data_editor.visible = false
+	if _overlay:
+		_overlay.add_child(_data_editor)
 	_highlight = Line2D.new()
 	_highlight.width = 1.5
 	_highlight.default_color = Color(1, 0.8, 0.2, 0.8)
@@ -219,6 +233,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			var ctrl_key: bool = Input.is_key_pressed(KEY_CTRL)
 			if not ctrl_down and not ctrl_key:
 				return
+			if _ui_blocking_input():
+				return
 			_handle_zoom(event)
 			get_viewport().set_input_as_handled()
 
@@ -236,6 +252,9 @@ func _input(event: InputEvent) -> void:
 		if event.keycode == KEY_F12 or event.physical_keycode == KEY_F12:
 			_toggle_editor()
 			print("Editor toggle via KEY_F12 fallback; editor_mode now:", editor_mode)
+			get_viewport().set_input_as_handled()
+		elif event.is_action_pressed(select_parent_action):
+			_select_parent()
 			get_viewport().set_input_as_handled()
 	if not editor_mode:
 		return
@@ -431,6 +450,20 @@ func _ensure_editor_camera_actions() -> void:
 			InputMap.action_add_event(action, ev)
 
 
+func _ensure_select_parent_action() -> void:
+	if not InputMap.has_action(select_parent_action):
+		InputMap.add_action(select_parent_action)
+	var has_key := false
+	for ev in InputMap.action_get_events(select_parent_action):
+		if ev is InputEventKey and ev.keycode == KEY_Q:
+			has_key = true
+			break
+	if not has_key:
+		var ev := InputEventKey.new()
+		ev.keycode = KEY_Q
+		InputMap.action_add_event(select_parent_action, ev)
+
+
 func _sanitize_input_maps() -> void:
 	# Restrict player move actions to WASD + arrow keys as intended
 	_restrict_action_keys("move_left", [KEY_A, KEY_LEFT])
@@ -442,6 +475,16 @@ func _sanitize_input_maps() -> void:
 	_restrict_action_keys("editor_cam_right", [KEY_RIGHT])
 	_restrict_action_keys("editor_cam_up", [KEY_UP])
 	_restrict_action_keys("editor_cam_down", [KEY_DOWN])
+
+
+func _select_parent() -> void:
+	if _selected and _selected.get_parent() and _selected.get_parent() is Node2D:
+		var parent_nd: Node2D = _selected.get_parent()
+		if _is_scene_root(parent_nd):
+			return
+		if _is_unselectable_node(parent_nd):
+			return
+		set_selection(parent_nd)
 
 
 func _restrict_action_keys(action: String, allowed: Array) -> void:
@@ -718,6 +761,9 @@ func _on_prefab_selected(kind: String, data: Variant = null) -> void:
 	if kind == "reload":
 		_reload_scene()
 		return
+	if kind == "data":
+		_toggle_data_editor()
+		return
 	if kind == "delete":
 		_delete_mode = true
 		_stamp_prefab = ""
@@ -764,30 +810,32 @@ func _place_prefab_at_mouse() -> void:
 	_set_cursor_plus()
 
 
-func _attach_enemy_spawner(enemy: Node) -> void:
-	if enemy == null or not (enemy is Node):
+func _attach_actor_spawner(actor: Node) -> void:
+	if actor == null or not (actor is Node):
 		return
-	var spawner := preload("res://engine/projectiles/ProjectileSpawner.tscn").instantiate()
+	var spawner := preload("res://engine/spawners/EnemySpawner.tscn").instantiate()
 	spawner.owner_path = NodePath("..")
 	spawner.projectile_scene = preload("res://engine/projectiles/EnemyProjectile2D.tscn")
 	spawner.speed = 250.0
 	spawner.direction = -1.0
 	spawner.fire_interval = 2.0
-	enemy.add_child(spawner)
+	actor.add_child(spawner)
 
 
 func _get_prefab_scene(kind: String) -> PackedScene:
 	match kind:
 		"player":
 			return preload("res://engine/actors/ActorCharacter2D.tscn")
-		"enemy":
-			return preload("res://engine/actors/EnemyDummy.tscn")
+		"actor":
+			return preload("res://engine/actors/ActorCharacter2D.tscn")
 		"deco":
 			return preload("res://engine/decoration/ActorDeco2D.tscn")
 		"deco_solid":
 			return preload("res://engine/decoration/ActorDeco2D_Static.tscn")
 		"trap":
 			return preload("res://engine/traps/ActorTrap2D.tscn")
+		"spawner":
+			return preload("res://engine/spawners/EnemySpawner.tscn")
 		"item":
 			return preload("res://engine/items/ActorItem2D.tscn")
 		"solid", "ground", "wall", "ceiling":
@@ -913,6 +961,12 @@ func _on_inspector_changed(value: String) -> void:
 			n.scale.x = float(_overlay._scale_x.text)
 		"scale_y":
 			n.scale.y = float(_overlay._scale_y.text)
+		"rot_reset":
+			n.rotation = 0.0
+		"scale_x_reset":
+			n.scale.x = 1.0
+		"scale_y_reset":
+			n.scale.y = 1.0
 		"proj_collide":
 			if "allow_projectile_collision" in n:
 				n.set("allow_projectile_collision", _overlay._proj_collide.button_pressed)
@@ -1093,6 +1147,15 @@ func _handle_zoom(event: InputEventMouseButton) -> void:
 	print("Zoom applied. Button:", event.button_index, "New zoom:", editor_camera.zoom, "is_current:", editor_camera.is_current())
 
 
+func _toggle_data_editor() -> void:
+	if _overlay and _overlay.has_method("_set_active_panel"):
+		var next := "data"
+		var data_panel := get_node_or_null("EditorOverlay/DataEditor")
+		if data_panel and data_panel.visible:
+			next = ""
+		_overlay.call("_set_active_panel", next)
+
+
 func _handle_editor_camera_move(delta: float) -> void:
 	if editor_camera == null:
 		return
@@ -1108,3 +1171,36 @@ func _handle_editor_camera_move(delta: float) -> void:
 	if dir != Vector2.ZERO:
 		dir = dir.normalized()
 		editor_camera.global_position += dir * camera_pan_speed * delta
+
+
+func _ui_blocking_input() -> bool:
+	if _window_controller and _window_controller.has_method("is_any_open"):
+		return _window_controller.call("is_any_open")
+	return false
+
+
+func _ensure_window_controller() -> Node:
+	var node := get_tree().root.get_node_or_null("WindowController")
+	if node:
+		return node
+	var ctrl := preload("res://engine/editor/WindowController.gd").new()
+	ctrl.name = "WindowController"
+	get_tree().root.add_child(ctrl)
+	return ctrl
+
+
+func _maximize_window(win: Node) -> void:
+	if win == null or not (win is Window):
+		return
+	var w := win as Window
+	var rect := get_viewport().get_visible_rect()
+	w.size = rect.size
+	w.position = rect.position
+
+
+func _get_ribbon_height() -> float:
+	if _overlay:
+		var rib := _overlay.get_node_or_null("Ribbon")
+		if rib and rib is Control:
+			return (rib as Control).size.y
+	return 0.0
