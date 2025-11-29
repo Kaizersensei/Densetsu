@@ -1,4 +1,0 @@
-[gd_resource type="Resource" script="res://engine/data/resources/TrapData.gd" format=3]
-
-[resource]
-id = "BaseTrap"

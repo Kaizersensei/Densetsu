@@ -1,4 +1,3 @@
-res://engine/editor/DataEditor.gd
 res://game/levels/CollisionTest.tscn
 res://assets/placeholder_enemy_projectile.tres
 res://assets/placeholder_player.tres
@@ -7,6 +6,4 @@ res://assets/placeholder_deco.tres
 res://assets/placeholder_trap.tres
 res://assets/placeholder_item.tres
 res://assets/placeholder_projectile.tres
-res://engine/actors/resources/ActorData.gd
-res://engine/actors/resources/SpawnerData.gd
-res://engine/actors/ActorNPC2D.tscn
+res://engine/editor/DataEditor.gd

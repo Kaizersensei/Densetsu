@@ -292,6 +292,191 @@ text = "XP"
 [node name="XP" type="LineEdit" parent="Root/ScrollInspector/Inspector/LevelRow"]
 custom_minimum_size = Vector2(80, 0)
 
+[node name="StatsLabel" type="Label" parent="Root/ScrollInspector/Inspector"]
+text = "Stats"
+
+[node name="HPRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="HPLabel" type="Label" parent="Root/ScrollInspector/Inspector/HPRow"]
+custom_minimum_size = Vector2(60, 0)
+text = "HP"
+
+[node name="HP" type="LineEdit" parent="Root/ScrollInspector/Inspector/HPRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="MPRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="MPLabel" type="Label" parent="Root/ScrollInspector/Inspector/MPRow"]
+custom_minimum_size = Vector2(60, 0)
+text = "MP"
+
+[node name="MP" type="LineEdit" parent="Root/ScrollInspector/Inspector/MPRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="StrengthRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="StrengthLabel" type="Label" parent="Root/ScrollInspector/Inspector/StrengthRow"]
+custom_minimum_size = Vector2(60, 0)
+text = "Str"
+
+[node name="Strength" type="LineEdit" parent="Root/ScrollInspector/Inspector/StrengthRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="DefenseRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="DefenseLabel" type="Label" parent="Root/ScrollInspector/Inspector/DefenseRow"]
+custom_minimum_size = Vector2(60, 0)
+text = "Def"
+
+[node name="Defense" type="LineEdit" parent="Root/ScrollInspector/Inspector/DefenseRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="AgilityRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="AgilityLabel" type="Label" parent="Root/ScrollInspector/Inspector/AgilityRow"]
+custom_minimum_size = Vector2(60, 0)
+text = "Agi"
+
+[node name="Agility" type="LineEdit" parent="Root/ScrollInspector/Inspector/AgilityRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="IntelligenceRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="IntelligenceLabel" type="Label" parent="Root/ScrollInspector/Inspector/IntelligenceRow"]
+custom_minimum_size = Vector2(60, 0)
+text = "Int"
+
+[node name="Intelligence" type="LineEdit" parent="Root/ScrollInspector/Inspector/IntelligenceRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="LuckRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="LuckLabel" type="Label" parent="Root/ScrollInspector/Inspector/LuckRow"]
+custom_minimum_size = Vector2(60, 0)
+text = "Luck"
+
+[node name="Luck" type="LineEdit" parent="Root/ScrollInspector/Inspector/LuckRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="ElementLabel" type="Label" parent="Root/ScrollInspector/Inspector"]
+text = "Elemental"
+
+[node name="ElemFireRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="ElemFireLabel" type="Label" parent="Root/ScrollInspector/Inspector/ElemFireRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Fire"
+
+[node name="ElemFire" type="LineEdit" parent="Root/ScrollInspector/Inspector/ElemFireRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="ElemWaterRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="ElemWaterLabel" type="Label" parent="Root/ScrollInspector/Inspector/ElemWaterRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Water"
+
+[node name="ElemWater" type="LineEdit" parent="Root/ScrollInspector/Inspector/ElemWaterRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="ElemEarthRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="ElemEarthLabel" type="Label" parent="Root/ScrollInspector/Inspector/ElemEarthRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Earth"
+
+[node name="ElemEarth" type="LineEdit" parent="Root/ScrollInspector/Inspector/ElemEarthRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="ElemWindRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="ElemWindLabel" type="Label" parent="Root/ScrollInspector/Inspector/ElemWindRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Wind"
+
+[node name="ElemWind" type="LineEdit" parent="Root/ScrollInspector/Inspector/ElemWindRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="ElemLightRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="ElemLightLabel" type="Label" parent="Root/ScrollInspector/Inspector/ElemLightRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Light"
+
+[node name="ElemLight" type="LineEdit" parent="Root/ScrollInspector/Inspector/ElemLightRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="ElemDarkRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="ElemDarkLabel" type="Label" parent="Root/ScrollInspector/Inspector/ElemDarkRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Dark"
+
+[node name="ElemDark" type="LineEdit" parent="Root/ScrollInspector/Inspector/ElemDarkRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="SkillLabel" type="Label" parent="Root/ScrollInspector/Inspector"]
+text = "Skills"
+
+[node name="SkillAtkRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="SkillAtkLabel" type="Label" parent="Root/ScrollInspector/Inspector/SkillAtkRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Attack"
+
+[node name="SkillAtk" type="LineEdit" parent="Root/ScrollInspector/Inspector/SkillAtkRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="SkillSupportRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="SkillSupportLabel" type="Label" parent="Root/ScrollInspector/Inspector/SkillSupportRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Support"
+
+[node name="SkillSupport" type="LineEdit" parent="Root/ScrollInspector/Inspector/SkillSupportRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="SkillSpecialRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="SkillSpecialLabel" type="Label" parent="Root/ScrollInspector/Inspector/SkillSpecialRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Special"
+
+[node name="SkillSpecial" type="LineEdit" parent="Root/ScrollInspector/Inspector/SkillSpecialRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
 [node name="AIStateLabel" type="Label" parent="Root/ScrollInspector/Inspector"]
 text = "AI Initial State"
 

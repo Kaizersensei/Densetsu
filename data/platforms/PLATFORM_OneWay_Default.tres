@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="PlatformData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://engine/data/resources/PlatformData.gd" id="1"]
+[ext_resource type="PackedScene" path="res://engine/platforms/PlatformOneWay.tscn" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "PLATFORM_OneWay_Default"
+description = "One-way platform"
+scene = ExtResource("2")
+platform_type = "one_way"
+allow_projectile_collision = false

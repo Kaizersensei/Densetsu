@@ -63,6 +63,7 @@ var _panel_buttons: Array[Control] = []
 var _current_panel: String = ""
 var _data_panel: Control = null
 @onready var _templates_button: Button = $Ribbon/Templates
+@onready var _hover_label: Label = $Ribbon/HoverLabel
 
 func set_editor_mode(active: bool) -> void:
 	visible = active
@@ -73,6 +74,17 @@ func set_editor_mode(active: bool) -> void:
 func set_selection_name(name: String) -> void:
 	if _selection:
 		_selection.text = "Selected: %s" % name
+
+func set_hover_info(text: String) -> void:
+	if _hover_label:
+		_hover_label.text = text
+	if has_node("HoverTip"):
+		var tip := get_node("HoverTip")
+		if tip and tip is Control:
+			var lbl := tip.get_node_or_null("HoverTipLabel")
+			if lbl and lbl is Label:
+				(lbl as Label).text = text
+			tip.visible = text != "" and text != "Hover: None"
 
 
 func get_snap_enabled() -> bool:

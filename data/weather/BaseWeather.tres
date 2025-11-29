@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="WeatherData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://engine/data/resources/WeatherData.gd" id="1_7h4cm"]
+
+[resource]
+script = ExtResource("1_7h4cm")
+id = "BaseWeather"
+description = ""
+tags = PackedStringArray()

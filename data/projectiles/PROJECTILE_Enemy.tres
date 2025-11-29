@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ProjectileData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://engine/data/resources/ProjectileData.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/placeholder_enemy_projectile.tres" id="2"]
+[ext_resource type="PackedScene" path="res://engine/projectiles/EnemyProjectile2D.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = "PROJECTILE_Enemy"
+description = "Enemy projectile placeholder"
+sprite = ExtResource("2")
+scene = ExtResource("3")
+speed = 300.0
+gravity = 0.0
+damage = 1
+knockback = Vector2(0, 0)
+lifetime = 3.0
+pierce_count = 0
+element = 0
+collision_layer = 1
+collision_mask = 1
+owner_team = ""

@@ -20,6 +20,8 @@ class_name ActorData
 @export var inventory_template_id: String = ""
 @export var patrol_path_id: String = ""
 @export var schedule_id: String = ""
+@export_enum("override", "average", "add", "merge") var stats_merge_policy: String = "override"
+@export_enum("override", "merge") var inventory_merge_policy: String = "override"
 @export var spawn_respawn: bool = false
 @export var spawn_unique: bool = false
 @export var spawn_persistent: bool = false

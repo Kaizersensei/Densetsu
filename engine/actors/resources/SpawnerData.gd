@@ -11,3 +11,6 @@ class_name SpawnerData
 @export var active_end_time: float = 9999.0
 @export var team: String = ""
 @export var show_in_game: bool = false
+@export var target_category: String = "Actor"
+@export var target_id: String = ""
+@export var spawn_radius: float = 0.0

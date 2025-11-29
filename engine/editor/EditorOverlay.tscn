@@ -51,12 +51,36 @@ offset_right = 520.0
 offset_bottom = 30.0
 text = "None"
 
+[node name="HoverLabel" type="Label" parent="Ribbon"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 8.0
+offset_right = 200.0
+offset_bottom = 30.0
+text = "Hover: None"
+
+[node name="HoverTip" type="Panel" parent="."]
+visible = false
+mouse_filter = 2
+z_index = 2000
+custom_styles/panel = SubResource("list_panel")
+
+[node name="HoverTipLabel" type="Label" parent="HoverTip"]
+offset_left = 6.0
+offset_top = 4.0
+offset_right = 250.0
+offset_bottom = 24.0
+text = ""
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
 [node name="Undo" type="Button" parent="Ribbon"]
 offset_left = 540.0
 offset_top = 8.0
 offset_right = 600.0
 offset_bottom = 30.0
 text = "Undo"
+tooltip_text = "Undo last edit"
 custom_styles/normal = SubResource("button_black")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
@@ -66,6 +90,7 @@ offset_top = 8.0
 offset_right = 670.0
 offset_bottom = 30.0
 text = "Redo"
+tooltip_text = "Redo last undone edit"
 custom_styles/normal = SubResource("button_black")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
@@ -77,6 +102,7 @@ offset_top = 8.0
 offset_right = -270.0
 offset_bottom = 30.0
 text = "Save"
+tooltip_text = "Open save panel"
 custom_styles/normal = SubResource("button_black")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
@@ -88,6 +114,7 @@ offset_top = 8.0
 offset_right = -210.0
 offset_bottom = 30.0
 text = "Load"
+tooltip_text = "Open load panel"
 custom_styles/normal = SubResource("button_black")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
@@ -99,6 +126,7 @@ offset_top = 8.0
 offset_right = -150.0
 offset_bottom = 30.0
 text = "Data"
+tooltip_text = "Open data panel"
 custom_styles/normal = SubResource("button_black")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
@@ -110,6 +138,7 @@ offset_top = 8.0
 offset_right = -80.0
 offset_bottom = 30.0
 text = "Templates"
+tooltip_text = "Open templates panel"
 custom_styles/normal = SubResource("button_black")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
@@ -119,6 +148,7 @@ offset_top = 8.0
 offset_right = 680.0
 offset_bottom = 30.0
 text = "Reload"
+tooltip_text = "Reload current scene baseline"
 custom_styles/normal = SubResource("button_black")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
@@ -129,6 +159,7 @@ offset_right = 1030.0
 offset_bottom = 30.0
 focus_mode = 0
 text = "Recent"
+tooltip_text = "Quick load recent saves"
 custom_styles/normal = SubResource("input_dark")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
@@ -138,6 +169,7 @@ offset_top = 8.0
 offset_right = 810.0
 offset_bottom = 30.0
 text = "Snap"
+tooltip_text = "Toggle grid snap"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
 [node name="SnapSize" type="LineEdit" parent="Ribbon"]
@@ -146,6 +178,7 @@ offset_top = 8.0
 offset_right = 880.0
 offset_bottom = 30.0
 text = "8"
+tooltip_text = "Snap step size"
 editable = true
 max_length = 4
 caret_caret_blink = true
@@ -174,6 +207,7 @@ text = "Prefabs"
 
 [node name="DeleteButton" type="Button" parent="SidebarLeft/PrefabList"]
 text = "DELETE"
+tooltip_text = "Enable delete mode"
 focus_mode = 0
 theme_override_colors/font_color = Color(1, 0, 0, 1)
 custom_styles/normal = SubResource("button_black")
@@ -189,31 +223,37 @@ theme_override_constants/separation = 4
 
 [node name="PlaceSolid" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Solid"
+tooltip_text = "Place Solid platform"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceOneWay" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "One-Way"
+tooltip_text = "Place One-Way platform"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceSlopeLeft" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Slope Left"
+tooltip_text = "Place left slope"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceSlopeRight" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Slope Right"
+tooltip_text = "Place right slope"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceDeco" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Deco"
+tooltip_text = "Place decoration"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceDecoSolid" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "Solid Deco"
+tooltip_text = "Place decoration with collision"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 
@@ -222,31 +262,37 @@ theme_override_constants/separation = 4
 
 [node name="PlacePlayer" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "Player"
+tooltip_text = "Place player actor"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceEnemy" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "Enemy"
+tooltip_text = "Place enemy actor"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceNPC" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "NPC"
+tooltip_text = "Place NPC actor"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceTrap" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "Trap"
+tooltip_text = "Place trap"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceSpawner" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "Actor Spawner"
+tooltip_text = "Place actor spawner"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 
 [node name="PlaceItem" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Actors"]
 text = "Item"
+tooltip_text = "Place item"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 

@@ -94,6 +94,8 @@ func _populate(node: Node) -> void:
 	var data_cat := _infer_data_category(node)
 	var data_res: Resource = null
 	var type_options: Array = []
+	if data_id != "" and data_cat == "":
+		data_cat = _infer_category_from_id(data_id)
 	if data_id != "" and data_cat != "":
 		var reg = _get_registry()
 		if reg:
@@ -162,6 +164,19 @@ func _extract_data_id(node: Node) -> String:
 func _infer_data_category(node: Node) -> String:
 	if node == null:
 		return ""
+	var id_hint := ""
+	if node.has_meta("data_id"):
+		var mv = node.get_meta("data_id")
+		if mv is String:
+			id_hint = mv
+	if "data_id" in node:
+		var dv = node.get("data_id")
+		if dv is String:
+			id_hint = dv
+	if id_hint != "":
+		var cat := _infer_category_from_id(id_hint)
+		if cat != "":
+			return cat
 	if node.is_in_group("actors") or node.has_node("ActorInterface"):
 		return "Actor"
 	var lname := node.name.to_lower()
@@ -187,6 +202,8 @@ func _fill_type_options(options: Array, current_id: String) -> void:
 		_data_type.add_item(current_id)
 	# Add the rest, skipping duplicates
 	for id in options:
+		if not (id is String):
+			continue
 		var exists := false
 		for i in range(_data_type.item_count):
 			if _data_type.get_item_text(i) == id:
@@ -218,6 +235,8 @@ func _on_type_selected(index: int) -> void:
 		mgr.call("_sync_data_panel", _current_node)
 	if mgr and mgr.has_method("_apply_actor_data_to_node"):
 		mgr.call("_apply_actor_data_to_node", _current_node)
+	# Refresh sidebar to reflect new data selection
+	_populate(_current_node)
 
 
 func _read_prop(node: Node, name: String, default_val: Variant) -> String:
@@ -233,3 +252,28 @@ func _get_registry():
 	if has_node("/root/DataRegistry"):
 		return get_node("/root/DataRegistry")
 	return null
+
+
+func _infer_category_from_id(data_id: String) -> String:
+	var upper := data_id.to_upper()
+	if upper.begins_with("ACTOR_"):
+		return "Actor"
+	if upper.begins_with("SPAWNER_"):
+		return "Spawner"
+	if upper.begins_with("ITEM_"):
+		return "Item"
+	if upper.begins_with("PROJECTILE_"):
+		return "Projectile"
+	if upper.begins_with("TRAP_"):
+		return "Trap"
+	if upper.begins_with("PLATFORM_"):
+		return "Platform"
+	if upper.begins_with("AIPROFILE_"):
+		return "AIProfile"
+	if upper.begins_with("FACTION_"):
+		return "Faction"
+	if upper.begins_with("LOOTTABLE_"):
+		return "LootTable"
+	if upper.begins_with("STATS_"):
+		return "Stats"
+	return ""

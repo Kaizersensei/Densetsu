@@ -30,11 +30,11 @@ metadata/data_id = "PlayerActor"
 
 [node name="Enemy" parent="." instance=ExtResource("9")]
 position = Vector2(140, -32)
-metadata/data_id = "EnemyDummyActor"
+metadata/data_id = "ACTOR_Enemy"
 
 [node name="NPC" parent="." instance=ExtResource("3")]
 position = Vector2(100, -32)
-metadata/data_id = "NPCActor"
+metadata/data_id = "ACTOR_NPC"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -64)

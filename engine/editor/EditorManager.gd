@@ -20,6 +20,7 @@ var _overlay: CanvasLayer
 var _grid: Node2D
 var _toggle_lock := 0.0
 var _selected: Node
+var _hovered: Node = null
 var _dragging := false
 var _drag_offset := Vector2.ZERO
 var _highlight: Line2D
@@ -62,9 +63,9 @@ const PREFAB_NAMES := {
 	"spawner": "Actor Spawner",
 }
 const PREFAB_DEFAULT_DATA := {
-	"player": "PlayerActor",
-	"enemy": "EnemyDummyActor",
-	"npc": "NPCActor",
+	"player": "ACTOR_Player",
+	"enemy": "ACTOR_Enemy",
+	"npc": "ACTOR_NPC",
 }
 var _data_editor: Node
 
@@ -273,8 +274,11 @@ func _input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseButton:
 		_handle_mouse_button(event)
-	elif event is InputEventMouseMotion and _dragging:
-		_drag_selection()
+	elif event is InputEventMouseMotion:
+		if _dragging:
+			_drag_selection()
+		else:
+			_update_hover_info()
 	_update_snap_from_overlay()
 
 
@@ -372,6 +376,7 @@ func _clear_passive_flag() -> void:
 func set_selection(node: Node) -> void:
 	_selected = node
 	_dragging = false
+	_apply_actor_data_to_node(_selected)
 	if _overlay and _overlay.has_method("set_selection_name"):
 		var name: String = node.name if node else "None"
 		_overlay.set_selection_name(name)
@@ -984,26 +989,80 @@ func _apply_actor_data_to_node(node: Node) -> void:
 		return
 	# Input source hint
 	if "use_player_input" in node:
-		if data_id == "PlayerActor":
-			node.set("use_player_input", true)
-		else:
-			node.set("use_player_input", false)
+		var wants_player: bool = data_id == "ACTOR_Player"
+		if "input_source" in res:
+			wants_player = res.input_source == "Player"
+		node.set("use_player_input", wants_player)
+	if "player_number" in node and "player_number" in res:
+		node.set("player_number", res.player_number)
+	# Collision properties
+	if "collision_layers" in res and "collision_layer" in node:
+		node.set("collision_layer", res.collision_layers)
+	if "collision_mask" in res and "collision_mask" in node:
+		node.set("collision_mask", res.collision_mask)
 	# Apply sprite override
 	if "sprite" in res and res.sprite:
 		var spr := node.get_node_or_null("SpriteRoot/Sprite2D")
 		if spr and spr is Sprite2D:
 			(spr as Sprite2D).texture = res.sprite
-			if data_id == "NPCActor":
+			if data_id == "ACTOR_NPC":
 				(spr as Sprite2D).modulate = Color(0, 1, 0)
-			elif data_id == "EnemyDummyActor":
+			elif data_id == "ACTOR_Enemy":
 				(spr as Sprite2D).modulate = Color(1, 0, 0)
-			elif data_id == "PlayerActor":
+			elif data_id == "ACTOR_Player":
 				(spr as Sprite2D).modulate = Color(0.2, 0.6, 1.0)
 	# Apply collider shape override if provided
 	if "collider_shape" in res and res.collider_shape:
 		var cs := _find_collision_shape(node)
 		if cs:
 			cs.shape = res.collider_shape
+	# Persist id/meta so UI and saves stay in sync
+	if "data_id" in node:
+		node.set("data_id", data_id)
+	else:
+		node.set_meta("data_id", data_id)
+
+
+func _update_hover_info() -> void:
+	if not editor_mode:
+		return
+	var node := _pick_node_at_mouse_top()
+	_hovered = node
+	if node and _overlay and _overlay.has_method("set_hover_info"):
+		var name := node.name
+		var data_id := ""
+		if "data_id" in node:
+			var v = node.get("data_id")
+			if v is String:
+				data_id = v
+		elif node.has_meta("data_id"):
+			var mv = node.get_meta("data_id")
+			if mv is String:
+				data_id = mv
+		var input := "None"
+		if "input_source" in node:
+			input = str(node.get("input_source"))
+		var pos := Vector2.ZERO
+		if node is Node2D:
+			pos = (node as Node2D).global_position
+		var txt := "Hover: %s | ID: %s | Input: %s | X: %.1f Y: %.1f" % [name, data_id, input, pos.x, pos.y]
+		var screen_pos := get_viewport().get_mouse_position() + Vector2(12, 12)
+		if _overlay.has_method("set_hover_info"):
+			_overlay.call("set_hover_info", txt)
+		if _overlay.has_node("HoverTip"):
+			var tip := _overlay.get_node("HoverTip")
+			if tip and tip is Control:
+				(tip as Control).position = screen_pos
+	elif _overlay and _overlay.has_method("set_hover_info"):
+		_overlay.call("set_hover_info", "Hover: None")
+
+
+func _pick_node_at_mouse_top() -> Node:
+	var pos := _get_mouse_world_pos()
+	var hits := _gather_pick_candidates(pos)
+	if hits.size() > 0:
+		return hits[0]
+	return null
 
 
 func _set_cursor_cross() -> void:
@@ -1036,6 +1095,7 @@ func _update_highlight() -> void:
 		_highlight.visible = true
 	else:
 		_highlight.visible = false
+	_update_hover_info()
 
 
 func _update_entity_popup(force: bool) -> void:

@@ -13,6 +13,11 @@ const CATEGORY_DIRS := {
 	"Platform": "res://data/platforms",
 	"LootTable": "res://data/loot_tables",
 	"Stats": "res://data/stats",
+	"Weather": "res://data/weather",
+	"Particles": "res://data/particles",
+	"Sounds": "res://data/sounds",
+	"Strings": "res://data/strings",
+	"Quests": "res://data/quests",
 }
 
 var _by_id: Dictionary = {}
