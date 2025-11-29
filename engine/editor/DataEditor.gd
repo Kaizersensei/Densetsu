@@ -74,6 +74,18 @@ const CATEGORY_SCRIPTS := {
 	"LootTable": "res://engine/data/resources/LootTableData.gd",
 	"Stats": "res://engine/data/resources/StatsData.gd",
 }
+const CATEGORY_TIPS := {
+	"Actor": "Entities with behaviors/inputs; set sprite/scene/collider, AI params, stats.",
+	"Spawner": "Spawn definitions; link spawn scene, counts, timing, visibility.",
+	"Faction": "Group alignment; affects relationships/hostility.",
+	"AIProfile": "Behavior profiles and decision params.",
+	"Item": "Pickups/consumables; link sprite/scene and effects.",
+	"Projectile": "Shots/bullets; link sprite/scene and damage params.",
+	"Trap": "Hazards; link sprite/scene and damage/flags.",
+	"Platform": "Solids/one-ways/slopes; link platform scenes.",
+	"LootTable": "Drop lists; define loot roll sets.",
+	"Stats": "Stat templates; baseline hp/atk/etc.",
+}
 
 func _ready() -> void:
 	_populate_categories()
@@ -126,7 +138,9 @@ func _populate_categories() -> void:
 	var reg = _get_registry()
 	if reg:
 		for cat in reg.CATEGORY_DIRS.keys():
-			_categories.add_item(cat)
+			var idx := _categories.add_item(cat)
+			if CATEGORY_TIPS.has(cat):
+				_categories.set_item_tooltip(idx, CATEGORY_TIPS[cat])
 	if _categories.item_count > 0:
 		_categories.select(0)
 		_on_category_selected(0)
