@@ -1,5 +1,6 @@
 extends Resource
 class_name SpawnerData
+@export var description: String = ""
 @export var id: String = ""
 @export var spawn_scene: PackedScene
 @export var min_spawn: int = 1

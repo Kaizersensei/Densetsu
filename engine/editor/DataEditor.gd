@@ -2,6 +2,7 @@ extends Control
 
 @onready var _categories: ItemList = $Root/ScrollLeft/CategoriesBox/Categories
 @onready var _assets: ItemList = $Root/ScrollAssets/AssetsBox/Assets
+@onready var _preview: TextureRect = $Root/ScrollAssets/AssetsBox/PreviewBox/PreviewTexture
 @onready var _path: LineEdit = $Root/ScrollInspector/Inspector/Path
 @onready var _id: LineEdit = $Root/ScrollInspector/Inspector/Id
 @onready var _type: OptionButton = $Root/ScrollInspector/Inspector/Type
@@ -53,14 +54,14 @@ extends Control
 @onready var _spawn_on_start: CheckBox = $Root/ScrollInspector/Inspector/SpawnerBox/SpawnerFlagsRow/SpawnOnStart
 @onready var _show_in_game: CheckBox = $Root/ScrollInspector/Inspector/SpawnerBox/SpawnerFlagsRow/ShowInGame
 @onready var _team: LineEdit = $Root/ScrollInspector/Inspector/SpawnerBox/TeamRow/Team
-@onready var _btn_new: Button = $Root/ScrollInspector/Inspector/Buttons/New
-@onready var _btn_save: Button = $Root/ScrollInspector/Inspector/Buttons/Save
-@onready var _btn_reload: Button = $Root/ScrollInspector/Inspector/Buttons/Reload
-@onready var _btn_delete: Button = $Root/ScrollInspector/Inspector/Buttons/Delete
-@onready var _btn_close: Button = $Root/ScrollInspector/Inspector/Buttons/Close
+@onready var _btn_new: Button = $Root/ScrollAssets/AssetsBox/Buttons/New
+@onready var _btn_save: Button = $Root/ScrollAssets/AssetsBox/Buttons/Save
+@onready var _btn_reload: Button = $Root/ScrollAssets/AssetsBox/Buttons/Reload
+@onready var _btn_delete: Button = $Root/ScrollAssets/AssetsBox/Buttons/Delete
 
 var _current_category: String = ""
 var _current_id: String = ""
+var _pending_select_id: String = ""
 const CATEGORY_SCRIPTS := {
 	"Actor": "res://engine/actors/resources/ActorData.gd",
 	"Spawner": "res://engine/actors/resources/SpawnerData.gd",
@@ -83,7 +84,6 @@ func _ready() -> void:
 	_btn_save.pressed.connect(_on_save)
 	_btn_reload.pressed.connect(_on_reload)
 	_btn_delete.pressed.connect(_on_delete)
-	_btn_close.pressed.connect(hide)
 	if _scene_browse:
 		_scene_browse.pressed.connect(_browse_scene)
 	if _spawner_scene_browse:
@@ -146,7 +146,17 @@ func _refresh_assets(rescan: bool = false) -> void:
 	_clear_all_fields()
 	var ids: Array = reg.get_ids(_current_category)
 	for id in ids:
-		_assets.add_item(id)
+		var idx := _assets.add_item(id)
+		var res_any = reg.get_resource_for_category(_current_category, id)
+		if res_any and "description" in res_any:
+			_assets.set_item_tooltip(idx, String(res_any.description))
+	if _pending_select_id != "":
+		var idx := _find_item_index(_assets, _pending_select_id)
+		_pending_select_id = ""
+		if idx != -1:
+			_assets.select(idx)
+			_on_asset_selected(idx)
+			return
 	if _assets.item_count > 0:
 		_assets.select(0)
 		_on_asset_selected(0)
@@ -176,11 +186,15 @@ func _on_asset_selected(index: int) -> void:
 	var res = reg.get_resource_for_category(_current_category, _current_id)
 	var path = reg.get_resource_path(_current_category, _current_id)
 	print("[DataEditor] Loading asset:", _current_id, "path:", path, "category:", _current_category)
-	if res == null:
-		print("[DataEditor] Loaded resource is null for id:", _current_id, "category:", _current_category)
 	_path.text = path
 	_clear_all_fields()
-	if res and "id" in res:
+	if res == null:
+		print("[DataEditor] Loaded resource is null for id:", _current_id, "category:", _current_category)
+		_id.text = _current_id
+		_update_preview(null)
+		return
+	_update_preview(res)
+	if "id" in res:
 		_id.text = res.id
 	if res and "type" in res:
 		for i in range(_type.item_count):
@@ -298,8 +312,12 @@ func _on_save() -> void:
 	if reg == null:
 		return
 	var res: Resource = _create_resource_for_category(_current_category)
-	res.id = _id.text.strip_edges()
-	res.type = _type.get_item_text(_type.selected)
+	var new_id := _id.text.strip_edges()
+	if new_id == "" and _current_id != "":
+		new_id = _current_id
+	res.id = new_id
+	if "type" in res:
+		res.type = _type.get_item_text(_type.selected)
 	if "lifecycle_state" in res:
 		res.lifecycle_state = _lifecycle.get_item_text(_lifecycle.selected)
 	var tag_list: PackedStringArray = PackedStringArray()
@@ -311,7 +329,10 @@ func _on_save() -> void:
 		res.input_source = _input_source.get_item_text(_input_source.selected)
 		if res.input_source == "Player" and "player_number" in res:
 			res.player_number = int(_player_number.value)
-	res.scene = load(_scene.text) if _scene.text.strip_edges() != "" else null
+	if "scene" in res and _scene:
+		var scene_path := _scene.text.strip_edges()
+		if scene_path != "":
+			res.scene = load(scene_path)
 	if "faction_id" in res:
 		res.faction_id = _faction.text.strip_edges()
 	if "aggressiveness" in res and _hostility:
@@ -349,12 +370,18 @@ func _on_save() -> void:
 	if "collision_mask" in res and _mask.text.strip_edges() != "":
 		res.collision_mask = int(_mask.text)
 	if res is SpawnerData:
-		res.spawn_scene = load(_spawner_spawn_scene.text) if _spawner_spawn_scene.text.strip_edges() != "" else null
-		res.min_spawn = int(_min_spawn.text) if _min_spawn.text.strip_edges() != "" else res.min_spawn
-		res.max_spawn = int(_max_spawn.text) if _max_spawn.text.strip_edges() != "" else res.max_spawn
-		res.cooldown = float(_cooldown.text) if _cooldown.text.strip_edges() != "" else res.cooldown
-		res.active_start_time = float(_active_start.text) if _active_start.text.strip_edges() != "" else res.active_start_time
-		res.active_end_time = float(_active_end.text) if _active_end.text.strip_edges() != "" else res.active_end_time
+		if _spawner_spawn_scene.text.strip_edges() != "":
+			res.spawn_scene = load(_spawner_spawn_scene.text)
+		if _min_spawn.text.strip_edges() != "":
+			res.min_spawn = int(_min_spawn.text)
+		if _max_spawn.text.strip_edges() != "":
+			res.max_spawn = int(_max_spawn.text)
+		if _cooldown.text.strip_edges() != "":
+			res.cooldown = float(_cooldown.text)
+		if _active_start.text.strip_edges() != "":
+			res.active_start_time = float(_active_start.text)
+		if _active_end.text.strip_edges() != "":
+			res.active_end_time = float(_active_end.text)
 		res.spawn_on_start = _spawn_on_start.button_pressed
 		res.show_in_game = _show_in_game.button_pressed
 		if "team" in res:
@@ -362,9 +389,11 @@ func _on_save() -> void:
 	var rid: String = res.id
 	if rid == "":
 		rid = "asset_%s" % str(Time.get_ticks_msec())
+	reg.remove(rid)
 	reg.save_resource(_current_category, rid, res)
 	_current_id = rid
 	_refresh_assets()
+	_update_preview(res)
 
 
 func _on_reload() -> void:
@@ -405,6 +434,7 @@ func _on_delete() -> void:
 		reg.remove(_current_id)
 	_current_id = ""
 	_refresh_assets()
+	_update_preview(null)
 
 
 func _create_resource_for_category(cat: String) -> Resource:
@@ -465,6 +495,7 @@ func _clear_actor_fields() -> void:
 	_xp.text = ""
 	_ai_state.text = ""
 	_ai_params.text = ""
+	_update_preview(null)
 
 
 func _clear_all_fields() -> void:
@@ -487,6 +518,7 @@ func _clear_all_fields() -> void:
 	_team.text = ""
 	_layers.text = ""
 	_mask.text = ""
+	_update_preview(null)
 
 
 func _browse_scene() -> void:
@@ -494,7 +526,10 @@ func _browse_scene() -> void:
 	fd.access = FileDialog.ACCESS_RESOURCES
 	fd.file_mode = FileDialog.FILE_MODE_OPEN_FILE
 	fd.filters = PackedStringArray(["*.tscn ; Scenes"])
-	fd.file_selected.connect(func(p): _scene.text = p)
+	fd.file_selected.connect(func(p):
+		_scene.text = p
+		_update_preview_from_inputs()
+	)
 	add_child(fd)
 	fd.popup_centered()
 
@@ -561,3 +596,86 @@ func _parse_dict(text: String) -> Dictionary:
 			var val := p.substr(eq + 1, p.length()).strip_edges()
 			d[key] = val
 	return d
+
+
+func _find_item_index(list: ItemList, text: String) -> int:
+	for i in range(list.item_count):
+		if list.get_item_text(i) == text:
+			return i
+	return -1
+
+
+func _texture_from_scene(res: Resource) -> Dictionary:
+	if "scene" in res and res.scene and res.scene is PackedScene:
+		var inst := (res.scene as PackedScene).instantiate()
+		var tex: Texture2D = null
+		var mod := Color(1, 1, 1, 1)
+		if inst:
+			var spr := inst.get_node_or_null("SpriteRoot/Sprite2D")
+			if spr and spr is Sprite2D and spr.texture:
+				tex = spr.texture
+				mod = spr.modulate
+			elif inst is Sprite2D and inst.texture:
+				tex = inst.texture
+			else:
+				for child in inst.get_children():
+					if child is Sprite2D and child.texture:
+						tex = child.texture
+						mod = child.modulate
+						break
+			inst.queue_free()
+		return {"tex": tex, "modulate": mod}
+	return {}
+
+
+func sync_from_node(category: String, data_id: String) -> void:
+	if category == "":
+		return
+	var cat_idx := _find_item_index(_categories, category)
+	if cat_idx == -1:
+		return
+	_pending_select_id = data_id
+	var current_sel := _categories.get_selected_items()
+	var already_selected := current_sel.size() > 0 and current_sel[0] == cat_idx
+	_categories.select(cat_idx)
+	_current_category = category
+	if already_selected:
+		_refresh_assets(true)
+	else:
+		_on_category_selected(cat_idx)
+
+
+func _update_preview(res: Resource) -> void:
+	if _preview == null:
+		return
+	_preview.modulate = Color(1, 1, 1, 1)
+	if res == null:
+		_preview.texture = null
+		return
+	var scene_info := _texture_from_scene(res)
+	var tex: Texture2D = null
+	var mod := Color(1, 1, 1, 1)
+	if scene_info.has("tex"):
+		tex = scene_info["tex"]
+	if scene_info.has("modulate") and scene_info["modulate"] is Color:
+		mod = scene_info["modulate"]
+	if "sprite" in res and res.sprite:
+		tex = res.sprite
+	elif "texture" in res and res.texture:
+		tex = res.texture
+	_preview.texture = tex
+	_preview.modulate = mod
+
+
+func _update_preview_from_inputs() -> void:
+	# Build a lightweight proxy using current inputs to preview pending changes
+	var proxy := Resource.new()
+	var scene_path := _scene.text.strip_edges()
+	if scene_path != "":
+		var ps := load(scene_path)
+		if ps and ps is PackedScene:
+			proxy.set("scene", ps)
+	if proxy == null:
+		_update_preview(null)
+	else:
+		_update_preview(proxy)

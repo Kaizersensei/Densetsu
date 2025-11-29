@@ -26,9 +26,15 @@ script = ExtResource("6")
 
 [node name="Player" parent="." instance=ExtResource("1")]
 position = Vector2(0, -32)
+metadata/data_id = "PlayerActor"
 
 [node name="Enemy" parent="." instance=ExtResource("9")]
 position = Vector2(140, -32)
+metadata/data_id = "EnemyDummyActor"
+
+[node name="NPC" parent="." instance=ExtResource("3")]
+position = Vector2(100, -32)
+metadata/data_id = "NPCActor"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, -64)
@@ -36,10 +42,12 @@ position = Vector2(0, -64)
 [node name="SolidGround" parent="." instance=ExtResource("13")]
 position = Vector2(22, 39)
 scale = Vector2(4, 0.25)
+metadata/data_id = "PlatformSolidGround"
 
 [node name="SlopeLeft" type="StaticBody2D" parent="."]
 position = Vector2(-192, 56)
 collision_mask = 2
+metadata/data_id = "PlatformSlopeLeft"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SlopeLeft"]
 position = Vector2(1, 0)
@@ -52,6 +60,7 @@ polygon = PackedVector2Array(-64, -64, -64, 0, 1.43051e-06, 0)
 [node name="SlopeRight" type="StaticBody2D" parent="."]
 position = Vector2(192, 56)
 collision_mask = 2
+metadata/data_id = "PlatformSlopeRight"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SlopeRight"]
 shape = SubResource("2")
@@ -62,18 +71,23 @@ polygon = PackedVector2Array(7.62939e-06, 0, 0.606064, 0, 64, 0, 64, -64)
 
 [node name="PlatformOneWay" parent="." instance=ExtResource("12")]
 position = Vector2(-75, -17)
+metadata/data_id = "PlatformOneWay_Default"
 
 [node name="DecoStatic" parent="." instance=ExtResource("3")]
 position = Vector2(-97, 13)
+metadata/data_id = "DecoStaticActor"
 
 [node name="Deco" parent="." instance=ExtResource("2")]
 position = Vector2(-30, -12)
+metadata/data_id = "DecoActor"
 
 [node name="Trap" parent="." instance=ExtResource("4")]
 position = Vector2(59, 24)
+metadata/data_id = "TrapBasic"
 
 [node name="Item" parent="." instance=ExtResource("5")]
 position = Vector2(60, -12)
+metadata/data_id = "ItemFloating"
 
 [node name="DebugOverlay" parent="." instance=ExtResource("7")]
 player_path = NodePath("../Player")
@@ -98,11 +112,14 @@ polygon = PackedVector2Array(-200, -10, 200, -10, 200, 10, -200, 10)
 [node name="SolidWallLeft" parent="." instance=ExtResource("13")]
 position = Vector2(-220, -8)
 scale = Vector2(0.25, 1)
+metadata/data_id = "PlatformWallLeft"
 
 [node name="SolidWallRight" parent="." instance=ExtResource("13")]
 position = Vector2(230, -8)
 scale = Vector2(0.25, 1)
+metadata/data_id = "PlatformWallRight"
 
 [node name="SolidCeiling" parent="." instance=ExtResource("13")]
 position = Vector2(0, -96)
 scale = Vector2(4, 0.25)
+metadata/data_id = "PlatformCeiling"

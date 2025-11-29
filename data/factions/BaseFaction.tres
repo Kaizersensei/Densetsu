@@ -1,3 +1,7 @@
-[gd_resource type="Resource" format=3 uid="uid://djksyjp1gov74"]
+[gd_resource type="Resource" script_class="FactionData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://engine/data/resources/FactionData.gd" id="1_efyyk"]
 
 [resource]
+script = ExtResource("1_efyyk")
+id = "BaseFaction"

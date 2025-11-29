@@ -1,4 +1,7 @@
-[gd_resource type="Resource" script="res://engine/data/resources/AIProfileData.gd" format=3]
+[gd_resource type="Resource" script_class="AIProfileData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://engine/data/resources/AIProfileData.gd" id="1_1gnsy"]
 
 [resource]
+script = ExtResource("1_1gnsy")
 id = "BaseAIProfile"

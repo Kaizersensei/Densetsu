@@ -1,0 +1,80 @@
+[gd_scene load_steps=14 format=3 uid="uid://ctornpc"]
+
+[ext_resource type="Script" path="res://engine/actors/ActorCharacter2D.gd" id="1"]
+[ext_resource type="Script" path="res://engine/core/ActorInterface.gd" id="2"]
+[ext_resource type="Texture2D" path="res://assets/placeholder_player.tres" id="3"]
+[ext_resource type="Script" path="res://engine/fsm/StateMachine.gd" id="4"]
+[ext_resource type="Script" path="res://engine/stats/StatsComponent.gd" id="5"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorIdle.gd" id="6"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorRun.gd" id="7"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorJump.gd" id="8"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorFall.gd" id="9"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorLand.gd" id="10"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorHurt.gd" id="11"]
+[ext_resource type="Script" path="res://engine/fsm/states/ActorDeath.gd" id="12"]
+
+[sub_resource type="CapsuleShape2D" id="1"]
+radius = 8.0
+height = 24.0
+
+[sub_resource type="CapsuleShape2D" id="2"]
+radius = 8.0
+height = 16.0
+
+[node name="ActorNPC" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 165
+wall_min_slide_angle = 0.436332
+platform_floor_layers = 1
+platform_wall_layers = 1
+script = ExtResource("1")
+use_player_input = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -8)
+shape = SubResource("1")
+
+[node name="SpriteRoot" type="Node2D" parent="."]
+position = Vector2(0, -8)
+
+[node name="Sprite2D" type="Sprite2D" parent="SpriteRoot"]
+texture = ExtResource("3")
+modulate = Color(0, 1, 0, 1)
+
+[node name="Hurtbox" type="Area2D" parent="."]
+collision_layer = 64
+collision_mask = 120
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2(0, -12)
+shape = SubResource("2")
+
+[node name="Hitboxes" type="Node2D" parent="."]
+
+[node name="ActorInterface" type="Node" parent="."]
+script = ExtResource("2")
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("4")
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("6")
+
+[node name="Run" type="Node" parent="StateMachine"]
+script = ExtResource("7")
+
+[node name="Jump" type="Node" parent="StateMachine"]
+script = ExtResource("8")
+
+[node name="Fall" type="Node" parent="StateMachine"]
+script = ExtResource("9")
+
+[node name="Land" type="Node" parent="StateMachine"]
+script = ExtResource("10")
+
+[node name="Hurt" type="Node" parent="StateMachine"]
+script = ExtResource("11")
+
+[node name="Death" type="Node" parent="StateMachine"]
+script = ExtResource("12")

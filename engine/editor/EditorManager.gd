@@ -37,6 +37,8 @@ var _baseline_snapshot: PackedScene
 var _save_path_primary := "res://editor_saves/last_scene.tscn"
 var _save_path_fallback := "user://editor_save.tscn"
 var _window_controller: Node = null
+var _entity_popup: Control = null
+var _entity_popup_state := {}
 const HISTORY_TRANSFORM := "transform"
 const HISTORY_CREATE := "create"
 const HISTORY_DELETE := "delete"
@@ -55,7 +57,14 @@ const PREFAB_NAMES := {
 	"item": "Item",
 	"actor": "Actor",
 	"player": "Player",
+	"enemy": "Enemy",
+	"npc": "NPC",
 	"spawner": "Actor Spawner",
+}
+const PREFAB_DEFAULT_DATA := {
+	"player": "PlayerActor",
+	"enemy": "EnemyDummyActor",
+	"npc": "NPCActor",
 }
 var _data_editor: Node
 
@@ -92,6 +101,10 @@ func _ready() -> void:
 	_data_editor.visible = false
 	if _overlay:
 		_overlay.add_child(_data_editor)
+	_entity_popup = preload("res://engine/editor/EntityInspectorPopup.tscn").instantiate()
+	_entity_popup.visible = false
+	if _overlay:
+		_overlay.add_child(_entity_popup)
 	_highlight = Line2D.new()
 	_highlight.width = 1.5
 	_highlight.default_color = Color(1, 0.8, 0.2, 0.8)
@@ -357,15 +370,15 @@ func _clear_passive_flag() -> void:
 
 
 func set_selection(node: Node) -> void:
-	selection_changed.emit(node)
 	_selected = node
 	_dragging = false
 	if _overlay and _overlay.has_method("set_selection_name"):
 		var name: String = node.name if node else "None"
 		_overlay.set_selection_name(name)
-	if _overlay and _overlay.has_method("populate_inspector"):
-		_overlay.populate_inspector(node)
 	_update_highlight()
+	selection_changed.emit(node)
+	_sync_data_panel(node)
+	_update_entity_popup(true)
 
 
 func _toggle_editor() -> void:
@@ -475,6 +488,55 @@ func _sanitize_input_maps() -> void:
 	_restrict_action_keys("editor_cam_right", [KEY_RIGHT])
 	_restrict_action_keys("editor_cam_up", [KEY_UP])
 	_restrict_action_keys("editor_cam_down", [KEY_DOWN])
+
+
+func _sync_data_panel(node: Node) -> void:
+	if _data_editor == null:
+		return
+	if not _data_editor.has_method("sync_from_node"):
+		return
+	var category := _infer_data_category(node)
+	if category == "":
+		return
+	var data_id := _extract_data_id(node)
+	_data_editor.call("sync_from_node", category, data_id)
+
+
+func _extract_data_id(node: Node) -> String:
+	if node == null:
+		return ""
+	if node.has_meta("data_id"):
+		var meta_val = node.get_meta("data_id")
+		if meta_val is String:
+			return meta_val
+	if "data_id" in node:
+		var v = node.get("data_id")
+		if v is String:
+			return v
+	if "id" in node:
+		var idv = node.get("id")
+		if idv is String:
+			return idv
+	return node.name
+
+
+func _infer_data_category(node: Node) -> String:
+	if node == null:
+		return ""
+	if node.is_in_group("actors") or node.has_node("ActorInterface"):
+		return "Actor"
+	var lname := node.name.to_lower()
+	if lname.find("spawner") != -1:
+		return "Spawner"
+	if lname.find("trap") != -1:
+		return "Trap"
+	if lname.find("item") != -1:
+		return "Item"
+	if lname.find("projectile") != -1:
+		return "Projectile"
+	if lname.find("platform") != -1 or lname.find("solid") != -1 or lname.find("slope") != -1 or lname.find("oneway") != -1:
+		return "Platform"
+	return ""
 
 
 func _select_parent() -> void:
@@ -796,6 +858,16 @@ func _place_prefab_at_mouse() -> void:
 		scene.name = desired_name
 		print("Placed prefab:", _stamp_prefab, "assigned name:", scene.name)
 	get_tree().current_scene.add_child(scene)
+	if scene and PREFAB_DEFAULT_DATA.has(_stamp_prefab):
+		var data_id: String = PREFAB_DEFAULT_DATA[_stamp_prefab]
+		if "data_id" in scene:
+			scene.set("data_id", data_id)
+		elif "id" in scene:
+			scene.set("id", data_id)
+		else:
+			scene.set_meta("data_id", data_id)
+		_apply_actor_data_to_node(scene)
+		_apply_visual_for_prefab(scene, _stamp_prefab)
 	if scene:
 		# Reassert the desired name after parenting in case Godot altered it
 		if PREFAB_NAMES.has(_stamp_prefab):
@@ -826,7 +898,9 @@ func _get_prefab_scene(kind: String) -> PackedScene:
 	match kind:
 		"player":
 			return preload("res://engine/actors/ActorCharacter2D.tscn")
-		"actor":
+		"enemy":
+			return preload("res://engine/actors/EnemyDummy.tscn")
+		"npc":
 			return preload("res://engine/actors/ActorCharacter2D.tscn")
 		"deco":
 			return preload("res://engine/decoration/ActorDeco2D.tscn")
@@ -848,6 +922,88 @@ func _get_prefab_scene(kind: String) -> PackedScene:
 			return preload("res://engine/platforms/PlatformSlopeRight.tscn")
 		_:
 			return null
+
+
+func _apply_visual_for_prefab(scene: Node, kind: String) -> void:
+	if scene == null:
+		return
+	# If a data_id is present, try to pull a sprite override from the data resource
+	var data_id := ""
+	if "data_id" in scene:
+		var v = scene.get("data_id")
+		if v is String:
+			data_id = v
+	if data_id == "" and scene.has_meta("data_id"):
+		var mv = scene.get_meta("data_id")
+		if mv is String:
+			data_id = mv
+	if data_id != "" and Engine.has_singleton("DataRegistry"):
+		var reg = Engine.get_singleton("DataRegistry")
+		if reg and reg.has_method("get_resource_for_category"):
+			var res = reg.get_resource_for_category("Actor", data_id)
+			if res and "sprite" in res and res.sprite:
+				var spr := scene.get_node_or_null("SpriteRoot/Sprite2D")
+				if spr and spr is Sprite2D:
+					spr.texture = res.sprite
+					return
+	if kind == "npc":
+		var sprite := scene.get_node_or_null("SpriteRoot/Sprite2D")
+		if sprite and sprite is Sprite2D:
+			(sprite as Sprite2D).modulate = Color(0, 1, 0)
+	if kind == "enemy":
+		var sprite := scene.get_node_or_null("SpriteRoot/Sprite2D")
+		if sprite and sprite is Sprite2D:
+			(sprite as Sprite2D).modulate = Color(1, 0, 0)
+	if kind == "player":
+		var sprite := scene.get_node_or_null("SpriteRoot/Sprite2D")
+		if sprite and sprite is Sprite2D:
+			(sprite as Sprite2D).modulate = Color(0.2, 0.6, 1.0)
+
+
+func _apply_actor_data_to_node(node: Node) -> void:
+	if node == null:
+		return
+	var data_id := ""
+	if "data_id" in node:
+		var v = node.get("data_id")
+		if v is String:
+			data_id = v
+	if data_id == "" and node.has_meta("data_id"):
+		var mv = node.get_meta("data_id")
+		if mv is String:
+			data_id = mv
+	if data_id == "":
+		return
+	if not Engine.has_singleton("DataRegistry"):
+		return
+	var reg = Engine.get_singleton("DataRegistry")
+	if reg == null or not reg.has_method("get_resource_for_category"):
+		return
+	var res = reg.get_resource_for_category("Actor", data_id)
+	if res == null:
+		return
+	# Input source hint
+	if "use_player_input" in node:
+		if data_id == "PlayerActor":
+			node.set("use_player_input", true)
+		else:
+			node.set("use_player_input", false)
+	# Apply sprite override
+	if "sprite" in res and res.sprite:
+		var spr := node.get_node_or_null("SpriteRoot/Sprite2D")
+		if spr and spr is Sprite2D:
+			(spr as Sprite2D).texture = res.sprite
+			if data_id == "NPCActor":
+				(spr as Sprite2D).modulate = Color(0, 1, 0)
+			elif data_id == "EnemyDummyActor":
+				(spr as Sprite2D).modulate = Color(1, 0, 0)
+			elif data_id == "PlayerActor":
+				(spr as Sprite2D).modulate = Color(0.2, 0.6, 1.0)
+	# Apply collider shape override if provided
+	if "collider_shape" in res and res.collider_shape:
+		var cs := _find_collision_shape(node)
+		if cs:
+			cs.shape = res.collider_shape
 
 
 func _set_cursor_cross() -> void:
@@ -880,6 +1036,36 @@ func _update_highlight() -> void:
 		_highlight.visible = true
 	else:
 		_highlight.visible = false
+
+
+func _update_entity_popup(force: bool) -> void:
+	if _entity_popup == null:
+		return
+	var panels_open := false
+	if _overlay:
+		for name in ["SavePanel", "LoadPanel", "TemplatePanel", "DataEditor"]:
+			var p := _overlay.get_node_or_null(name)
+			if p and p.visible:
+				panels_open = true
+				break
+	var key := {
+		"selected": _selected,
+		"panels_open": panels_open,
+	}
+	if not force and _entity_popup_state == key:
+		return
+	_entity_popup_state = key
+	if panels_open or _selected == null:
+		_entity_popup.hide()
+		return
+	var ribbon_h: float = 40.0
+	if _overlay:
+		var rib := _overlay.get_node_or_null("Ribbon")
+		if rib and rib is Control:
+			ribbon_h = (rib as Control).size.y
+	var rect := get_viewport().get_visible_rect()
+	if _entity_popup.has_method("show_sidebar"):
+		_entity_popup.call("show_sidebar", _selected, rect, ribbon_h)
 
 
 func _get_highlight_points(n: Node2D) -> PackedVector2Array:

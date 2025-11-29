@@ -1,6 +1,7 @@
 extends Resource
 class_name ActorData
 @export var id: String = ""
+@export var description: String = ""
 @export_enum("Character", "Creature", "Trap", "Projectile", "Item", "Utility", "Decoration", "Spawner", "Destructible") var type: String = "Character"
 @export var tags: PackedStringArray = PackedStringArray()
 @export_enum("Player", "AI") var input_source: String = "AI"
@@ -32,6 +33,8 @@ class_name ActorData
 @export var scale: Vector2 = Vector2.ONE
 @export var collision_layers: int = 1
 @export var collision_mask: int = 1
+@export var sprite: Texture2D
+@export var collider_shape: Resource
 @export var stats: Dictionary = {}
 @export var resistances: Dictionary = {}
 @export var abilities: Array[String] = []

@@ -42,7 +42,8 @@ extends CanvasLayer
 @onready var _proj_collide: CheckBox = $Inspector/ProjRow/ProjCollide
 @onready var _proj_apply: Button = $Inspector/ProjRow/ProjApply
 @onready var _place_player: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlacePlayer
-@onready var _place_actor: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlaceActor
+@onready var _place_enemy: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlaceEnemy
+@onready var _place_npc: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlaceNPC
 @onready var _place_trap: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlaceTrap
 @onready var _place_spawner: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlaceSpawner
 @onready var _place_item: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlaceItem
@@ -86,45 +87,8 @@ func get_snap_size() -> float:
 
 
 func populate_inspector(node: Node) -> void:
-	if _inspector_signal_block:
-		return
-	_inspector_signal_block = true
-	if node is Node2D:
-		var n := node as Node2D
-		if _pos_x: _pos_x.text = str(round(n.position.x))
-		if _pos_y: _pos_y.text = str(round(n.position.y))
-		if _rot: _rot.text = str(round(rad_to_deg(n.rotation)))
-		if _scale_x: _scale_x.text = "%0.4f" % n.scale.x
-		if _scale_y: _scale_y.text = "%0.4f" % n.scale.y
-		if _proj_collide:
-			var row := _proj_collide.get_parent()
-			if "allow_projectile_collision" in n:
-				_proj_collide.button_pressed = bool(n.get("allow_projectile_collision"))
-				_proj_collide.visible = true
-				if _proj_apply:
-					_proj_apply.visible = true
-				if row:
-					row.visible = true
-			else:
-				_proj_collide.visible = false
-				if _proj_apply:
-					_proj_apply.visible = false
-				if row:
-					row.visible = false
-	else:
-		if _pos_x: _pos_x.text = ""
-		if _pos_y: _pos_y.text = ""
-		if _rot: _rot.text = ""
-		if _scale_x: _scale_x.text = ""
-		if _scale_y: _scale_y.text = ""
-		if _proj_collide:
-			_proj_collide.visible = false
-			var row := _proj_collide.get_parent()
-			if row:
-				row.visible = false
-		if _proj_apply:
-			_proj_apply.visible = false
-	_inspector_signal_block = false
+	# deprecated; using right-side inspector strip instead
+	pass
 
 
 func connect_inspector(handler: Callable) -> void:
@@ -168,8 +132,10 @@ func connect_prefab_buttons(handler: Callable) -> void:
 		_delete_button.pressed.connect(handler.bind("delete"))
 	if _place_player:
 		_place_player.pressed.connect(handler.bind("player"))
-	if _place_actor:
-		_place_actor.pressed.connect(handler.bind("actor"))
+	if _place_enemy:
+		_place_enemy.pressed.connect(handler.bind("enemy"))
+	if _place_npc:
+		_place_npc.pressed.connect(handler.bind("npc"))
 	if _place_deco:
 		_place_deco.pressed.connect(handler.bind("deco"))
 	if _place_deco_solid:
@@ -318,6 +284,9 @@ func _set_active_panel(name: String) -> void:
 	var ribbon_h := _ribbon.size.y if _ribbon else 0.0
 	_hide_modal()
 	if name == "":
+		var mgr := get_parent()
+		if mgr and mgr.has_method("_update_entity_popup"):
+			mgr.call("_update_entity_popup", true)
 		return
 	var panel: Control = null
 	if name == "save":
@@ -360,6 +329,9 @@ func _set_active_panel(name: String) -> void:
 				_modal_blocker.visible = false
 				_modal_blocker.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_hide_ribbon_buttons(true)
+	var mgr := get_parent()
+	if mgr and mgr.has_method("_update_entity_popup"):
+		mgr.call("_update_entity_popup", true)
 
 
 func _on_save_confirm() -> void:
@@ -429,6 +401,10 @@ func _hide_modal() -> void:
 		_template_panel.visible = false
 	_current_panel = ""
 	_hide_ribbon_buttons(false)
+	if get_tree():
+		var mgr := get_tree().root.get_node_or_null("EditorManager")
+		if mgr and mgr.has_method("_update_entity_popup"):
+			mgr.call_deferred("_update_entity_popup")
 
 
 func _hide_ribbon_buttons(hide: bool) -> void:

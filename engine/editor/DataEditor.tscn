@@ -70,6 +70,36 @@ size_flags_vertical = 3
 auto_height = false
 select_mode = 1
 
+[node name="PreviewBox" type="VBoxContainer" parent="Root/ScrollAssets/AssetsBox"]
+theme_override_constants/separation = 4
+
+[node name="PreviewLabel" type="Label" parent="Root/ScrollAssets/AssetsBox/PreviewBox"]
+text = "Preview"
+
+[node name="PreviewTexture" type="TextureRect" parent="Root/ScrollAssets/AssetsBox/PreviewBox"]
+custom_minimum_size = Vector2(200, 200)
+expand = true
+stretch_mode = 2
+mouse_filter = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Buttons" type="HBoxContainer" parent="Root/ScrollAssets/AssetsBox"]
+theme_override_constants/separation = 8
+
+[node name="New" type="Button" parent="Root/ScrollAssets/AssetsBox/Buttons"]
+text = "New"
+
+[node name="Save" type="Button" parent="Root/ScrollAssets/AssetsBox/Buttons"]
+text = "Save"
+
+[node name="Reload" type="Button" parent="Root/ScrollAssets/AssetsBox/Buttons"]
+text = "Reload"
+
+[node name="Delete" type="Button" parent="Root/ScrollAssets/AssetsBox/Buttons"]
+text = "Delete"
+theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
+
 [node name="ScrollInspector" type="ScrollContainer" parent="Root"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -348,22 +378,3 @@ theme_override_constants/separation = 6
 text = "Team"
 
 [node name="Team" type="LineEdit" parent="Root/ScrollInspector/Inspector/SpawnerBox/TeamRow"]
-
-[node name="Buttons" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
-theme_override_constants/separation = 8
-
-[node name="New" type="Button" parent="Root/ScrollInspector/Inspector/Buttons"]
-text = "New"
-
-[node name="Save" type="Button" parent="Root/ScrollInspector/Inspector/Buttons"]
-text = "Save"
-
-[node name="Reload" type="Button" parent="Root/ScrollInspector/Inspector/Buttons"]
-text = "Reload"
-
-[node name="Delete" type="Button" parent="Root/ScrollInspector/Inspector/Buttons"]
-text = "Delete"
-theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
-
-[node name="Close" type="Button" parent="Root/ScrollInspector/Inspector/Buttons"]
-text = "Close"

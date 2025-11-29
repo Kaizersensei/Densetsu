@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ActorData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://engine/actors/resources/ActorData.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/placeholder_player.tres" id="2"]
+[ext_resource type="PackedScene" path="res://engine/actors/ActorNPC.tscn" id="3"]
+[ext_resource type="Texture2D" path="res://assets/placeholder_player.tres" id="4"]
+
+[resource]
+script = ExtResource("1")
+id = "NPCActor"
+type = "Character"
+input_source = "AI"
+lifecycle_state = "Active"
+description = "Neutral NPC placeholder"
+group = "actors"
+sprite = ExtResource("2")
+scene = ExtResource("3")

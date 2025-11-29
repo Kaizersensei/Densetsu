@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ProjectileData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://engine/data/resources/ProjectileData.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/placeholder_enemy_projectile.tres" id="2"]
+[ext_resource type="PackedScene" path="res://engine/projectiles/EnemyProjectile2D.tscn" id="3"]
+
+[resource]
+script = ExtResource("1")
+id = "EnemyProjectile"
+description = "Enemy projectile placeholder"
+sprite = ExtResource("2")
+scene = ExtResource("3")

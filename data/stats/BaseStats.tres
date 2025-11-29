@@ -1,5 +1,8 @@
-[gd_resource type="Resource" script="res://engine/data/resources/StatsData.gd" format=3]
+[gd_resource type="Resource" script_class="StatsData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://engine/data/resources/StatsData.gd" id="1_cgfcu"]
 
 [resource]
+script = ExtResource("1_cgfcu")
 id = "BaseStats"
 stats = {}

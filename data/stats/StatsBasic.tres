@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="StatsData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://engine/data/resources/StatsData.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "StatsBasic"
+description = "Basic stats template"
+stats = {
+"hp": 10,
+"mp": 0,
+"strength": 1,
+"defense": 0,
+"agility": 1,
+"intelligence": 1,
+"luck": 1,
+}

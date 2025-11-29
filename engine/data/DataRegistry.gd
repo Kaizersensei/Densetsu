@@ -65,9 +65,18 @@ func _load_dir(category: String, dir_path: String) -> void:
 
 
 func get_ids(category: String = "") -> Array:
+	var ids: Array = []
 	if category != "" and _by_category.has(category):
-		return _by_category[category]
-	return _by_id.keys()
+		ids = _by_category[category].duplicate()
+	else:
+		ids = _by_id.keys()
+	# Filter out legacy/base entries
+	ids = ids.filter(func(id):
+		if id == null:
+			return false
+		var s := String(id)
+		return not s.begins_with("Base"))
+	return ids
 
 
 func get_resource(id: String):
