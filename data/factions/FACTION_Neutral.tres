@@ -6,3 +6,10 @@
 script = ExtResource("1")
 id = "FACTION_Neutral"
 description = "Neutral faction placeholder"
+tags = PackedStringArray()
+hostility_table = {}
+base_loot_table_id = ""
+inventory_template_id = ""
+base_stats = {}
+stats_merge_policy = "override"
+inventory_merge_policy = "override"

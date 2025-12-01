@@ -20,9 +20,14 @@ class_name StatsData
 @export var elem_wind: float = 0.0
 @export var elem_light: float = 0.0
 @export var elem_dark: float = 0.0
-# Skill multipliers
-@export var skill_attack: float = 0.0
-@export var skill_support: float = 0.0
-@export var skill_special: float = 0.0
+@export var elem_thunder: float = 0.0
+@export var elem_gaea: float = 0.0
+@export var elem_timespace: float = 0.0
+# Combat skill proficiencies
+@export var skill_unarmed: float = 0.0
+@export var skill_armed: float = 0.0
+@export var skill_ranged: float = 0.0
+@export var skill_finesse: float = 0.0
+@export var skill_stealth: float = 0.0
 # Freeform dictionary for derived or extended stats
 @export var stats: Dictionary = {}

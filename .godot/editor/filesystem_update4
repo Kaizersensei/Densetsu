@@ -6,4 +6,4 @@ res://assets/placeholder_deco.tres
 res://assets/placeholder_trap.tres
 res://assets/placeholder_item.tres
 res://assets/placeholder_projectile.tres
-res://engine/editor/DataEditor.gd
+res://engine/scene/SceneManager.gd

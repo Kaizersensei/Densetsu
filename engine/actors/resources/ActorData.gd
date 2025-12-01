@@ -36,6 +36,7 @@ class_name ActorData
 @export var collision_layers: int = 1
 @export var collision_mask: int = 1
 @export var sprite: Texture2D
+@export var tint: Color = Color(1, 1, 1, 1)
 @export var collider_shape: Resource
 @export var stats: Dictionary = {}
 @export var resistances: Dictionary = {}

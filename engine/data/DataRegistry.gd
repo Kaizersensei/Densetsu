@@ -4,20 +4,25 @@ signal data_changed
 
 const CATEGORY_DIRS := {
 	"Actor": "res://data/actors",
-	"Spawner": "res://data/spawners",
-	"Faction": "res://data/factions",
 	"AIProfile": "res://data/ai_profiles",
+	"Biome": "res://data/biomes",
+	"Faction": "res://data/factions",
 	"Item": "res://data/items",
-	"Projectile": "res://data/projectiles",
-	"Trap": "res://data/traps",
-	"Platform": "res://data/platforms",
 	"LootTable": "res://data/loot_tables",
-	"Stats": "res://data/stats",
-	"Weather": "res://data/weather",
 	"Particles": "res://data/particles",
-	"Sounds": "res://data/sounds",
+	"Scenery": "res://data/platforms",
+	"Prefab": "res://data/prefabs",
+	"Projectile": "res://data/projectiles",
+	"Quest": "res://data/quests",
+	"Region": "res://data/regions",
+	"Sound": "res://data/sounds",
+	"Spawner": "res://data/spawners",
+	"Stats": "res://data/stats",
+	"StatusEffect": "res://data/status_effects",
 	"Strings": "res://data/strings",
-	"Quests": "res://data/quests",
+	"Trap": "res://data/traps",
+	"Trigger": "res://data/triggers",
+	"Weather": "res://data/weather",
 }
 
 var _by_id: Dictionary = {}
@@ -32,7 +37,9 @@ func _rescan() -> void:
 	_by_id.clear()
 	_by_category.clear()
 	_by_category_map.clear()
-	for cat in CATEGORY_DIRS.keys():
+	var cats: Array = CATEGORY_DIRS.keys()
+	cats.sort()
+	for cat in cats:
 		_by_category[cat] = []
 		_by_category_map[cat] = {}
 		var dir_path: String = CATEGORY_DIRS[cat]

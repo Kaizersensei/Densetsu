@@ -14,3 +14,5 @@ class_name SpawnerData
 @export var target_category: String = "Actor"
 @export var target_id: String = ""
 @export var spawn_radius: float = 0.0
+@export var collision_layers: int = 1
+@export var collision_mask: int = 1

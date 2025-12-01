@@ -1,0 +1,5 @@
+actor tester
+
+has tools like "hit weapon" "hit unarmed"etc. to test all the combat handling
+actors can be controlled in preview for fine tuning
+states can be triggered expicitly without FSM chain reliance

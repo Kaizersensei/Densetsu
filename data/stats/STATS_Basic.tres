@@ -7,6 +7,7 @@ script = ExtResource("1")
 id = "STATS_Basic"
 description = "Basic stats template"
 level = 1
+xp_value = 1
 hp = 1.0
 mp = 1.0
 strength = 1.0
@@ -20,9 +21,14 @@ elem_earth = 1.0
 elem_wind = 1.0
 elem_light = 1.0
 elem_dark = 1.0
-skill_attack = 1.0
-skill_support = 1.0
-skill_special = 1.0
+elem_thunder = 1.0
+elem_gaea = 1.0
+elem_timespace = 1.0
+skill_unarmed = 1.0
+skill_armed = 1.0
+skill_ranged = 1.0
+skill_finesse = 1.0
+skill_stealth = 1.0
 stats = {
 "hp": 1.0,
 "mp": 1.0,
@@ -37,7 +43,13 @@ stats = {
  "elem_wind": 1.0,
  "elem_light": 1.0,
  "elem_dark": 1.0,
- "skill_attack": 1.0,
- "skill_support": 1.0,
- "skill_special": 1.0,
+ "elem_thunder": 1.0,
+ "elem_gaea": 1.0,
+ "elem_timespace": 1.0,
+ "skill_unarmed": 1.0,
+ "skill_armed": 1.0,
+ "skill_ranged": 1.0,
+ "skill_finesse": 1.0,
+ "skill_stealth": 1.0,
+ "xp_value": 1.0,
 }

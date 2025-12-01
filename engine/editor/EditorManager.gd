@@ -66,6 +66,15 @@ const PREFAB_DEFAULT_DATA := {
 	"player": "ACTOR_Player",
 	"enemy": "ACTOR_Enemy",
 	"npc": "ACTOR_NPC",
+	"solid": "PLATFORM_SolidGround",
+	"one_way": "PLATFORM_OneWay_Default",
+	"slope_left": "PLATFORM_SlopeLeft",
+	"slope_right": "PLATFORM_SlopeRight",
+	"trap": "TRAP_Basic",
+	"item": "ITEM_Floating",
+	"deco": "SCENERY_Deco",
+	"deco_solid": "SCENERY_DecoStatic",
+	"spawner": "SPAWNER_Enemy",
 }
 var _data_editor: Node
 
@@ -116,6 +125,7 @@ func _ready() -> void:
 	_cursor_plus = preload("res://engine/editor/icons/cursor_plus.png")
 	_cursor_cross = preload("res://engine/editor/icons/cursor_cross.png")
 	_baseline_snapshot = _make_scene_snapshot()
+	_connect_data_registry()
 
 
 func _capture_transform(n: Node2D) -> Dictionary:
@@ -376,7 +386,7 @@ func _clear_passive_flag() -> void:
 func set_selection(node: Node) -> void:
 	_selected = node
 	_dragging = false
-	_apply_actor_data_to_node(_selected)
+	_apply_data_to_node(_selected)
 	if _overlay and _overlay.has_method("set_selection_name"):
 		var name: String = node.name if node else "None"
 		_overlay.set_selection_name(name)
@@ -539,8 +549,8 @@ func _infer_data_category(node: Node) -> String:
 		return "Item"
 	if lname.find("projectile") != -1:
 		return "Projectile"
-	if lname.find("platform") != -1 or lname.find("solid") != -1 or lname.find("slope") != -1 or lname.find("oneway") != -1:
-		return "Platform"
+	if lname.find("platform") != -1 or lname.find("solid") != -1 or lname.find("slope") != -1 or lname.find("oneway") != -1 or lname.find("deco") != -1 or lname.find("scenery") != -1:
+		return "Scenery"
 	return ""
 
 
@@ -862,17 +872,17 @@ func _place_prefab_at_mouse() -> void:
 			desired_name = "Solid"
 		scene.name = desired_name
 		print("Placed prefab:", _stamp_prefab, "assigned name:", scene.name)
-	get_tree().current_scene.add_child(scene)
-	if scene and PREFAB_DEFAULT_DATA.has(_stamp_prefab):
-		var data_id: String = PREFAB_DEFAULT_DATA[_stamp_prefab]
-		if "data_id" in scene:
-			scene.set("data_id", data_id)
-		elif "id" in scene:
-			scene.set("id", data_id)
-		else:
-			scene.set_meta("data_id", data_id)
-		_apply_actor_data_to_node(scene)
-		_apply_visual_for_prefab(scene, _stamp_prefab)
+		get_tree().current_scene.add_child(scene)
+		if scene and PREFAB_DEFAULT_DATA.has(_stamp_prefab):
+			var data_id: String = PREFAB_DEFAULT_DATA[_stamp_prefab]
+			if "data_id" in scene:
+				scene.set("data_id", data_id)
+			elif "id" in scene:
+				scene.set("id", data_id)
+			else:
+				scene.set_meta("data_id", data_id)
+			_apply_data_to_node(scene)
+			_apply_visual_for_prefab(scene, _stamp_prefab)
 	if scene:
 		# Reassert the desired name after parenting in case Godot altered it
 		if PREFAB_NAMES.has(_stamp_prefab):
@@ -966,7 +976,14 @@ func _apply_visual_for_prefab(scene: Node, kind: String) -> void:
 
 
 func _apply_actor_data_to_node(node: Node) -> void:
+	var sm: Node = _get_scene_manager()
+	if sm and sm.has_method("apply_actor_data"):
+		sm.apply_actor_data(node)
+		if node == _selected:
+			_update_highlight()
+		return
 	if node == null:
+		print("[Editor] apply actor data skipped: node null")
 		return
 	var data_id := ""
 	if "data_id" in node:
@@ -978,15 +995,20 @@ func _apply_actor_data_to_node(node: Node) -> void:
 		if mv is String:
 			data_id = mv
 	if data_id == "":
+		print("[Editor] apply actor data skipped: no data_id on", node.name)
 		return
 	if not Engine.has_singleton("DataRegistry"):
+		print("[Editor] apply actor data skipped: no DataRegistry")
 		return
 	var reg = Engine.get_singleton("DataRegistry")
 	if reg == null or not reg.has_method("get_resource_for_category"):
+		print("[Editor] apply actor data skipped: registry missing get_resource_for_category")
 		return
 	var res = reg.get_resource_for_category("Actor", data_id)
 	if res == null:
+		print("[Editor] actor data missing for", data_id)
 		return
+	print("[Editor] apply actor data", data_id, "to", node.name)
 	# Input source hint
 	if "use_player_input" in node:
 		var wants_player: bool = data_id == "ACTOR_Player"
@@ -1016,11 +1038,163 @@ func _apply_actor_data_to_node(node: Node) -> void:
 		var cs := _find_collision_shape(node)
 		if cs:
 			cs.shape = res.collider_shape
+	# Sync from scene template if provided (sprite/collider/poly)
+	if "scene" in res and res.scene:
+		_apply_scene_overrides(node, res.scene)
 	# Persist id/meta so UI and saves stay in sync
 	if "data_id" in node:
 		node.set("data_id", data_id)
 	else:
 		node.set_meta("data_id", data_id)
+	if node is Node2D and node.has_method("reset_base_position"):
+		node.call("reset_base_position")
+
+
+func _infer_category_from_id(data_id: String) -> String:
+	var upper := data_id.to_upper()
+	if upper.begins_with("ACTOR_"):
+		return "Actor"
+	if upper.begins_with("SPAWNER_"):
+		return "Spawner"
+	if upper.begins_with("ITEM_"):
+		return "Item"
+	if upper.begins_with("PROJECTILE_"):
+		return "Projectile"
+	if upper.begins_with("TRAP_"):
+		return "Trap"
+	if upper.begins_with("PLATFORM_") or upper.begins_with("ACTOR_DECO"):
+		return "Scenery"
+	if upper.begins_with("AIPROFILE_"):
+		return "AIProfile"
+	if upper.begins_with("FACTION_"):
+		return "Faction"
+	if upper.begins_with("LOOTTABLE_"):
+		return "LootTable"
+	if upper.begins_with("STATS_"):
+		return "Stats"
+	return ""
+
+
+func _apply_scene_overrides(node: Node, scene: PackedScene) -> void:
+	if node == null or scene == null:
+		return
+	var inst := scene.instantiate()
+	if inst == null:
+		return
+	var tex: Texture2D = null
+	var mod := Color(1, 1, 1, 1)
+	var spr_inst: Sprite2D = inst.get_node_or_null("SpriteRoot/Sprite2D") as Sprite2D
+	if spr_inst and spr_inst.texture:
+		tex = spr_inst.texture
+		mod = spr_inst.modulate
+	var cs_inst := _find_collision_shape(inst)
+	var shape: Shape2D = null
+	if cs_inst and cs_inst.shape:
+		shape = cs_inst.shape.duplicate()
+	var poly: PackedVector2Array = PackedVector2Array()
+	var poly_color := Color(1, 1, 1, 1)
+	var poly_inst: Polygon2D = inst.get_node_or_null("Visual") as Polygon2D
+	if poly_inst and poly_inst.polygon.size() > 0:
+		poly = poly_inst.polygon.duplicate()
+		poly_color = poly_inst.color
+	inst.queue_free()
+	if tex:
+		var target_spr: Sprite2D = node.get_node_or_null("SpriteRoot/Sprite2D") as Sprite2D
+		if target_spr:
+			target_spr.texture = tex
+			target_spr.modulate = mod
+		elif node is Sprite2D:
+			(node as Sprite2D).texture = tex
+	if shape:
+		var target_cs := _find_collision_shape(node)
+		if target_cs:
+			target_cs.shape = shape
+	if poly.size() > 0:
+		var target_poly: Polygon2D = node.get_node_or_null("Visual") as Polygon2D
+		if target_poly:
+			target_poly.polygon = poly
+			target_poly.color = poly_color
+
+
+# Generic apply for non-actor categories; best-effort visuals and collisions
+func _apply_data_to_node(node: Node) -> void:
+	var sm: Node = _get_scene_manager()
+	if sm and sm.has_method("apply_data"):
+		sm.apply_data(node)
+		if node == _selected:
+			_update_highlight()
+		return
+	if node == null:
+		print("[Editor] apply data skipped: node null")
+		return
+	var data_id := ""
+	if "data_id" in node:
+		var v = node.get("data_id")
+		if v is String:
+			data_id = v
+	if data_id == "" and node.has_meta("data_id"):
+		var mv = node.get_meta("data_id")
+		if mv is String:
+			data_id = mv
+	if data_id == "":
+		print("[Editor] apply data skipped: no data_id on", node.name)
+		return
+	if not Engine.has_singleton("DataRegistry"):
+		print("[Editor] apply data skipped: no DataRegistry")
+		return
+	var reg = Engine.get_singleton("DataRegistry")
+	if reg == null or not reg.has_method("get_resource_for_category"):
+		print("[Editor] apply data skipped: registry missing get_resource_for_category")
+		return
+	var cat := _infer_category_from_id(data_id)
+	if cat == "Actor":
+		_apply_actor_data_to_node(node)
+		return
+	var res = reg.get_resource_for_category(cat, data_id)
+	if res == null:
+		print("[Editor] data missing for", data_id, "cat", cat)
+		return
+	print("[Editor] apply data", data_id, "cat", cat, "node", node.name)
+	# platform visuals
+	if "scene" in res and res.scene:
+		_apply_scene_overrides(node, res.scene)
+	# item visuals
+	if cat == "Item":
+		if "sprite" in res and res.sprite:
+			var spr2 := node.get_node_or_null("SpriteRoot/Sprite2D") as Sprite2D
+			if spr2:
+				spr2.texture = res.sprite
+			elif node is Sprite2D:
+				(node as Sprite2D).texture = res.sprite
+	# trap/projectile collision/spawner
+	if cat in ["Trap", "Projectile", "Spawner"]:
+		if "collision_layer" in res and "collision_layer" in node:
+			node.set("collision_layer", res.collision_layer)
+		if "collision_mask" in res and "collision_mask" in node:
+			node.set("collision_mask", res.collision_mask)
+	# apply collision if present
+	if "collision_layer" in res and "collision_layer" in node:
+		node.set("collision_layer", res.collision_layer)
+	if "collision_layers" in res and "collision_layer" in node:
+		node.set("collision_layer", res.collision_layers)
+	if "collision_mask" in res and "collision_mask" in node:
+		node.set("collision_mask", res.collision_mask)
+	# sprite/texture best-effort
+	if "sprite" in res and res.sprite:
+		var spr := node.get_node_or_null("SpriteRoot/Sprite2D")
+		if spr and spr is Sprite2D:
+			(spr as Sprite2D).texture = res.sprite
+		elif node is Sprite2D:
+			(node as Sprite2D).texture = res.sprite
+	# persist data id
+	if "data_id" in node:
+		node.set("data_id", data_id)
+	else:
+		node.set_meta("data_id", data_id)
+	if node is Node2D and node.has_method("reset_base_position"):
+		node.call("reset_base_position")
+	if node == _selected:
+		_update_highlight()
 
 
 func _update_hover_info() -> void:
@@ -1029,32 +1203,10 @@ func _update_hover_info() -> void:
 	var node := _pick_node_at_mouse_top()
 	_hovered = node
 	if node and _overlay and _overlay.has_method("set_hover_info"):
-		var name := node.name
-		var data_id := ""
-		if "data_id" in node:
-			var v = node.get("data_id")
-			if v is String:
-				data_id = v
-		elif node.has_meta("data_id"):
-			var mv = node.get_meta("data_id")
-			if mv is String:
-				data_id = mv
-		var input := "None"
-		if "input_source" in node:
-			input = str(node.get("input_source"))
-		var pos := Vector2.ZERO
-		if node is Node2D:
-			pos = (node as Node2D).global_position
-		var txt := "Hover: %s | ID: %s | Input: %s | X: %.1f Y: %.1f" % [name, data_id, input, pos.x, pos.y]
-		var screen_pos := get_viewport().get_mouse_position() + Vector2(12, 12)
-		if _overlay.has_method("set_hover_info"):
-			_overlay.call("set_hover_info", txt)
-		if _overlay.has_node("HoverTip"):
-			var tip := _overlay.get_node("HoverTip")
-			if tip and tip is Control:
-				(tip as Control).position = screen_pos
+		# Suppress ribbon hover info; leave empty
+		_overlay.call("set_hover_info", "")
 	elif _overlay and _overlay.has_method("set_hover_info"):
-		_overlay.call("set_hover_info", "Hover: None")
+		_overlay.call("set_hover_info", "")
 
 
 func _pick_node_at_mouse_top() -> Node:
@@ -1450,3 +1602,46 @@ func _get_ribbon_height() -> float:
 		if rib and rib is Control:
 			return (rib as Control).size.y
 	return 0.0
+
+
+# Scene manager helper
+func _get_scene_manager():
+	if Engine.has_singleton("SceneManager"):
+		return Engine.get_singleton("SceneManager")
+	if has_node("/root/SceneManager"):
+		return get_node("/root/SceneManager")
+	return null
+
+
+# Registry helper (fallback for legacy paths)
+func _get_registry():
+	if Engine.has_singleton("DataRegistry"):
+		return Engine.get_singleton("DataRegistry")
+	if has_node("/root/DataRegistry"):
+		return get_node("/root/DataRegistry")
+	return null
+
+
+func _connect_data_registry() -> void:
+	var reg: Node = _get_registry()
+	if reg == null:
+		return
+	if reg.has_signal("data_changed"):
+		var cb := Callable(self, "_on_data_changed")
+		if not reg.is_connected("data_changed", cb):
+			reg.connect("data_changed", cb)
+
+
+func _on_data_changed() -> void:
+	# Reapply data to all nodes that carry a data_id so scene instances reflect latest changes.
+	if not get_tree().current_scene:
+		return
+	var stack: Array = [get_tree().current_scene]
+	while not stack.is_empty():
+		var n: Node = stack.pop_back()
+		if n:
+			if n.has_meta("data_id") or ("data_id" in n):
+				_apply_data_to_node(n)
+			for child in n.get_children():
+				if child is Node:
+					stack.append(child)

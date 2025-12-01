@@ -14,3 +14,4 @@ description = "Static decoration with collision"
 group = "actors"
 sprite = ExtResource("2")
 scene = ExtResource("3")
+ tint = Color(0.6, 0.6, 0.6, 1)

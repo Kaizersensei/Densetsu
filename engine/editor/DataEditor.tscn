@@ -300,7 +300,7 @@ theme_override_constants/separation = 8
 
 [node name="HPLabel" type="Label" parent="Root/ScrollInspector/Inspector/HPRow"]
 custom_minimum_size = Vector2(60, 0)
-text = "HP"
+text = "HP Max"
 
 [node name="HP" type="LineEdit" parent="Root/ScrollInspector/Inspector/HPRow"]
 custom_minimum_size = Vector2(80, 0)
@@ -311,7 +311,7 @@ theme_override_constants/separation = 8
 
 [node name="MPLabel" type="Label" parent="Root/ScrollInspector/Inspector/MPRow"]
 custom_minimum_size = Vector2(60, 0)
-text = "MP"
+text = "MP Max"
 
 [node name="MP" type="LineEdit" parent="Root/ScrollInspector/Inspector/MPRow"]
 custom_minimum_size = Vector2(80, 0)
@@ -441,6 +441,39 @@ text = "Dark"
 custom_minimum_size = Vector2(80, 0)
 placeholder_text = "1"
 
+[node name="ElemThunderRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="ElemThunderLabel" type="Label" parent="Root/ScrollInspector/Inspector/ElemThunderRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Thunder"
+
+[node name="ElemThunder" type="LineEdit" parent="Root/ScrollInspector/Inspector/ElemThunderRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="ElemGaeaRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="ElemGaeaLabel" type="Label" parent="Root/ScrollInspector/Inspector/ElemGaeaRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Gaea"
+
+[node name="ElemGaea" type="LineEdit" parent="Root/ScrollInspector/Inspector/ElemGaeaRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="ElemTimespaceRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="ElemTimespaceLabel" type="Label" parent="Root/ScrollInspector/Inspector/ElemTimespaceRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Timespace"
+
+[node name="ElemTimespace" type="LineEdit" parent="Root/ScrollInspector/Inspector/ElemTimespaceRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
 [node name="SkillLabel" type="Label" parent="Root/ScrollInspector/Inspector"]
 text = "Skills"
 
@@ -449,7 +482,7 @@ theme_override_constants/separation = 8
 
 [node name="SkillAtkLabel" type="Label" parent="Root/ScrollInspector/Inspector/SkillAtkRow"]
 custom_minimum_size = Vector2(80, 0)
-text = "Attack"
+text = "Unarmed"
 
 [node name="SkillAtk" type="LineEdit" parent="Root/ScrollInspector/Inspector/SkillAtkRow"]
 custom_minimum_size = Vector2(80, 0)
@@ -460,7 +493,7 @@ theme_override_constants/separation = 8
 
 [node name="SkillSupportLabel" type="Label" parent="Root/ScrollInspector/Inspector/SkillSupportRow"]
 custom_minimum_size = Vector2(80, 0)
-text = "Support"
+text = "Armed"
 
 [node name="SkillSupport" type="LineEdit" parent="Root/ScrollInspector/Inspector/SkillSupportRow"]
 custom_minimum_size = Vector2(80, 0)
@@ -471,9 +504,31 @@ theme_override_constants/separation = 8
 
 [node name="SkillSpecialLabel" type="Label" parent="Root/ScrollInspector/Inspector/SkillSpecialRow"]
 custom_minimum_size = Vector2(80, 0)
-text = "Special"
+text = "Ranged"
 
 [node name="SkillSpecial" type="LineEdit" parent="Root/ScrollInspector/Inspector/SkillSpecialRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="SkillFinesseRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="SkillFinesseLabel" type="Label" parent="Root/ScrollInspector/Inspector/SkillFinesseRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Finesse"
+
+[node name="SkillFinesse" type="LineEdit" parent="Root/ScrollInspector/Inspector/SkillFinesseRow"]
+custom_minimum_size = Vector2(80, 0)
+placeholder_text = "1"
+
+[node name="SkillStealthRow" type="HBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 8
+
+[node name="SkillStealthLabel" type="Label" parent="Root/ScrollInspector/Inspector/SkillStealthRow"]
+custom_minimum_size = Vector2(80, 0)
+text = "Stealth"
+
+[node name="SkillStealth" type="LineEdit" parent="Root/ScrollInspector/Inspector/SkillStealthRow"]
 custom_minimum_size = Vector2(80, 0)
 placeholder_text = "1"
 
@@ -498,6 +553,81 @@ custom_minimum_size = Vector2(100, 0)
 
 [node name="Mask" type="LineEdit" parent="Root/ScrollInspector/Inspector/CollisionRow"]
 custom_minimum_size = Vector2(100, 0)
+
+[node name="DynamicBox" type="VBoxContainer" parent="Root/ScrollInspector/Inspector"]
+theme_override_constants/separation = 6
+
+[node name="ItemLabel" type="Label" parent="Root/ScrollInspector/Inspector"]
+text = "Item Settings"
+
+[node name="ItemSprite" type="LineEdit" parent="Root/ScrollInspector/Inspector"]
+custom_minimum_size = Vector2(200, 0)
+placeholder_text = "sprite path"
+
+[node name="ItemAmount" type="LineEdit" parent="Root/ScrollInspector/Inspector"]
+custom_minimum_size = Vector2(200, 0)
+placeholder_text = "amount"
+
+[node name="ItemAutoPickup" type="CheckBox" parent="Root/ScrollInspector/Inspector"]
+text = "Auto Pickup"
+
+[node name="ItemFloatIdle" type="CheckBox" parent="Root/ScrollInspector/Inspector"]
+text = "Float Idle"
+
+[node name="ItemSlots" type="LineEdit" parent="Root/ScrollInspector/Inspector"]
+custom_minimum_size = Vector2(200, 0)
+placeholder_text = "slots_needed"
+
+[node name="ItemMaxStack" type="LineEdit" parent="Root/ScrollInspector/Inspector"]
+custom_minimum_size = Vector2(200, 0)
+placeholder_text = "max_stack"
+
+[node name="ItemValue" type="LineEdit" parent="Root/ScrollInspector/Inspector"]
+custom_minimum_size = Vector2(200, 0)
+placeholder_text = "value"
+
+[node name="ItemEquipable" type="CheckBox" parent="Root/ScrollInspector/Inspector"]
+text = "Equippable"
+
+[node name="ItemEquipSlot" type="LineEdit" parent="Root/ScrollInspector/Inspector"]
+custom_minimum_size = Vector2(200, 0)
+placeholder_text = "equip_slot"
+
+[node name="ItemConsumable" type="CheckBox" parent="Root/ScrollInspector/Inspector"]
+text = "Consumable"
+
+[node name="ItemSubweapon" type="CheckBox" parent="Root/ScrollInspector/Inspector"]
+text = "Subweapon"
+
+[node name="ItemSubweaponId" type="LineEdit" parent="Root/ScrollInspector/Inspector"]
+custom_minimum_size = Vector2(200, 0)
+placeholder_text = "subweapon_projectile_id"
+
+[node name="PlatformLabel" type="Label" parent="Root/ScrollInspector/Inspector"]
+text = "Platform Settings"
+
+[node name="PlatformName" type="LineEdit" parent="Root/ScrollInspector/Inspector"]
+custom_minimum_size = Vector2(200, 0)
+placeholder_text = "Name"
+
+[node name="PlatformType" type="LineEdit" parent="Root/ScrollInspector/Inspector"]
+custom_minimum_size = Vector2(200, 0)
+placeholder_text = "platform_type"
+
+[node name="PlatformSlope" type="LineEdit" parent="Root/ScrollInspector/Inspector"]
+custom_minimum_size = Vector2(200, 0)
+placeholder_text = "slope_direction"
+
+[node name="PlatformSpeed" type="LineEdit" parent="Root/ScrollInspector/Inspector"]
+custom_minimum_size = Vector2(200, 0)
+placeholder_text = "speed"
+
+[node name="PlatformPath" type="LineEdit" parent="Root/ScrollInspector/Inspector"]
+custom_minimum_size = Vector2(200, 0)
+placeholder_text = "movement_path_id"
+
+[node name="PlatformAllowProjectile" type="CheckBox" parent="Root/ScrollInspector/Inspector"]
+text = "Allow Projectile Collision"
 
 [node name="SpawnerLabel" type="Label" parent="Root/ScrollInspector/Inspector"]
 text = "Spawner Settings"

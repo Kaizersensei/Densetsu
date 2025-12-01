@@ -5,7 +5,6 @@
 
 [resource]
 script = ExtResource("1")
-id = "EnemySpawnerData"
 id = "SPAWNER_Enemy"
 description = "Spawns enemy dummy actors"
 spawn_scene = ExtResource("2")
@@ -20,3 +19,5 @@ show_in_game = false
 target_category = "Actor"
 target_id = "ACTOR_Enemy"
 spawn_radius = 0.0
+collision_layers = 1
+collision_mask = 1

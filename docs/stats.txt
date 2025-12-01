@@ -1,0 +1,120 @@
+6 – Stat & Skill Framework
+Purpose
+The Stat & Skill Framework governs all numerical and categorical data defining Actor capabilities, growth, and interactions. It provides the mathematical backbone for combat, progression, and system balancing. Its modular design allows easy addition, scaling, and tuning of attributes without breaking dependent systems.
+
+Core Philosophy
+This framework separates data (stats) from function (systems). Stats describe potential, while systems interpret that potential through gameplay contexts. Skills, meanwhile, translate data and context into actionable outcomes.
+Each value is deterministic, traceable, and sourced from data tables or scripts referenced in the Actor definition.
+
+Architecture Overview
+Stat Container: Each Actor holds a structured stat table with core attributes, derived stats, and modifiers.
+
+
+Skill Registry: Repository of reusable skill templates that define attacks, abilities, or techniques.
+
+
+Scaling Module: Applies formulas to derive values (e.g., attack power = Strength * Weapon Mod). These formulas can be defined externally for easy tuning.
+
+
+Modifier System: Buffs, debuffs, and environmental influences modify base stats dynamically.
+
+
+
+
+Core Attributes
+Core stats are consistent across all Actor types:
+Level – Represents growth stage and scaling multiplier.
+
+
+HP Max / MP Max – Maximum vitality and energy.
+
+
+Strength / Defense / Agility / Intelligence / Luck – Core physical and mental capabilities.
+
+
+XP Value – Experience yielded upon defeat (for NPCs or enemies).
+Combat Skills
+Unarmed / Armed / Ranged / Finesse / Stealth – Skill proficiencies affecting hit accuracy, evasion, and damage scaling.
+Elemental Affinities
+Earth / Water / Wind / Fire / Light / Dark / Thunder / Gaea / Timespace – Elemental modifiers affecting attack potency and resistance. These interact dynamically with the Combat System’s damage resolver.
+
+Skill Definition Model
+Each Skill entry defines an ability or technique and includes:
+Name & Category (e.g., Physical, Magical, Support)
+Base Power (raw multiplier before scaling)
+Elemental Type (affinity interaction)
+Resource Cost (MP, stamina, item, cooldown)
+Execution Window (startup, active, recovery frames)
+Tags (metadata for conditional logic such as “projectile”, “heavy_attack”, “healing”)
+Scaling Factors (e.g., Strength 80%, Intelligence 20%)
+Effect Set (status applications, environmental changes, or event triggers)
+
+
+All Skills are stored in structured data files and loaded dynamically during Actor initialization or area load.
+
+
+Growth & Progression
+Level-ups increase stats according to race/class growth curves defined in templates.
+
+
+Curve definitions (linear, exponential, hybrid) are adjustable per Actor type.
+
+
+Experience and stat progression follow reflective meditation rules from the GDD — increases occur at rest points, not instantaneously.
+
+
+
+Modifiers & Buff System
+Modifiers temporarily alter stats or introduce timed effects. They are stackable, tagged, and defined by:
+Modifier Source: Skill, environment, item, or anomaly.
+
+
+Type: Additive, multiplicative, or replacement.
+
+
+Duration: Finite (timed) or infinite (persistent until removed).
+
+
+Priority: Determines which modifiers override in conflicts.
+
+
+A Modifier Manager maintains the active list per Actor and applies recalculation only when necessary, optimizing performance.
+
+Integration Points
+Actor System: Holds the stat container and modifier manager.
+
+
+Combat System: Reads stats to resolve damage and scaling; applies modifiers upon hits or effects.
+
+
+FSM System: Can query skill data to conditionally enable or disable states.
+
+
+Chronogardening Layer: Time distortions can alter stat flow (e.g., slowed regen, accelerated decay).
+
+
+
+
+Implementation Intent
+The framework is data-first. Formulas and scaling factors should be defined in external data files (e.g., JSON, CSV) that both human designers and AI agents can edit safely. Any change to base stats or scaling should propagate automatically to dependent systems through runtime recalculation.
+The system must allow the creation of new skills purely through data definition, without requiring script edits.
+
+Constraints
+Avoid circular references between modifiers and derived stats.
+
+
+Ensure stat recalculations are deferred until necessary to prevent frame spikes.
+
+
+Provide debugging visualization for real-time stat evaluation and modifier stacks.
+
+
+
+Balancing & Testing
+Each stat and skill interaction must be logged for playtesting.
+
+
+Designers should be able to visualize average DPS, defense efficiency, and scaling curves.
+
+
+Provide command-line or debug menu access to stat editors for rapid balancing iteration.

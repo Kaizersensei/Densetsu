@@ -1,9 +1,12 @@
 [gd_resource type="Resource" script_class="ParticlesData" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://engine/data/resources/ParticlesData.gd" id="1_gtqf5"]
+[ext_resource type="Script" path="res://engine/data/resources/ParticlesData.gd" id="1"]
 
 [resource]
-script = ExtResource("1_gtqf5")
+script = ExtResource("1")
 id = "BaseParticles"
 description = ""
 tags = PackedStringArray()
+particle_path = ""
+looping = true
+spawn_rate = 1.0

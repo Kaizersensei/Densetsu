@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PrefabData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://engine/data/resources/PrefabData.gd" id="1_iy67g"]
+
+[resource]
+script = ExtResource("1_iy67g")
+id = "BasePrefab"
+name = ""
+prefab_path = ""
+category = ""
+allowed_overrides = []

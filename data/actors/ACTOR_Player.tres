@@ -13,3 +13,4 @@ description = "Player-controlled actor using placeholder sprite"
 group = "actors"
 sprite = ExtResource("2")
 scene = ExtResource("3")
+ tint = Color(0.2, 0.6, 1, 1)

@@ -1,9 +1,14 @@
 [gd_resource type="Resource" script_class="SoundsData" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://engine/data/resources/SoundsData.gd" id="1_kkcg4"]
+[ext_resource type="Script" path="res://engine/data/resources/SoundsData.gd" id="1"]
 
 [resource]
-script = ExtResource("1_kkcg4")
+script = ExtResource("1")
 id = "BaseSounds"
 description = ""
 tags = PackedStringArray()
+file_path = ""
+category = ""
+loop = false
+volume = 1.0
+attack_decay = 0.0

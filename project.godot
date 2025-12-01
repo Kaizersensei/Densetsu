@@ -22,6 +22,7 @@ EventBus="*res://autoload/EventBus.gd"
 InputManager="*res://autoload/InputManager.gd"
 EditorManager="*res://engine/editor/EditorManager.gd"
 DataRegistry="*res://engine/data/DataRegistry.gd"
+SceneManager="*res://engine/scene/SceneManager.gd"
 
 [display]
 

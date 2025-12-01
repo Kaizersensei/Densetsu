@@ -25,76 +25,127 @@ offset_right = -8.0
 offset_bottom = -8.0
 
 [node name="Transform" type="VBoxContainer" parent="Tabs"]
-theme_override_constants/separation = 4
-
-[node name="VBox" type="VBoxContainer" parent="Tabs/Transform"]
-theme_override_constants/separation = 4
-
-[node name="Pos" type="Label" parent="Tabs/Transform/VBox"]
-text = "Pos: n/a"
-
-[node name="Rot" type="Label" parent="Tabs/Transform/VBox"]
-text = "Rot: n/a"
-
-[node name="Scale" type="Label" parent="Tabs/Transform/VBox"]
-text = "Scale: n/a"
-
-[node name="Data" type="VBoxContainer" parent="Tabs"]
-theme_override_constants/separation = 4
-
-[node name="VBox" type="VBoxContainer" parent="Tabs/Data"]
-theme_override_constants/separation = 4
-
-[node name="DataId" type="Label" parent="Tabs/Data/VBox"]
-text = "Data Id:"
-
-[node name="TypeRow" type="HBoxContainer" parent="Tabs/Data/VBox"]
 theme_override_constants/separation = 6
 
-[node name="TypeLabel" type="Label" parent="Tabs/Data/VBox/TypeRow"]
+[node name="PosRow" type="HBoxContainer" parent="Tabs/Transform"]
+theme_override_constants/separation = 6
+
+[node name="PosLabel" type="Label" parent="Tabs/Transform/PosRow"]
+text = "Pos"
+size_flags_horizontal = 1
+size_flags_stretch_ratio = 0.3
+
+[node name="PosX" type="LineEdit" parent="Tabs/Transform/PosRow"]
+custom_minimum_size = Vector2(70, 0)
+placeholder_text = "x"
+size_flags_horizontal = 3
+
+[node name="PosY" type="LineEdit" parent="Tabs/Transform/PosRow"]
+custom_minimum_size = Vector2(70, 0)
+placeholder_text = "y"
+size_flags_horizontal = 3
+
+[node name="RotScaleRow" type="HBoxContainer" parent="Tabs/Transform"]
+theme_override_constants/separation = 6
+
+[node name="RotLabel" type="Label" parent="Tabs/Transform/RotScaleRow"]
+text = "Rot"
+size_flags_horizontal = 1
+size_flags_stretch_ratio = 0.2
+
+[node name="RotDeg" type="LineEdit" parent="Tabs/Transform/RotScaleRow"]
+custom_minimum_size = Vector2(70, 0)
+placeholder_text = "deg"
+size_flags_horizontal = 2
+
+[node name="ScaleLabel" type="Label" parent="Tabs/Transform/RotScaleRow"]
+text = "Scale"
+size_flags_horizontal = 1
+size_flags_stretch_ratio = 0.2
+
+[node name="ScaleX" type="LineEdit" parent="Tabs/Transform/RotScaleRow"]
+custom_minimum_size = Vector2(70, 0)
+placeholder_text = "x"
+size_flags_horizontal = 2
+
+[node name="ScaleY" type="LineEdit" parent="Tabs/Transform/RotScaleRow"]
+custom_minimum_size = Vector2(70, 0)
+placeholder_text = "y"
+size_flags_horizontal = 2
+
+[node name="Type" type="VBoxContainer" parent="Tabs"]
+theme_override_constants/separation = 6
+
+[node name="DataId" type="Label" parent="Tabs/Type"]
+text = "Data Id:"
+
+[node name="TypeRow" type="HBoxContainer" parent="Tabs/Type"]
+theme_override_constants/separation = 6
+
+[node name="TypeLabel" type="Label" parent="Tabs/Type/TypeRow"]
 text = "Type"
 size_flags_horizontal = 1
 size_flags_stretch_ratio = 0.3
 
-[node name="DataType" type="OptionButton" parent="Tabs/Data/VBox/TypeRow"]
+[node name="DataType" type="OptionButton" parent="Tabs/Type/TypeRow"]
 size_flags_horizontal = 3
 focus_mode = 0
 
-[node name="InputSource" type="Label" parent="Tabs/Data/VBox"]
-text = "Input:"
+[node name="OpenData" type="Button" parent="Tabs/Type"]
+text = "Open in Data Panel"
 
-[node name="PlayerNum" type="Label" parent="Tabs/Data/VBox"]
-text = "Player #:"
+[node name="Instance" type="VBoxContainer" parent="Tabs"]
+theme_override_constants/separation = 6
 
-[node name="Aggressiveness" type="Label" parent="Tabs/Data/VBox"]
-text = "Aggressiveness:"
+[node name="TagsRow" type="HBoxContainer" parent="Tabs/Instance"]
+theme_override_constants/separation = 6
 
-[node name="BehaviorProfile" type="Label" parent="Tabs/Data/VBox"]
-text = "Behavior:"
+[node name="TagsLabel" type="Label" parent="Tabs/Instance/TagsRow"]
+text = "Instance Tags"
+size_flags_horizontal = 1
+size_flags_stretch_ratio = 0.35
 
-[node name="StatsId" type="Label" parent="Tabs/Data/VBox"]
-text = "Stats:"
+[node name="Tags" type="LineEdit" parent="Tabs/Instance/TagsRow"]
+placeholder_text = "csv tags"
+size_flags_horizontal = 3
 
-[node name="Collision" type="VBoxContainer" parent="Tabs"]
-theme_override_constants/separation = 4
+[node name="SpriteRow" type="HBoxContainer" parent="Tabs/Instance"]
+theme_override_constants/separation = 6
 
-[node name="VBox" type="VBoxContainer" parent="Tabs/Collision"]
-theme_override_constants/separation = 4
+[node name="SpriteLabel" type="Label" parent="Tabs/Instance/SpriteRow"]
+text = "Sprite Override"
+size_flags_horizontal = 1
+size_flags_stretch_ratio = 0.35
 
-[node name="Layers" type="Label" parent="Tabs/Collision/VBox"]
+[node name="SpriteOverride" type="LineEdit" parent="Tabs/Instance/SpriteRow"]
+placeholder_text = "res://..."
+size_flags_horizontal = 3
+
+[node name="SpriteLoad" type="Button" parent="Tabs/Instance/SpriteRow"]
+text = "Load"
+
+[node name="CollisionRow" type="HBoxContainer" parent="Tabs/Instance"]
+theme_override_constants/separation = 6
+
+[node name="CollisionLabel" type="Label" parent="Tabs/Instance/CollisionRow"]
+text = "Collision Mask"
+size_flags_horizontal = 1
+size_flags_stretch_ratio = 0.35
+
+[node name="CollisionMask" type="LineEdit" parent="Tabs/Instance/CollisionRow"]
+placeholder_text = "mask"
+size_flags_horizontal = 3
+
+[node name="NoProj" type="CheckBox" parent="Tabs/Instance"]
+text = "Disable projectile collisions"
+
+[node name="LayerNames" type="Label" parent="Tabs/Instance"]
 text = "Layers:"
+autowrap_mode = 3
 
-[node name="Mask" type="Label" parent="Tabs/Collision/VBox"]
-text = "Mask:"
+[node name="InstanceApply" type="Button" parent="Tabs/Instance"]
+text = "Apply Overrides"
 
-[node name="AI" type="VBoxContainer" parent="Tabs"]
-theme_override_constants/separation = 4
-
-[node name="VBox" type="VBoxContainer" parent="Tabs/AI"]
-theme_override_constants/separation = 4
-
-[node name="AIProfile" type="Label" parent="Tabs/AI/VBox"]
-text = "AI Profile:"
-
-[node name="AIState" type="Label" parent="Tabs/AI/VBox"]
-text = "AI State:"
+[node name="TransformTimer" type="Timer" parent="."]
+one_shot = true
+wait_time = 0.2

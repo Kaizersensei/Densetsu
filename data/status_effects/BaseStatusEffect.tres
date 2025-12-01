@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="StatusEffectData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://engine/data/resources/StatusEffectData.gd" id="1_adaks"]
+
+[resource]
+script = ExtResource("1_adaks")
+id = "BaseStatusEffect"
+name = ""
+type = ""
+duration = 0.0
+max_stacks = 0
+tick_interval = 0.0
+tick_damage = 0.0
+stat_modifiers = {}
+movement_modifiers = {}
+control_modifiers = {}
+visual_fx_id = ""
+sound_fx_id = ""
+is_dispersed_by_cleanse = true
+is_temporal = false
+ignore_invulnerability = false
+applies_knockback = false

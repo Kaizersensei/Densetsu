@@ -1,0 +1,515 @@
+# Editor Database Analysis
+
+## Purpose
+
+Define **all data categories**, their **required fields**, **cross‑links**, **minimum viable datasets**, and **missing categories** needed for the Densetsu Engine’s in‑editor database. This reflects **Phase One–Two engine design**, *Universe Document* canon, and *GDD* systems.
+
+The goal: a **Codex‑friendly structured data schema** that the Editor can load, edit, serialize, and validate.
+
+---
+
+# 1. ACTOR
+
+## Definition
+
+An Actor is anything that:
+
+* Exists in the world,
+* Has an identity,
+* Can optionally use FSM, Stats, Combat, AI.
+
+## Minimum Dataset
+
+* **id** (string)
+* **name**
+* **category** (character, enemy, npc, trap, projectile, item, deco)
+* **faction_id** (nullable)
+* **stats_id** (nullable)
+* **ai_profile_id** (nullable)
+* **prefab_path** (tscn)
+* **editor_icon**
+* **tags** (array)
+
+## Cross‑links
+
+* Stats → Stats table
+* AI → AIProfile
+* Faction → Faction
+* Loot → LootTable
+
+## Notes
+
+Actors DO NOT store animations, FSM states, or node hierarchy in the database. Only metadata.
+
+---
+
+# 2. SPAWNER
+
+## Definition
+
+Object that generates entities dynamically in levels.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **category**  (actor, particle, sound, maybe more!)
+* **type list** (what is spawned)
+* **spawn_type** (on_start, timed, triggered, wave, daytime-based)
+* **interval** (float)
+* **max_instances** (int)
+* **trigger_id** (optional)
+* **spawn coordinates and random deviation**
+
+## Cross‑links
+
+* actor_id → Actor
+* trigger_id → future Trigger system
+
+---
+
+# 3. FACTION
+
+## Definition
+
+Represents political/narrative alignment.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **hostility_table** (array using ternary system from our source code)
+* **description**
+* **base loot table** (to add faction and cultural flavor)
+
+## Known factions
+
+* Hirogawa (Protagonist's birthplace and initial dwelling)
+* Crimson Dominion
+* Seigetsu
+* Yukigami
+* Eddara
+* Verdathal
+* Varthum
+* Galport
+* Eresh Emirate
+* Mycomind
+* Kojimigakure
+* **The Ninth Wave** (antagonist)
+
+---
+
+# 4. AI PROFILE
+
+## Definition
+
+Behavior template for Actor AI.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **detection_visual** (in game units - metres)
+* **detection_audio** (in-game units - metres)
+* melee_range (in-game units -  metres; distance at which the AI sees melee as viable if isRanged, otherwise general aggro radius)
+* canJump, canRoll, canDuck, canDash, and so on (for basic movement modules)
+* isMelee , isRanged, isSeeker, isAvoider, isAmbusher, isBlocker, isDodger (Basic combat behavior packages, boolean ticks)
+* projectiles_used (if isRanged, array)
+* **patrol_bounds** (optional)
+* **aggression** (0–100, percentage of chance to attack enemy faction when in-range)
+* **attack_cooldown** (general amount of time to wait before beginning an attack state sequence)
+* **FSM_Template** (for instancing complex behavior, FSM overrides AI profile on instruction conflicts)
+
+---
+
+# 5. ITEM
+
+## Definition
+
+Usable object, inventory entry, or gadget.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **item_type** (consumable, gadget, key, material)
+* **description**
+* **icon**
+* **effect_script** (script name)
+* **parameters** (dictionary)
+* **stack_size** (how many of these stack in allocated slots)
+* **slots_needed** (how much inventory space it needs)
+* **consume** (Boolean switch, destroys 1 of item after use)
+
+---
+
+# 6. PROJECTILE
+
+## Definition
+
+Actor subtype representing projectiles.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **speed**
+* **lifetime**
+* **damage**
+* **element** (optional)
+* **hit_effect_id** (optional)
+* **gravity** (boolean switch, adds world gravity to shots)
+* **prefab_path** (selection, has preset paths and offers parameters)
+
+  **Note:** Projectile origins (spawners/actors/etc) must pass a direction for the shot, in degrees. Value processed clockwise (negative values turn counterclockwise) 
+
+---
+
+# 7. TRAP
+
+## Definition
+
+Static or timed hazard.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **damage**
+* **trigger_type** (proximity, timer, interaction)
+*
+* **prefab_path**
+* **faction_id** (optional)
+* **parameters** (e.g. cycle time, spikes up/down)
+
+---
+
+# 8. PLATFORM
+
+## Definition
+
+Platforms with movement or logic.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **platform_type** (static, moving, falling)
+* **movement_path_id** (optional)
+* **speed**
+* **editor_icon**
+
+---
+
+# 9. LOOT TABLE
+
+## Definition
+
+Defines drops for enemies/containers.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **entries:** array of { item_id, probability, min_count, max_count }
+
+---
+
+# 10. STATS
+
+## Definition
+
+Stat profile for actors.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **level**
+* **hp_max**
+* **mp_max**
+* **strength**
+* **defense**
+* **agility**
+* **intelligence**
+* **luck**
+* **elemental_affinity:** array/dict (fire, water, etc.)
+* **xp_value**
+
+---
+
+# 11. WEATHER
+
+## Definition
+
+Environmental profile for regions.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **precipitation_type**
+* **intensity**
+* **wind_speed**
+* **ambient_light**
+* **particle_effect_id** (optional)
+
+---
+
+# 12. PARTICLES
+
+## Definition
+
+Reusable particle presets.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **particle_path**
+* **looping**
+* **spawn_rate**
+
+---
+
+# 13. SOUNDS
+
+## Definition
+
+Audio assets with metadata.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **file_path**
+* **category** (sfx, music, ui)
+* **loop** (bool)
+* **volume** (db)
+* **attack/decay** (optional)
+
+---
+
+# 14. STRINGS
+
+## Definition
+
+Localized or central text.
+
+## Minimum Dataset
+
+* **id**
+* **key**
+* **value_en**
+* **value_pt** (optional)
+* **category** (ui, dialog, system)
+
+---
+
+# 15. QUESTS
+
+## Definition
+
+Structured narrative tasks.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **description**
+* **objectives:** array of steps
+* **rewards:** xp, items, flags
+* **dependencies:** quest ids
+* **region_id** (optional)
+
+---
+
+# 16. STATUS EFFECTS
+
+## Additional Field
+
+* **priority** (int, determines override/conflict resolution when multiple effects modify same stat or behavior)
+
+## Definition
+
+A **Status Effect** is any temporary or timed modifier applied to an Actor that alters stats, behavior, visuals, or physics.
+
+This system is required for:
+
+* Combat (poison, burn, stun, bleed)
+* Temporal anomalies (time slow, desync, echo‑state)
+* Gadgets (Chronosap reset, Wispcatcher hold)
+* Enemy AI reactions
+* Environmental hazards (heat, cold, toxin)
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **type** (buff, debuff, control, elemental, temporal)
+* **duration** (seconds; 0 = infinite until removed)
+* **max_stacks** (0–n)
+* **tick_interval** (time between periodic effects)
+* **tick_damage** (optional; element‑typed)
+* **stat_modifiers** (dict: stat → +/– value or multiplier)
+* **movement_modifiers** (speed %, jump %, acceleration %)
+* **control_modifiers** (disable_jump, disable_attack, force_hurt state)
+* **visual_fx_id** (particles, tint, shader)
+* **sound_fx_id**
+* **flags:**
+
+  * **is_dispersed_by_cleanse** (bool)
+  * **is_temporal** (bool)
+  * **ignore_invulnerability** (bool)
+  * **applies_knockback** (optional)
+
+## Cross‑links
+
+* Visual FX → Particles
+* Sound FX → Sounds
+* Applied by → Items, Gadgets, Traps, Projectiles
+* Removed by → Items, Gadgets, scripted events
+
+---
+
+# 17. REMOVED - disregard
+
+---
+
+# 18. REGION
+
+## Definition
+
+Geographical/narrative region used for quests, weather, anomalies.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **continent**
+* **biome_id** (optional)
+* **weather_id** (optional)
+* **description**
+* **recommended_level_range**
+
+---
+
+# 19. BIOME
+
+## Definition
+
+Environmental grouping for visuals, particles, soundscapes.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **ambient_particle_id**
+* **ambient_sound_id**
+* **color_profile_id** (future)
+
+---
+
+# 20. SKILL / TECHNIQUE
+
+## Definition
+
+Action‑based abilities usable by actors.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **description**
+* **animation_name**
+* **damage_formula**
+* **cooldown**
+* **resource_costs** (mp, stamina, etc.)
+* **applied_status_effects** (array)
+
+---
+
+# 21. PREFAB
+
+## Definition
+
+Reusable multi‑node scene template.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **prefab_path**
+* **category** (structure, enemy_group, prop_cluster)
+* **allowed_overrides** (array)
+* **editor_icon**
+
+---
+
+# 22. TRIGGER / EVENT NODE
+
+## Definition
+
+Conditional logic nodes used in quests, cutscenes, level scripts.
+
+## Minimum Dataset
+
+* **id**
+* **name**
+* **trigger_type** (on_enter, on_leave, on_kill, on_collect, on_flag, timed)
+* **conditions** (array)
+* **actions** (array)
+* **region_id** (optional)
+
+---
+
+# Suggested Missing or Useful Categories
+
+## **1. REGION** (Strongly Recommended)
+
+Needed for weather, quests, anomalies.
+
+## **2. BIOME** (Optional)
+
+For editor filtering and particle sets.
+
+## **3. EFFECT / STATUS EFFECT**
+
+For gadgets, combat, anomalies.
+
+## **4. GADGET**
+
+Sage’s Bio‑tech tools need metadata.
+
+## **5. PREFAB**
+
+Required for editor’s prefab system.
+
+## **6. DROP PROFILE (for containers)**
+
+Useful variant of loot tables.
+
+## **7. CUTSCENE / EVENT NODES**
+
+Needed later for story system.
+
+---
+
+# Questions to Fill Gaps
+
+1. Should **Actors** include a reference to **animation set ID** even if animations aren’t stored in the DB?
+2. Should **Items** and **Gadgets** share a category or be distinct in the DB?
+3. Do you want **Weather** tied to Region or Biome or both?
+4. Should **AI Profiles** include behavior trees later or remain simple?
+5. Should **Quests** include triggers (enter area, kill count, item obtained)?
+6. Should **Strings** be stored globally or per-module (dialog system separate from UI strings)?
+7. Should **Platforms** include collision presets or always inherit from prefab?
+8. Should **Stats** include **growth curves** now or later?
+
+---
+
+# Summary
+
+This document provides a full structured outline for converting your engine ecosystem into a clean, modular, editor‑driven database.
+
+Awaiting your clarifications on the open questions before generating the final canonical schemas.
