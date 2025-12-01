@@ -13,6 +13,7 @@ const CATEGORY_DIRS := {
 	"Scenery": "res://data/platforms",
 	"Prefab": "res://data/prefabs",
 	"Projectile": "res://data/projectiles",
+	"PolygonTemplate": "res://data/polygon_templates",
 	"Quest": "res://data/quests",
 	"Region": "res://data/regions",
 	"Sound": "res://data/sounds",

@@ -12,17 +12,23 @@ extends CanvasLayer
 @onready var _load_button: Button = $Ribbon/Load
 @onready var _reload_button: Button = $Ribbon/Reload
 @onready var _data_button: Button = $Ribbon/Data
+@onready var _polygon_button: Button = $Ribbon/Polygon
+@onready var _poly_use_button: Button = $PolygonToolbar/PolygonButtons/UsePolygon
+@onready var _poly_cancel_button: Button = $PolygonToolbar/PolygonButtons/CancelPolygon
+@onready var _polygon_toolbar: Control = $PolygonToolbar
 @onready var _save_panel: Panel = $SavePanel
 @onready var _save_path: LineEdit = $SavePanel/SaveRoot/SavePathRow/SavePath
 @onready var _save_filename: LineEdit = $SavePanel/SaveRoot/SaveFilenameRow/SaveFilename
 @onready var _save_list: ItemList = $SavePanel/SaveRoot/SaveList
 @onready var _save_confirm: Button = $SavePanel/SaveRoot/SaveButtons/SaveConfirm
 @onready var _save_cancel: Button = $SavePanel/SaveRoot/SaveButtons/SaveCancel
+@onready var _save_dialog: FileDialog = $SavePanel/SaveDialog
 @onready var _load_panel: Panel = $LoadPanel
 @onready var _load_path: LineEdit = $LoadPanel/LoadRoot/LoadPathRow/LoadPath
 @onready var _load_list: ItemList = $LoadPanel/LoadRoot/LoadList
 @onready var _load_confirm: Button = $LoadPanel/LoadRoot/LoadButtons/LoadConfirm
 @onready var _load_cancel: Button = $LoadPanel/LoadRoot/LoadButtons/LoadCancel
+@onready var _load_dialog: FileDialog = $LoadPanel/LoadDialog
 @onready var _template_panel: Panel = $TemplatePanel
 @onready var _modal_blocker: ColorRect = $ModalBlocker
 @onready var _quick_load: OptionButton = $Ribbon/QuickLoad
@@ -49,10 +55,9 @@ extends CanvasLayer
 @onready var _place_item: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlaceItem
 @onready var _place_solid: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceSolid
 @onready var _place_one_way: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceOneWay
-@onready var _place_slope_left: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceSlopeLeft
-@onready var _place_slope_right: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceSlopeRight
 @onready var _place_deco: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceDeco
 @onready var _place_deco_solid: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceDecoSolid
+@onready var _place_polygon: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlacePolygon
 @onready var _delete_button: Button = $SidebarLeft/PrefabList/DeleteButton
 
 var _inspector_signal_block := false
@@ -75,9 +80,13 @@ func set_selection_name(name: String) -> void:
 	if _selection:
 		_selection.text = "Selected: %s" % name
 
-func set_hover_info(text: String) -> void:
+func set_status(text: String) -> void:
+	if _status:
+		_status.text = text
+
+func set_hover_info(text: String, pos: Vector2 = Vector2.ZERO) -> void:
 	if _hover_label:
-		_hover_label.text = text
+		_hover_label.text = ""
 	if has_node("HoverTip"):
 		var tip := get_node("HoverTip")
 		if tip and tip is Control:
@@ -85,6 +94,14 @@ func set_hover_info(text: String) -> void:
 			if lbl and lbl is Label:
 				(lbl as Label).text = text
 			tip.visible = text != "" and text != "Hover: None"
+			if tip.visible:
+				var offset := Vector2(12, 12)
+				var target := pos + offset
+				var vr := get_viewport().get_visible_rect()
+				var tip_size: Vector2 = tip.size
+				target.x = clamp(target.x, 0.0, vr.size.x - tip_size.x)
+				target.y = clamp(target.y, 0.0, vr.size.y - tip_size.y)
+				tip.position = target
 
 
 func get_snap_enabled() -> bool:
@@ -142,6 +159,12 @@ func connect_prefab_buttons(handler: Callable) -> void:
 	_prefab_handler = handler
 	if _delete_button:
 		_delete_button.pressed.connect(handler.bind("delete"))
+	if _polygon_button:
+		_polygon_button.pressed.connect(handler.bind("toggle_polygon"))
+	if _poly_use_button:
+		_poly_use_button.pressed.connect(handler.bind("use_polygon"))
+	if _poly_cancel_button:
+		_poly_cancel_button.pressed.connect(handler.bind("cancel_polygon"))
 	if _place_player:
 		_place_player.pressed.connect(handler.bind("player"))
 	if _place_enemy:
@@ -162,10 +185,8 @@ func connect_prefab_buttons(handler: Callable) -> void:
 		_place_solid.pressed.connect(handler.bind("solid"))
 	if _place_one_way:
 		_place_one_way.pressed.connect(handler.bind("one_way"))
-	if _place_slope_left:
-		_place_slope_left.pressed.connect(handler.bind("slope_left"))
-	if _place_slope_right:
-		_place_slope_right.pressed.connect(handler.bind("slope_right"))
+	if _place_polygon:
+		_place_polygon.pressed.connect(handler.bind("polygon"))
 	if _undo_button:
 		_undo_button.pressed.connect(handler.bind("undo"))
 	if _redo_button:
@@ -185,10 +206,16 @@ func connect_prefab_buttons(handler: Callable) -> void:
 		_save_confirm.pressed.connect(_on_save_confirm)
 	if _save_cancel:
 		_save_cancel.pressed.connect(_on_save_cancel)
+	if _save_dialog:
+		_save_dialog.file_selected.connect(_on_save_dialog_selected)
+		_save_dialog.canceled.connect(_on_save_cancel)
 	if _load_confirm:
 		_load_confirm.pressed.connect(_on_load_confirm)
 	if _load_cancel:
 		_load_cancel.pressed.connect(_on_load_cancel)
+	if _load_dialog:
+		_load_dialog.file_selected.connect(_on_load_dialog_selected)
+		_load_dialog.canceled.connect(_on_load_cancel)
 	if _templates_button:
 		_templates_button.pressed.connect(_open_template_panel)
 	_ribbon_hidden = []
@@ -211,20 +238,31 @@ func register_popups(controller: Node) -> void:
 		_window_controller.call_deferred("register_popup", _load_panel)
 	if _template_panel:
 		_window_controller.call_deferred("register_popup", _template_panel)
+	set_polygon_toolbar_visible(false)
+	set_polygon_toolbar_visible(false)
 
 
 func _open_save_panel() -> void:
-	if _current_panel == "save":
-		_set_active_panel("")
+	if _save_dialog:
+		_save_dialog.current_dir = "res://editor_saves"
+		_save_dialog.current_file = "scene.tscn"
+		_save_dialog.popup_centered_ratio(0.8)
 	else:
-		_set_active_panel("save")
+		if _current_panel == "save":
+			_set_active_panel("")
+		else:
+			_set_active_panel("save")
 
 
 func _open_load_panel() -> void:
-	if _current_panel == "load":
-		_set_active_panel("")
+	if _load_dialog:
+		_load_dialog.current_dir = "res://editor_saves"
+		_load_dialog.popup_centered_ratio(0.8)
 	else:
-		_set_active_panel("load")
+		if _current_panel == "load":
+			_set_active_panel("")
+		else:
+			_set_active_panel("load")
 
 
 func _open_template_panel() -> void:
@@ -299,6 +337,8 @@ func _set_active_panel(name: String) -> void:
 		var mgr := get_parent()
 		if mgr and mgr.has_method("_update_entity_popup"):
 			mgr.call("_update_entity_popup", true)
+		set_polygon_toolbar_visible(false)
+		_highlight_panel_buttons("")
 		return
 	var panel: Control = null
 	if name == "save":
@@ -311,20 +351,37 @@ func _set_active_panel(name: String) -> void:
 		panel = _data_panel
 	elif name == "templates":
 		panel = _template_panel
+	elif name == "polygon":
+		panel = _polygon_toolbar
 	if panel:
 		_current_panel = name
-		var use_blocker := name != "data"
-		panel.anchor_left = 0
-		panel.anchor_top = 0
-		panel.anchor_right = 1
-		panel.anchor_bottom = 1
-		panel.offset_left = 0
-		panel.offset_right = 0
-		panel.offset_top = ribbon_h
-		panel.offset_bottom = 0
+		var use_blocker := name != "data" and name != "polygon"
+		if name == "polygon":
+			panel.anchor_left = 0
+			panel.anchor_top = 0
+			panel.anchor_right = 1
+			panel.anchor_bottom = 0
+			panel.offset_left = 0
+			panel.offset_right = 0
+			panel.offset_top = ribbon_h
+			var desired_h: float = max(panel.size.y, 32.0)
+			panel.offset_bottom = ribbon_h + desired_h
+		else:
+			panel.anchor_left = 0
+			panel.anchor_top = 0
+			panel.anchor_right = 1
+			panel.anchor_bottom = 1
+			panel.offset_left = 0
+			panel.offset_right = 0
+			panel.offset_top = ribbon_h
+			panel.offset_bottom = 0
 		panel.visible = true
 		panel.z_index = 1000
 		panel.mouse_filter = Control.MOUSE_FILTER_STOP
+		if name == "polygon":
+			set_polygon_toolbar_visible(true)
+			_hide_ribbon_buttons(false)
+		_highlight_panel_buttons(name)
 		if _modal_blocker:
 			if use_blocker:
 				_modal_blocker.visible = true
@@ -340,13 +397,17 @@ func _set_active_panel(name: String) -> void:
 			else:
 				_modal_blocker.visible = false
 				_modal_blocker.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_hide_ribbon_buttons(true)
+		if name != "polygon":
+			_hide_ribbon_buttons(true)
 	var mgr := get_parent()
 	if mgr and mgr.has_method("_update_entity_popup"):
 		mgr.call("_update_entity_popup", true)
 
 
 func _on_save_confirm() -> void:
+	if _save_dialog:
+		_save_dialog.popup_centered_ratio(0.8)
+		return
 	if _prefab_handler.is_valid():
 		var path := (_save_path.text + "/" + _save_filename.text).strip_edges()
 		_prefab_handler.call("save_path", path)
@@ -354,6 +415,9 @@ func _on_save_confirm() -> void:
 
 
 func _on_load_confirm() -> void:
+	if _load_dialog:
+		_load_dialog.popup_centered_ratio(0.8)
+		return
 	if _prefab_handler.is_valid():
 		var items := _load_list.get_selected_items()
 		var fname := ""
@@ -369,6 +433,18 @@ func _on_save_cancel() -> void:
 
 
 func _on_load_cancel() -> void:
+	_hide_modal()
+
+
+func _on_save_dialog_selected(path: String) -> void:
+	if _prefab_handler.is_valid():
+		_prefab_handler.call("save_path", path)
+	_hide_modal()
+
+
+func _on_load_dialog_selected(path: String) -> void:
+	if _prefab_handler.is_valid():
+		_prefab_handler.call("load_path", path)
 	_hide_modal()
 
 
@@ -407,12 +483,18 @@ func _hide_modal() -> void:
 		_save_panel.visible = false
 	if _load_panel:
 		_load_panel.visible = false
+	if _save_dialog:
+		_save_dialog.hide()
+	if _load_dialog:
+		_load_dialog.hide()
 	if _data_panel:
 		_data_panel.visible = false
 	if _template_panel:
 		_template_panel.visible = false
+	set_polygon_toolbar_visible(false)
 	_current_panel = ""
 	_hide_ribbon_buttons(false)
+	_highlight_panel_buttons("")
 	if get_tree():
 		var mgr := get_tree().root.get_node_or_null("EditorManager")
 		if mgr and mgr.has_method("_update_entity_popup"):
@@ -426,3 +508,28 @@ func _hide_ribbon_buttons(hide: bool) -> void:
 	for c in _panel_buttons:
 		if c:
 			c.visible = true
+
+
+func _highlight_panel_buttons(active: String) -> void:
+	var highlight := Color(1, 1, 0.3, 1)
+	var normal := Color(1, 1, 1, 1)
+	var pairs := {
+		"save": _save_button,
+		"load": _load_button,
+		"data": _data_button,
+		"templates": _templates_button,
+		"polygon": _polygon_button,
+	}
+	for key in pairs.keys():
+		var btn: Control = pairs[key]
+		if btn:
+			btn.self_modulate = highlight if key == active else normal
+
+
+func set_polygon_toolbar_visible(visible: bool) -> void:
+	if _polygon_toolbar:
+		_polygon_toolbar.visible = visible
+	if _poly_use_button:
+		_poly_use_button.visible = visible
+	if _poly_cancel_button:
+		_poly_cancel_button.visible = visible

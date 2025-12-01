@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://b0dkwftvi47ab"]
+[gd_scene load_steps=14 format=3 uid="uid://b0dkwftvi47ab"]
 
 [ext_resource type="PackedScene" uid="uid://bs3o6hkufssrb" path="res://engine/actors/ActorCharacter2D.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://d2rrhkmanwo4g" path="res://engine/actors/EnemyDummy.tscn" id="2"]
@@ -9,8 +9,6 @@
 [ext_resource type="PackedScene" uid="uid://item" path="res://engine/items/ActorItem2D.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://engine/platforms/PlatformSolid.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://engine/platforms/PlatformOneWay.tscn" id="9"]
-[ext_resource type="PackedScene" path="res://engine/platforms/PlatformSlopeLeft.tscn" id="10"]
-[ext_resource type="PackedScene" path="res://engine/platforms/PlatformSlopeRight.tscn" id="11"]
 [ext_resource type="PackedScene" path="res://engine/debug/DebugOverlay.tscn" id="12"]
 [ext_resource type="Script" uid="uid://bp4nbrrx7n2jj" path="res://game/levels/CollisionTest.gd" id="13"]
 [ext_resource type="Script" uid="uid://ducujtrkyat5y" path="res://game/levels/KillZone.gd" id="14"]
@@ -18,19 +16,19 @@
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(400, 20)
 
-[node name="CollisionTest" type="Node2D"]
+[node name="_Node2D_303" type="Node2D"]
 script = ExtResource("13")
 
 [node name="Player" parent="." instance=ExtResource("1")]
-position = Vector2(0, -32)
+position = Vector2(-2.33339, 22.9251)
 metadata/data_id = "ACTOR_Player"
 
 [node name="Enemy" parent="." instance=ExtResource("2")]
-position = Vector2(140, -32)
+position = Vector2(140, 22.9924)
 metadata/data_id = "ACTOR_Enemy"
 
 [node name="NPC" parent="." instance=ExtResource("3")]
-position = Vector2(100, -32)
+position = Vector2(100, 22.9924)
 metadata/data_id = "ACTOR_NPC"
 
 [node name="Deco" parent="." instance=ExtResource("4")]
@@ -46,12 +44,12 @@ position = Vector2(59, 24)
 metadata/data_id = "TRAP_Basic"
 
 [node name="Item" parent="." instance=ExtResource("7")]
-position = Vector2(60, -12)
+position = Vector2(60, -9.67347)
 metadata/data_id = "ITEM_Floating"
 
 [node name="SolidGround" parent="." instance=ExtResource("8")]
-position = Vector2(22, 39)
-scale = Vector2(4, 0.25)
+position = Vector2(7, 35)
+scale = Vector2(9.04167, 0.25)
 metadata/data_id = "PLATFORM_SolidGround"
 
 [node name="SolidWallLeft" parent="." instance=ExtResource("8")]
@@ -70,19 +68,12 @@ scale = Vector2(4, 0.25)
 metadata/data_id = "PLATFORM_Ceiling"
 
 [node name="PlatformOneWay" parent="." instance=ExtResource("9")]
-position = Vector2(-75, -17)
+position = Vector2(-140, -43)
 metadata/data_id = "PLATFORM_OneWay_Default"
 
-[node name="SlopeLeft" parent="." instance=ExtResource("10")]
-position = Vector2(-192, 56)
-metadata/data_id = "PLATFORM_SlopeLeft"
-
-[node name="SlopeRight" parent="." instance=ExtResource("11")]
-position = Vector2(192, 56)
-metadata/data_id = "PLATFORM_SlopeRight"
-
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(0, -64)
+position = Vector2(0, 22.9924)
+enabled = false
 
 [node name="DebugOverlay" parent="." instance=ExtResource("12")]
 player_path = NodePath("../Player")

@@ -24,6 +24,18 @@ var _hovered: Node = null
 var _dragging := false
 var _drag_offset := Vector2.ZERO
 var _highlight: Line2D
+var _handles_layer: Node2D
+var _handle_gizmos: Array = []
+var _handle_positions: Array = []
+var _rotation_handle_pos: Vector2 = Vector2.ZERO
+var _drag_mode: String = ""
+var _active_handle: int = -1
+var _initial_transform: Transform2D
+var _initial_scale: Vector2 = Vector2.ONE
+var _initial_handle_local: Vector2 = Vector2.ZERO
+var _initial_rotation: float = 0.0
+var _initial_center: Vector2 = Vector2.ZERO
+var _handle_hover_index: int = -1
 var _inspector_dirty := false
 var _stamp_prefab: String = ""
 var _cursor_select: Resource
@@ -40,6 +52,13 @@ var _save_path_fallback := "user://editor_save.tscn"
 var _window_controller: Node = null
 var _entity_popup: Control = null
 var _entity_popup_state := {}
+var _polygon_mode := false
+var _active_polygon: Node = null
+var _polygon_vertices: Array[Vector2] = []
+var _poly_confirm_dialog: ConfirmationDialog = null
+var _poly_drag_index := -1
+var _poly_selected_index := -1
+var _primary_player: Node2D = null
 const HISTORY_TRANSFORM := "transform"
 const HISTORY_CREATE := "create"
 const HISTORY_DELETE := "delete"
@@ -50,8 +69,6 @@ var show_hitboxes := false
 const PREFAB_NAMES := {
 	"solid": "Solid",
 	"one_way": "One-Way",
-	"slope_left": "Slope Left",
-	"slope_right": "Slope Right",
 	"deco": "Deco",
 	"deco_solid": "Solid Deco",
 	"trap": "Trap",
@@ -68,8 +85,6 @@ const PREFAB_DEFAULT_DATA := {
 	"npc": "ACTOR_NPC",
 	"solid": "PLATFORM_SolidGround",
 	"one_way": "PLATFORM_OneWay_Default",
-	"slope_left": "PLATFORM_SlopeLeft",
-	"slope_right": "PLATFORM_SlopeRight",
 	"trap": "TRAP_Basic",
 	"item": "ITEM_Floating",
 	"deco": "SCENERY_Deco",
@@ -83,6 +98,7 @@ func _ready() -> void:
 	set_process_unhandled_input(true)
 	set_process_unhandled_key_input(true)
 	_ensure_toggle_action()
+	_ensure_polygon_action()
 	_ensure_hitbox_toggle_action()
 	_ensure_editor_camera_actions()
 	_ensure_select_parent_action()
@@ -121,11 +137,27 @@ func _ready() -> void:
 	_highlight.visible = false
 	_highlight.z_index = 1000
 	add_child(_highlight)
+	_handles_layer = Node2D.new()
+	_handles_layer.z_index = 2000
+	_handles_layer.z_as_relative = false
+	add_child(_handles_layer)
+	_create_handle_gizmos()
 	_cursor_select = preload("res://engine/editor/icons/cursor_select.png")
 	_cursor_plus = preload("res://engine/editor/icons/cursor_plus.png")
 	_cursor_cross = preload("res://engine/editor/icons/cursor_cross.png")
 	_baseline_snapshot = _make_scene_snapshot()
 	_connect_data_registry()
+	_poly_confirm_dialog = ConfirmationDialog.new()
+	_poly_confirm_dialog.dialog_text = "Polygon requires at least three points. Deleting this point will cancel polygon editing."
+	_poly_confirm_dialog.ok_button_text = "Cancel and remove polygon"
+	_poly_confirm_dialog.get_cancel_button().text = "Keep editing"
+	_poly_confirm_dialog.visible = false
+	add_child(_poly_confirm_dialog)
+	if get_tree():
+		get_tree().node_added.connect(_on_tree_node_added)
+		get_tree().node_removed.connect(_on_tree_node_removed)
+	_center_game_camera(true)
+	_reapply_all_tints()
 
 
 func _capture_transform(n: Node2D) -> Dictionary:
@@ -154,6 +186,7 @@ func _apply_transform_state(n: Node2D, state: Dictionary) -> void:
 	_update_highlight()
 	if _overlay and _overlay.has_method("populate_inspector"):
 		_overlay.populate_inspector(_selected)
+	_reapply_tint(n)
 
 
 func _pack_node(node: Node) -> PackedScene:
@@ -268,6 +301,14 @@ func _input(event: InputEvent) -> void:
 		_toggle_editor()
 		print("Editor toggle via _input; editor_mode now:", editor_mode)
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("toggle_polygon_mode"):
+		_polygon_mode = not _polygon_mode
+		if not _polygon_mode:
+			_finish_polygon()
+		if _overlay:
+			_overlay.call_deferred("_set_active_panel", "polygon" if _polygon_mode else "")
+		print("Polygon mode:", _polygon_mode)
+		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("toggle_hitboxes"):
 		show_hitboxes = not show_hitboxes
 		_set_hitboxes_visible(show_hitboxes)
@@ -279,6 +320,9 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif event.is_action_pressed(select_parent_action):
 			_select_parent()
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_DELETE:
+			_delete_selected()
 			get_viewport().set_input_as_handled()
 	if not editor_mode:
 		return
@@ -330,9 +374,16 @@ func _exit_editor_mode() -> void:
 	if not editor_mode:
 		return
 	editor_mode = false
+	_ensure_game_camera()
 	if _game_camera:
-		_game_camera.enabled = true
-		_game_camera.make_current()
+		var player := _find_primary_player()
+		if player:
+			_game_camera.global_position = player.global_position
+			_game_camera.enabled = true
+			_game_camera.make_current()
+			_show_footer_message("Camera centered on player")
+		else:
+			_show_footer_message("You must add a player to play the level")
 	if editor_camera:
 		editor_camera.enabled = false
 		editor_camera.visible = false
@@ -344,6 +395,16 @@ func _exit_editor_mode() -> void:
 		_overlay.visible = false
 		if _overlay.has_method("set_editor_mode"):
 			_overlay.set_editor_mode(false)
+	set_selection(null)
+	_hovered = null
+	_active_handle = -1
+	_dragging = false
+	_handle_positions.clear()
+	_set_handles_visible(false)
+	if _highlight:
+		_highlight.visible = false
+	_poly_drag_index = -1
+	_polygon_mode = false
 	_clear_passive_flag()
 	emit_signal("editor_exited")
 	_set_cursor_select()
@@ -356,15 +417,116 @@ func _find_current_camera() -> Camera2D:
 	for cam in get_tree().get_nodes_in_group("Camera2D"):
 		if cam is Camera2D and cam.is_current():
 			return cam
-	# Fallback: traverse tree for current camera
+	# Fallback: traverse tree for current or first camera
 	var stack := [get_tree().root]
+	var first_cam: Camera2D = null
 	while stack.size() > 0:
 		var node = stack.pop_back()
-		if node is Camera2D and node.is_current():
-			return node
+		if node is Camera2D:
+			if (node as Camera2D).is_current():
+				return node as Camera2D
+			if first_cam == null:
+				first_cam = node as Camera2D
 		for child in node.get_children():
 			stack.append(child)
+	return first_cam
+
+
+func _find_primary_player() -> Node2D:
+	if get_tree().current_scene == null:
+		return null
+	var stack: Array = [get_tree().current_scene]
+	while stack.size() > 0:
+		var n: Node = stack.pop_back()
+		if n is Node2D:
+			var nd := n as Node2D
+			var meta_id := ""
+			if nd.has_meta("data_id"):
+				var mv = nd.get_meta("data_id")
+				if mv is String:
+					meta_id = mv
+			if "data_id" in nd:
+				var dv = nd.get("data_id")
+				if dv is String:
+					meta_id = dv
+			if _is_player_node(nd):
+				return nd
+		for child in n.get_children():
+			if child is Node:
+				stack.append(child)
 	return null
+
+
+func _on_tree_node_added(n: Node) -> void:
+	if _primary_player == null and _is_player_node(n):
+		_primary_player = n as Node2D
+		_center_game_camera(true)
+
+
+func _on_tree_node_removed(n: Node) -> void:
+	if n == _primary_player:
+		_primary_player = _find_primary_player()
+		_center_game_camera(true)
+
+
+func _ensure_game_camera() -> void:
+	if get_tree().current_scene == null:
+		return
+	if _game_camera and is_instance_valid(_game_camera):
+		if not _game_camera.is_current():
+			_game_camera.make_current()
+		_game_camera.enabled = true
+		return
+	_game_camera = _find_current_camera()
+	if _game_camera:
+		_game_camera.enabled = true
+		_game_camera.make_current()
+		return
+	# Create a simple camera if none exists
+	var player := _find_primary_player()
+	_game_camera = Camera2D.new()
+	_game_camera.name = "GameCamera"
+	_game_camera.position = player.global_position if player else Vector2.ZERO
+	get_tree().current_scene.add_child(_game_camera)
+	_game_camera.make_current()
+	_show_footer_message("Created fallback game camera")
+
+
+func _center_game_camera(show_msg: bool = false) -> void:
+	_ensure_game_camera()
+	if _game_camera == null:
+		return
+	if _primary_player == null:
+		_primary_player = _find_primary_player()
+	if _primary_player:
+		_game_camera.global_position = _primary_player.global_position
+		_game_camera.make_current()
+		if show_msg:
+			_show_footer_message("Camera centered on player")
+	else:
+		if show_msg:
+			_show_footer_message("You must add a player to play the level")
+
+
+func _reapply_all_tints() -> void:
+	if get_tree().current_scene == null:
+		return
+	var stack: Array = [get_tree().current_scene]
+	while stack.size() > 0:
+		var n: Node = stack.pop_back()
+		_reapply_tint(n)
+		for child in n.get_children():
+			if child is Node:
+				stack.append(child)
+
+
+func _follow_primary_player() -> void:
+	if _game_camera == null:
+		return
+	if _primary_player == null or not is_instance_valid(_primary_player):
+		_primary_player = _find_primary_player()
+	if _primary_player:
+		_game_camera.global_position = _primary_player.global_position
 
 
 func _set_all_actors_passive() -> void:
@@ -384,8 +546,28 @@ func _clear_passive_flag() -> void:
 
 
 func set_selection(node: Node) -> void:
+	if node == null:
+		_selected = null
+		_dragging = false
+		_drag_mode = ""
+		_active_handle = -1
+		_handle_hover_index = -1
+		_handle_positions.clear()
+		_set_handles_visible(false)
+		if _highlight:
+			_highlight.visible = false
+		if _overlay and _overlay.has_method("set_selection_name"):
+			_overlay.set_selection_name("None")
+		Input.set_custom_mouse_cursor(null)
+		Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+		_refresh_cursor()
+		_update_hover_info()
+		_update_entity_popup(true)
+		return
 	_selected = node
 	_dragging = false
+	_drag_mode = ""
+	_active_handle = -1
 	_apply_data_to_node(_selected)
 	if _overlay and _overlay.has_method("set_selection_name"):
 		var name: String = node.name if node else "None"
@@ -394,6 +576,11 @@ func set_selection(node: Node) -> void:
 	selection_changed.emit(node)
 	_sync_data_panel(node)
 	_update_entity_popup(true)
+
+
+func _show_footer_message(msg: String) -> void:
+	if _overlay and _overlay.has_method("set_selection_name"):
+		_overlay.set_selection_name(msg)
 
 
 func _toggle_editor() -> void:
@@ -503,6 +690,8 @@ func _sanitize_input_maps() -> void:
 	_restrict_action_keys("editor_cam_right", [KEY_RIGHT])
 	_restrict_action_keys("editor_cam_up", [KEY_UP])
 	_restrict_action_keys("editor_cam_down", [KEY_DOWN])
+	# Polygon toggle binding
+	_ensure_polygon_action()
 
 
 func _sync_data_panel(node: Node) -> void:
@@ -593,8 +782,24 @@ func _update_snap_from_overlay() -> void:
 func _handle_mouse_button(event: InputEventMouseButton) -> void:
 	if event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
+			_drag_mode = ""
+			_active_handle = -1
+			var handled := _pick_handle_at_mouse()
+			if handled != "":
+				return
 			var ui_hit: Control = get_viewport().gui_get_hovered_control()
 			if ui_hit != null:
+				return
+			if _polygon_mode:
+				var idx := _polygon_pick_vertex(_get_mouse_world_pos())
+				if idx >= 0:
+					_poly_selected_index = idx
+					_poly_drag_index = idx
+					Input.set_default_cursor_shape(Input.CURSOR_DRAG)
+					_dragging = true
+					_drag_mode = "poly_point"
+				else:
+					_add_polygon_vertex(_get_mouse_world_pos())
 				return
 			if _delete_mode:
 				_delete_at_mouse()
@@ -602,26 +807,40 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 			if _stamp_prefab != "":
 				_place_prefab_at_mouse()
 			else:
-				var node := _pick_node_at_mouse()
-				set_selection(node)
-				if node:
+				var picked := _pick_node_at_mouse()
+				set_selection(picked)
+				if picked:
 					_dragging = true
-					_drag_offset = node.global_position - _get_mouse_world_pos()
-					if node is Node2D:
-						_drag_start_node = node
-						_drag_start_state = _capture_transform(node)
+					_drag_offset = picked.global_position - _get_mouse_world_pos()
+					if picked is Node2D:
+						_drag_start_node = picked
+						_drag_start_state = _capture_transform(picked)
 		else:
 			if _dragging and _drag_start_node and is_instance_valid(_drag_start_node):
 				var end_state := _capture_transform(_drag_start_node)
 				var entry := _make_transform_entry(_drag_start_node, _drag_start_state, end_state)
 				_push_history_entry(entry)
 			_dragging = false
+			_drag_mode = ""
+			_active_handle = -1
 			_drag_start_node = null
 			_drag_start_state = {}
 	elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		if _polygon_mode:
+			_delete_polygon_vertex()
+			return
 		_stamp_prefab = ""
 		_delete_mode = false
 		_set_cursor_select()
+	if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		if _poly_drag_index != -1 and _active_polygon:
+			_inspector_dirty = true
+		_poly_drag_index = -1
+		_drag_mode = ""
+		_dragging = false
+		Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+		_dragging = false
+		_drag_mode = ""
 
 
 func _pick_node_at_mouse() -> Node:
@@ -636,6 +855,83 @@ func _pick_node_at_mouse() -> Node:
 	var node: Node = _last_pick_hits[_last_pick_cycle % _last_pick_hits.size()]
 	_last_pick_cycle += 1
 	return node
+
+
+func _pick_handle_at_mouse() -> String:
+	if _handle_positions.is_empty():
+		return ""
+	var mouse := _get_mouse_world_pos()
+	for i in range(min(8, _handle_positions.size())):
+		if mouse.distance_to(_handle_positions[i]) <= 8.0:
+			_active_handle = i
+			_drag_mode = "scale"
+			if _selected and _selected is Node2D:
+				_initial_transform = (_selected as Node2D).global_transform
+				_initial_scale = (_selected as Node2D).global_scale
+				_initial_rotation = (_selected as Node2D).global_rotation
+				_initial_center = _initial_transform.get_origin()
+				_initial_handle_local = _handle_positions[i]
+			_start_handle_drag()
+			return "scale"
+	if _handle_gizmos.size() > 8:
+		if mouse.distance_to(_rotation_handle_pos) <= 12.0:
+			_active_handle = 8
+			_drag_mode = "rotate"
+			if _selected and _selected is Node2D:
+				_initial_transform = (_selected as Node2D).global_transform
+				_initial_scale = (_selected as Node2D).global_scale
+				_initial_rotation = (_selected as Node2D).global_rotation
+				_initial_center = _initial_transform.get_origin()
+			_start_handle_drag()
+			return "rotate"
+	return ""
+
+
+func _start_handle_drag() -> void:
+	if _selected == null or not (_selected is Node2D):
+		return
+	_dragging = true
+	_drag_start_node = _selected
+	_drag_start_state = _capture_transform(_selected as Node2D)
+
+
+func _handle_under_mouse() -> int:
+	if _handle_positions.is_empty():
+		return -1
+	var mouse := _get_mouse_world_pos()
+	for i in range(min(8, _handle_positions.size())):
+		if mouse.distance_to(_handle_positions[i]) <= 8.0:
+			return i
+	if _handle_gizmos.size() > 8:
+		if mouse.distance_to(_rotation_handle_pos) <= 12.0:
+			return 8
+	return -1
+
+
+func _cursor_shape_for_handle(idx: int) -> int:
+	match idx:
+		0, 4:
+			return Input.CURSOR_FDIAGSIZE
+		2, 6:
+			return Input.CURSOR_BDIAGSIZE
+		1, 5:
+			return Input.CURSOR_VSIZE
+		3, 7:
+			return Input.CURSOR_HSIZE
+		8:
+			return Input.CURSOR_DRAG
+		_:
+			return Input.CURSOR_ARROW
+
+
+func _refresh_cursor() -> void:
+	# Restore custom cursor based on current mode when not hovering a handle
+	if _delete_mode:
+		_set_cursor_cross()
+	elif _stamp_prefab != "":
+		_set_cursor_plus()
+	else:
+		_set_cursor_select()
 
 
 func _gather_pick_candidates(world_pos: Vector2) -> Array:
@@ -733,6 +1029,21 @@ func _get_node_aabb(node: Node2D) -> Rect2:
 func _drag_selection() -> void:
 	if not _selected or not (_selected is Node2D):
 		return
+	if _polygon_mode and _active_polygon and _poly_drag_index >= 0:
+		_drag_polygon_point()
+		_refresh_inspector_sidebar()
+		_reapply_tint(_selected)
+		return
+	if _drag_mode == "scale":
+		_apply_handle_scale()
+		_refresh_inspector_sidebar()
+		_reapply_tint(_selected)
+		return
+	if _drag_mode == "rotate":
+		_apply_handle_rotation()
+		_refresh_inspector_sidebar()
+		_reapply_tint(_selected)
+		return
 	var target := _get_mouse_world_pos() + _drag_offset
 	if snap_enabled and snap_size > 0.0:
 		target.x = snapped(target.x, snap_size)
@@ -740,6 +1051,51 @@ func _drag_selection() -> void:
 	_selected.global_position = target
 	if _selected and _selected.has_method("reset_base_position"):
 		_selected.reset_base_position()
+	_update_highlight()
+
+
+func _apply_handle_scale() -> void:
+	if _selected == null or not (_selected is Node2D) or _active_handle < 0:
+		return
+	var n := _selected as Node2D
+	var center := _initial_center
+	var current := _get_mouse_world_pos()
+	var from_center := _initial_handle_local - center
+	var current_vec := current - center
+	var new_scale := _initial_scale
+	# Determine which axes to affect based on handle index
+	var affect_x := true
+	var affect_y := true
+	match _active_handle:
+		1, 5:
+			affect_x = false
+		3, 7:
+			affect_y = false
+		_:
+			pass
+	if affect_x and abs(from_center.x) > 0.001:
+		new_scale.x = _initial_scale.x * (current_vec.x / from_center.x)
+	if affect_y and abs(from_center.y) > 0.001:
+		new_scale.y = _initial_scale.y * (current_vec.y / from_center.y)
+	if snap_enabled and snap_size > 0.0:
+		new_scale.x = snapped(new_scale.x, 0.05)
+		new_scale.y = snapped(new_scale.y, 0.05)
+	n.global_scale = new_scale
+	_update_highlight()
+
+
+func _apply_handle_rotation() -> void:
+	if _selected == null or not (_selected is Node2D):
+		return
+	var n := _selected as Node2D
+	var center := _initial_center
+	var ang0 := (_initial_handle_local - center).angle()
+	var ang1 := (_get_mouse_world_pos() - center).angle()
+	var delta := ang1 - ang0
+	n.global_rotation = _initial_rotation + delta
+	if snap_enabled and snap_size > 0.0:
+		var step := deg_to_rad(15.0)
+		n.global_rotation = snapped(n.global_rotation, step)
 	_update_highlight()
 	_inspector_dirty = true
 
@@ -753,6 +1109,16 @@ func _delete_at_mouse() -> void:
 			_highlight.visible = false
 		_push_history_entry(entry)
 		node.queue_free()
+
+
+func _delete_selected() -> void:
+	if _selected == null or _selected.get_parent() == null:
+		return
+	var entry := _make_delete_entry(_selected)
+	var to_free := _selected
+	set_selection(null)
+	_push_history_entry(entry)
+	to_free.queue_free()
 
 
 func _get_mouse_world_pos() -> Vector2:
@@ -792,6 +1158,21 @@ func _is_unselectable_node(n: Node2D) -> bool:
 	if lname == "hitboxes":
 		return true
 	return false
+
+
+func _is_player_node(n: Node2D) -> bool:
+	var meta_id := ""
+	if n.has_meta("data_id"):
+		var mv = n.get_meta("data_id")
+		if mv is String:
+			meta_id = mv
+	if "data_id" in n:
+		var dv = n.get("data_id")
+		if dv is String:
+			meta_id = dv
+	if meta_id.to_upper() == "ACTOR_PLAYER":
+		return true
+	return n.name.to_lower() == "player"
 
 
 func _is_scene_root(n: Node2D) -> bool:
@@ -840,6 +1221,30 @@ func _on_prefab_selected(kind: String, data: Variant = null) -> void:
 		return
 	if kind == "data":
 		_toggle_data_editor()
+		return
+	if kind == "polygon":
+		_start_new_polygon()
+		return
+	if kind == "toggle_polygon":
+		_polygon_mode = not _polygon_mode
+		if not _polygon_mode:
+			_finish_polygon()
+		if _overlay:
+			_overlay.call_deferred("_set_active_panel", "polygon" if _polygon_mode else "")
+		return
+	if kind == "use_polygon":
+		_finish_polygon()
+		_polygon_mode = false
+		if _overlay:
+			_overlay.call_deferred("_set_active_panel", "")
+		return
+	if kind == "cancel_polygon":
+		if _active_polygon:
+			_active_polygon.queue_free()
+		_finish_polygon()
+		_polygon_mode = false
+		if _overlay:
+			_overlay.call_deferred("_set_active_panel", "")
 		return
 	if kind == "delete":
 		_delete_mode = true
@@ -931,10 +1336,6 @@ func _get_prefab_scene(kind: String) -> PackedScene:
 			return preload("res://engine/platforms/PlatformSolid.tscn")
 		"one_way":
 			return preload("res://engine/platforms/PlatformOneWay.tscn")
-		"slope_left":
-			return preload("res://engine/platforms/PlatformSlopeLeft.tscn")
-		"slope_right":
-			return preload("res://engine/platforms/PlatformSlopeRight.tscn")
 		_:
 			return null
 
@@ -1200,13 +1601,92 @@ func _apply_data_to_node(node: Node) -> void:
 func _update_hover_info() -> void:
 	if not editor_mode:
 		return
+	var txt := ""
+	var mouse_pos := get_viewport().get_mouse_position()
 	var node := _pick_node_at_mouse_top()
 	_hovered = node
-	if node and _overlay and _overlay.has_method("set_hover_info"):
-		# Suppress ribbon hover info; leave empty
-		_overlay.call("set_hover_info", "")
-	elif _overlay and _overlay.has_method("set_hover_info"):
-		_overlay.call("set_hover_info", "")
+	_handle_hover_index = _handle_under_mouse()
+	if _polygon_mode and _active_polygon:
+		var idx := _polygon_pick_vertex(_get_mouse_world_pos())
+		if idx >= 0:
+			Input.set_default_cursor_shape(Input.CURSOR_DRAG)
+		elif _poly_drag_index != -1:
+			Input.set_default_cursor_shape(Input.CURSOR_DRAG)
+		else:
+			Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+	elif _handle_hover_index >= 0:
+		Input.set_custom_mouse_cursor(null)
+		Input.set_default_cursor_shape(_cursor_shape_for_handle(_handle_hover_index))
+	else:
+		Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+		_refresh_cursor()
+	if node and node is Node2D:
+		var n := node as Node2D
+		var data_id := _extract_data_id(n)
+		var cat := _infer_data_category(n)
+		var pos := n.global_position
+		var rot := rad_to_deg(n.global_rotation)
+		var sc := n.global_scale
+		txt = "Sel:%s | Type:%s(%s) | Pos:%.1f,%.1f | Rot:%.1f | Scale:%.2f,%.2f" % [
+			n.name, data_id, cat, pos.x, pos.y, rot, sc.x, sc.y
+		]
+	if _overlay and _overlay.has_method("set_hover_info"):
+		_overlay.call("set_hover_info", txt, mouse_pos)
+	_update_polygon_visual_state()
+	_refresh_inspector_sidebar()
+	_reapply_tint(_selected)
+
+
+func _drag_polygon_point() -> void:
+	if _active_polygon == null or _poly_drag_index < 0 or _poly_drag_index >= _polygon_vertices.size():
+		return
+	var target := _get_mouse_world_pos()
+	if snap_enabled and snap_size > 0.0:
+		target.x = snapped(target.x, snap_size)
+		target.y = snapped(target.y, snap_size)
+	if _active_polygon is Node2D:
+		target = (_active_polygon as Node2D).to_local(target)
+	_polygon_vertices[_poly_drag_index] = target
+	if _active_polygon and _active_polygon.has_method("set_vertices"):
+		_active_polygon.call("set_vertices", _polygon_vertices)
+	_update_polygon_visual_state()
+	_poly_selected_index = _poly_drag_index
+	_reapply_tint(_active_polygon)
+
+
+func _reapply_tint(node: Node) -> void:
+	if node == null:
+		return
+	var data_id := _extract_data_id(node)
+	if data_id == "":
+		return
+	if not Engine.has_singleton("DataRegistry"):
+		return
+	var reg = Engine.get_singleton("DataRegistry")
+	if reg == null or not reg.has_method("get_resource_for_category"):
+		return
+	var cat := _infer_category_from_id(data_id)
+	var res = reg.get_resource_for_category(cat, data_id)
+	if res == null:
+		return
+	if "tint" in res and res.tint is Color:
+		var col: Color = res.tint
+		var spr := node.get_node_or_null("SpriteRoot/Sprite2D") as Sprite2D
+		if spr:
+			spr.modulate = col
+		elif node is Sprite2D:
+			(node as Sprite2D).modulate = col
+		var poly := node.get_node_or_null("Visual") as Polygon2D
+		if poly:
+			poly.color = col
+
+
+func _refresh_inspector_sidebar() -> void:
+	if _overlay == null:
+		return
+	var mgr := self
+	if mgr.has_method("_update_entity_popup"):
+		mgr.call_deferred("_update_entity_popup", true)
 
 
 func _pick_node_at_mouse_top() -> Node:
@@ -1219,19 +1699,22 @@ func _pick_node_at_mouse_top() -> Node:
 
 func _set_cursor_cross() -> void:
 	if _cursor_cross:
-		Input.set_custom_mouse_cursor(_cursor_cross, Input.CURSOR_ARROW, Vector2(8, 8))
+		# Hotspot at green center dot in the provided graphic
+		Input.set_custom_mouse_cursor(_cursor_cross, Input.CURSOR_ARROW, Vector2(12, 12))
 
 
 func _set_cursor_select() -> void:
 	if _cursor_select:
-		Input.set_custom_mouse_cursor(_cursor_select, Input.CURSOR_ARROW, Vector2(8, 8))
+		# Hotspot at green tip in the provided graphic (top-left)
+		Input.set_custom_mouse_cursor(_cursor_select, Input.CURSOR_ARROW, Vector2(2, 2))
 	else:
 		Input.set_custom_mouse_cursor(null)
 
 
 func _set_cursor_plus() -> void:
 	if _cursor_plus:
-		Input.set_custom_mouse_cursor(_cursor_plus, Input.CURSOR_ARROW, Vector2(8, 8))
+		# Hotspot at green center dot in the provided graphic
+		Input.set_custom_mouse_cursor(_cursor_plus, Input.CURSOR_ARROW, Vector2(12, 12))
 	else:
 		Input.set_custom_mouse_cursor(null)
 
@@ -1245,9 +1728,94 @@ func _update_highlight() -> void:
 		_highlight.global_position = Vector2.ZERO
 		_highlight.points = points
 		_highlight.visible = true
+		_update_handles()
 	else:
 		_highlight.visible = false
+		_set_handles_visible(false)
 	_update_hover_info()
+	_update_polygon_visual_state()
+	_reapply_tint(_selected)
+
+
+func _create_handle_gizmos() -> void:
+	_handle_gizmos.clear()
+	for i in range(8):
+		var ln := Line2D.new()
+		ln.width = 2.0
+		ln.default_color = Color.WHITE
+		ln.points = [
+			Vector2(-4, -4), Vector2(4, -4),
+			Vector2(4, 4), Vector2(-4, 4),
+			Vector2(-4, -4)
+		]
+		ln.visible = false
+		_handle_gizmos.append(ln)
+		_handles_layer.add_child(ln)
+	var rot_ln := Line2D.new()
+	rot_ln.width = 2.0
+	rot_ln.default_color = Color(1, 1, 1, 0.8)
+	var circle := PackedVector2Array()
+	var radius := 8.0
+	for a in range(0, 360, 30):
+		var rad := deg_to_rad(a)
+		circle.append(Vector2(cos(rad), sin(rad)) * radius)
+	circle.append(circle[0])
+	rot_ln.points = circle
+	rot_ln.visible = false
+	_handle_gizmos.append(rot_ln) # index 8
+	_handles_layer.add_child(rot_ln)
+
+
+func _update_handles() -> void:
+	if _selected == null or not (_selected is Node2D):
+		_set_handles_visible(false)
+		return
+	var n := _selected as Node2D
+	var local_rect := _get_local_bounds(n)
+	var handle_margin := 0.0
+	if n is Polygon2D or n.get_node_or_null("Visual") is Polygon2D or n is PolygonTerrain2D:
+		handle_margin = 16.0
+	local_rect = local_rect.grow(handle_margin)
+	var corners_local := [
+		local_rect.position,
+		local_rect.position + Vector2(local_rect.size.x, 0),
+		local_rect.position + local_rect.size,
+		local_rect.position + Vector2(0, local_rect.size.y),
+	]
+	var corners_world: Array[Vector2] = []
+	for c in corners_local:
+		corners_world.append(n.global_transform * c)
+	var centers_world := [
+		(corners_world[0] + corners_world[1]) * 0.5,
+		(corners_world[1] + corners_world[2]) * 0.5,
+		(corners_world[2] + corners_world[3]) * 0.5,
+		(corners_world[3] + corners_world[0]) * 0.5,
+	]
+	_handle_positions = [
+		corners_world[0], centers_world[0], corners_world[1],
+		centers_world[1], corners_world[2], centers_world[2],
+		corners_world[3], centers_world[3],
+	]
+	var center_world := n.global_transform * (local_rect.position + local_rect.size * 0.5)
+	var up := n.global_transform.basis_xform(Vector2.UP).normalized()
+	_rotation_handle_pos = center_world + up * (local_rect.size.length() * 0.25 + 24.0)
+	for i in range(_handle_gizmos.size()):
+		_handle_gizmos[i].visible = false
+	for i in range(min(8, _handle_positions.size())):
+		var ln: Line2D = _handle_gizmos[i]
+		ln.global_position = _handle_positions[i]
+		ln.visible = true
+	if _handle_gizmos.size() > 8:
+		var rot_ln: Line2D = _handle_gizmos[8]
+		rot_ln.global_position = _rotation_handle_pos
+		rot_ln.visible = true
+	_set_handles_visible(true)
+
+
+func _set_handles_visible(visible: bool) -> void:
+	for giz in _handle_gizmos:
+		if giz and giz is CanvasItem:
+			(giz as CanvasItem).visible = visible
 
 
 func _update_entity_popup(force: bool) -> void:
@@ -1342,6 +1910,206 @@ func _get_highlight_points(n: Node2D) -> PackedVector2Array:
 	return pts
 
 
+func _update_polygon_visual_state() -> void:
+	if _active_polygon == null:
+		return
+	var show_pts := _polygon_mode
+	if _active_polygon.has_method("set_show_points"):
+		_active_polygon.call("set_show_points", show_pts)
+	if _active_polygon.has_method("set_active_vertex_index"):
+		var idx := -1
+		if show_pts:
+			if _poly_drag_index != -1:
+				idx = _poly_drag_index
+			else:
+				var hover_idx := _polygon_pick_vertex(_get_mouse_world_pos())
+				if hover_idx != -1:
+					idx = hover_idx
+				elif _poly_selected_index != -1:
+					idx = _poly_selected_index
+		_active_polygon.call("set_active_vertex_index", idx)
+	_reapply_tint(_active_polygon)
+
+
+func _get_local_bounds(node: Node2D) -> Rect2:
+	# Sprite bounds (local, unscaled)
+	if node is Sprite2D:
+		var s := node as Sprite2D
+		if s.texture:
+			var size := s.texture.get_size()
+			return Rect2(-size * 0.5, size)
+	# Visual polygon
+	var poly := node.get_node_or_null("Visual") as Polygon2D
+	if poly and poly.polygon.size() > 0:
+		var pts := poly.polygon
+		var minv := pts[0]
+		var maxv := pts[0]
+		for v in pts:
+			minv = minv.min(v)
+			maxv = maxv.max(v)
+		return Rect2(minv, maxv - minv)
+	# Collision shapes
+	var cs := _find_collision_shape(node)
+	if cs and cs.shape:
+		if cs.shape is RectangleShape2D:
+			var rect := cs.shape as RectangleShape2D
+			var half := rect.size * 0.5
+			return Rect2(-half, rect.size)
+		if cs.shape is ConvexPolygonShape2D:
+			var pts2 := (cs.shape as ConvexPolygonShape2D).points
+			if pts2.size() > 0:
+				var minp := pts2[0]
+				var maxp := pts2[0]
+				for v in pts2:
+					minp = minp.min(v)
+					maxp = maxp.max(v)
+				return Rect2(minp, maxp - minp)
+	# Fallback
+	return Rect2(Vector2(-8, -8), Vector2(16, 16))
+
+
+# Polygon helpers
+func _ensure_polygon_action() -> void:
+	var action := "toggle_polygon_mode"
+	if not InputMap.has_action(action):
+		InputMap.add_action(action)
+	if InputMap.action_get_events(action).is_empty():
+		var ev := InputEventKey.new()
+		ev.keycode = KEY_F10
+		InputMap.action_add_event(action, ev)
+
+
+func _add_polygon_vertex(pos: Vector2) -> void:
+	if snap_enabled and snap_size > 0.0:
+		pos = Vector2(snapped(pos.x, snap_size), snapped(pos.y, snap_size))
+	if _active_polygon == null:
+		var poly_scene := preload("res://engine/terrain/PolygonTerrain2D.tscn")
+		_active_polygon = poly_scene.instantiate()
+		_active_polygon.name = "PolygonTerrain"
+		get_tree().current_scene.add_child(_active_polygon)
+		if _active_polygon is Node2D:
+			(_active_polygon as Node2D).global_position = pos
+		_polygon_vertices = [
+			Vector2(-32, 18.475),
+			Vector2(32, 18.475),
+			Vector2(0, -36.95),
+		]
+		_poly_selected_index = 0
+		set_selection(_active_polygon)
+		var entry := _make_create_entry(_active_polygon)
+		_push_history_entry(entry)
+		if _active_polygon and _active_polygon.has_method("set_vertices"):
+			_active_polygon.call("set_vertices", _polygon_vertices)
+		_update_polygon_visual_state()
+		return
+	if _active_polygon is Node2D:
+		var local := (_active_polygon as Node2D).to_local(pos)
+		var insert_at := _poly_selected_index
+		if insert_at >= 0 and insert_at < _polygon_vertices.size():
+			_polygon_vertices.insert(insert_at + 1, local)
+			_poly_selected_index = insert_at + 1
+		else:
+			_polygon_vertices.append(local)
+			_poly_selected_index = _polygon_vertices.size() - 1
+	else:
+		var insert_at2 := _poly_selected_index
+		if insert_at2 >= 0 and insert_at2 < _polygon_vertices.size():
+			_polygon_vertices.insert(insert_at2 + 1, pos)
+			_poly_selected_index = insert_at2 + 1
+		else:
+			_polygon_vertices.append(pos)
+			_poly_selected_index = _polygon_vertices.size() - 1
+	if _active_polygon and _active_polygon.has_method("set_vertices"):
+		_active_polygon.call("set_vertices", _polygon_vertices)
+	_inspector_dirty = true
+	_update_polygon_visual_state()
+
+
+func _start_new_polygon() -> void:
+	_finish_polygon()
+	_polygon_mode = true
+	if _overlay:
+		_overlay.call_deferred("_set_active_panel", "polygon")
+	var start_pos := editor_camera.global_position if editor_camera else _get_mouse_world_pos()
+	_add_polygon_vertex(start_pos)
+
+
+func _finish_polygon() -> void:
+	if _active_polygon and _active_polygon.has_method("set_vertices"):
+		if _polygon_vertices.size() >= 3:
+			_active_polygon.call("set_vertices", _polygon_vertices)
+		else:
+			if _selected == _active_polygon:
+				set_selection(null)
+			_active_polygon.queue_free()
+	if _active_polygon and _active_polygon.has_method("set_show_points"):
+		_active_polygon.call("set_show_points", false)
+	_active_polygon = null
+	_polygon_vertices.clear()
+	_poly_drag_index = -1
+	_poly_selected_index = -1
+	_update_highlight()
+	_set_handles_visible(false)
+	if _overlay:
+		_overlay.call_deferred("_set_active_panel", "")
+
+
+func _delete_polygon_vertex() -> void:
+	if _active_polygon == null or _polygon_vertices.is_empty():
+		return
+	var mouse := _get_mouse_world_pos()
+	var nearest := 0
+	var best := 1e20
+	for i in range(_polygon_vertices.size()):
+		var world_pt := _polygon_vertices[i]
+		if _active_polygon is Node2D:
+			world_pt = (_active_polygon as Node2D).to_global(world_pt)
+		var d := mouse.distance_to(world_pt)
+		if d < best:
+			best = d
+			nearest = i
+	if _polygon_vertices.size() <= 3:
+		if _poly_confirm_dialog:
+			_poly_confirm_dialog.dialog_text = "Polygon requires at least three points. Deleting this point will cancel polygon editing."
+			_poly_confirm_dialog.ok_button_text = "Cancel and remove polygon"
+			_poly_confirm_dialog.get_cancel_button().text = "Keep editing"
+			if _poly_confirm_dialog.is_connected("confirmed", Callable(self, "_on_polygon_delete_confirmed")):
+				_poly_confirm_dialog.confirmed.disconnect(Callable(self, "_on_polygon_delete_confirmed"))
+			_poly_confirm_dialog.confirmed.connect(Callable(self, "_on_polygon_delete_confirmed"), ConnectFlags.CONNECT_ONE_SHOT)
+			_poly_confirm_dialog.popup_centered()
+		return
+	_polygon_vertices.remove_at(nearest)
+	if _poly_selected_index >= _polygon_vertices.size():
+		_poly_selected_index = _polygon_vertices.size() - 1
+	if _active_polygon and _active_polygon.has_method("set_vertices"):
+		_active_polygon.call("set_vertices", _polygon_vertices)
+	_inspector_dirty = true
+	_update_polygon_visual_state()
+
+
+func _polygon_pick_vertex(world_pos: Vector2) -> int:
+	if _active_polygon == null:
+		return -1
+	var closest := -1
+	var best := 1e20
+	for i in range(_polygon_vertices.size()):
+		var wp := _polygon_vertices[i]
+		if _active_polygon is Node2D:
+			wp = (_active_polygon as Node2D).to_global(wp)
+		var d := world_pos.distance_to(wp)
+		if d < best and d <= 10.0:
+			best = d
+			closest = i
+	return closest
+
+
+func _on_polygon_delete_confirmed() -> void:
+	if _active_polygon:
+		_active_polygon.queue_free()
+	_finish_polygon()
+	_polygon_mode = false
+	_update_polygon_visual_state()
+
 func _on_inspector_changed(value: String) -> void:
 	if _selected == null or not (_selected is Node2D):
 		return
@@ -1377,6 +2145,7 @@ func _on_inspector_changed(value: String) -> void:
 		_selected.reset_base_position()
 	if _overlay and _overlay.has_method("populate_inspector"):
 		_overlay.populate_inspector(_selected)
+	_reapply_tint(_selected)
 
 
 func _apply_history_entry(entry: Dictionary, undo: bool) -> void:

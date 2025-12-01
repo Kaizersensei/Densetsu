@@ -221,6 +221,13 @@ const CATEGORY_SCHEMA := {
 		"name", "platform_type", "slope_direction",
 		"speed", "movement_path_id", "allow_projectile_collision", "tint"
 	],
+	"PolygonTemplate": [
+		"texture_border", "texture_transition", "texture_core",
+		"border_width", "transition_width",
+		"angle_min", "angle_max",
+		"smoothing_threshold_deg", "smoothing_steps",
+		"material_override"
+	],
 	"LootTable": [],
 	"Stats": [
 		"level", "xp_value",
@@ -264,6 +271,7 @@ const CATEGORY_SCRIPTS := {
 	"Trap": "res://engine/data/resources/TrapData.gd",
 	"Trigger": "res://engine/data/resources/TriggerData.gd",
 	"Weather": "res://engine/data/resources/WeatherData.gd",
+	"PolygonTemplate": "res://engine/data/resources/PolygonTemplateData.gd",
 }
 const CATEGORY_TIPS := {
 	"Actor": "Entities with behaviors/inputs; set sprite/scene/collider, AI params, stats.",
@@ -274,6 +282,7 @@ const CATEGORY_TIPS := {
 	"Projectile": "Shots/bullets; link sprite/scene and damage params.",
 	"Trap": "Hazards; link sprite/scene and damage/flags.",
 	"Scenery": "Solids/one-ways/slopes/deco; link platform scenes and tints.",
+	"PolygonTemplate": "Textures/zones/smoothing defaults for polygon terrain.",
 	"LootTable": "Drop lists; define loot roll sets.",
 	"Stats": "Stat templates; baseline hp/atk/etc.",
 	"Weather": "Weather effect definitions and parameters.",

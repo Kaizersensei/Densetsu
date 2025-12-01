@@ -1,0 +1,159 @@
+# 2D Polygon Terrain System Design Plan
+
+## Core Architecture
+
+### 1. Polygon Data Structure
+Create a foundational polygon class that stores:
+- **Vertices**: Ordered list of 2D points defining the polygon boundary
+- **Edges**: Derived from consecutive vertex pairs, each storing its normal vector
+- **Metadata**: Layer/sorting information, collision properties, rendering priority
+
+### 2. Texture Zone System
+Implement a three-tier texturing approach along each edge's normal:
+
+**Zone Definition:**
+- **Border Zone**: Immediate edge region (configurable width in pixels/units)
+- **Transition Zone**: Gradient area between border and core (configurable width)
+- **Core Zone**: Interior region beyond transition
+
+**Storage Requirements:**
+- Texture references for each zone (border, transition, core)
+- Zone width parameters (can be percentage-based or absolute units)
+- UV mapping coordinates or tiling factors
+- Blending methods for transitions
+
+### 3. Texture Template System
+
+**Template Structure:**
+A template is a reusable configuration containing:
+- References to three textures (border/transition/core)
+- Default zone widths
+- Material properties (shaders, blend modes)
+- Optional metadata (terrain type, tags)
+
+**Template Application:**
+- Quick-swap mechanism: replace all textures at once
+- Angle-based conditional application: templates can be restricted to edges within specified angle ranges
+- Database integration: templates stored as serializable assets with unique identifiers
+
+### 4. Smoothing/Subdivision System
+
+**Parameters:**
+- **N**: Maximum angle difference threshold (in degrees) between adjacent edges that triggers smoothing
+- **S**: Number of subdivision steps to apply
+
+**Algorithm Approach:**
+- Iterate through polygon edges, calculate angle between consecutive edges
+- If angle difference exceeds N degrees, mark edge pair for subdivision
+- Apply S subdivision iterations using Catmull-Clark, Chaikin, or similar subdivision scheme
+- Generate new intermediate vertices while preserving texture zone mappings
+- Option to smooth entire polygon or only sharp corners
+
+**Implementation Considerations:**
+- Smoothing should update edge normals for texture projection
+- Maintain separate "visual mesh" (smoothed) and "collision mesh" (original or simplified)
+- Allow toggle between original and smoothed representations
+
+## Editor Integration
+
+### 5. Point Manipulation Interface
+
+**Operations:**
+- **Add Point**: Click to insert vertex at cursor position
+  - Insert between nearest edge vertices
+  - Respect snap-to-grid if enabled
+  
+- **Move Point**: Drag existing vertices
+  - Apply snap settings during movement
+  - Update edge normals and texture mappings in real-time
+  
+- **Delete Point**: Remove vertex (minimum 3 vertices for valid polygon)
+  - Reconnect adjacent vertices
+  - Recalculate affected edge properties
+
+**Snap System Integration:**
+- Query global snap settings (grid size, snap-to-vertex, snap-to-edge)
+- Apply snapping transformations before committing point positions
+- Visual feedback for snap targets
+
+### 6. Inspector/Property Panel
+
+Display editable properties:
+- Vertex coordinates (as array or individual fields)
+- Current texture template selection (dropdown)
+- Smoothing parameters (N threshold, S steps, enable/disable)
+- Zone width overrides per polygon
+- Angle range filters for conditional texture application
+
+### 7. Entity Population System
+
+**Placement Mechanism:**
+- Define spawn rules: density, distribution pattern (random, grid, Poisson disk)
+- Placement bounds: within polygon area or along edges
+- Orientation options: align to terrain normal, random rotation, fixed angle
+
+**Entity Database Integration:**
+- Inspector displays filterable list of available entity types
+- Each entity type stores: prefab/scene reference, scale range, rotation constraints
+- Support for weighted random selection from entity groups
+
+**Runtime/Editor Instantiation:**
+- Preview mode: show placement without committing
+- Bake option: instantiate entities as children or separate nodes
+- Regeneration: clear and repopulate based on updated rules
+
+## Rendering Pipeline
+
+### 8. Texture Projection and Blending
+
+**Rendering Strategy:**
+- Generate mesh from polygon vertices
+- Calculate distance-from-edge for each fragment/vertex
+- Sample appropriate texture based on distance thresholds
+- Blend between zones using gradient functions (linear, smoothstep, custom curves)
+
+**Implementation Options:**
+- **Shader-based**: Pass zone textures and parameters to material shader
+- **Baked mesh**: Generate mesh with multiple UV sets or vertex colors encoding zone information
+- **Multi-pass rendering**: Separate draw calls for each zone with alpha blending
+
+### 9. Angle-Based Template Application
+
+**Conditional Texture Logic:**
+- Each template includes optional angle range (min/max degrees)
+- Edge normal compared against reference direction (e.g., world up, polygon centroid outward)
+- If edge angle within template's range, apply that template's textures to adjacent zones
+- Fallback to default template if no angle-matched template available
+
+**Use Cases:**
+- Cliffs use rocky textures on steep edges (70-90° from horizontal)
+- Gentle slopes use grass textures (0-30°)
+- Mid-range slopes blend dirt/gravel (30-70°)
+
+## Data Flow Summary
+
+### Creation Workflow:
+1. User places initial points in editor → creates polygon
+2. System calculates edges and normals
+3. User selects texture template from database
+4. Template applied, zones calculated automatically
+5. Optional: Enable smoothing with N/S parameters
+6. Optional: Configure entity population rules
+7. Optional: Override specific edges with angle-based templates
+
+### Runtime Behavior:
+1. Polygon mesh generated (smoothed if enabled)
+2. Shader/material receives zone textures and parameters
+3. Fragments rendered with appropriate texture based on distance from edges
+4. Entities instantiated at designated positions
+5. Collision mesh (unsmoothed) handles physics queries
+
+## Extensibility Considerations
+
+- **Multi-polygon terrains**: Support for terrain composed of multiple connected polygons with shared edges
+- **Height mapping**: Extension to 2.5D by assigning height values to vertices
+- **Dynamic modification**: Runtime vertex manipulation with texture re-mapping
+- **LOD system**: Simplified polygon versions for distant rendering
+- **Serialization**: Clear format for saving/loading polygon configurations and template references
+
+This system provides flexibility for diverse terrain types while maintaining editor usability and performance optimization opportunities.

@@ -114,6 +114,20 @@ func _populate(node: Node) -> void:
 
 	var data_id := _extract_data_id(node)
 	var data_cat := _infer_data_category(node)
+	# Remap legacy deco IDs into Scenery
+	var upper_id := data_id.to_upper()
+	if upper_id.begins_with("ACTOR_DECOSTATIC"):
+		data_id = "SCENERY_DecoStatic"
+		if "data_id" in node:
+			node.set("data_id", data_id)
+		else:
+			node.set_meta("data_id", data_id)
+	if upper_id.begins_with("ACTOR_DECO") and not upper_id.begins_with("ACTOR_DECOSTATIC"):
+		data_id = "SCENERY_Deco"
+		if "data_id" in node:
+			node.set("data_id", data_id)
+		else:
+			node.set_meta("data_id", data_id)
 	var data_res: Resource = null
 	var type_options: Array = []
 	if data_id != "" and data_cat == "":
