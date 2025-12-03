@@ -1,0 +1,860 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2layout>
+    <name>WEATHER</name>
+    <sid>172523088764806</sid>
+    <event-sheet>WEATHER</event-sheet>
+    <size>
+        <width>1920</width>
+        <height>1080</height>
+    </size>
+    <margins>
+        <horizontal>500</horizontal>
+        <vertical>500</vertical>
+    </margins>
+    <unbounded-scrolling>0</unbounded-scrolling>
+    <layers>
+        <layer name="WEATHER" sid="878179823788598">
+            <initially-visible>0</initially-visible>
+            <background-color>255,255,255</background-color>
+            <transparent>1</transparent>
+            <parallax>
+                <x>0</x>
+                <y>0</y>
+            </parallax>
+            <zoom-rate>1</zoom-rate>
+            <opacity>1</opacity>
+            <force-own-texture>0</force-own-texture>
+            <global>1</global>
+            <use-render-cells>0</use-render-cells>
+            <blend-mode>1</blend-mode>
+            <effect-fallback>0</effect-fallback>
+            <instances>
+                <instance type="WEATHER_Rain1" uid="463">
+                    <properties>
+                        <rate>25</rate>
+                        <spray-cone>15</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>480</speed>
+                        <size>128</size>
+                        <opacity>100</opacity>
+                        <grow-rate>-0.1</grow-rate>
+                        <x-randomiser>960</x-randomiser>
+                        <y-randomiser>32</y-randomiser>
+                        <speed-randomiser->32</speed-randomiser->
+                        <size-randomiser>256</size-randomiser>
+                        <grow-rate-randomiser>-0.5</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>800</gravity>
+                        <angle-randomiser>3</angle-randomiser>
+                        <speed-randomiser>32</speed-randomiser>
+                        <opacity-randomiser>-40</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>5</timeout>
+                    </properties>
+                    <instance-variables>
+                        <Intensity>1</Intensity>
+                        <WeatherType>0</WeatherType>
+                        <FallSpeed>800</FallSpeed>
+                        <Position></Position>
+                    </instance-variables>
+                    <behavior-instances>
+                        <behavior-instance type="Sine">
+                            <properties>
+                                <active-on-start>Yes</active-on-start>
+                                <movement>Value only</movement>
+                                <wave>Sine</wave>
+                                <period>4</period>
+                                <period-random>0</period-random>
+                                <period-offset>0</period-offset>
+                                <period-offset-random>0</period-offset-random>
+                                <magnitude>50</magnitude>
+                                <magnitude-random>0</magnitude-random>
+                            </properties>
+                        </behavior-instance>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <effect-instances>
+                        <effect-instance type="DirectionBlur">
+                            <parameters>
+                                <angle>90</angle>
+                                <bluramount>8</bluramount>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Warp">
+                            <parameters>
+                                <x-amplitude>1</x-amplitude>
+                                <x-frequency>1920</x-frequency>
+                                <x-speed>0</x-speed>
+                                <y-amplitude>64</y-amplitude>
+                                <y-frequency>540</y-frequency>
+                                <y-speed>5</y-speed>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Brightness">
+                            <parameters>
+                                <brightness>1</brightness>
+                            </parameters>
+                        </effect-instance>
+                    </effect-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>960</x>
+                        <y>-128</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>1.570796371</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="WEATHER_Rain2" uid="464">
+                    <properties>
+                        <rate>66</rate>
+                        <spray-cone>15</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>480</speed>
+                        <size>512</size>
+                        <opacity>50</opacity>
+                        <grow-rate>1</grow-rate>
+                        <x-randomiser>960</x-randomiser>
+                        <y-randomiser>32</y-randomiser>
+                        <speed-randomiser->32</speed-randomiser->
+                        <size-randomiser>512</size-randomiser>
+                        <grow-rate-randomiser>-0.5</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>1200</gravity>
+                        <angle-randomiser>3</angle-randomiser>
+                        <speed-randomiser>32</speed-randomiser>
+                        <opacity-randomiser>-40</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>5</timeout>
+                    </properties>
+                    <instance-variables>
+                        <Intensity>2</Intensity>
+                        <WeatherType>0</WeatherType>
+                        <FallSpeed>1200</FallSpeed>
+                        <Position></Position>
+                    </instance-variables>
+                    <behavior-instances>
+                        <behavior-instance type="Sine">
+                            <properties>
+                                <active-on-start>Yes</active-on-start>
+                                <movement>Value only</movement>
+                                <wave>Sine</wave>
+                                <period>4</period>
+                                <period-random>0</period-random>
+                                <period-offset>0</period-offset>
+                                <period-offset-random>0</period-offset-random>
+                                <magnitude>50</magnitude>
+                                <magnitude-random>0</magnitude-random>
+                            </properties>
+                        </behavior-instance>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <effect-instances>
+                        <effect-instance type="DirectionBlur">
+                            <parameters>
+                                <angle>90</angle>
+                                <bluramount>8</bluramount>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Warp">
+                            <parameters>
+                                <x-amplitude>1</x-amplitude>
+                                <x-frequency>3840</x-frequency>
+                                <x-speed>0</x-speed>
+                                <y-amplitude>480</y-amplitude>
+                                <y-frequency>540</y-frequency>
+                                <y-speed>5</y-speed>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Brightness">
+                            <parameters>
+                                <brightness>1</brightness>
+                            </parameters>
+                        </effect-instance>
+                    </effect-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>960</x>
+                        <y>-256</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>1.570796371</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="WEATHER_Rain3" uid="465">
+                    <properties>
+                        <rate>8</rate>
+                        <spray-cone>15</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>480</speed>
+                        <size>2048</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.1</grow-rate>
+                        <x-randomiser>960</x-randomiser>
+                        <y-randomiser>32</y-randomiser>
+                        <speed-randomiser->32</speed-randomiser->
+                        <size-randomiser>512</size-randomiser>
+                        <grow-rate-randomiser>-0.5</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>600</gravity>
+                        <angle-randomiser>3</angle-randomiser>
+                        <speed-randomiser>32</speed-randomiser>
+                        <opacity-randomiser>-40</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>5</timeout>
+                    </properties>
+                    <instance-variables>
+                        <Intensity>3</Intensity>
+                        <WeatherType>0</WeatherType>
+                        <FallSpeed>600</FallSpeed>
+                        <Position></Position>
+                    </instance-variables>
+                    <behavior-instances>
+                        <behavior-instance type="Sine">
+                            <properties>
+                                <active-on-start>Yes</active-on-start>
+                                <movement>Value only</movement>
+                                <wave>Sine</wave>
+                                <period>4</period>
+                                <period-random>0</period-random>
+                                <period-offset>0</period-offset>
+                                <period-offset-random>0</period-offset-random>
+                                <magnitude>50</magnitude>
+                                <magnitude-random>0</magnitude-random>
+                            </properties>
+                        </behavior-instance>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <effect-instances>
+                        <effect-instance type="DirectionBlur">
+                            <parameters>
+                                <angle>90</angle>
+                                <bluramount>8</bluramount>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Warp">
+                            <parameters>
+                                <x-amplitude>1</x-amplitude>
+                                <x-frequency>3840</x-frequency>
+                                <x-speed>0</x-speed>
+                                <y-amplitude>32</y-amplitude>
+                                <y-frequency>540</y-frequency>
+                                <y-speed>5</y-speed>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Brightness">
+                            <parameters>
+                                <brightness>1</brightness>
+                            </parameters>
+                        </effect-instance>
+                    </effect-instances>
+                    <blend-mode>1</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>960</x>
+                        <y>-384</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>1.570796371</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="WEATHER_Snow1" uid="466">
+                    <properties>
+                        <rate>8</rate>
+                        <spray-cone>15</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>64</speed>
+                        <size>512</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-4</grow-rate>
+                        <x-randomiser>960</x-randomiser>
+                        <y-randomiser>32</y-randomiser>
+                        <speed-randomiser->32</speed-randomiser->
+                        <size-randomiser>128</size-randomiser>
+                        <grow-rate-randomiser>-0.5</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>400</gravity>
+                        <angle-randomiser>5</angle-randomiser>
+                        <speed-randomiser>32</speed-randomiser>
+                        <opacity-randomiser>-40</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>5</timeout>
+                    </properties>
+                    <instance-variables>
+                        <Intensity>1</Intensity>
+                        <WeatherType>1</WeatherType>
+                        <FallSpeed>400</FallSpeed>
+                        <Position></Position>
+                    </instance-variables>
+                    <behavior-instances>
+                        <behavior-instance type="Sine">
+                            <properties>
+                                <active-on-start>Yes</active-on-start>
+                                <movement>Value only</movement>
+                                <wave>Sine</wave>
+                                <period>4</period>
+                                <period-random>0</period-random>
+                                <period-offset>0</period-offset>
+                                <period-offset-random>0</period-offset-random>
+                                <magnitude>50</magnitude>
+                                <magnitude-random>0</magnitude-random>
+                            </properties>
+                        </behavior-instance>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <effect-instances>
+                        <effect-instance type="DirectionBlur">
+                            <parameters>
+                                <angle>0</angle>
+                                <bluramount>0</bluramount>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Warp">
+                            <parameters>
+                                <x-amplitude>0</x-amplitude>
+                                <x-frequency>0</x-frequency>
+                                <x-speed>0</x-speed>
+                                <y-amplitude>0</y-amplitude>
+                                <y-frequency>0</y-frequency>
+                                <y-speed>0</y-speed>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Brightness">
+                            <parameters>
+                                <brightness>1</brightness>
+                            </parameters>
+                        </effect-instance>
+                    </effect-instances>
+                    <blend-mode>1</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>960</x>
+                        <y>-336</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>1.570796371</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="WEATHER_Snow2" uid="467">
+                    <properties>
+                        <rate>6</rate>
+                        <spray-cone>15</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>64</speed>
+                        <size>512</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-4</grow-rate>
+                        <x-randomiser>960</x-randomiser>
+                        <y-randomiser>32</y-randomiser>
+                        <speed-randomiser->32</speed-randomiser->
+                        <size-randomiser>512</size-randomiser>
+                        <grow-rate-randomiser>-0.5</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>400</gravity>
+                        <angle-randomiser>5</angle-randomiser>
+                        <speed-randomiser>32</speed-randomiser>
+                        <opacity-randomiser>-40</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>5</timeout>
+                    </properties>
+                    <instance-variables>
+                        <Intensity>2</Intensity>
+                        <WeatherType>1</WeatherType>
+                        <FallSpeed>512</FallSpeed>
+                        <Position></Position>
+                    </instance-variables>
+                    <behavior-instances>
+                        <behavior-instance type="Sine">
+                            <properties>
+                                <active-on-start>Yes</active-on-start>
+                                <movement>Value only</movement>
+                                <wave>Sine</wave>
+                                <period>4</period>
+                                <period-random>0</period-random>
+                                <period-offset>0</period-offset>
+                                <period-offset-random>0</period-offset-random>
+                                <magnitude>50</magnitude>
+                                <magnitude-random>0</magnitude-random>
+                            </properties>
+                        </behavior-instance>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <effect-instances>
+                        <effect-instance type="DirectionBlur">
+                            <parameters>
+                                <angle>0</angle>
+                                <bluramount>0</bluramount>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Warp">
+                            <parameters>
+                                <x-amplitude>0</x-amplitude>
+                                <x-frequency>0</x-frequency>
+                                <x-speed>0</x-speed>
+                                <y-amplitude>0</y-amplitude>
+                                <y-frequency>0</y-frequency>
+                                <y-speed>0</y-speed>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Brightness">
+                            <parameters>
+                                <brightness>1</brightness>
+                            </parameters>
+                        </effect-instance>
+                    </effect-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>960</x>
+                        <y>-283</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>1.570796371</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="WEATHER_Ashen1" uid="468">
+                    <properties>
+                        <rate>25</rate>
+                        <spray-cone>15</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>128</speed>
+                        <size>128</size>
+                        <opacity>100</opacity>
+                        <grow-rate>-0.1</grow-rate>
+                        <x-randomiser>960</x-randomiser>
+                        <y-randomiser>32</y-randomiser>
+                        <speed-randomiser->32</speed-randomiser->
+                        <size-randomiser>384</size-randomiser>
+                        <grow-rate-randomiser>-0.5</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>800</gravity>
+                        <angle-randomiser>10</angle-randomiser>
+                        <speed-randomiser>32</speed-randomiser>
+                        <opacity-randomiser>-40</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>5</timeout>
+                    </properties>
+                    <instance-variables>
+                        <Intensity>1</Intensity>
+                        <WeatherType>2</WeatherType>
+                        <FallSpeed>800</FallSpeed>
+                        <Position></Position>
+                    </instance-variables>
+                    <behavior-instances>
+                        <behavior-instance type="Sine">
+                            <properties>
+                                <active-on-start>Yes</active-on-start>
+                                <movement>Value only</movement>
+                                <wave>Sine</wave>
+                                <period>4</period>
+                                <period-random>0</period-random>
+                                <period-offset>0</period-offset>
+                                <period-offset-random>0</period-offset-random>
+                                <magnitude>50</magnitude>
+                                <magnitude-random>0</magnitude-random>
+                            </properties>
+                        </behavior-instance>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <effect-instances>
+                        <effect-instance type="DirectionBlur">
+                            <parameters>
+                                <angle>0</angle>
+                                <bluramount>0</bluramount>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Warp">
+                            <parameters>
+                                <x-amplitude>4</x-amplitude>
+                                <x-frequency>4</x-frequency>
+                                <x-speed>1</x-speed>
+                                <y-amplitude>0</y-amplitude>
+                                <y-frequency>0</y-frequency>
+                                <y-speed>0</y-speed>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Brightness">
+                            <parameters>
+                                <brightness>1</brightness>
+                            </parameters>
+                        </effect-instance>
+                    </effect-instances>
+                    <blend-mode>1</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>960</x>
+                        <y>-214</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>1.570796371</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="WEATHER_Ashen2" uid="469">
+                    <properties>
+                        <rate>25</rate>
+                        <spray-cone>15</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>64</speed>
+                        <size>256</size>
+                        <opacity>100</opacity>
+                        <grow-rate>-0.1</grow-rate>
+                        <x-randomiser>960</x-randomiser>
+                        <y-randomiser>32</y-randomiser>
+                        <speed-randomiser->32</speed-randomiser->
+                        <size-randomiser>768</size-randomiser>
+                        <grow-rate-randomiser>-0.5</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>800</gravity>
+                        <angle-randomiser>10</angle-randomiser>
+                        <speed-randomiser>32</speed-randomiser>
+                        <opacity-randomiser>-40</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>5</timeout>
+                    </properties>
+                    <instance-variables>
+                        <Intensity>2</Intensity>
+                        <WeatherType>2</WeatherType>
+                        <FallSpeed>800</FallSpeed>
+                        <Position></Position>
+                    </instance-variables>
+                    <behavior-instances>
+                        <behavior-instance type="Sine">
+                            <properties>
+                                <active-on-start>Yes</active-on-start>
+                                <movement>Value only</movement>
+                                <wave>Sine</wave>
+                                <period>4</period>
+                                <period-random>0</period-random>
+                                <period-offset>0</period-offset>
+                                <period-offset-random>0</period-offset-random>
+                                <magnitude>50</magnitude>
+                                <magnitude-random>0</magnitude-random>
+                            </properties>
+                        </behavior-instance>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <effect-instances>
+                        <effect-instance type="DirectionBlur">
+                            <parameters>
+                                <angle>0</angle>
+                                <bluramount>0</bluramount>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Warp">
+                            <parameters>
+                                <x-amplitude>0</x-amplitude>
+                                <x-frequency>0</x-frequency>
+                                <x-speed>0</x-speed>
+                                <y-amplitude>0</y-amplitude>
+                                <y-frequency>0</y-frequency>
+                                <y-speed>0</y-speed>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Brightness">
+                            <parameters>
+                                <brightness>1</brightness>
+                            </parameters>
+                        </effect-instance>
+                    </effect-instances>
+                    <blend-mode>1</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>960</x>
+                        <y>-163</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>1.570796371</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="WEATHER_Wind" uid="471">
+                    <properties>
+                        <rate>8</rate>
+                        <spray-cone>3</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>480</speed>
+                        <size>64</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.1</grow-rate>
+                        <x-randomiser>0</x-randomiser>
+                        <y-randomiser>1080</y-randomiser>
+                        <speed-randomiser->32</speed-randomiser->
+                        <size-randomiser>512</size-randomiser>
+                        <grow-rate-randomiser>-0.5</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>120</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>2</angle-randomiser>
+                        <speed-randomiser>320</speed-randomiser>
+                        <opacity-randomiser>-40</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>5</timeout>
+                    </properties>
+                    <instance-variables>
+                        <Intensity>1</Intensity>
+                        <WeatherType>-1</WeatherType>
+                        <FallSpeed>0</FallSpeed>
+                        <Position></Position>
+                        <WindRight>true</WindRight>
+                    </instance-variables>
+                    <behavior-instances>
+                        <behavior-instance type="Sine">
+                            <properties>
+                                <active-on-start>Yes</active-on-start>
+                                <movement>Value only</movement>
+                                <wave>Sine</wave>
+                                <period>4</period>
+                                <period-random>0</period-random>
+                                <period-offset>0</period-offset>
+                                <period-offset-random>0</period-offset-random>
+                                <magnitude>50</magnitude>
+                                <magnitude-random>0</magnitude-random>
+                            </properties>
+                        </behavior-instance>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <effect-instances>
+                        <effect-instance type="DirectionBlur">
+                            <parameters>
+                                <angle>0</angle>
+                                <bluramount>0</bluramount>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Warp">
+                            <parameters>
+                                <x-amplitude>16</x-amplitude>
+                                <x-frequency>1</x-frequency>
+                                <x-speed>5</x-speed>
+                                <y-amplitude>1</y-amplitude>
+                                <y-frequency>2</y-frequency>
+                                <y-speed>0</y-speed>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Brightness">
+                            <parameters>
+                                <brightness>1</brightness>
+                            </parameters>
+                        </effect-instance>
+                    </effect-instances>
+                    <blend-mode>1</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>-128</x>
+                        <y>540</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>0</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="WEATHER_Wind" uid="470">
+                    <properties>
+                        <rate>8</rate>
+                        <spray-cone>3</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>480</speed>
+                        <size>64</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.1</grow-rate>
+                        <x-randomiser>0</x-randomiser>
+                        <y-randomiser>1080</y-randomiser>
+                        <speed-randomiser->32</speed-randomiser->
+                        <size-randomiser>512</size-randomiser>
+                        <grow-rate-randomiser>-0.5</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>120</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>2</angle-randomiser>
+                        <speed-randomiser>320</speed-randomiser>
+                        <opacity-randomiser>-40</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>5</timeout>
+                    </properties>
+                    <instance-variables>
+                        <Intensity>1</Intensity>
+                        <WeatherType>-1</WeatherType>
+                        <FallSpeed>0</FallSpeed>
+                        <Position></Position>
+                        <WindRight>false</WindRight>
+                    </instance-variables>
+                    <behavior-instances>
+                        <behavior-instance type="Sine">
+                            <properties>
+                                <active-on-start>Yes</active-on-start>
+                                <movement>Value only</movement>
+                                <wave>Sine</wave>
+                                <period>4</period>
+                                <period-random>0</period-random>
+                                <period-offset>0</period-offset>
+                                <period-offset-random>0</period-offset-random>
+                                <magnitude>50</magnitude>
+                                <magnitude-random>0</magnitude-random>
+                            </properties>
+                        </behavior-instance>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <effect-instances>
+                        <effect-instance type="DirectionBlur">
+                            <parameters>
+                                <angle>0</angle>
+                                <bluramount>0</bluramount>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Warp">
+                            <parameters>
+                                <x-amplitude>16</x-amplitude>
+                                <x-frequency>1</x-frequency>
+                                <x-speed>5</x-speed>
+                                <y-amplitude>1</y-amplitude>
+                                <y-frequency>2</y-frequency>
+                                <y-speed>0</y-speed>
+                            </parameters>
+                        </effect-instance>
+                        <effect-instance type="Brightness">
+                            <parameters>
+                                <brightness>1</brightness>
+                            </parameters>
+                        </effect-instance>
+                    </effect-instances>
+                    <blend-mode>1</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>2048</x>
+                        <y>556</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>3.141592741</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="WEATHERFX_Dust" uid="472">
+                    <properties>
+                        <rate>5</rate>
+                        <spray-cone>10</spray-cone>
+                        <type>One-shot</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>200</speed>
+                        <size>16</size>
+                        <opacity>100</opacity>
+                        <grow-rate>32</grow-rate>
+                        <x-randomiser>8</x-randomiser>
+                        <y-randomiser>4</y-randomiser>
+                        <speed-randomiser->4</speed-randomiser->
+                        <size-randomiser>64</size-randomiser>
+                        <grow-rate-randomiser>64</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>3</angle-randomiser>
+                        <speed-randomiser>4</speed-randomiser>
+                        <opacity-randomiser>-2</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>1</timeout>
+                    </properties>
+                    <behavior-instances>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>2101</x>
+                        <y>902</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>0</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="WEATHER_DustCheck" uid="473">
+                    <properties>
+                        <initial-visibility>Visible</initial-visibility>
+                        <initial-animation>Default</initial-animation>
+                        <initial-frame>0</initial-frame>
+                        <collisions>Enabled</collisions>
+                    </properties>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>2181</x>
+                        <y>682</y>
+                        <z>0</z>
+                        <width>3</width>
+                        <height>3</height>
+                        <depth>0</depth>
+                        <hotspotX>0.666666687</hotspotX>
+                        <hotspotY>0.666666687</hotspotY>
+                        <angle>0</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+            </instances>
+            <effects />
+        </layer>
+    </layers>
+    <nonworld-instances />
+    <effects />
+</c2layout>

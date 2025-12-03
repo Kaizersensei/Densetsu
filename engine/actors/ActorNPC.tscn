@@ -13,13 +13,11 @@
 [ext_resource type="Script" path="res://engine/fsm/states/ActorHurt.gd" id="11"]
 [ext_resource type="Script" path="res://engine/fsm/states/ActorDeath.gd" id="12"]
 
-[sub_resource type="CapsuleShape2D" id="1"]
-radius = 8.0
-height = 24.0
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(22, 112)
 
-[sub_resource type="CapsuleShape2D" id="2"]
-radius = 8.0
-height = 16.0
+[sub_resource type="RectangleShape2D" id="2"]
+size = Vector2(22, 112)
 
 [node name="ActorNPC" type="CharacterBody2D"]
 collision_layer = 2
@@ -31,14 +29,15 @@ script = ExtResource("1")
 use_player_input = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -8)
+position = Vector2(0, -56)
 shape = SubResource("1")
 
 [node name="SpriteRoot" type="Node2D" parent="."]
-position = Vector2(0, -8)
+position = Vector2(0, -56)
 
 [node name="Sprite2D" type="Sprite2D" parent="SpriteRoot"]
 texture = ExtResource("3")
+scale = Vector2(1, 1)
 modulate = Color(0, 1, 0, 1)
 
 [node name="Hurtbox" type="Area2D" parent="."]
@@ -46,7 +45,7 @@ collision_layer = 64
 collision_mask = 120
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
-position = Vector2(0, -12)
+position = Vector2(0, -56)
 shape = SubResource("2")
 
 [node name="Hitboxes" type="Node2D" parent="."]

@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>MAIN</name>
+    <events>
+        <variable constant="0" name="Pause" sid="741096431028168" static="0" type="number">0</variable>
+        <include>Controls</include>
+        <include>camera</include>
+        <include>!ENEMY_LIST</include>
+        <include>AI</include>
+        <include>COMBAT</include>
+        <include>HUD</include>
+        <include>MENU</include>
+        <include>PStates</include>
+        <include>Environment</include>
+        <include>Clock</include>
+        <include>Weather Editor</include>
+        <include>Actor Sounds</include>
+        <include>Interactive Objects</include>
+        <event-block sid="6777231645164654">
+            <conditions>
+                <condition id="-1" name="Every tick" sid="7885307904717107" type="System" />
+            </conditions>
+            <actions>
+                <action id="-24" name="Move to top" sid="339571532265278" type="ACTORS" />
+                <action id="-29" name="Move to object" sid="928138955682042" type="Enemies">
+                    <param id="0" name="Where">0</param>
+                    <param id="1" name="Object">ACTORS</param>
+                </action>
+                <action id="-8" name="Scroll to object" sid="210793536602569" type="System">
+                    <param id="0" name="Object">Players</param>
+                </action>
+            </actions>
+        </event-block>
+        <comment>Lazy Hacks</comment>
+        <event-block sid="6326863102492545">
+            <conditions />
+            <actions />
+        </event-block>
+        <event-block sid="442229949653424">
+            <conditions>
+                <condition id="-2" name="On start of layout" sid="787750717414182" type="System" />
+            </conditions>
+            <actions>
+                <action id="-3" name="Create object" sid="823469783288478" type="System">
+                    <param id="0" name="Object to create">PARTICLES_Splash_big</param>
+                    <param id="1" name="Layer">0</param>
+                    <param id="2" name="X">-Infinity</param>
+                    <param id="3" name="Y">-Infinity</param>
+                </action>
+                <action id="-3" name="Create object" sid="377423776185100" type="System">
+                    <param id="0" name="Object to create">PARTICLES_Splash_small</param>
+                    <param id="1" name="Layer">0</param>
+                    <param id="2" name="X">-Infinity</param>
+                    <param id="3" name="Y">-Infinity</param>
+                </action>
+            </actions>
+        </event-block>
+        <comment>DEBUG</comment>
+        <event-block sid="443947438137636">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="493695015501274" type="Keyboard">
+                    <param id="0" name="Key">116</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-26" name="Restart layout" sid="741047880294388" type="System" />
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>

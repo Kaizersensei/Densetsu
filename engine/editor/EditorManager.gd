@@ -58,6 +58,7 @@ var _polygon_vertices: Array[Vector2] = []
 var _poly_confirm_dialog: ConfirmationDialog = null
 var _poly_drag_index := -1
 var _poly_selected_index := -1
+var _polygon_add_enabled := true
 var _primary_player: Node2D = null
 const HISTORY_TRANSFORM := "transform"
 const HISTORY_CREATE := "create"
@@ -215,6 +216,15 @@ func _restore_owner_recursive(backup: Dictionary) -> void:
 		var n: Node = key
 		if n:
 			n.owner = backup[key]
+
+
+func _assign_owner_recursive(node: Node, owner: Node) -> void:
+	if node == null or owner == null:
+		return
+	node.owner = owner
+	for child in node.get_children():
+		if child is Node:
+			_assign_owner_recursive(child, owner)
 
 
 func _push_history_entry(entry: Dictionary) -> void:
@@ -576,11 +586,15 @@ func set_selection(node: Node) -> void:
 	selection_changed.emit(node)
 	_sync_data_panel(node)
 	_update_entity_popup(true)
+	if not _polygon_mode and _is_polygon_node(node):
+		_polygon_mode = true
+		if _overlay:
+			_overlay.call_deferred("_set_active_panel", "polygon")
 
 
 func _show_footer_message(msg: String) -> void:
-	if _overlay and _overlay.has_method("set_selection_name"):
-		_overlay.set_selection_name(msg)
+	if _overlay and _overlay.has_method("set_footer"):
+		_overlay.set_footer(msg)
 
 
 func _toggle_editor() -> void:
@@ -798,8 +812,10 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 					Input.set_default_cursor_shape(Input.CURSOR_DRAG)
 					_dragging = true
 					_drag_mode = "poly_point"
-				else:
+				elif _polygon_add_enabled:
 					_add_polygon_vertex(_get_mouse_world_pos())
+				else:
+					_set_cursor_select()
 				return
 			if _delete_mode:
 				_delete_at_mouse()
@@ -815,23 +831,27 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 					if picked is Node2D:
 						_drag_start_node = picked
 						_drag_start_state = _capture_transform(picked)
-		else:
-			if _dragging and _drag_start_node and is_instance_valid(_drag_start_node):
-				var end_state := _capture_transform(_drag_start_node)
-				var entry := _make_transform_entry(_drag_start_node, _drag_start_state, end_state)
-				_push_history_entry(entry)
-			_dragging = false
-			_drag_mode = ""
-			_active_handle = -1
-			_drag_start_node = null
-			_drag_start_state = {}
-	elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+	else:
+		if _dragging and _drag_start_node and is_instance_valid(_drag_start_node):
+			var end_state := _capture_transform(_drag_start_node)
+			var entry := _make_transform_entry(_drag_start_node, _drag_start_state, end_state)
+			_push_history_entry(entry)
+		_dragging = false
+		_drag_mode = ""
+		_active_handle = -1
+		_drag_start_node = null
+		_drag_start_state = {}
+	if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		if _polygon_mode:
 			_delete_polygon_vertex()
 			return
 		_stamp_prefab = ""
 		_delete_mode = false
 		_set_cursor_select()
+	if event.button_index == MOUSE_BUTTON_MIDDLE and event.pressed:
+		if _polygon_mode:
+			_toggle_polygon_edit_mode()
+		return
 	if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 		if _poly_drag_index != -1 and _active_polygon:
 			_inspector_dirty = true
@@ -1146,6 +1166,8 @@ func _is_unselectable_node(n: Node2D) -> bool:
 		return true
 	if n.name.begins_with("Editor"):
 		return true
+	if n is Camera2D:
+		return true
 	if n.name == "SpriteRoot":
 		return true
 	if n.is_in_group("editor_only") or n.is_in_group("editor_selector"):
@@ -1232,6 +1254,9 @@ func _on_prefab_selected(kind: String, data: Variant = null) -> void:
 		if _overlay:
 			_overlay.call_deferred("_set_active_panel", "polygon" if _polygon_mode else "")
 		return
+	if kind == "edit_polygon":
+		_edit_existing_polygon()
+		return
 	if kind == "use_polygon":
 		_finish_polygon()
 		_polygon_mode = false
@@ -1239,10 +1264,23 @@ func _on_prefab_selected(kind: String, data: Variant = null) -> void:
 			_overlay.call_deferred("_set_active_panel", "")
 		return
 	if kind == "cancel_polygon":
+		if _active_polygon and _selected == _active_polygon:
+			set_selection(null)
 		if _active_polygon:
-			_active_polygon.queue_free()
-		_finish_polygon()
+			if is_instance_valid(_active_polygon):
+				_active_polygon.queue_free()
+			_active_polygon = null
+		_polygon_vertices.clear()
+		_poly_drag_index = -1
+		_poly_selected_index = -1
+		_polygon_add_enabled = true
+		_set_handles_visible(false)
+		_update_polygon_visual_state()
 		_polygon_mode = false
+		if _overlay:
+			_overlay.call_deferred("_set_active_panel", "")
+		return
+	if kind == "close_panels":
 		if _overlay:
 			_overlay.call_deferred("_set_active_panel", "")
 		return
@@ -1294,6 +1332,8 @@ func _place_prefab_at_mouse() -> void:
 			scene.name = PREFAB_NAMES[_stamp_prefab]
 		elif packed.resource_path.get_file().get_basename() != "":
 			scene.name = packed.resource_path.get_file().get_basename()
+	if scene:
+		_assign_owner_recursive(scene, get_tree().current_scene)
 	if scene and scene.has_method("reset_base_position"):
 		scene.reset_base_position()
 	var entry := _make_create_entry(scene)
@@ -1455,6 +1495,8 @@ func _infer_category_from_id(data_id: String) -> String:
 	var upper := data_id.to_upper()
 	if upper.begins_with("ACTOR_"):
 		return "Actor"
+	if upper.begins_with("MOVEMENT_"):
+		return "Movement"
 	if upper.begins_with("SPAWNER_"):
 		return "Spawner"
 	if upper.begins_with("ITEM_"):
@@ -1463,6 +1505,8 @@ func _infer_category_from_id(data_id: String) -> String:
 		return "Projectile"
 	if upper.begins_with("TRAP_"):
 		return "Trap"
+	if upper.begins_with("SCENERY_"):
+		return "Scenery"
 	if upper.begins_with("PLATFORM_") or upper.begins_with("ACTOR_DECO"):
 		return "Scenery"
 	if upper.begins_with("AIPROFILE_"):
@@ -1504,8 +1548,10 @@ func _apply_scene_overrides(node: Node, scene: PackedScene) -> void:
 		if target_spr:
 			target_spr.texture = tex
 			target_spr.modulate = mod
+			target_spr.set_meta("editor_tint", mod)
 		elif node is Sprite2D:
 			(node as Sprite2D).texture = tex
+			(node as Sprite2D).set_meta("editor_tint", mod)
 	if shape:
 		var target_cs := _find_collision_shape(node)
 		if target_cs:
@@ -1515,6 +1561,7 @@ func _apply_scene_overrides(node: Node, scene: PackedScene) -> void:
 		if target_poly:
 			target_poly.polygon = poly
 			target_poly.color = poly_color
+			target_poly.set_meta("editor_tint", poly_color)
 
 
 # Generic apply for non-actor categories; best-effort visuals and collisions
@@ -1522,6 +1569,7 @@ func _apply_data_to_node(node: Node) -> void:
 	var sm: Node = _get_scene_manager()
 	if sm and sm.has_method("apply_data"):
 		sm.apply_data(node)
+		_reapply_tint(node)
 		if node == _selected:
 			_update_highlight()
 		return
@@ -1580,13 +1628,36 @@ func _apply_data_to_node(node: Node) -> void:
 		node.set("collision_layer", res.collision_layers)
 	if "collision_mask" in res and "collision_mask" in node:
 		node.set("collision_mask", res.collision_mask)
+	# Apply tint override even if no explicit sprite assignment
+	if "tint" in res and res.tint is Color:
+		var col: Color = res.tint
+		var spr_t := node.get_node_or_null("SpriteRoot/Sprite2D") as Sprite2D
+		if spr_t:
+			spr_t.modulate = col
+			spr_t.set_meta("editor_tint", col)
+		elif node is Sprite2D:
+			(node as Sprite2D).modulate = col
+			(node as Sprite2D).set_meta("editor_tint", col)
+		var poly_t := node.get_node_or_null("Visual") as Polygon2D
+		if poly_t:
+			poly_t.color = col
+			poly_t.set_meta("editor_tint", col)
+		# if no direct visual, remember tint on the node for later restore
+		if not spr_t and not (node is Sprite2D) and not poly_t:
+			node.set_meta("editor_tint", col)
 	# sprite/texture best-effort
 	if "sprite" in res and res.sprite:
 		var spr := node.get_node_or_null("SpriteRoot/Sprite2D")
 		if spr and spr is Sprite2D:
 			(spr as Sprite2D).texture = res.sprite
+			if "tint" in res and res.tint is Color:
+				(spr as Sprite2D).modulate = res.tint
+				(spr as Sprite2D).set_meta("editor_tint", res.tint)
 		elif node is Sprite2D:
 			(node as Sprite2D).texture = res.sprite
+			if "tint" in res and res.tint is Color:
+				(node as Sprite2D).modulate = res.tint
+				(node as Sprite2D).set_meta("editor_tint", res.tint)
 	# persist data id
 	if "data_id" in node:
 		node.set("data_id", data_id)
@@ -1602,6 +1673,7 @@ func _update_hover_info() -> void:
 	if not editor_mode:
 		return
 	var txt := ""
+	var click_hint := ""
 	var mouse_pos := get_viewport().get_mouse_position()
 	var node := _pick_node_at_mouse_top()
 	_hovered = node
@@ -1614,9 +1686,11 @@ func _update_hover_info() -> void:
 			Input.set_default_cursor_shape(Input.CURSOR_DRAG)
 		else:
 			Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+		click_hint = "Click/drag vertices; Right-click delete; MMB toggles add/edit"
 	elif _handle_hover_index >= 0:
 		Input.set_custom_mouse_cursor(null)
 		Input.set_default_cursor_shape(_cursor_shape_for_handle(_handle_hover_index))
+		click_hint = "Drag handle to scale/rotate; Right-click deselect"
 	else:
 		Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 		_refresh_cursor()
@@ -1630,8 +1704,21 @@ func _update_hover_info() -> void:
 		txt = "Sel:%s | Type:%s(%s) | Pos:%.1f,%.1f | Rot:%.1f | Scale:%.2f,%.2f" % [
 			n.name, data_id, cat, pos.x, pos.y, rot, sc.x, sc.y
 		]
+		if click_hint == "":
+			if _delete_mode:
+				click_hint = "Click to delete"
+			elif _stamp_prefab != "":
+				click_hint = "Click places prefab; Right-click cancels stamp"
+			else:
+				click_hint = "Click to select; Drag to move; Delete removes"
+	elif click_hint == "":
+		txt = "Hover: None"
+		click_hint = "Click to place prefab or select entities"
 	if _overlay and _overlay.has_method("set_hover_info"):
-		_overlay.call("set_hover_info", txt, mouse_pos)
+		var msg := txt
+		if click_hint != "":
+			msg = "%s | %s" % [txt, click_hint]
+		_overlay.call("set_hover_info", msg, mouse_pos)
 	_update_polygon_visual_state()
 	_refresh_inspector_sidebar()
 	_reapply_tint(_selected)
@@ -1654,31 +1741,50 @@ func _drag_polygon_point() -> void:
 	_reapply_tint(_active_polygon)
 
 
-func _reapply_tint(node: Node) -> void:
-	if node == null:
+func _reapply_tint(node) -> void:
+	if node == null or not is_instance_valid(node):
 		return
 	var data_id := _extract_data_id(node)
 	if data_id == "":
 		return
-	if not Engine.has_singleton("DataRegistry"):
+	var col: Color = Color.WHITE
+	var has_tint := false
+	if Engine.has_singleton("DataRegistry"):
+		var reg = Engine.get_singleton("DataRegistry")
+		if reg and reg.has_method("get_resource_for_category"):
+			var cat := _infer_category_from_id(data_id)
+			var res = reg.get_resource_for_category(cat, data_id)
+			if res and "tint" in res and res.tint is Color:
+				col = res.tint
+				has_tint = true
+	# Fallback to stored editor tint if resource is missing or lacks tint
+	if not has_tint:
+		var spr_meta := node.get_node_or_null("SpriteRoot/Sprite2D") as Sprite2D
+		if spr_meta and spr_meta.has_meta("editor_tint"):
+			col = spr_meta.get_meta("editor_tint") as Color
+			has_tint = true
+		elif node is Sprite2D and node.has_meta("editor_tint"):
+			col = node.get_meta("editor_tint") as Color
+			has_tint = true
+		var poly_meta := node.get_node_or_null("Visual") as Polygon2D
+		if not has_tint and poly_meta and poly_meta.has_meta("editor_tint"):
+			col = poly_meta.get_meta("editor_tint") as Color
+			has_tint = true
+		if not has_tint and node.has_meta("editor_tint"):
+			var ndcol = node.get_meta("editor_tint")
+			if ndcol is Color:
+				col = ndcol
+				has_tint = true
+	if not has_tint:
 		return
-	var reg = Engine.get_singleton("DataRegistry")
-	if reg == null or not reg.has_method("get_resource_for_category"):
-		return
-	var cat := _infer_category_from_id(data_id)
-	var res = reg.get_resource_for_category(cat, data_id)
-	if res == null:
-		return
-	if "tint" in res and res.tint is Color:
-		var col: Color = res.tint
-		var spr := node.get_node_or_null("SpriteRoot/Sprite2D") as Sprite2D
-		if spr:
-			spr.modulate = col
-		elif node is Sprite2D:
-			(node as Sprite2D).modulate = col
-		var poly := node.get_node_or_null("Visual") as Polygon2D
-		if poly:
-			poly.color = col
+	var spr := node.get_node_or_null("SpriteRoot/Sprite2D") as Sprite2D
+	if spr:
+		spr.modulate = col
+	elif node is Sprite2D:
+		(node as Sprite2D).modulate = col
+	var poly := node.get_node_or_null("Visual") as Polygon2D
+	if poly:
+		poly.color = col
 
 
 func _refresh_inspector_sidebar() -> void:
@@ -1823,7 +1929,7 @@ func _update_entity_popup(force: bool) -> void:
 		return
 	var panels_open := false
 	if _overlay:
-		for name in ["SavePanel", "LoadPanel", "TemplatePanel", "DataEditor"]:
+		for name in ["SavePanel", "LoadPanel", "DataEditor"]:
 			var p := _overlay.get_node_or_null(name)
 			if p and p.visible:
 				panels_open = true
@@ -1911,7 +2017,7 @@ func _get_highlight_points(n: Node2D) -> PackedVector2Array:
 
 
 func _update_polygon_visual_state() -> void:
-	if _active_polygon == null:
+	if _active_polygon == null or not is_instance_valid(_active_polygon):
 		return
 	var show_pts := _polygon_mode
 	if _active_polygon.has_method("set_show_points"):
@@ -1932,40 +2038,21 @@ func _update_polygon_visual_state() -> void:
 
 
 func _get_local_bounds(node: Node2D) -> Rect2:
-	# Sprite bounds (local, unscaled)
-	if node is Sprite2D:
-		var s := node as Sprite2D
-		if s.texture:
-			var size := s.texture.get_size()
-			return Rect2(-size * 0.5, size)
-	# Visual polygon
-	var poly := node.get_node_or_null("Visual") as Polygon2D
-	if poly and poly.polygon.size() > 0:
-		var pts := poly.polygon
-		var minv := pts[0]
-		var maxv := pts[0]
-		for v in pts:
-			minv = minv.min(v)
-			maxv = maxv.max(v)
-		return Rect2(minv, maxv - minv)
-	# Collision shapes
-	var cs := _find_collision_shape(node)
-	if cs and cs.shape:
-		if cs.shape is RectangleShape2D:
-			var rect := cs.shape as RectangleShape2D
-			var half := rect.size * 0.5
-			return Rect2(-half, rect.size)
-		if cs.shape is ConvexPolygonShape2D:
-			var pts2 := (cs.shape as ConvexPolygonShape2D).points
-			if pts2.size() > 0:
-				var minp := pts2[0]
-				var maxp := pts2[0]
-				for v in pts2:
-					minp = minp.min(v)
-					maxp = maxp.max(v)
-				return Rect2(minp, maxp - minp)
-	# Fallback
-	return Rect2(Vector2(-8, -8), Vector2(16, 16))
+	# Derive bounds from world AABB so child offsets are respected, then convert back to local.
+	var aabb := _get_node_aabb(node)
+	var corners := [
+		aabb.position,
+		aabb.position + Vector2(aabb.size.x, 0),
+		aabb.position + aabb.size,
+		aabb.position + Vector2(0, aabb.size.y),
+	]
+	var minv := node.to_local(corners[0])
+	var maxv := minv
+	for c in corners:
+		var local := node.to_local(c)
+		minv = minv.min(local)
+		maxv = maxv.max(local)
+	return Rect2(minv, maxv - minv)
 
 
 # Polygon helpers
@@ -1980,6 +2067,8 @@ func _ensure_polygon_action() -> void:
 
 
 func _add_polygon_vertex(pos: Vector2) -> void:
+	if not _polygon_add_enabled:
+		return
 	if snap_enabled and snap_size > 0.0:
 		pos = Vector2(snapped(pos.x, snap_size), snapped(pos.y, snap_size))
 	if _active_polygon == null:
@@ -1987,6 +2076,7 @@ func _add_polygon_vertex(pos: Vector2) -> void:
 		_active_polygon = poly_scene.instantiate()
 		_active_polygon.name = "PolygonTerrain"
 		get_tree().current_scene.add_child(_active_polygon)
+		_assign_owner_recursive(_active_polygon, get_tree().current_scene)
 		if _active_polygon is Node2D:
 			(_active_polygon as Node2D).global_position = pos
 		_polygon_vertices = [
@@ -2035,6 +2125,8 @@ func _start_new_polygon() -> void:
 
 
 func _finish_polygon() -> void:
+	if _active_polygon and not is_instance_valid(_active_polygon):
+		_active_polygon = null
 	if _active_polygon and _active_polygon.has_method("set_vertices"):
 		if _polygon_vertices.size() >= 3:
 			_active_polygon.call("set_vertices", _polygon_vertices)
@@ -2042,12 +2134,16 @@ func _finish_polygon() -> void:
 			if _selected == _active_polygon:
 				set_selection(null)
 			_active_polygon.queue_free()
+			_active_polygon = null
 	if _active_polygon and _active_polygon.has_method("set_show_points"):
 		_active_polygon.call("set_show_points", false)
+	if _active_polygon:
+		_assign_owner_recursive(_active_polygon, get_tree().current_scene)
 	_active_polygon = null
 	_polygon_vertices.clear()
 	_poly_drag_index = -1
 	_poly_selected_index = -1
+	_polygon_add_enabled = true
 	_update_highlight()
 	_set_handles_visible(false)
 	if _overlay:
@@ -2109,6 +2205,67 @@ func _on_polygon_delete_confirmed() -> void:
 	_finish_polygon()
 	_polygon_mode = false
 	_update_polygon_visual_state()
+	_set_handles_visible(false)
+	_highlight.visible = false
+
+
+func _edit_existing_polygon() -> void:
+	var target := _selected
+	if target == null or not _is_polygon_node(target):
+		var pick := _pick_node_at_mouse_top()
+		if pick and _is_polygon_node(pick):
+			target = pick
+	if target == null or not _is_polygon_node(target):
+		_show_footer_message("Select a polygon to edit")
+		return
+	_finish_polygon()
+	_active_polygon = target
+	_polygon_vertices.clear()
+	if target is PolygonTerrain2D:
+		for v in (target as PolygonTerrain2D).vertices:
+			_polygon_vertices.append(v)
+	elif target is Polygon2D:
+		for v in (target as Polygon2D).polygon:
+			_polygon_vertices.append(v)
+	if _polygon_vertices.is_empty():
+		_show_footer_message("Polygon has no vertices")
+		return
+	_polygon_mode = true
+	_poly_selected_index = -1
+	_poly_drag_index = -1
+	set_selection(target)
+	_update_polygon_visual_state()
+	if _overlay:
+		_overlay.call_deferred("_set_active_panel", "polygon")
+	_show_footer_message("Editing polygon")
+
+
+func _is_polygon_node(n: Node) -> bool:
+	if n == null:
+		return false
+	# Only treat our dedicated polygon terrain nodes as polygon-edit targets.
+	if n is PolygonTerrain2D:
+		return true
+	# Optional metadata escape hatch if we ever need to flag a node explicitly.
+	if n.has_meta("is_polygon_entity") and n.get_meta("is_polygon_entity") == true:
+		return true
+	return false
+
+
+func _toggle_polygon_edit_mode() -> void:
+	# Middle mouse toggles between add/drag intent by flipping selection state
+	if not _polygon_mode:
+		_edit_existing_polygon()
+		_polygon_add_enabled = true
+		return
+	if _active_polygon == null:
+		_edit_existing_polygon()
+		_polygon_add_enabled = true
+	else:
+		# Toggle add ability off/on while staying in polygon mode
+		_polygon_add_enabled = not _polygon_add_enabled
+		var msg := "Polygon edit: add %s" % ( "enabled" if _polygon_add_enabled else "disabled (selection/drag only)")
+		_show_footer_message(msg)
 
 func _on_inspector_changed(value: String) -> void:
 	if _selected == null or not (_selected is Node2D):
@@ -2354,6 +2511,12 @@ func _ensure_window_controller() -> Node:
 	ctrl.name = "WindowController"
 	get_tree().root.add_child(ctrl)
 	return ctrl
+
+# Called when overlay closes all panels
+func _overlay_closed() -> void:
+	# No open panels, exit editor mode back to play
+	if editor_mode:
+		_toggle_editor()
 
 
 func _maximize_window(win: Node) -> void:

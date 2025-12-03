@@ -10,6 +10,7 @@ const CATEGORY_DIRS := {
 	"Item": "res://data/items",
 	"LootTable": "res://data/loot_tables",
 	"Particles": "res://data/particles",
+	"Movement": "res://data/movement",
 	"Scenery": "res://data/platforms",
 	"Prefab": "res://data/prefabs",
 	"Projectile": "res://data/projectiles",

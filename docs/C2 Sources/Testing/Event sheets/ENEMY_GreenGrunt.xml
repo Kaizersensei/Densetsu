@@ -1,0 +1,409 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>ENEMY_GreenGrunt</name>
+    <events>
+        <event-group description="basic AI routines go here" sid="365642914034259" title="Green Grunt - AI">
+            <sub-events>
+                <event-block sid="762019227337595">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="210655968433213" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                            <param id="0" name="Instance variable">AIAlertLevel</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action behavior="Platform" id="8" name="Set vector X" sid="548336853744035" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                            <param id="0" name="Vector X">0</param>
+                        </action>
+                        <action id="4" name="Set animation" sid="985382946913253" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                            <param id="0" name="Animation">&quot;Default&quot;</param>
+                            <param id="1" name="From">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="313616252345409">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="212489659527948" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                            <param id="0" name="Instance variable">AIAlertLevel</param>
+                            <param id="1" name="Comparison">4</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block sid="224227821359914">
+                            <conditions>
+                                <condition id="-1" name="Compare X" sid="589539018541122" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Comparison">2</param>
+                                    <param id="1" name="X co-ordinate">ACTOR_Michio.X</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block sid="907143797493082">
+                                    <conditions>
+                                        <condition id="9" inverted="1" name="Is overlapping at offset" sid="533369327391682" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                            <param id="0" name="Object">deprecated_ACTOR_Player_1</param>
+                                            <param id="1" name="Offset X">12</param>
+                                            <param id="2" name="Offset Y">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action behavior="Platform" id="7" name="Simulate control" sid="971304512566535" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                            <param id="0" name="Control">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="707176351344722">
+                                    <conditions>
+                                        <condition id="9" name="Is overlapping at offset" sid="603721039376190" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                            <param id="0" name="Object">deprecated_ACTOR_Player_1</param>
+                                            <param id="1" name="Offset X">12</param>
+                                            <param id="2" name="Offset Y">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions />
+                                    <sub-events>
+                                        <event-block sid="660041790731177">
+                                            <conditions>
+                                                <condition id="4" name="On finished" sid="177866064652845" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Kick&quot;</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="4" name="Set animation" sid="284073085560125" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Default&quot;</param>
+                                                    <param id="1" name="From">1</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <event-block sid="378279647266168">
+                                            <conditions>
+                                                <condition id="4" name="On finished" sid="866614251661737" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Punch&quot;</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="4" name="Set animation" sid="200782292799538" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Kick&quot;</param>
+                                                    <param id="1" name="From">1</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <event-block sid="944361305805578">
+                                            <conditions>
+                                                <condition id="2" inverted="1" name="Is playing" sid="855230221206630" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Kick&quot;</param>
+                                                </condition>
+                                                <condition id="2" inverted="1" name="Is playing" sid="172550974570308" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Punch&quot;</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="4" name="Set animation" sid="888857619326149" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Punch&quot;</param>
+                                                    <param id="1" name="From">1</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="527679735890101">
+                            <conditions>
+                                <condition id="-1" name="Compare X" sid="652319019723428" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Comparison">4</param>
+                                    <param id="1" name="X co-ordinate">ACTOR_Michio.X</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block sid="442444743531258">
+                                    <conditions>
+                                        <condition id="9" inverted="1" name="Is overlapping at offset" sid="514935404607729" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                            <param id="0" name="Object">deprecated_ACTOR_Player_1</param>
+                                            <param id="1" name="Offset X">-12</param>
+                                            <param id="2" name="Offset Y">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action behavior="Platform" id="7" name="Simulate control" sid="608022935515994" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                            <param id="0" name="Control">0</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="811865266829616">
+                                    <conditions>
+                                        <condition id="9" name="Is overlapping at offset" sid="597892123712749" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                            <param id="0" name="Object">deprecated_ACTOR_Player_1</param>
+                                            <param id="1" name="Offset X">-12</param>
+                                            <param id="2" name="Offset Y">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions />
+                                    <sub-events>
+                                        <event-block sid="702328721364742">
+                                            <conditions>
+                                                <condition id="4" name="On finished" sid="543682794473276" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Kick&quot;</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="4" name="Set animation" sid="115002401064637" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Default&quot;</param>
+                                                    <param id="1" name="From">1</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <event-block sid="718928851073684">
+                                            <conditions>
+                                                <condition id="4" name="On finished" sid="213269466390187" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Punch&quot;</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="4" name="Set animation" sid="573553220619676" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Kick&quot;</param>
+                                                    <param id="1" name="From">1</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <event-block sid="200241833131260">
+                                            <conditions>
+                                                <condition id="2" inverted="1" name="Is playing" sid="642376354487550" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Kick&quot;</param>
+                                                </condition>
+                                                <condition id="2" inverted="1" name="Is playing" sid="717055998325994" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Punch&quot;</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="4" name="Set animation" sid="801089112884608" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                                    <param id="0" name="Animation">&quot;Punch&quot;</param>
+                                                    <param id="1" name="From">1</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block any="1" sid="495199871216760">
+                    <conditions>
+                        <condition behavior="Platform" id="9" name="On landed" sid="981896462739962" type="ACTOR_ENEMY_ACTIVE_GreenGrunt" />
+                        <condition behavior="Platform" id="2" name="Is on floor" sid="696260077080027" type="ACTOR_ENEMY_ACTIVE_GreenGrunt" />
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block sid="400881413545668">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="368904613648975" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Instance variable">VECTOR_X</param>
+                                    <param id="1" name="Comparison">2</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action disabled="1" id="-10" name="Set value" sid="943260651354252" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Value">&quot;L&quot;</param>
+                                </action>
+                                <action id="7" name="Set mirrored" sid="488330504663827" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="State">0</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="708853501752543">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="300867899336690" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Instance variable">VECTOR_X</param>
+                                    <param id="1" name="Comparison">4</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action disabled="1" id="-10" name="Set value" sid="857359815223390" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Value">&quot;R&quot;</param>
+                                </action>
+                                <action id="7" name="Set mirrored" sid="690250262494144" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="State">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block disabled="1" sid="458767010107520">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="766928825435123" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Instance variable">VECTOR_X</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="245042571652182" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Value">&quot;stop&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block any="1" sid="766096639925061">
+                    <conditions>
+                        <condition behavior="Platform" id="5" name="On jump" sid="648477675424929" type="ACTOR_ENEMY_ACTIVE_GreenGrunt" />
+                        <condition behavior="Platform" disabled="1" id="6" name="On fall" sid="583720680923598" type="ACTOR_ENEMY_ACTIVE_GreenGrunt" />
+                    </conditions>
+                    <actions>
+                        <action id="4" name="Set animation" sid="380830102911474" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                            <param id="0" name="Animation">&quot;Jump&quot;</param>
+                            <param id="1" name="From">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block any="1" sid="946969864646411">
+                    <conditions>
+                        <condition behavior="Platform" id="9" name="On landed" sid="438683687038703" type="ACTOR_ENEMY_ACTIVE_GreenGrunt" />
+                        <condition behavior="Platform" id="2" name="Is on floor" sid="188045343683459" type="ACTOR_ENEMY_ACTIVE_GreenGrunt" />
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block sid="585268818803378">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="472714417577457" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Instance variable">VECTOR_X</param>
+                                    <param id="1" name="Comparison">1</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block any="1" sid="162134964673654">
+                                    <conditions>
+                                        <condition id="-7" name="Compare instance variable" sid="878285823430713" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                            <param id="0" name="Instance variable">AIState</param>
+                                            <param id="1" name="Comparison">1</param>
+                                            <param id="2" name="Value">&quot;jump&quot;</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="4" name="Set animation" sid="347576410231542" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                            <param id="0" name="Animation">&quot;run&quot;</param>
+                                            <param id="1" name="From">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block any="1" sid="539010067071559">
+                                    <conditions>
+                                        <condition id="-7" name="Compare instance variable" sid="701165654817119" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                            <param id="0" name="Instance variable">AIState</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">&quot;jump&quot;</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action behavior="Platform" id="7" name="Simulate control" sid="248689191119940" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                            <param id="0" name="Control">2</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block any="1" sid="543106430239932">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="343617544894500" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">&quot;stop&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="4" name="Set animation" sid="844402272706472" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Animation">&quot;Default&quot;</param>
+                                    <param id="1" name="From">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-group description="Vost variables get set and read here" sid="812819652793145" title="Green Grunt - Variables">
+            <sub-events>
+                <event-block sid="502143786810021">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="680701651928998" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                            <param id="0" name="Instance variable">VECTOR_X</param>
+                            <param id="1" name="Comparison">1</param>
+                            <param id="2" name="Value">self.Platform.VectorX</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-10" name="Set value" sid="501702685214904" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                            <param id="0" name="Instance variable">VECTOR_X</param>
+                            <param id="1" name="Value">self.Platform.VectorX</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="134661494002909">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="527946489715427" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                            <param id="0" name="Instance variable">VECTOR_Y</param>
+                            <param id="1" name="Comparison">1</param>
+                            <param id="2" name="Value">self.Platform.VectorY</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-10" name="Set value" sid="833510415069280" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                            <param id="0" name="Instance variable">VECTOR_Y</param>
+                            <param id="1" name="Value">self.Platform.VectorY</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-group description="" sid="764530674829721" title="Green Grunt - Hitboxes">
+            <sub-events>
+                <event-block sid="686403498816413">
+                    <conditions>
+                        <condition id="2" name="Is playing" sid="869245248078696" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                            <param id="0" name="Animation">&quot;Punch&quot;</param>
+                        </condition>
+                        <condition id="3" name="Compare frame" sid="599181762582397" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                            <param id="0" name="Comparison">0</param>
+                            <param id="1" name="Number">1</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                </event-block>
+                <event-block sid="696287015036457">
+                    <conditions>
+                        <condition id="2" name="Is playing" sid="969464465658294" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                            <param id="0" name="Animation">&quot;Kick&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block any="1" sid="504502367603733">
+                            <conditions>
+                                <condition id="3" name="Compare frame" sid="174419632094302" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Comparison">0</param>
+                                    <param id="1" name="Number">2</param>
+                                </condition>
+                                <condition id="3" name="Compare frame" sid="823465177981305" type="ACTOR_ENEMY_ACTIVE_GreenGrunt">
+                                    <param id="0" name="Comparison">0</param>
+                                    <param id="1" name="Number">4</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-group>
+    </events>
+</c2eventsheet>

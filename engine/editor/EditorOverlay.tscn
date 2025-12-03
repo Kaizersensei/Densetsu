@@ -74,6 +74,24 @@ offset_bottom = 24.0
 text = ""
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
+[node name="Footer" type="Panel" parent="."]
+visible = false
+anchor_right = 1.0
+offset_left = 0.0
+offset_right = 0.0
+offset_bottom = 32.0
+custom_styles/panel = SubResource("bg_gradient")
+
+[node name="FooterLabel" type="Label" parent="Footer"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -400.0
+offset_top = 4.0
+offset_right = 400.0
+offset_bottom = 26.0
+text = ""
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+
 [node name="Undo" type="Button" parent="Ribbon"]
 offset_left = 540.0
 offset_top = 8.0
@@ -130,27 +148,27 @@ tooltip_text = "Open data panel"
 custom_styles/normal = SubResource("button_black")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
-[node name="Templates" type="Button" parent="Ribbon"]
+[node name="Polygon" type="Button" parent="Ribbon"]
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -210.0
 offset_top = 8.0
 offset_right = -140.0
 offset_bottom = 30.0
-text = "Templates"
-tooltip_text = "Open templates panel"
+text = "Polygon"
+tooltip_text = "Toggle polygon tools"
 custom_styles/normal = SubResource("button_black")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
-[node name="Polygon" type="Button" parent="Ribbon"]
+[node name="ClosePanels" type="Button" parent="Ribbon"]
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -140.0
+offset_left = -70.0
 offset_top = 8.0
-offset_right = -70.0
+offset_right = -10.0
 offset_bottom = 30.0
-text = "Polygon"
-tooltip_text = "Toggle polygon tools"
+text = "X"
+tooltip_text = "Close active panels"
 custom_styles/normal = SubResource("button_black")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
@@ -162,17 +180,6 @@ offset_bottom = 30.0
 text = "Reload"
 tooltip_text = "Reload current scene baseline"
 custom_styles/normal = SubResource("button_black")
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-
-[node name="QuickLoad" type="OptionButton" parent="Ribbon"]
-offset_left = 900.0
-offset_top = 8.0
-offset_right = 1030.0
-offset_bottom = 30.0
-focus_mode = 0
-text = "Recent"
-tooltip_text = "Quick load recent saves"
-custom_styles/normal = SubResource("input_dark")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 
 [node name="SnapToggle" type="CheckBox" parent="Ribbon"]
@@ -646,102 +653,3 @@ text = "Cancel"
 custom_minimum_size = Vector2(90, 0)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 custom_styles/normal = SubResource("button_black")
-
-[node name="TemplatePanel" type="Panel" parent="."]
-visible = false
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
-custom_styles/panel = SubResource("bg_gradient")
-mouse_filter = 2
-
-[node name="TemplateBg" type="ColorRect" parent="TemplatePanel"]
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
-color = Color(0.05, 0.05, 0.05, 1)
-mouse_filter = 2
-
-[node name="TemplateRoot" type="VBoxContainer" parent="TemplatePanel"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 12
-
-[node name="TemplateTitle" type="Label" parent="TemplatePanel/TemplateRoot"]
-text = "Templates"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-
-[node name="TemplateTabs" type="TabContainer" parent="TemplatePanel/TemplateRoot"]
-size_flags_vertical = 3
-custom_styles/panel = SubResource("list_panel")
-
-[node name="TemplateTabActors" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
-theme_override_constants/separation = 6
-
-[node name="TemplateTabActorsLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabActors"]
-text = "Actors (template editing coming soon)"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-
-[node name="TemplateTabStats" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
-
-[node name="TemplateTabStatsLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabStats"]
-text = "Stats templates (coming soon)"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-
-[node name="TemplateTabFaction" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
-
-[node name="TemplateTabFactionLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabFaction"]
-text = "Factions (coming soon)"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-
-[node name="TemplateTabAIProfile" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
-
-[node name="TemplateTabAIProfileLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabAIProfile"]
-text = "AI Profiles (coming soon)"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-
-[node name="TemplateTabItem" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
-
-[node name="TemplateTabItemLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabItem"]
-text = "Items (coming soon)"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-
-[node name="TemplateTabProjectile" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
-
-[node name="TemplateTabProjectileLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabProjectile"]
-text = "Projectiles (coming soon)"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-
-[node name="TemplateTabTrap" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
-
-[node name="TemplateTabTrapLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabTrap"]
-text = "Traps (coming soon)"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-
-[node name="TemplateTabPlatform" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
-
-[node name="TemplateTabPlatformLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabPlatform"]
-text = "Platforms (coming soon)"
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-
-[node name="TemplateTabLoot" type="VBoxContainer" parent="TemplatePanel/TemplateRoot/TemplateTabs"]
-
-[node name="TemplateTabLootLabel" type="Label" parent="TemplatePanel/TemplateRoot/TemplateTabs/TemplateTabLoot"]
-text = "Loot Tables (coming soon)"
-theme_override_colors/font_color = Color(1, 1, 1, 1)

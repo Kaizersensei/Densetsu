@@ -1,0 +1,597 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>WEATHER</name>
+    <events>
+        <variable comment="0 Rain 1 Snow 2 Ashen" constant="0" name="WEATHER_Type" sid="208792363487203" static="0" type="number">0</variable>
+        <variable constant="0" name="WEATHER_Precipitation" sid="411039697600903" static="0" type="number">0</variable>
+        <event-block sid="508306613952727">
+            <conditions>
+                <condition id="-1" name="Every tick" sid="372280616252256" type="System" />
+            </conditions>
+            <actions>
+                <action id="4" name="Set speed" sid="585286548812150" type="WEATHERFX_Dust">
+                    <param id="0" name="Speed">WindStrength*32</param>
+                </action>
+                <action id="1" name="Set rate" sid="309944125991079" type="WEATHERFX_Dust">
+                    <param id="0" name="Rate">WindStrength</param>
+                </action>
+                <action id="-8" name="Set angle" sid="472736077966990" type="WEATHERFX_Dust">
+                    <param id="0" name="Angle">(90*WindDirection)-(30*WindDirection)</param>
+                </action>
+            </actions>
+            <sub-events>
+                <event-block disabled="1" sid="309089650737491">
+                    <conditions>
+                        <condition id="-4" name="Trigger once while true" sid="581333480550786" type="System" />
+                        <condition id="-7" name="Compare instance variable" sid="141891519222658" type="WeatherParticles">
+                            <param id="0" name="Instance variable">WeatherType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="6" name="Set opacity" sid="989749223056804" type="WeatherParticles">
+                            <param id="0" name="Opacity">lerp(0, 100, 0.25)</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="470766752022318">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="769259825782711" type="WeatherParticles">
+                            <param id="0" name="Instance variable">WeatherType</param>
+                            <param id="1" name="Comparison">5</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="14" name="Set gravity" sid="785686961170120" type="WeatherParticles">
+                            <param id="0" name="Gravity">max(128, random(self.FallSpeed))</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="457229824167487">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="574367961903847" type="WeatherParticles">
+                            <param id="0" name="Instance variable">Intensity</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">1</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="1" name="Set rate" sid="225107099513954" type="WeatherParticles">
+                            <param id="0" name="Rate">WEATHER_Precipitation*3</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="658052895568162">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="351556118632383" type="WeatherParticles">
+                            <param id="0" name="Instance variable">Intensity</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">2</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="1" name="Set rate" sid="740574876570586" type="WeatherParticles">
+                            <param id="0" name="Rate">WEATHER_Precipitation*2</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="335712200944033">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="827018411398440" type="WeatherParticles">
+                            <param id="0" name="Instance variable">Intensity</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">3</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="1" name="Set rate" sid="714039104011936" type="WeatherParticles">
+                            <param id="0" name="Rate">WEATHER_Precipitation</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="893942500679575">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="826460241872354" type="System">
+                            <param id="0" name="Variable">WindStrength</param>
+                            <param id="1" name="Comparison">3</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set spraying" sid="938415889471718" type="WEATHER_Wind">
+                            <param id="0" name="State">0</param>
+                        </action>
+                        <action id="0" name="Set spraying" sid="659969847956968" type="WEATHERFX_Dust">
+                            <param id="0" name="State">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="749044426750950">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="695162612923854" type="System">
+                            <param id="0" name="Variable">WindStrength</param>
+                            <param id="1" name="Comparison">4</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="1" name="Set rate" sid="705293514779130" type="WEATHER_Wind">
+                            <param id="0" name="Rate">WindStrength*2</param>
+                        </action>
+                        <action id="4" name="Set speed" sid="656696090202038" type="WeatherParticles">
+                            <param id="0" name="Speed">WindStrength*32*WindDirection</param>
+                        </action>
+                        <action id="-8" name="Set angle" sid="546969664089927" type="WeatherParticles">
+                            <param id="0" name="Angle">(30*WindDirection)+(WindDirection*WindStrength)</param>
+                        </action>
+                        <action id="4" name="Set speed" sid="944498888357809" type="WEATHER_Wind">
+                            <param id="0" name="Speed">WindStrength*120</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="651338978713134">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="297876001645532" type="System">
+                                    <param id="0" name="Variable">WindDirection</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">-1</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-8" name="Set angle" sid="860558016368737" type="WEATHER_Wind">
+                                    <param id="0" name="Angle">180</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block sid="506906230986671">
+                                    <conditions>
+                                        <condition id="-8" name="Is boolean instance variable set" sid="387101964703470" type="WEATHER_Wind">
+                                            <param id="0" name="Instance variable">WindRight</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="0" name="Set spraying" sid="257735624512519" type="WEATHER_Wind">
+                                            <param id="0" name="State">0</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="342835895594210">
+                                    <conditions>
+                                        <condition id="-8" inverted="1" name="Is boolean instance variable set" sid="392515728852484" type="WEATHER_Wind">
+                                            <param id="0" name="Instance variable">WindRight</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="0" name="Set spraying" sid="452828667579018" type="WEATHER_Wind">
+                                            <param id="0" name="State">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="374689870361075">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="440673686559246" type="System">
+                                    <param id="0" name="Variable">WindDirection</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">1</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-8" name="Set angle" sid="201452796827784" type="WEATHER_Wind">
+                                    <param id="0" name="Angle">0</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block sid="240770630967752">
+                                    <conditions>
+                                        <condition id="-8" name="Is boolean instance variable set" sid="945478156396818" type="WEATHER_Wind">
+                                            <param id="0" name="Instance variable">WindRight</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="0" name="Set spraying" sid="232973475566431" type="WEATHER_Wind">
+                                            <param id="0" name="State">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="835116106615428">
+                                    <conditions>
+                                        <condition id="-8" inverted="1" name="Is boolean instance variable set" sid="361877472837701" type="WEATHER_Wind">
+                                            <param id="0" name="Instance variable">WindRight</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="0" name="Set spraying" sid="741489102480097" type="WEATHER_Wind">
+                                            <param id="0" name="State">0</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="889703882385560">
+            <conditions>
+                <condition id="-14" name="Compare variable" sid="712804154607040" type="System">
+                    <param id="0" name="Variable">WEATHER_Type</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">0</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-block sid="981268095376244">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="654472849755161" type="WeatherParticles">
+                            <param id="0" name="Instance variable">WeatherType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set spraying" sid="795465665290456" type="WeatherParticles">
+                            <param id="0" name="State">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="918257842385588">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="315816735108709" type="WeatherParticles">
+                            <param id="0" name="Instance variable">WeatherType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">1</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set spraying" sid="260134774623328" type="WeatherParticles">
+                            <param id="0" name="State">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="975864117318991">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="748970961490842" type="WeatherParticles">
+                            <param id="0" name="Instance variable">WeatherType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">2</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set spraying" sid="516911502511634" type="WeatherParticles">
+                            <param id="0" name="State">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="509873220725754">
+            <conditions>
+                <condition id="-14" name="Compare variable" sid="442282331697989" type="System">
+                    <param id="0" name="Variable">WEATHER_Type</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">1</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-block sid="472335953618342">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="172923970877478" type="WeatherParticles">
+                            <param id="0" name="Instance variable">WeatherType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set spraying" sid="346544922836820" type="WeatherParticles">
+                            <param id="0" name="State">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="910105550314205">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="267106791632933" type="WeatherParticles">
+                            <param id="0" name="Instance variable">WeatherType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">1</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set spraying" sid="416174160671279" type="WeatherParticles">
+                            <param id="0" name="State">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="561978851996937">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="481015207178451" type="WeatherParticles">
+                            <param id="0" name="Instance variable">WeatherType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">2</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set spraying" sid="238236461090078" type="WeatherParticles">
+                            <param id="0" name="State">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="393034647287116">
+            <conditions>
+                <condition id="-14" name="Compare variable" sid="286015906868467" type="System">
+                    <param id="0" name="Variable">WEATHER_Type</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">2</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-28" name="Set effect parameter" sid="826813260350893" type="WeatherParticles">
+                    <param id="0" name="Effect">&quot;Brightness&quot;</param>
+                    <param id="1" name="Parameter index">0</param>
+                    <param id="2" name="Value">75+Self.Sine.CyclePosition+50</param>
+                </action>
+            </actions>
+            <sub-events>
+                <event-block sid="208415592534860">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="159711511355510" type="WeatherParticles">
+                            <param id="0" name="Instance variable">WeatherType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set spraying" sid="434665331356931" type="WeatherParticles">
+                            <param id="0" name="State">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="289352757922423">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="337666782782439" type="WeatherParticles">
+                            <param id="0" name="Instance variable">WeatherType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">1</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set spraying" sid="927093406869312" type="WeatherParticles">
+                            <param id="0" name="State">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="421967077619167">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="472829597335755" type="WeatherParticles">
+                            <param id="0" name="Instance variable">WeatherType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">2</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set spraying" sid="358000319226892" type="WeatherParticles">
+                            <param id="0" name="State">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <comment>Debug</comment>
+        <event-block sid="226312299031603">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="180899328312585" type="Keyboard">
+                    <param id="0" name="Key">191</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-10" name="Add to" sid="803093907175676" type="System">
+                    <param id="0" name="Variable">WindStrength</param>
+                    <param id="1" name="Value">1</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="502326284652298">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="522504723550328" type="Keyboard">
+                    <param id="0" name="Key">222</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-11" name="Subtract from" sid="375190319426879" type="System">
+                    <param id="0" name="Variable">WindStrength</param>
+                    <param id="1" name="Value">1</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="139194515253496">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="151739851650253" type="Keyboard">
+                    <param id="0" name="Key">192</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-9" name="Set value" sid="341034165930866" type="System">
+                    <param id="0" name="Variable">WindDirection</param>
+                    <param id="1" name="Value">WindDirection*-1</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="543465031137604">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="561372514311498" type="Keyboard">
+                    <param id="0" name="Key">221</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-10" name="Add to" sid="297424493735358" type="System">
+                    <param id="0" name="Variable">WEATHER_Precipitation</param>
+                    <param id="1" name="Value">1</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="125555461164166">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="490222198022632" type="Keyboard">
+                    <param id="0" name="Key">219</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-11" name="Subtract from" sid="101158883927821" type="System">
+                    <param id="0" name="Variable">WEATHER_Precipitation</param>
+                    <param id="1" name="Value">1</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="930282594069025">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="514083770685379" type="Keyboard">
+                    <param id="0" name="Key">8</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-block sid="347491964804832">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="910997061621166" type="System">
+                            <param id="0" name="Variable">WEATHER_Type</param>
+                            <param id="1" name="Comparison">2</param>
+                            <param id="2" name="Value">2</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-10" name="Add to" sid="820057064685892" type="System">
+                            <param id="0" name="Variable">WEATHER_Type</param>
+                            <param id="1" name="Value">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="274391825951153">
+                    <conditions>
+                        <condition id="-22" name="Else" sid="606281674345868" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Set value" sid="965508428618427" type="System">
+                            <param id="0" name="Variable">WEATHER_Type</param>
+                            <param id="1" name="Value">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-group description="Experimental, may crash or freeze" disabled="1" sid="299234142463107" title="Dust">
+            <sub-events>
+                <event-block disabled="1" sid="838431429606769">
+                    <conditions>
+                        <condition id="-6" name="Every X seconds" sid="570641512308203" type="System">
+                            <param id="0" name="Interval (seconds)">0.25</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block disabled="1" sid="126839071913974">
+                            <conditions>
+                                <condition id="-12" name="Repeat" sid="480831598443194" type="System">
+                                    <param id="0" name="Count">4</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-3" name="Create object" sid="983814211780290" type="System">
+                                    <param id="0" name="Object to create">WEATHER_DustCheck</param>
+                                    <param id="1" name="Layer">&quot;WEATHER&quot;</param>
+                                    <param id="2" name="X">random(1900)</param>
+                                    <param id="3" name="Y">16</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block disabled="1" sid="350667427375290">
+                    <conditions>
+                        <condition id="-23" name="While" sid="607853167094421" type="System" />
+                        <condition id="1" inverted="1" name="Is overlapping another object" sid="411083285552780" type="WEATHER_DustCheck">
+                            <param id="0" name="Object">COLLISION_box</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-2" name="Set Y" sid="829457856305564" type="WEATHER_DustCheck">
+                            <param id="0" name="Y">self.Y+16</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block disabled="1" sid="273525807025783">
+                    <conditions>
+                        <condition id="1" name="Is overlapping another object" sid="619244629732360" type="WEATHER_DustCheck">
+                            <param id="0" name="Object">COLLISION_box</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Spawn another object" sid="918048335715839" type="WEATHER_DustCheck">
+                            <param id="0" name="Object">WEATHERFX_Dust</param>
+                            <param id="1" name="Layer">&quot;WEATHER&quot;</param>
+                            <param id="2" name="Image point">0</param>
+                        </action>
+                        <action id="-9" name="Destroy" sid="745956162161797" type="WEATHER_DustCheck" />
+                    </actions>
+                </event-block>
+                <event-block any="1" disabled="1" sid="816264072185904">
+                    <conditions>
+                        <condition id="1" name="Is overlapping another object" sid="831438799415989" type="WEATHER_DustCheck">
+                            <param id="0" name="Object">WATER_depth</param>
+                        </condition>
+                        <condition id="1" name="Is overlapping another object" sid="364996281142000" type="WEATHER_DustCheck">
+                            <param id="0" name="Object">WATER_Surface</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Destroy" sid="708546228091531" type="WEATHER_DustCheck" />
+                    </actions>
+                </event-block>
+                <event-block disabled="1" sid="505879965110874">
+                    <conditions>
+                        <condition id="-3" inverted="1" name="Is on-screen" sid="557036126361210" type="WEATHERFX_Dust" />
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Destroy" sid="135167178989664" type="WEATHERFX_Dust" />
+                    </actions>
+                </event-block>
+                <event-block disabled="1" sid="161048940736073">
+                    <conditions>
+                        <condition id="-3" inverted="1" name="Is on-screen" sid="885032292441841" type="WEATHER_DustCheck" />
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Destroy" sid="927383665940468" type="WEATHER_DustCheck" />
+                    </actions>
+                </event-block>
+                <event-block disabled="1" sid="300707127304848">
+                    <conditions>
+                        <condition id="-6" name="Every X seconds" sid="648972912202405" type="System">
+                            <param id="0" name="Interval (seconds)">0.15</param>
+                        </condition>
+                        <condition id="-16" name="Pick random instance" sid="627174024587651" type="System">
+                            <param id="0" name="Object">WEATHERFX_Dust</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Destroy" sid="888099227936672" type="WEATHERFX_Dust" />
+                    </actions>
+                </event-block>
+                <event-block disabled="1" sid="528858204579026">
+                    <conditions>
+                        <condition id="0" inverted="1" name="Is spraying" sid="703721422692946" type="WEATHERFX_Dust" />
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Destroy" sid="620622487523076" type="WEATHERFX_Dust" />
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-group>
+    </events>
+</c2eventsheet>

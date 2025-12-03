@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://engine/spawners/EnemySpawner.gd" id="1"]
 [ext_resource type="Texture2D" path="res://engine/editor/icons/enemy_spawner.png" id="2"]
 
-[sub_resource type="CircleShape2D" id="1"]
-radius = 6.0
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(12, 12)
 
 [node name="ActorSpawner" type="Area2D"]
 collision_layer = 0

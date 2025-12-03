@@ -7,5 +7,7 @@ res://assets/placeholder_trap.tres
 res://assets/placeholder_item.tres
 res://assets/placeholder_projectile.tres
 res://engine/editor/EditorManager.gd
-res://engine/terrain/PolygonTerrain2D.gd
 res://engine/editor/EditorOverlay.gd
+res://engine/actors/ActorCharacter2D.gd
+res://engine/actors/movement/BaselinePlatformController.gd
+res://engine/scene/SceneManager.gd

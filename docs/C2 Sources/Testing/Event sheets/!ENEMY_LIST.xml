@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>!ENEMY_LIST</name>
+    <events>
+        <include>ENEMY_GreenGrunt</include>
+        <include>ENEMY_BigRat</include>
+    </events>
+</c2eventsheet>

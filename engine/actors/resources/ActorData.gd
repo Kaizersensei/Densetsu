@@ -38,6 +38,7 @@ class_name ActorData
 @export var sprite: Texture2D
 @export var tint: Color = Color(1, 1, 1, 1)
 @export var collider_shape: Resource
+@export var movement_id: String = ""
 @export var stats: Dictionary = {}
 @export var resistances: Dictionary = {}
 @export var abilities: Array[String] = []

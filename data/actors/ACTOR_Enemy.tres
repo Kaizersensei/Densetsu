@@ -14,4 +14,5 @@ description = "Basic enemy placeholder"
 group = "actors"
 sprite = ExtResource("2")
 scene = ExtResource("3")
- tint = Color(1, 0, 0, 1)
+tint = Color(1, 0, 0, 1)
+movement_id = "MOVEMENT_Base"

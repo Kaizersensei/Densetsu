@@ -29,9 +29,7 @@ extends CanvasLayer
 @onready var _load_confirm: Button = $LoadPanel/LoadRoot/LoadButtons/LoadConfirm
 @onready var _load_cancel: Button = $LoadPanel/LoadRoot/LoadButtons/LoadCancel
 @onready var _load_dialog: FileDialog = $LoadPanel/LoadDialog
-@onready var _template_panel: Panel = $TemplatePanel
 @onready var _modal_blocker: ColorRect = $ModalBlocker
-@onready var _quick_load: OptionButton = $Ribbon/QuickLoad
 @onready var _pos_x: LineEdit = $Inspector/PosRow/PosX
 @onready var _pos_y: LineEdit = $Inspector/PosYRow/PosY
 @onready var _rot: LineEdit = $Inspector/RotRow/Rot
@@ -59,6 +57,7 @@ extends CanvasLayer
 @onready var _place_deco_solid: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceDecoSolid
 @onready var _place_polygon: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlacePolygon
 @onready var _delete_button: Button = $SidebarLeft/PrefabList/DeleteButton
+@onready var _close_panels: Button = $Ribbon/ClosePanels
 
 var _inspector_signal_block := false
 var _prefab_handler: Callable = Callable()
@@ -67,7 +66,6 @@ var _ribbon_hidden: Array[Control] = []
 var _panel_buttons: Array[Control] = []
 var _current_panel: String = ""
 var _data_panel: Control = null
-@onready var _templates_button: Button = $Ribbon/Templates
 @onready var _hover_label: Label = $Ribbon/HoverLabel
 
 func set_editor_mode(active: bool) -> void:
@@ -83,6 +81,17 @@ func set_selection_name(name: String) -> void:
 func set_status(text: String) -> void:
 	if _status:
 		_status.text = text
+
+
+func set_footer(text: String) -> void:
+	if has_node("Footer"):
+		var footer := get_node("Footer")
+		if footer and footer is Control:
+			footer.position = Vector2(0, get_viewport().get_visible_rect().size.y - footer.size.y - 12)
+			footer.visible = text != ""
+			var lbl := footer.get_node_or_null("FooterLabel")
+			if lbl and lbl is Label:
+				lbl.text = text
 
 func set_hover_info(text: String, pos: Vector2 = Vector2.ZERO) -> void:
 	if _hover_label:
@@ -160,11 +169,13 @@ func connect_prefab_buttons(handler: Callable) -> void:
 	if _delete_button:
 		_delete_button.pressed.connect(handler.bind("delete"))
 	if _polygon_button:
-		_polygon_button.pressed.connect(handler.bind("toggle_polygon"))
+		_polygon_button.pressed.connect(handler.bind("edit_polygon"))
 	if _poly_use_button:
 		_poly_use_button.pressed.connect(handler.bind("use_polygon"))
 	if _poly_cancel_button:
 		_poly_cancel_button.pressed.connect(handler.bind("cancel_polygon"))
+	if _close_panels:
+		_close_panels.pressed.connect(handler.bind("close_panels"))
 	if _place_player:
 		_place_player.pressed.connect(handler.bind("player"))
 	if _place_enemy:
@@ -199,9 +210,6 @@ func connect_prefab_buttons(handler: Callable) -> void:
 		_data_button.pressed.connect(_open_data_panel)
 	if _reload_button:
 		_reload_button.pressed.connect(handler.bind("reload"))
-	if _quick_load:
-		_quick_load.item_selected.connect(_on_quick_load_selected)
-		_refresh_quick_load()
 	if _save_confirm:
 		_save_confirm.pressed.connect(_on_save_confirm)
 	if _save_cancel:
@@ -216,14 +224,24 @@ func connect_prefab_buttons(handler: Callable) -> void:
 	if _load_dialog:
 		_load_dialog.file_selected.connect(_on_load_dialog_selected)
 		_load_dialog.canceled.connect(_on_load_cancel)
-	if _templates_button:
-		_templates_button.pressed.connect(_open_template_panel)
+	if _close_panels:
+		_close_panels.pressed.connect(func(): _set_active_panel(""))
+
+	# Tooltip bindings to feed footer/status
+	var tooltip_controls: Array = [
+		_undo_button, _redo_button, _save_button, _load_button, _data_button, _polygon_button, _reload_button,
+		_snap_toggle, _snap_size, _close_panels, _poly_use_button, _poly_cancel_button,
+		_place_player, _place_enemy, _place_npc, _place_trap, _place_spawner, _place_item,
+		_place_solid, _place_one_way, _place_deco, _place_deco_solid, _place_polygon, _delete_button,
+	]
+	for c in tooltip_controls:
+		_bind_tooltip(c)
 	_ribbon_hidden = []
-	for c in [_undo_button, _redo_button, _reload_button, _snap_toggle, _snap_size, _quick_load]:
+	for c in [_undo_button, _redo_button, _reload_button, _snap_toggle, _snap_size]:
 		if c:
 			_ribbon_hidden.append(c)
 	_panel_buttons = []
-	for c in [_save_button, _load_button, _data_button, _templates_button]:
+	for c in [_save_button, _load_button, _data_button]:
 		if c:
 			_panel_buttons.append(c)
 
@@ -236,8 +254,6 @@ func register_popups(controller: Node) -> void:
 		_window_controller.call_deferred("register_popup", _save_panel)
 	if _load_panel:
 		_window_controller.call_deferred("register_popup", _load_panel)
-	if _template_panel:
-		_window_controller.call_deferred("register_popup", _template_panel)
 	set_polygon_toolbar_visible(false)
 	set_polygon_toolbar_visible(false)
 
@@ -265,13 +281,6 @@ func _open_load_panel() -> void:
 			_set_active_panel("load")
 
 
-func _open_template_panel() -> void:
-	if _current_panel == "templates":
-		_set_active_panel("")
-	else:
-		_set_active_panel("templates")
-
-
 func _open_data_panel() -> void:
 	if _current_panel == "data":
 		_set_active_panel("")
@@ -281,45 +290,6 @@ func _open_data_panel() -> void:
 			var de := get_node("DataEditor")
 			if de.has_method("force_refresh"):
 				de.call_deferred("force_refresh")
-
-
-func _refresh_quick_load() -> void:
-	if _quick_load == null:
-		return
-	_quick_load.clear()
-	var saves := _list_recent_saves()
-	for p in saves:
-		_quick_load.add_item(p.get_file())
-		_quick_load.set_item_metadata(_quick_load.item_count - 1, p)
-	if _quick_load.item_count == 0:
-		_quick_load.add_item("No saves")
-		_quick_load.disabled = true
-	else:
-		_quick_load.disabled = false
-
-
-func _list_recent_saves() -> Array:
-	var paths: Array = []
-	var dir := DirAccess.open("res://editor_saves")
-	if dir:
-		dir.list_dir_begin()
-		var f := dir.get_next()
-		while f != "":
-			if not dir.current_is_dir() and f.ends_with(".tscn"):
-				paths.append("res://editor_saves/%s" % f)
-			f = dir.get_next()
-		dir.list_dir_end()
-	return paths
-
-
-func _on_quick_load_selected(index: int) -> void:
-	if _quick_load == null:
-		return
-	var meta: Variant = _quick_load.get_item_metadata(index)
-	if meta is String and meta != "":
-		if _prefab_handler.is_valid():
-			_prefab_handler.call("load_path", meta)
-
 
 func _on_save_dialog_canceled() -> void:
 	_hide_modal()
@@ -337,6 +307,8 @@ func _set_active_panel(name: String) -> void:
 		var mgr := get_parent()
 		if mgr and mgr.has_method("_update_entity_popup"):
 			mgr.call("_update_entity_popup", true)
+		if mgr and mgr.has_method("_overlay_closed"):
+			mgr.call("_overlay_closed")
 		set_polygon_toolbar_visible(false)
 		_highlight_panel_buttons("")
 		return
@@ -349,8 +321,6 @@ func _set_active_panel(name: String) -> void:
 		if _data_panel == null:
 			_data_panel = get_node_or_null("DataEditor") as Control
 		panel = _data_panel
-	elif name == "templates":
-		panel = _template_panel
 	elif name == "polygon":
 		panel = _polygon_toolbar
 	if panel:
@@ -489,8 +459,6 @@ func _hide_modal() -> void:
 		_load_dialog.hide()
 	if _data_panel:
 		_data_panel.visible = false
-	if _template_panel:
-		_template_panel.visible = false
 	set_polygon_toolbar_visible(false)
 	_current_panel = ""
 	_hide_ribbon_buttons(false)
@@ -517,13 +485,26 @@ func _highlight_panel_buttons(active: String) -> void:
 		"save": _save_button,
 		"load": _load_button,
 		"data": _data_button,
-		"templates": _templates_button,
 		"polygon": _polygon_button,
 	}
 	for key in pairs.keys():
 		var btn: Control = pairs[key]
 		if btn:
 			btn.self_modulate = highlight if key == active else normal
+
+
+func _bind_tooltip(ctrl: Control) -> void:
+	if ctrl == null:
+		return
+	ctrl.mouse_entered.connect(func():
+		var tip := ctrl.tooltip_text
+		if tip == "" and "text" in ctrl:
+			tip = str(ctrl.text)
+		set_status(tip)
+	)
+	ctrl.mouse_exited.connect(func():
+		set_status("")
+	)
 
 
 func set_polygon_toolbar_visible(visible: bool) -> void:

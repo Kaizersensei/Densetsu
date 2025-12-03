@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>camera</name>
+    <events>
+        <comment>Classic camera</comment>
+        <event-block sid="857281589390974">
+            <conditions>
+                <condition id="-1" name="Every tick" sid="191900228222956" type="System" />
+                <condition id="-8" name="Compare two values" sid="571128359054238" type="System">
+                    <param id="0" name="First value">LayoutName</param>
+                    <param id="1" name="Comparison">1</param>
+                    <param id="2" name="Second value">&quot;Wagon Chase&quot;</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-block sid="411458334007064">
+                    <conditions>
+                        <condition id="-8" inverted="1" name="Is boolean instance variable set" sid="325376775293137" type="Players">
+                            <param id="0" name="Instance variable">Climbing</param>
+                        </condition>
+                        <condition id="-8" inverted="1" name="Is boolean instance variable set" sid="466713640709864" type="Players">
+                            <param id="0" name="Instance variable">Ledge</param>
+                        </condition>
+                        <condition id="-8" inverted="1" name="Is boolean instance variable set" sid="453021798670220" type="Players">
+                            <param id="0" name="Instance variable">Ducking</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-7" name="Scroll to position" sid="277313244010265" type="System">
+                            <param id="0" name="X">lerp(Players.X, Players.X+Players.PlatformPlus.VectorX,dt)</param>
+                            <param id="1" name="Y">lerp(Players.Y, Players.Y+Players.PlatformPlus.VectorY*0.5, dt)</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block any="1" sid="758429946704226">
+                    <conditions>
+                        <condition id="-8" name="Is boolean instance variable set" sid="560419475505791" type="Players">
+                            <param id="0" name="Instance variable">Climbing</param>
+                        </condition>
+                        <condition id="-8" name="Is boolean instance variable set" sid="777306280083657" type="Players">
+                            <param id="0" name="Instance variable">Ledge</param>
+                        </condition>
+                        <condition id="-8" name="Is boolean instance variable set" sid="359502246525068" type="Players">
+                            <param id="0" name="Instance variable">Ducking</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-7" name="Scroll to position" sid="953265823359976" type="System">
+                            <param id="0" name="X">lerp(scrollx, Players.X, dt*16)</param>
+                            <param id="1" name="Y">lerp(scrolly, Players.Y, dt*16)</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <comment>Dynamic camera</comment>
+        <event-block disabled="1" sid="352120836031762">
+            <conditions>
+                <condition id="-1" name="Every tick" sid="842861662983457" type="System" />
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-block sid="418334083540841">
+                    <conditions />
+                    <actions />
+                    <sub-events>
+                        <event-block sid="686667457222569">
+                            <conditions>
+                                <condition id="-8" inverted="1" name="Is boolean instance variable set" sid="290095477395092" type="deprecated_ACTOR_Player_1">
+                                    <param id="0" name="Instance variable">Climbing</param>
+                                </condition>
+                                <condition id="-8" inverted="1" name="Is boolean instance variable set" sid="121647459047726" type="deprecated_ACTOR_Player_1">
+                                    <param id="0" name="Instance variable">Ledge</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-3" name="Set position" sid="808713639451017" type="CameraFocus">
+                                    <param id="0" name="X">ACTOR_Michio.X+deprecated_ACTOR_Player_1.SpeedX</param>
+                                    <param id="1" name="Y">ACTOR_Michio.Y</param>
+                                </action>
+                                <action id="-7" name="Scroll to position" sid="141458620742864" type="System">
+                                    <param id="0" name="X">lerp(scrollx, CameraFocus.X, dt*16)</param>
+                                    <param id="1" name="Y">lerp(scrolly, CameraFocus.Y, dt*16)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block any="1" sid="208846850290080">
+                    <conditions>
+                        <condition id="-8" name="Is boolean instance variable set" sid="877484590682325" type="deprecated_ACTOR_Player_1">
+                            <param id="0" name="Instance variable">Climbing</param>
+                        </condition>
+                        <condition id="-8" name="Is boolean instance variable set" sid="625298262340388" type="deprecated_ACTOR_Player_1">
+                            <param id="0" name="Instance variable">Ledge</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action behavior="MoveTo" id="6" name="Move to object" sid="953989851171217" type="CameraFocus">
+                            <param id="0" name="Target">ACTOR_Michio</param>
+                        </action>
+                        <action id="-7" name="Scroll to position" sid="117818621060323" type="System">
+                            <param id="0" name="X">CameraFocus.X</param>
+                            <param id="1" name="Y">CameraFocus.Y</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="424340189361379">
+                    <conditions />
+                    <actions>
+                        <action id="-3" name="Set position" sid="340008764041492" type="CameraFocus">
+                            <param id="0" name="X">ACTOR_Michio.X+(deprecated_ACTOR_Player_1.SpeedX*0.25)</param>
+                            <param id="1" name="Y">ACTOR_Michio.Y</param>
+                        </action>
+                        <action id="-7" name="Scroll to position" sid="914407885029545" type="System">
+                            <param id="0" name="X">lerp(scrollx, CameraFocus.X, dt*4)</param>
+                            <param id="1" name="Y">lerp(scrolly, CameraFocus.Y, dt*4)</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+    </events>
+</c2eventsheet>

@@ -1,0 +1,353 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>ENEMY_BigRat</name>
+    <events>
+        <event-block sid="151972051229838">
+            <conditions>
+                <condition id="-7" name="Compare instance variable" sid="373331731092688" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Instance variable">State</param>
+                    <param id="1" name="Comparison">1</param>
+                    <param id="2" name="Value">&quot;attack&quot;</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-block sid="153586836632530">
+                    <conditions>
+                        <condition id="-1" name="Every tick" sid="430505874087145" type="System" />
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block sid="598941601565670">
+                            <conditions>
+                                <condition behavior="Platform" id="2" name="Is on floor" sid="398090778386188" type="ACTOR_CREATURE_RIDEABLE_BigRat" />
+                                <condition id="2" inverted="1" name="Is playing" sid="734961666934044" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Animation">&quot;hit&quot;</param>
+                                </condition>
+                                <condition id="-7" name="Compare instance variable" sid="970403752487151" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Instance variable">HitType</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">&quot;NULL&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action behavior="Platform" id="8" name="Set vector X" sid="160316600118182" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Vector X">self.Sine.Value</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="956161464131584" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Instance variable">VECTOR_X</param>
+                                    <param id="1" name="Value">self.Platform.VectorX</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="388357617177360" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Instance variable">VECTOR_Y</param>
+                                    <param id="1" name="Value">self.Platform.VectorY</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block sid="982223626720266">
+                                    <conditions>
+                                        <condition behavior="Platform" id="10" name="Is by wall" sid="919704550082778" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                            <param id="0" name="Side">1</param>
+                                        </condition>
+                                        <condition id="-7" name="Compare instance variable" sid="569775223239823" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                            <param id="0" name="Instance variable">VECTOR_X</param>
+                                            <param id="1" name="Comparison">2</param>
+                                            <param id="2" name="Value">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action behavior="Platform" id="8" name="Set vector X" sid="654352383966364" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                            <param id="0" name="Vector X">-self.Platform.MaxSpeed</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="628551313152692">
+                                    <conditions>
+                                        <condition behavior="Platform" id="10" name="Is by wall" sid="455701680841742" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                            <param id="0" name="Side">0</param>
+                                        </condition>
+                                        <condition id="-7" name="Compare instance variable" sid="180735712414547" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                            <param id="0" name="Instance variable">VECTOR_X</param>
+                                            <param id="1" name="Comparison">4</param>
+                                            <param id="2" name="Value">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action behavior="Platform" id="8" name="Set vector X" sid="710880084923799" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                            <param id="0" name="Vector X">self.Platform.MaxSpeed</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="180646542240019">
+                    <conditions>
+                        <condition behavior="Platform" id="0" name="Is moving" sid="460339046119030" type="ACTOR_CREATURE_RIDEABLE_BigRat" />
+                    </conditions>
+                    <actions>
+                        <action id="4" name="Set animation" sid="794718169597285" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                            <param id="0" name="Animation">&quot;walk&quot;</param>
+                            <param id="1" name="From">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="773938143998120">
+                    <conditions>
+                        <condition behavior="Platform" id="0" inverted="1" name="Is moving" sid="710061073255028" type="ACTOR_CREATURE_RIDEABLE_BigRat" />
+                        <condition id="2" inverted="1" name="Is playing" sid="366935540044567" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                            <param id="0" name="Animation">&quot;hit&quot;</param>
+                        </condition>
+                        <condition id="2" inverted="1" name="Is playing" sid="861231861697703" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                            <param id="0" name="Animation">&quot;die&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="4" name="Set animation" sid="298544849339178" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                            <param id="0" name="Animation">&quot;Default&quot;</param>
+                            <param id="1" name="From">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="990814376157536">
+            <conditions>
+                <condition id="4" name="On finished" sid="385828004423916" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Animation">&quot;hit&quot;</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="4" name="Set animation" sid="747698036305148" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Animation">&quot;Default&quot;</param>
+                    <param id="1" name="From">1</param>
+                </action>
+                <action behavior="Sine" id="0" name="Set active" sid="720051552874738" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="State">1</param>
+                </action>
+                <action id="-10" name="Set value" sid="853602201715599" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Instance variable">State</param>
+                    <param id="1" name="Value">&quot;&quot;</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="953849329936866">
+            <conditions>
+                <condition id="4" name="On finished" sid="686193381693277" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Animation">&quot;attack&quot;</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="4" name="Set animation" sid="542488541678753" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Animation">&quot;Default&quot;</param>
+                    <param id="1" name="From">1</param>
+                </action>
+                <action behavior="Sine" id="0" name="Set active" sid="467679714891292" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="State">1</param>
+                </action>
+                <action id="-16" name="Wait" sid="716269583165355" type="System">
+                    <param id="0" name="Seconds">ACTOR_CREATURE_RIDEABLE_BigRat.Cooldown*3</param>
+                </action>
+                <action id="-10" name="Set value" sid="266523624244557" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Instance variable">State</param>
+                    <param id="1" name="Value">&quot;&quot;</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="620839288918945">
+            <conditions>
+                <condition id="-7" name="Compare instance variable" sid="599502782813454" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Instance variable">HitType</param>
+                    <param id="1" name="Comparison">1</param>
+                    <param id="2" name="Value">&quot;NULL&quot;</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-10" name="Set value" sid="235606664961019" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Instance variable">State</param>
+                    <param id="1" name="Value">&quot;hit&quot;</param>
+                </action>
+                <action behavior="Sine" id="0" name="Set active" sid="748196046442145" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="State">0</param>
+                </action>
+                <action behavior="Platform" id="8" name="Set vector X" sid="245878650707441" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Vector X">0</param>
+                </action>
+                <action id="4" name="Set animation" sid="796728160223915" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Animation">&quot;hit&quot;</param>
+                    <param id="1" name="From">0</param>
+                </action>
+                <action id="-10" name="Set value" sid="778460629668043" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Instance variable">HitType</param>
+                    <param id="1" name="Value">&quot;NULL&quot;</param>
+                </action>
+                <action id="-16" name="Wait" sid="295093332484054" type="System">
+                    <param id="0" name="Seconds">ACTOR_CREATURE_RIDEABLE_BigRat.Cooldown</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="675568469920742">
+            <conditions>
+                <condition id="-7" name="Compare instance variable" sid="864079077454506" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Instance variable">State</param>
+                    <param id="1" name="Comparison">1</param>
+                    <param id="2" name="Value">&quot;hit&quot;</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-block sid="472098172740128">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="426999299759063" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                            <param id="0" name="Instance variable">VECTOR_X</param>
+                            <param id="1" name="Comparison">2</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="7" name="Set mirrored" sid="729226526597129" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                            <param id="0" name="State">0</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="775975447989685">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="618440834805564" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Instance variable">State</param>
+                                    <param id="1" name="Comparison">1</param>
+                                    <param id="2" name="Value">&quot;attack&quot;</param>
+                                </condition>
+                                <condition disabled="1" id="2" inverted="1" name="Is playing" sid="847699046928959" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Animation">&quot;attack&quot;</param>
+                                </condition>
+                                <condition id="-1" name="Compare X" sid="759249007848517" type="ACTOR_Michio">
+                                    <param id="0" name="Comparison">5</param>
+                                    <param id="1" name="X co-ordinate">ACTOR_CREATURE_RIDEABLE_BigRat.X-64</param>
+                                </condition>
+                                <condition id="-1" name="Compare X" sid="764306223737864" type="ACTOR_Michio">
+                                    <param id="0" name="Comparison">3</param>
+                                    <param id="1" name="X co-ordinate">ACTOR_CREATURE_RIDEABLE_BigRat.X-4</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action behavior="Sine" id="0" name="Set active" sid="234065132594750" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="State">0</param>
+                                </action>
+                                <action behavior="Platform" id="8" name="Set vector X" sid="950548944473081" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Vector X">0</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="838766363709734" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Instance variable">State</param>
+                                    <param id="1" name="Value">&quot;attack&quot;</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="749496710880819" type="System">
+                                    <param id="0" name="Seconds">ACTOR_CREATURE_RIDEABLE_BigRat.Cooldown*1.5</param>
+                                </action>
+                                <action id="4" name="Set animation" sid="879662630367357" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Animation">&quot;attack&quot;</param>
+                                    <param id="1" name="From">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="137841373815625">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="607648109658869" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                            <param id="0" name="Instance variable">VECTOR_X</param>
+                            <param id="1" name="Comparison">4</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="7" name="Set mirrored" sid="705366317624834" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                            <param id="0" name="State">1</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="892555425314985">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="633843148473746" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Instance variable">State</param>
+                                    <param id="1" name="Comparison">1</param>
+                                    <param id="2" name="Value">&quot;attack&quot;</param>
+                                </condition>
+                                <condition disabled="1" id="2" inverted="1" name="Is playing" sid="167388802410837" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Animation">&quot;attack&quot;</param>
+                                </condition>
+                                <condition id="-1" name="Compare X" sid="461347835474530" type="ACTOR_Michio">
+                                    <param id="0" name="Comparison">3</param>
+                                    <param id="1" name="X co-ordinate">ACTOR_CREATURE_RIDEABLE_BigRat.X+64</param>
+                                </condition>
+                                <condition id="-1" name="Compare X" sid="866186792613134" type="ACTOR_Michio">
+                                    <param id="0" name="Comparison">5</param>
+                                    <param id="1" name="X co-ordinate">ACTOR_CREATURE_RIDEABLE_BigRat.X+4</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action behavior="Sine" id="0" name="Set active" sid="104009636050796" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="State">0</param>
+                                </action>
+                                <action behavior="Platform" id="8" name="Set vector X" sid="150436964657800" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Vector X">0</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="957975544810939" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Instance variable">State</param>
+                                    <param id="1" name="Value">&quot;attack&quot;</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="356859668533545" type="System">
+                                    <param id="0" name="Seconds">ACTOR_CREATURE_RIDEABLE_BigRat.Cooldown*1.5</param>
+                                </action>
+                                <action id="4" name="Set animation" sid="516746940724705" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                                    <param id="0" name="Animation">&quot;attack&quot;</param>
+                                    <param id="1" name="From">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="749882779700783">
+            <conditions>
+                <condition id="2" name="Is playing" sid="202559567198678" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Animation">&quot;attack&quot;</param>
+                </condition>
+                <condition id="3" name="Compare frame" sid="486931388389038" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Comparison">0</param>
+                    <param id="1" name="Number">3</param>
+                </condition>
+                <condition id="-4" name="Trigger once while true" sid="713757703502885" type="System" />
+            </conditions>
+            <actions>
+                <action id="0" name="Spawn another object" sid="201335328879351" type="ACTOR_CREATURE_RIDEABLE_BigRat">
+                    <param id="0" name="Object">HITBOX_BigRat</param>
+                    <param id="1" name="Layer">Self.LayerNumber</param>
+                    <param id="2" name="Image point">0</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="995761270023498">
+            <conditions>
+                <condition id="7" name="Is mirrored" sid="974695781332754" type="ACTOR_CREATURE_RIDEABLE_BigRat" />
+            </conditions>
+            <actions>
+                <action id="7" name="Set mirrored" sid="478951247899291" type="HITBOX_BigRat">
+                    <param id="0" name="State">0</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="982728697468764">
+            <conditions>
+                <condition id="7" inverted="1" name="Is mirrored" sid="876923771511168" type="ACTOR_CREATURE_RIDEABLE_BigRat" />
+            </conditions>
+            <actions>
+                <action id="7" name="Set mirrored" sid="594794707555339" type="HITBOX_BigRat">
+                    <param id="0" name="State">1</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>

@@ -1,0 +1,560 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2layout>
+    <name>SKY</name>
+    <sid>710408223149133</sid>
+    <event-sheet>SKY</event-sheet>
+    <size>
+        <width>1920</width>
+        <height>1080</height>
+    </size>
+    <margins>
+        <horizontal>500</horizontal>
+        <vertical>500</vertical>
+    </margins>
+    <unbounded-scrolling>0</unbounded-scrolling>
+    <layers>
+        <layer name="SKY" sid="802612626701067">
+            <initially-visible>1</initially-visible>
+            <background-color>18,11,15</background-color>
+            <transparent>0</transparent>
+            <parallax>
+                <x>1</x>
+                <y>1</y>
+            </parallax>
+            <zoom-rate>1</zoom-rate>
+            <opacity>1</opacity>
+            <force-own-texture>0</force-own-texture>
+            <global>1</global>
+            <use-render-cells>0</use-render-cells>
+            <blend-mode>0</blend-mode>
+            <effect-fallback>0</effect-fallback>
+            <instances>
+                <instance type="SKY_CloudLayer" uid="500">
+                    <properties>
+                        <initial-visibility>Visible</initial-visibility>
+                        <initial-animation>Default</initial-animation>
+                        <initial-frame>0</initial-frame>
+                        <collisions>Enabled</collisions>
+                    </properties>
+                    <blend-mode>1</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>0</x>
+                        <y>-512</y>
+                        <z>0</z>
+                        <width>640</width>
+                        <height>480</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0</hotspotY>
+                        <angle>0</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="HELPER_skycolorchanger" uid="501">
+                    <properties>
+                        <initial-visibility>Visible</initial-visibility>
+                        <initial-animation>Default</initial-animation>
+                        <initial-frame>0</initial-frame>
+                        <collisions>Enabled</collisions>
+                    </properties>
+                    <behavior-instances>
+                        <behavior-instance type="Red">
+                            <properties>
+                                <active-on-start>Yes</active-on-start>
+                                <movement>Value only</movement>
+                                <wave>Sine</wave>
+                                <period>3600</period>
+                                <period-random>0</period-random>
+                                <period-offset>0</period-offset>
+                                <period-offset-random>0</period-offset-random>
+                                <magnitude>45</magnitude>
+                                <magnitude-random>0</magnitude-random>
+                            </properties>
+                        </behavior-instance>
+                        <behavior-instance type="Green">
+                            <properties>
+                                <active-on-start>Yes</active-on-start>
+                                <movement>Value only</movement>
+                                <wave>Sine</wave>
+                                <period>1800</period>
+                                <period-random>0</period-random>
+                                <period-offset>0</period-offset>
+                                <period-offset-random>0</period-offset-random>
+                                <magnitude>96</magnitude>
+                                <magnitude-random>0</magnitude-random>
+                            </properties>
+                        </behavior-instance>
+                        <behavior-instance type="Blue">
+                            <properties>
+                                <active-on-start>Yes</active-on-start>
+                                <movement>Value only</movement>
+                                <wave>Sine</wave>
+                                <period>1800</period>
+                                <period-random>0</period-random>
+                                <period-offset>0</period-offset>
+                                <period-offset-random>0</period-offset-random>
+                                <magnitude>192</magnitude>
+                                <magnitude-random>0</magnitude-random>
+                            </properties>
+                        </behavior-instance>
+                    </behavior-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>-32</x>
+                        <y>1184</y>
+                        <z>0</z>
+                        <width>64</width>
+                        <height>64</height>
+                        <depth>0</depth>
+                        <hotspotX>0.5</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>0</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="cloud" uid="415">
+                    <properties>
+                        <rate>0.1</rate>
+                        <spray-cone>3</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>1</speed>
+                        <size>32</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.5</grow-rate>
+                        <x-randomiser>0</x-randomiser>
+                        <y-randomiser>400</y-randomiser>
+                        <speed-randomiser->16</speed-randomiser->
+                        <size-randomiser>1024</size-randomiser>
+                        <grow-rate-randomiser>0</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>0</angle-randomiser>
+                        <speed-randomiser>1</speed-randomiser>
+                        <opacity-randomiser>0</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>100</timeout>
+                    </properties>
+                    <behavior-instances>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>-192</x>
+                        <y>480</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>0</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="cloud2" uid="416">
+                    <properties>
+                        <rate>0.1</rate>
+                        <spray-cone>3</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>1</speed>
+                        <size>32</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.5</grow-rate>
+                        <x-randomiser>0</x-randomiser>
+                        <y-randomiser>400</y-randomiser>
+                        <speed-randomiser->16</speed-randomiser->
+                        <size-randomiser>1024</size-randomiser>
+                        <grow-rate-randomiser>0</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>0</angle-randomiser>
+                        <speed-randomiser>1</speed-randomiser>
+                        <opacity-randomiser>0</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>100</timeout>
+                    </properties>
+                    <behavior-instances>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>-192</x>
+                        <y>480</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>0</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="cloud5" uid="420">
+                    <properties>
+                        <rate>0.1</rate>
+                        <spray-cone>3</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>1</speed>
+                        <size>32</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.5</grow-rate>
+                        <x-randomiser>0</x-randomiser>
+                        <y-randomiser>400</y-randomiser>
+                        <speed-randomiser->16</speed-randomiser->
+                        <size-randomiser>1024</size-randomiser>
+                        <grow-rate-randomiser>0</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>0</angle-randomiser>
+                        <speed-randomiser>1</speed-randomiser>
+                        <opacity-randomiser>0</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>100</timeout>
+                    </properties>
+                    <behavior-instances>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>-192</x>
+                        <y>480</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>0</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="cloud3" uid="421">
+                    <properties>
+                        <rate>0.1</rate>
+                        <spray-cone>3</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>1</speed>
+                        <size>32</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.5</grow-rate>
+                        <x-randomiser>0</x-randomiser>
+                        <y-randomiser>400</y-randomiser>
+                        <speed-randomiser->16</speed-randomiser->
+                        <size-randomiser>1024</size-randomiser>
+                        <grow-rate-randomiser>0</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>0</angle-randomiser>
+                        <speed-randomiser>1</speed-randomiser>
+                        <opacity-randomiser>0</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>100</timeout>
+                    </properties>
+                    <behavior-instances>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>-192</x>
+                        <y>480</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>-0.019952197</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="cloud4" uid="423">
+                    <properties>
+                        <rate>0.1</rate>
+                        <spray-cone>3</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>1</speed>
+                        <size>32</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.5</grow-rate>
+                        <x-randomiser>0</x-randomiser>
+                        <y-randomiser>400</y-randomiser>
+                        <speed-randomiser->16</speed-randomiser->
+                        <size-randomiser>1024</size-randomiser>
+                        <grow-rate-randomiser>0</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>0</angle-randomiser>
+                        <speed-randomiser>1</speed-randomiser>
+                        <opacity-randomiser>0</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>100</timeout>
+                    </properties>
+                    <behavior-instances>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>-192</x>
+                        <y>480</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>-0.019951958</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="cloud" uid="418">
+                    <properties>
+                        <rate>0.1</rate>
+                        <spray-cone>3</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>1</speed>
+                        <size>32</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.5</grow-rate>
+                        <x-randomiser>0</x-randomiser>
+                        <y-randomiser>400</y-randomiser>
+                        <speed-randomiser->16</speed-randomiser->
+                        <size-randomiser>1024</size-randomiser>
+                        <grow-rate-randomiser>0</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>0</angle-randomiser>
+                        <speed-randomiser>1</speed-randomiser>
+                        <opacity-randomiser>0</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>100</timeout>
+                    </properties>
+                    <behavior-instances>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>2176</x>
+                        <y>394.138763428</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>3.132266998</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="cloud2" uid="419">
+                    <properties>
+                        <rate>0.1</rate>
+                        <spray-cone>3</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>1</speed>
+                        <size>32</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.5</grow-rate>
+                        <x-randomiser>0</x-randomiser>
+                        <y-randomiser>400</y-randomiser>
+                        <speed-randomiser->16</speed-randomiser->
+                        <size-randomiser>1024</size-randomiser>
+                        <grow-rate-randomiser>0</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>0</angle-randomiser>
+                        <speed-randomiser>1</speed-randomiser>
+                        <opacity-randomiser>0</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>100</timeout>
+                    </properties>
+                    <behavior-instances>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>2176</x>
+                        <y>522.138793945</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>3.13226676</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="cloud5" uid="425">
+                    <properties>
+                        <rate>0.1</rate>
+                        <spray-cone>3</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>1</speed>
+                        <size>32</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.5</grow-rate>
+                        <x-randomiser>0</x-randomiser>
+                        <y-randomiser>400</y-randomiser>
+                        <speed-randomiser->16</speed-randomiser->
+                        <size-randomiser>1024</size-randomiser>
+                        <grow-rate-randomiser>0</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>0</angle-randomiser>
+                        <speed-randomiser>1</speed-randomiser>
+                        <opacity-randomiser>0</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>100</timeout>
+                    </properties>
+                    <behavior-instances>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>2144</x>
+                        <y>512</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>3.13226676</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="cloud3" uid="426">
+                    <properties>
+                        <rate>0.1</rate>
+                        <spray-cone>3</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>1</speed>
+                        <size>32</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.5</grow-rate>
+                        <x-randomiser>0</x-randomiser>
+                        <y-randomiser>400</y-randomiser>
+                        <speed-randomiser->16</speed-randomiser->
+                        <size-randomiser>1024</size-randomiser>
+                        <grow-rate-randomiser>0</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>0</angle-randomiser>
+                        <speed-randomiser>1</speed-randomiser>
+                        <opacity-randomiser>0</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>100</timeout>
+                    </properties>
+                    <behavior-instances>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>2144</x>
+                        <y>490.138763428</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>3.112313986</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+                <instance type="cloud4" uid="427">
+                    <properties>
+                        <rate>0.1</rate>
+                        <spray-cone>3</spray-cone>
+                        <type>Continuous spray</type>
+                        <initial-particle-properties></initial-particle-properties>
+                        <speed>1</speed>
+                        <size>32</size>
+                        <opacity>50</opacity>
+                        <grow-rate>-0.5</grow-rate>
+                        <x-randomiser>0</x-randomiser>
+                        <y-randomiser>400</y-randomiser>
+                        <speed-randomiser->16</speed-randomiser->
+                        <size-randomiser>1024</size-randomiser>
+                        <grow-rate-randomiser>0</grow-rate-randomiser>
+                        <particle-lifetime-properties></particle-lifetime-properties>
+                        <acceleration>0</acceleration>
+                        <gravity>0</gravity>
+                        <angle-randomiser>0</angle-randomiser>
+                        <speed-randomiser>1</speed-randomiser>
+                        <opacity-randomiser>0</opacity-randomiser>
+                        <destroy-mode>Fade to invisible</destroy-mode>
+                        <timeout>100</timeout>
+                    </properties>
+                    <behavior-instances>
+                        <behavior-instance type="PinToImagePoint2" />
+                    </behavior-instances>
+                    <blend-mode>0</blend-mode>
+                    <effect-fallback>0</effect-fallback>
+                    <world>
+                        <x>2112</x>
+                        <y>512</y>
+                        <z>0</z>
+                        <width>128</width>
+                        <height>128</height>
+                        <depth>0</depth>
+                        <hotspotX>0</hotspotX>
+                        <hotspotY>0.5</hotspotY>
+                        <angle>3.112313986</angle>
+                        <opacity>1</opacity>
+                    </world>
+                </instance>
+            </instances>
+            <effects>
+                <effect-type name="Contrast">
+                    <effect id="contrast" />
+                    <effect-instance type="Contrast">
+                        <parameters>
+                            <contrast>1.5</contrast>
+                        </parameters>
+                    </effect-instance>
+                </effect-type>
+                <effect-type name="Exposure">
+                    <effect id="exposure" />
+                    <effect-instance type="Exposure">
+                        <parameters>
+                            <exposure>0.2</exposure>
+                        </parameters>
+                    </effect-instance>
+                </effect-type>
+            </effects>
+        </layer>
+    </layers>
+    <nonworld-instances />
+    <effects />
+</c2layout>

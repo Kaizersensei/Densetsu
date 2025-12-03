@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>MAIN+m7</name>
+    <events>
+        <variable constant="0" name="Pause2" sid="108649088760485" static="0" type="number">0</variable>
+        <include>Controls</include>
+        <include>!ENEMY_LIST</include>
+        <include>AI</include>
+        <include>COMBAT</include>
+        <include>HUD</include>
+        <include>MENU</include>
+        <include>PStates</include>
+        <include>Environment</include>
+        <include>Clock</include>
+        <include>Weather Editor</include>
+        <include>Actor Sounds</include>
+        <include>Interactive Objects</include>
+        <event-block sid="335129695220615">
+            <conditions>
+                <condition id="-1" name="Every tick" sid="908428976373220" type="System" />
+            </conditions>
+            <actions>
+                <action id="-24" name="Move to top" sid="809663030178881" type="ACTORS" />
+                <action id="-29" name="Move to object" sid="528841695002535" type="ACTORS">
+                    <param id="0" name="Where">0</param>
+                    <param id="1" name="Object">Players</param>
+                </action>
+            </actions>
+        </event-block>
+        <comment>DEBUG</comment>
+        <event-block sid="749781788534569">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="289814721031347" type="Keyboard">
+                    <param id="0" name="Key">116</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-26" name="Restart layout" sid="876860653959565" type="System" />
+            </actions>
+        </event-block>
+        <event-block sid="816827827894372">
+            <conditions>
+                <condition id="9" name="Is overlapping at offset" sid="153423491356479" type="Players">
+                    <param id="0" name="Object">Solids</param>
+                    <param id="1" name="Offset X">0</param>
+                    <param id="2" name="Offset Y">5</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-8" name="Set angle" sid="134386536996099" type="ACTOR_Player_1234">
+                    <param id="0" name="Angle">Solids.Angle</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>

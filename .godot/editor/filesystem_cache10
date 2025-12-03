@@ -1,46 +1,46 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1764599269
+::res://::1764786355
 icon.svg::CompressedTexture2D/CompressedTexture2D::8628337075502139453::1764088422::1764088745::1::::<><><>0<>0<>73389a15339cd5a46a5231836784f7b1<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
 README.md::TextFile/TextFile::-1::1764263830::0::1::::<><><>0<>0<><>::
 ::res://addons/::1764091492
-::res://assets/::1764598593
-placeholder_deco.tres::GradientTexture2D/GradientTexture2D::552915581276146957::1764598591::0::1::::<><><>0<>0<><>::
-placeholder_enemy.tres::GradientTexture2D/GradientTexture2D::1323079694463705799::1764598590::0::1::::<><><>0<>0<><>::
-placeholder_enemy_projectile.tres::GradientTexture2D/GradientTexture2D::6682747842725829768::1764598589::0::1::::<><><>0<>0<><>::
-placeholder_item.tres::GradientTexture2D/GradientTexture2D::4725290373835713626::1764598592::0::1::::<><><>0<>0<><>::
-placeholder_player.tres::GradientTexture2D/GradientTexture2D::5604261193579995254::1764598590::0::1::::<><><>0<>0<><>::
-placeholder_projectile.tres::GradientTexture2D/GradientTexture2D::6461275362961420982::1764598593::0::1::::<><><>0<>0<><>::
-placeholder_trap.tres::GradientTexture2D/GradientTexture2D::8057128624940666828::1764598592::0::1::::<><><>0<>0<><>::
+::res://assets/::1764785213
+placeholder_deco.tres::GradientTexture2D::552915581276146957::1764785212::0::1::::<><><>0<>0<><>::
+placeholder_enemy.tres::GradientTexture2D::1323079694463705799::1764785212::0::1::::<><><>0<>0<><>::
+placeholder_enemy_projectile.tres::GradientTexture2D::6682747842725829768::1764785211::0::1::::<><><>0<>0<><>::
+placeholder_item.tres::GradientTexture2D::4725290373835713626::1764785212::0::1::::<><><>0<>0<><>::
+placeholder_player.tres::GradientTexture2D::5604261193579995254::1764785212::0::1::::<><><>0<>0<><>::
+placeholder_projectile.tres::GradientTexture2D::6461275362961420982::1764785213::0::1::::<><><>0<>0<><>::
+placeholder_trap.tres::GradientTexture2D::8057128624940666828::1764785212::0::1::::<><><>0<>0<><>::
 ::res://autoload/::1764170910
 EventBus.gd::GDScript/GDScript::5260470903693051881::1764170834::0::1::::<>Node<><>0<>0<><>::
 InputManager.gd::GDScript/GDScript::5412327402161393522::1764170847::0::1::::<>Node<><>0<>0<><>::
 Runtime.gd::GDScript/GDScript::1027813782768627933::1764170805::0::1::::<>Node<><>0<>0<><>::
-::res://data/::1764593803
+::res://data/::1764779644
 ::res://data/actors/::1764429352
 ACTOR_Deco.tres::Resource/ActorData::-1::1764546590::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_deco.tres<>res://engine/decoration/ActorDeco2D.tscn
 ACTOR_DecoStatic.tres::Resource/ActorData::-1::1764545039::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_deco.tres<>res://engine/decoration/ActorDeco2D_Static.tscn
-ACTOR_Enemy.tres::Resource/ActorData::-1::1764545022::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_enemy.tres<>res://engine/actors/EnemyDummy.tscn
-ACTOR_NPC.tres::Resource/ActorData::-1::1764545027::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_player.tres<>res://engine/actors/ActorNPC.tscn<>res://assets/placeholder_player.tres
-ACTOR_Player.tres::Resource/ActorData::-1::1764545012::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_player.tres<>res://engine/actors/ActorCharacter2D.tscn
+ACTOR_Enemy.tres::Resource/ActorData::-1::1764779714::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_enemy.tres<>res://engine/actors/EnemyDummy.tscn
+ACTOR_NPC.tres::Resource/ActorData::-1::1764779741::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_player.tres<>res://engine/actors/ActorNPC.tscn<>res://assets/placeholder_player.tres
+ACTOR_Player.tres::Resource/ActorData::-1::1764779684::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_player.tres<>res://engine/actors/ActorCharacter2D.tscn
 ::res://data/ai_profiles/::1764429345
 AIPROFILE_Default.tres::Resource/AIProfileData::-1::1764428352::0::1::::<><><>0<>0<><>::res://engine/data/resources/AIProfileData.gd
 ::res://data/biomes/::1764521767
-BaseBiome.tres::Resource/BiomeData::-1::1764538545::0::1::::<><><>0<>0<><>::res://engine/data/resources/BiomeData.gd
+BaseBiome.tres::Resource/BiomeData::-1::1764602904::0::1::::<><><>0<>0<><>::res://engine/data/resources/BiomeData.gd
 ::res://data/factions/::1764429340
 FACTION_Neutral.tres::Resource/FactionData::-1::1764531102::0::1::::<><><>0<>0<><>::res://engine/data/resources/FactionData.gd
 ::res://data/items/::1764429337
 ITEM_Floating.tres::Resource/ItemData::-1::1764430853::0::1::::<><><>0<>0<><>::res://engine/data/resources/ItemData.gd<>res://assets/placeholder_item.tres<>res://engine/items/ActorItem2D.tscn
 ::res://data/loot_tables/::1764429332
 LOOTTABLE_Common.tres::Resource/LootTableData::-1::1764428411::0::1::::<><><>0<>0<><>::res://engine/data/resources/LootTableData.gd
+::res://data/movement/::1764779660
+MOVEMENT_Base.tres::Resource/MovementData::-1::1764779857::0::1::::<><><>0<>0<><>::res://engine/data/resources/MovementData.gd
 ::res://data/particles/::1764441685
-BaseParticles.tres::Resource/ParticlesData::-1::1764538551::0::1::::<><><>0<>0<><>::res://engine/data/resources/ParticlesData.gd
-::res://data/platforms/::1764546988
+BaseParticles.tres::Resource/ParticlesData::-1::1764602939::0::1::::<><><>0<>0<><>::res://engine/data/resources/ParticlesData.gd
+::res://data/platforms/::1764600141
 ACTOR_Deco.tres::Resource/PlatformData::-1::1764546803::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/decoration/ActorDeco2D.tscn
 ACTOR_DecoStatic.tres::Resource/PlatformData::-1::1764546812::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/decoration/ActorDeco2D_Static.tscn
 PLATFORM_Ceiling.tres::Resource/PlatformData::-1::1764545121::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/PlatformSolid.tscn
 PLATFORM_OneWay_Default.tres::Resource/PlatformData::-1::1764545080::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/PlatformOneWay.tscn
-PLATFORM_SlopeLeft.tres::Resource/PlatformData::-1::1764545094::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/PlatformSlopeLeft.tscn
-PLATFORM_SlopeRight.tres::Resource/PlatformData::-1::1764545109::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/PlatformSlopeRight.tscn
 PLATFORM_SolidGround.tres::Resource/PlatformData::-1::1764545067::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/PlatformSolid.tscn
 PLATFORM_WallLeft.tres::Resource/PlatformData::-1::1764545144::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/PlatformSolid.tscn
 PLATFORM_WallRight.tres::Resource/PlatformData::-1::1764545159::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/PlatformSolid.tscn
@@ -74,7 +74,7 @@ TRAP_Basic.tres::Resource/TrapData::-1::1764429506::0::1::::<><><>0<>0<><>::res:
 BaseTrigger.tres::Resource/TriggerData::-1::1764538571::0::1::::<><><>0<>0<><>::res://engine/data/resources/TriggerData.gd
 ::res://data/weather/::1764441683
 BaseWeather.tres::Resource/WeatherData::-1::1764538573::0::1::::<><><>0<>0<><>::res://engine/data/resources/WeatherData.gd
-::res://docs/::1764592871
+::res://docs/::1764778083
 AI Implementation phase 0.txt::TextFile/TextFile::-1::1764087891::0::1::::<><><>0<>0<><>::
 database.txt::TextFile/TextFile::-1::1764521506::0::1::::<><><>0<>0<><>::
 data_inspector_notes.md::TextFile/TextFile::-1::1764538555::0::1::::<><><>0<>0<><>::
@@ -86,35 +86,115 @@ engine reference.txt::TextFile/TextFile::-1::1764109937::0::1::::<><><>0<>0<><>:
 error_registry.md::TextFile/TextFile::-1::1764241437::0::1::::<><><>0<>0<><>::
 implementation strategy.txt::TextFile/TextFile::-1::1764272473::0::1::::<><><>0<>0<><>::
 movement analysis.txt::TextFile/TextFile::-1::1764094121::0::1::::<><><>0<>0<><>::
+movement implementation.txt::TextFile/TextFile::-1::1764778316::0::1::::<><><>0<>0<><>::
 phase one.txt::TextFile/TextFile::-1::1764170279::0::1::::<><><>0<>0<><>::
 polygon terrain.txt::TextFile/TextFile::-1::1764591458::0::1::::<><><>0<>0<><>::
 polygon_terrain_plan.md::TextFile/TextFile::-1::1764592871::0::1::::<><><>0<>0<><>::
 stats.txt::TextFile/TextFile::-1::1764502473::0::1::::<><><>0<>0<><>::
 sysplan old GDD.txt::TextFile/TextFile::-1::1764167584::0::1::::<><><>0<>0<><>::
+work_principles_week1.md::TextFile/TextFile::-1::1764761730::0::1::::<><><>0<>0<><>::
+::res://docs/C2 Sources/::1764764147
+::res://docs/C2 Sources/platform+/::1751549079
+PluginIcon.ico::OtherFile/OtherFile::-1::1456523370::0::1::::<><><>0<>0<><>::
+README.md::TextFile/TextFile::-1::1751211299::0::1::::<><><>0<>0<><>::
+::res://docs/C2 Sources/Testing/::1764764148
+Densetsu Arcade.uistate.xml::TextFile/TextFile::-1::1757078182::0::1::::<><><>0<>0<><>::
+::res://docs/C2 Sources/Testing/Event sheets/::1757078373
+!ENEMY_LIST.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+Actor Sounds.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+AI.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+camera.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+Clock.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+COMBAT.uistate.xml::TextFile/TextFile::-1::1755942839::0::1::::<><><>0<>0<><>::
+COMBAT.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+Controls.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+ENEMY_BigRat.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+ENEMY_GreenGrunt.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+Environment.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+HUD.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+Interactive Objects.uistate.xml::TextFile/TextFile::-1::1755942839::0::1::::<><><>0<>0<><>::
+Interactive Objects.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+Level Select (DEBUG).xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+LOGO_RS.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+M7 General.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+MAIN+m7.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+MAIN.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+MENU.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+Object Pool Viewer.uistate.xml::TextFile/TextFile::-1::1755942839::0::1::::<><><>0<>0<><>::
+Object Pool Viewer.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+Player - States Backup.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+Player - States.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+PStates.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+scraps.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+SKY.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+TITLE.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+Weather Editor.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+WEATHER.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+::res://docs/C2 Sources/Testing/Layouts/::1757078373
+Daimyo.uistate.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Daimyo.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Fortress Out.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Hirogawa.uistate.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+Hirogawa.xml::TextFile/TextFile::-1::1757078373::0::1::::<><><>0<>0<><>::
+HUD.uistate.xml::TextFile/TextFile::-1::1755942839::0::1::::<><><>0<>0<><>::
+HUD.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Infinitree.uistate.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Infinitree.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Level Select (DEBUG).uistate.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Level Select (DEBUG).xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+LOGO_RS.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+MENU.uistate.xml::TextFile/TextFile::-1::1755942839::0::1::::<><><>0<>0<><>::
+MENU.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+OBJECT POOL.uistate.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+OBJECT POOL.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+scrap.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Sea Caves.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+SKY.uistate.xml::TextFile/TextFile::-1::1755942839::0::1::::<><><>0<>0<><>::
+SKY.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+STATUS.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Template M7.uistate.xml::TextFile/TextFile::-1::1754700359::0::1::::<><><>0<>0<><>::
+Template M7.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Template Platform.uistate.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Template Platform.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+TESTER.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Timebroken Forest.uistate.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Timebroken Forest.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+TITLE.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Wagon Chase.uistate.xml::TextFile/TextFile::-1::1755963420::0::1::::<><><>0<>0<><>::
+Wagon Chase.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Waterfalls.uistate.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Waterfalls.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+WEATHER.uistate.xml::TextFile/TextFile::-1::1755942839::0::1::::<><><>0<>0<><>::
+WEATHER.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Woods.uistate.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+Woods.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
 ::res://editor_saves/::1764263201
-default_scene.tscn::PackedScene/PackedScene::-1::1764263201::0::1::::<><><>0<>0<><>::res://game/levels/CollisionTest.gd<>res://engine/actors/ActorCharacter2D.tscn<>res://engine/actors/ActorCharacter2D.gd<>res://engine/actors/EnemyDummy.tscn<>res://engine/projectiles/ProjectileSpawner.tscn<>res://engine/projectiles/ProjectileSpawner.gd<>res://engine/projectiles/EnemyProjectile2D.tscn<>res://assets/placeholder_deco.tres<>res://engine/decoration/ActorDeco2D_Static.tscn<>res://engine/decoration/ActorDeco2D.gd<>res://engine/decoration/ActorDeco2D.tscn<>res://engine/traps/ActorTrap2D.tscn<>res://engine/traps/ActorTrap2D.gd<>res://engine/items/ActorItem2D.tscn<>res://engine/items/ActorItem2D.gd<>res://engine/debug/DebugOverlay.tscn<>res://engine/debug/DebugOverlay.gd<>res://game/levels/KillZone.gd
+default_scene.tscn::PackedScene/PackedScene::-1::1764776227::0::1::::<><><>0<>0<><>::res://game/levels/CollisionTest.gd<>res://engine/actors/ActorCharacter2D.tscn<>res://engine/actors/ActorCharacter2D.gd<>res://engine/actors/EnemyDummy.tscn<>res://engine/actors/ActorNPC.tscn<>res://engine/decoration/ActorDeco2D.tscn<>res://engine/decoration/ActorDeco2D.gd<>res://engine/traps/ActorTrap2D.tscn<>res://engine/traps/ActorTrap2D.gd<>res://engine/platforms/PlatformOneWay.tscn<>res://engine/debug/DebugOverlay.tscn<>res://engine/debug/DebugOverlay.gd<>res://game/levels/KillZone.gd<>res://engine/platforms/PlatformSolid.tscn<>res://engine/terrain/PolygonTerrain2D.tscn<>res://engine/terrain/PolygonTerrain2D.gd
 last_scene.tscn::PackedScene/PackedScene::-1::1764262056::0::1::::<><><>0<>0<><>::res://game/levels/CollisionTest.gd<>res://engine/actors/ActorCharacter2D.tscn<>res://engine/actors/ActorCharacter2D.gd<>res://engine/actors/EnemyDummy.tscn<>res://engine/projectiles/ProjectileSpawner.tscn<>res://engine/projectiles/ProjectileSpawner.gd<>res://engine/projectiles/EnemyProjectile2D.tscn<>res://assets/placeholder_deco.tres<>res://engine/decoration/ActorDeco2D_Static.tscn<>res://engine/decoration/ActorDeco2D.gd<>res://engine/decoration/ActorDeco2D.tscn<>res://engine/traps/ActorTrap2D.tscn<>res://engine/traps/ActorTrap2D.gd<>res://engine/items/ActorItem2D.tscn<>res://engine/items/ActorItem2D.gd<>res://engine/debug/DebugOverlay.tscn<>res://engine/debug/DebugOverlay.gd<>res://game/levels/KillZone.gd
 ::res://editor_saves/test saves/::1764263150
 test_save.tscn::PackedScene/PackedScene::-1::1764263150::0::1::::<><><>0<>0<><>::res://game/levels/CollisionTest.gd<>res://engine/actors/ActorCharacter2D.tscn<>res://engine/actors/ActorCharacter2D.gd<>res://engine/actors/EnemyDummy.tscn<>res://engine/platforms/PlatformSolid.tscn<>res://engine/platforms/PlatformOneWay.tscn<>res://engine/decoration/ActorDeco2D_Static.tscn<>res://engine/decoration/ActorDeco2D.gd<>res://engine/decoration/ActorDeco2D.tscn<>res://engine/traps/ActorTrap2D.tscn<>res://engine/traps/ActorTrap2D.gd<>res://engine/items/ActorItem2D.tscn<>res://engine/items/ActorItem2D.gd<>res://engine/debug/DebugOverlay.tscn<>res://engine/debug/DebugOverlay.gd<>res://game/levels/KillZone.gd
 ::res://engine/::1764593829
-::res://engine/actors/::1764425637
-ActorCharacter2D.gd::GDScript/GDScript::733884129668344800::1764268812::0::1::::<>CharacterBody2D<><>0<>0<><>::
-ActorCharacter2D.tscn::PackedScene/PackedScene::3708528227828754155::1764175553::0::1::::<><><>0<>0<><>::uid://kpq713sgkyl1::::res://engine/actors/ActorCharacter2D.gd<>uid://b5ukyq8bv8gdn::::res://engine/core/ActorInterface.gd<>uid://cl30mlx6o5dhm::::res://assets/placeholder_player.tres<>uid://c2d4tbwgy4eqw::::res://engine/fsm/StateMachine.gd<>uid://d4cfif6puoan7::::res://engine/fsm/states/ActorIdle.gd<>uid://r128s4eqbo86::::res://engine/stats/StatsComponent.gd<>uid://cwgvbbuqenk06::::res://engine/fsm/states/ActorRun.gd<>uid://xdptniwfon8m::::res://engine/fsm/states/ActorJump.gd<>uid://bk1us330fsky::::res://engine/fsm/states/ActorFall.gd<>uid://b02d10wg6s285::::res://engine/fsm/states/ActorLand.gd<>uid://c370ai0q863jg::::res://engine/fsm/states/ActorHurt.gd<>uid://cnsrbg70eyj00::::res://engine/fsm/states/ActorDeath.gd<>uid://cf4f53ylasonx::::res://engine/fsm/states/ActorWalk.gd<>uid://baycmiveuccel::::res://engine/fsm/states/ActorSprint.gd
-ActorNPC.tscn::PackedScene/PackedScene::-1::1764425637::0::1::::<><><>0<>0<><>::
-EnemyDummy.tscn::PackedScene/PackedScene::9090500484348966552::1764168557::0::1::::<><><>0<>0<><>::uid://kpq713sgkyl1::::res://engine/actors/ActorCharacter2D.gd<>uid://b5ukyq8bv8gdn::::res://engine/core/ActorInterface.gd<>uid://s356uh1hcntn::::res://assets/placeholder_enemy.tres<>res://engine/fsm/StateMachine.gd<>res://engine/stats/StatsComponent.gd<>res://engine/fsm/states/ActorIdle.gd<>res://engine/fsm/states/ActorRun.gd<>res://engine/fsm/states/ActorJump.gd<>res://engine/fsm/states/ActorFall.gd<>res://engine/fsm/states/ActorLand.gd<>res://engine/fsm/states/ActorHurt.gd<>res://engine/fsm/states/ActorDeath.gd
+::res://engine/actors/::1764769832
+ActorCharacter2D.gd::GDScript/GDScript::733884129668344800::1764778966::0::1::::<>CharacterBody2D<><>0<>0<><>::
+ActorCharacter2D.tscn::PackedScene/PackedScene::3708528227828754155::1764769832::0::1::::<><><>0<>0<><>::uid://kpq713sgkyl1::::res://engine/actors/ActorCharacter2D.gd<>uid://b5ukyq8bv8gdn::::res://engine/core/ActorInterface.gd<>uid://cl30mlx6o5dhm::::res://assets/placeholder_player.tres<>uid://c2d4tbwgy4eqw::::res://engine/fsm/StateMachine.gd<>uid://d4cfif6puoan7::::res://engine/fsm/states/ActorIdle.gd<>uid://r128s4eqbo86::::res://engine/stats/StatsComponent.gd<>uid://cwgvbbuqenk06::::res://engine/fsm/states/ActorRun.gd<>uid://xdptniwfon8m::::res://engine/fsm/states/ActorJump.gd<>uid://bk1us330fsky::::res://engine/fsm/states/ActorFall.gd<>uid://b02d10wg6s285::::res://engine/fsm/states/ActorLand.gd<>uid://c370ai0q863jg::::res://engine/fsm/states/ActorHurt.gd<>uid://cnsrbg70eyj00::::res://engine/fsm/states/ActorDeath.gd<>uid://cf4f53ylasonx::::res://engine/fsm/states/ActorWalk.gd<>uid://baycmiveuccel::::res://engine/fsm/states/ActorSprint.gd
+ActorNPC.tscn::PackedScene/PackedScene::3972274300::1764768628::0::1::::<><><>0<>0<><>::res://engine/actors/ActorCharacter2D.gd<>res://engine/core/ActorInterface.gd<>res://assets/placeholder_player.tres<>res://engine/fsm/StateMachine.gd<>res://engine/stats/StatsComponent.gd<>res://engine/fsm/states/ActorIdle.gd<>res://engine/fsm/states/ActorRun.gd<>res://engine/fsm/states/ActorJump.gd<>res://engine/fsm/states/ActorFall.gd<>res://engine/fsm/states/ActorLand.gd<>res://engine/fsm/states/ActorHurt.gd<>res://engine/fsm/states/ActorDeath.gd
+EnemyDummy.tscn::PackedScene/PackedScene::9090500484348966552::1764769832::0::1::::<><><>0<>0<><>::uid://kpq713sgkyl1::::res://engine/actors/ActorCharacter2D.gd<>uid://b5ukyq8bv8gdn::::res://engine/core/ActorInterface.gd<>uid://s356uh1hcntn::::res://assets/placeholder_enemy.tres<>uid://c2d4tbwgy4eqw::::res://engine/fsm/StateMachine.gd<>uid://r128s4eqbo86::::res://engine/stats/StatsComponent.gd<>uid://d4cfif6puoan7::::res://engine/fsm/states/ActorIdle.gd<>uid://cwgvbbuqenk06::::res://engine/fsm/states/ActorRun.gd<>uid://xdptniwfon8m::::res://engine/fsm/states/ActorJump.gd<>uid://bk1us330fsky::::res://engine/fsm/states/ActorFall.gd<>uid://b02d10wg6s285::::res://engine/fsm/states/ActorLand.gd<>uid://c370ai0q863jg::::res://engine/fsm/states/ActorHurt.gd<>uid://cnsrbg70eyj00::::res://engine/fsm/states/ActorDeath.gd
+::res://engine/actors/movement/::1764764904
+BaselinePlatformController.gd::GDScript/GDScript::789643986764436741::1764778989::0::1::::BaselinePlatformController<>RefCounted<><>0<>0<><>::
 ::res://engine/actors/resources/::1764274094
-ActorData.gd::GDScript/GDScript::7695722391809700878::1764544978::0::1::::ActorData<>Resource<><>0<>0<><>::
+ActorData.gd::GDScript/GDScript::7695722391809700878::1764779753::0::1::::ActorData<>Resource<><>0<>0<><>::
 SpawnerData.gd::GDScript/GDScript::7817924598187642350::1764531189::0::1::::SpawnerData<>Resource<><>0<>0<><>::
 ::res://engine/core/::1764088744
 ActorInterface.gd::GDScript/GDScript::4534024468323600835::1764171972::0::1::::ActorInterface<>Node<><>0<>0<><>::
 ::res://engine/data/::1764370591
-DataRegistry.gd::GDScript/GDScript::7716431376464895988::1764592892::0::1::::<>Node<><>0<>0<><>::
-::res://engine/data/resources/::1764595278
+DataRegistry.gd::GDScript/GDScript::7716431376464895988::1764779615::0::1::::<>Node<><>0<>0<><>::
+::res://engine/data/resources/::1764779893
 AIProfileData.gd::GDScript/GDScript::2919206459201465392::1764424887::0::1::::AIProfileData<>Resource<><>0<>0<><>::
 BiomeData.gd::GDScript/GDScript::6043976331143336380::1764521253::0::1::::BiomeData<>Resource<><>0<>0<><>::
 FactionData.gd::GDScript/GDScript::2477943021010436180::1764530992::0::1::::FactionData<>Resource<><>0<>0<><>::
 ItemData.gd::GDScript/GDScript::121755063328571704::1764430838::0::1::::ItemData<>Resource<><>0<>0<><>::
 LootTableData.gd::GDScript/GDScript::3671710235010806720::1764424909::0::1::::LootTableData<>Resource<><>0<>0<><>::
+MovementData.gd::GDScript/GDScript::4748673429759491876::1764779831::0::1::::MovementData<>Resource<><>0<>0<><>::
 ParticlesData.gd::GDScript/GDScript::2904673137560948440::1764530972::0::1::::ParticlesData<>Resource<><>0<>0<><>::
 PlatformData.gd::GDScript/GDScript::5955669251590964312::1764544984::0::1::::PlatformData<>Resource<><>0<>0<><>::
 PolygonTemplateData.gd::GDScript/GDScript::8034881898082196327::1764592882::0::1::::PolygonTemplateData<>Resource<><>0<>0<><>::
@@ -136,17 +216,17 @@ DebugOverlay.tscn::PackedScene/PackedScene::-1::1764104897::0::1::::<><><>0<>0<>
 ActorDeco2D.gd::GDScript/GDScript::6155269997945775076::1764173199::0::1::::<>Node2D<><>0<>0<><>::
 ActorDeco2D.tscn::PackedScene/PackedScene::122618::1764173221::0::1::::<><><>0<>0<><>::res://engine/decoration/ActorDeco2D.gd<>res://assets/placeholder_deco.tres
 ActorDeco2D_Static.tscn::PackedScene/PackedScene::-1::1764173520::0::1::::<><><>0<>0<><>::res://assets/placeholder_deco.tres<>res://engine/decoration/ActorDeco2D.gd
-::res://engine/editor/::1764538031
+::res://engine/editor/::1764781488
 DataEditor.gd::GDScript/GDScript::6028169167055824734::1764593794::0::1::::<>Control<><>0<>0<><>::
 DataEditor.tscn::PackedScene/PackedScene::-1::1764528830::0::1::::<><><>0<>0<><>::res://engine/editor/DataEditor.gd
 EditorCamera2D.gd::GDScript/GDScript::6617687716914119291::1764269039::0::1::::<>Camera2D<><>0<>0<><>::
 EditorCamera2D.tscn::PackedScene/PackedScene::-1::1764171081::0::1::::<><><>0<>0<><>::res://engine/editor/EditorCamera2D.gd
-EditorManager.gd::GDScript/GDScript::1274986858552652684::1764598871::0::1::::<>Node<><>0<>0<><>::
-EditorOverlay.gd::GDScript::1517429260681015944::1764599192::0::1::::<>CanvasLayer<><>0<>0<><>::
-EditorOverlay.tscn::PackedScene::-1::1764599136::0::1::::<><><>0<>0<><>::res://engine/editor/EditorOverlay.gd
-EntityInspectorPopup.gd::GDScript/GDScript::1897182965279361800::1764588500::0::1::::<>Panel<><>0<>0<><>::
-EntityInspectorPopup.tscn::PackedScene/PackedScene::-1::1764540970::0::1::::<><><>0<>0<><>::res://engine/editor/EntityInspectorPopup.gd
-GridOverlay.gd::GDScript/GDScript::4234779333078259122::1764175526::0::1::::<>Node2D<><>0<>0<><>::
+EditorManager.gd::GDScript/GDScript::1274986858552652684::1764783459::0::1::::<>Node<><>0<>0<><>::
+EditorOverlay.gd::GDScript/GDScript::1517429260681015944::1764783724::0::1::::<>CanvasLayer<><>0<>0<><>::
+EditorOverlay.tscn::PackedScene/PackedScene::-1::1764783704::0::1::::<><><>0<>0<><>::res://engine/editor/EditorOverlay.gd
+EntityInspectorPopup.gd::GDScript::1897182965279361800::1764785816::0::1::::<>Panel<><>0<>0<><>::
+EntityInspectorPopup.tscn::PackedScene::-1::1764786054::0::1::::<><><>0<>0<><>::res://engine/editor/EntityInspectorPopup.gd
+GridOverlay.gd::GDScript/GDScript::4234779333078259122::1764768646::0::1::::<>Node2D<><>0<>0<><>::
 WindowController.gd::GDScript/GDScript::2257297426031895159::1764368366::0::1::::<>Node<><>0<>0<><>::
 ::res://engine/editor/icons/::1764426199
 cursor_cross.png::CompressedTexture2D/CompressedTexture2D::8862815271201008142::1764426182::1764426198::1::::<><><>0<>0<>a5c66da63d1883b8a3482e7b9ad0208b<>res://.godot/imported/cursor_cross.png-ab0dacaf071d18da4cc42c529a9b2759.ctex::
@@ -171,7 +251,7 @@ TrapArmed.gd::GDScript/GDScript::4703399489440346378::1764167741::0::1::::<>FSMS
 TrapTriggered.gd::GDScript/GDScript::7350127927098407215::1764167746::0::1::::<>FSMState<><>0<>0<><>::
 ::res://engine/items/::1764090367
 ActorItem2D.gd::GDScript/GDScript::1981565268467763105::1764243774::0::1::::<>Area2D<><>0<>0<><>::
-ActorItem2D.tscn::PackedScene/PackedScene::336544::1764090367::0::1::::<><><>0<>0<><>::uid://3h5dctq1a4cj::::res://engine/items/ActorItem2D.gd<>uid://b8k73vpirl0rm::::res://assets/placeholder_item.tres
+ActorItem2D.tscn::PackedScene/PackedScene::336544::1764766526::0::1::::<><><>0<>0<><>::uid://3h5dctq1a4cj::::res://engine/items/ActorItem2D.gd<>uid://b8k73vpirl0rm::::res://assets/placeholder_item.tres
 ::res://engine/platforms/::1764257693
 PlatformGround.tscn::PackedScene/PackedScene::-1::1764240794::0::1::::<><><>0<>0<><>::
 PlatformOneWay.tscn::PackedScene/PackedScene::-1::1764257711::0::1::::<><><>0<>0<><>::
@@ -181,25 +261,25 @@ PlatformSolid.tscn::PackedScene/PackedScene::-1::1764264543::0::1::::<><><>0<>0<
 PlatformWall.tscn::PackedScene/PackedScene::-1::1764240809::0::1::::<><><>0<>0<><>::
 ::res://engine/projectiles/::1764272021
 ActorProjectile2D.gd::GDScript/GDScript::7935991277277744429::1764100744::0::1::::<>Area2D<><>0<>0<><>::
-ActorProjectile2D.tscn::PackedScene/PackedScene::941862803192722::1764100441::0::1::::<><><>0<>0<><>::res://engine/projectiles/ActorProjectile2D.gd<>res://assets/placeholder_projectile.tres
-EnemyProjectile2D.tscn::PackedScene/PackedScene::-1::1764094854::0::1::::<><><>0<>0<><>::res://engine/projectiles/ActorProjectile2D.gd<>res://assets/placeholder_enemy_projectile.tres
+ActorProjectile2D.tscn::PackedScene/PackedScene::941862803192722::1764766573::0::1::::<><><>0<>0<><>::res://engine/projectiles/ActorProjectile2D.gd<>res://assets/placeholder_projectile.tres
+EnemyProjectile2D.tscn::PackedScene/PackedScene::-1::1764766602::0::1::::<><><>0<>0<><>::res://engine/projectiles/ActorProjectile2D.gd<>res://assets/placeholder_enemy_projectile.tres
 ::res://engine/scene/::1764544670
-SceneManager.gd::GDScript/GDScript::8654153056383494242::1764547648::0::1::::<>Node<><>0<>0<><>::
+SceneManager.gd::GDScript/GDScript::8654153056383494242::1764779810::0::1::::<>Node<><>0<>0<><>::
 ::res://engine/spawners/::1764272125
 EnemySpawner.gd::GDScript/GDScript::6027707094873872397::1764358797::0::1::::<>Area2D<><>0<>0<><>::
-EnemySpawner.tscn::PackedScene/PackedScene::-1::1764358806::0::1::::<><><>0<>0<><>::res://engine/spawners/EnemySpawner.gd<>res://engine/editor/icons/enemy_spawner.png
+EnemySpawner.tscn::PackedScene/PackedScene::-1::1764766638::0::1::::<><><>0<>0<><>::res://engine/spawners/EnemySpawner.gd<>res://engine/editor/icons/enemy_spawner.png
 ::res://engine/stats/::1764167897
 StatsComponent.gd::GDScript/GDScript::1248583443878471169::1764167755::0::1::::StatsComponent<>Node<><>0<>0<><>::
 ::res://engine/terrain/::1764595278
-PolygonTerrain2D.gd::GDScript::2311119187420561737::1764599222::0::1::::PolygonTerrain2D<>StaticBody2D<><>0<>0<><>::
+PolygonTerrain2D.gd::GDScript/GDScript::2311119187420561737::1764599986::0::1::::PolygonTerrain2D<>StaticBody2D<><>0<>0<><>::
 PolygonTerrain2D.tscn::PackedScene/PackedScene::-1::1764597467::0::1::::<><><>0<>0<><>::res://engine/terrain/PolygonTerrain2D.gd
 ::res://engine/tests/::1764088303
 ::res://engine/traps/::1764090333
 ActorTrap2D.gd::GDScript/GDScript::744704761273799592::1764168093::0::1::::<>StaticBody2D<><>0<>0<><>::
 ActorTrap2D.tscn::PackedScene/PackedScene::766443::1764167813::0::1::::<><><>0<>0<><>::uid://ku0gcqki2kse::::res://engine/traps/ActorTrap2D.gd<>res://assets/placeholder_trap.tres<>res://engine/fsm/StateMachine.gd<>res://engine/fsm/states/TrapArmed.gd<>res://engine/fsm/states/TrapTriggered.gd<>res://engine/core/ActorInterface.gd
 ::res://game/::1764088303
-::res://game/levels/::1764598589
+::res://game/levels/::1764785864
 CollisionTest.gd::GDScript/GDScript::3499912320078136751::1764100049::0::1::::<>Node2D<><>0<>0<><>::
-CollisionTest.tscn::PackedScene/PackedScene::4147981658233708361::1764598589::0::1::::<><><>0<>0<><>::uid://bs3o6hkufssrb::::res://engine/actors/ActorCharacter2D.tscn<>uid://d2rrhkmanwo4g::::res://engine/actors/EnemyDummy.tscn<>res://engine/actors/ActorNPC.tscn<>uid://deco::::res://engine/decoration/ActorDeco2D.tscn<>res://engine/decoration/ActorDeco2D_Static.tscn<>uid://trap::::res://engine/traps/ActorTrap2D.tscn<>uid://item::::res://engine/items/ActorItem2D.tscn<>res://engine/platforms/PlatformSolid.tscn<>res://engine/platforms/PlatformOneWay.tscn<>res://engine/platforms/PlatformSlopeLeft.tscn<>res://engine/platforms/PlatformSlopeRight.tscn<>res://engine/debug/DebugOverlay.tscn<>uid://bp4nbrrx7n2jj::::res://game/levels/CollisionTest.gd<>uid://ducujtrkyat5y::::res://game/levels/KillZone.gd
+CollisionTest.tscn::PackedScene::9200015917437539029::1764785864::0::1::::<><><>0<>0<><>::uid://bp4nbrrx7n2jj::::res://game/levels/CollisionTest.gd<>uid://bs3o6hkufssrb::::res://engine/actors/ActorCharacter2D.tscn<>uid://d2rrhkmanwo4g::::res://engine/actors/EnemyDummy.tscn<>uid://ctornpc::::res://engine/actors/ActorNPC.tscn<>uid://deco::::res://engine/decoration/ActorDeco2D.tscn<>uid://trap::::res://engine/traps/ActorTrap2D.tscn<>res://engine/platforms/PlatformOneWay.tscn<>res://engine/debug/DebugOverlay.tscn<>uid://ducujtrkyat5y::::res://game/levels/KillZone.gd<>res://engine/platforms/PlatformSolid.tscn
 KillZone.gd::GDScript/GDScript::8568399116040320864::1764091163::0::1::::<>Area2D<><>0<>0<><>::
 ::res://game/prototypes/::1764088303

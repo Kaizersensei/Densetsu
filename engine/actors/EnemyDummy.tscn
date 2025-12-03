@@ -1,25 +1,23 @@
-[gd_scene load_steps=14 format=3 uid="uid://d2rrhkmanwo4g"]
+[gd_scene load_steps=15 format=3 uid="uid://d2rrhkmanwo4g"]
 
 [ext_resource type="Script" uid="uid://kpq713sgkyl1" path="res://engine/actors/ActorCharacter2D.gd" id="1"]
 [ext_resource type="Script" uid="uid://b5ukyq8bv8gdn" path="res://engine/core/ActorInterface.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://s356uh1hcntn" path="res://assets/placeholder_enemy.tres" id="3"]
-[ext_resource type="Script" path="res://engine/fsm/StateMachine.gd" id="4"]
-[ext_resource type="Script" path="res://engine/stats/StatsComponent.gd" id="5"]
-[ext_resource type="Script" path="res://engine/fsm/states/ActorIdle.gd" id="6"]
-[ext_resource type="Script" path="res://engine/fsm/states/ActorRun.gd" id="7"]
-[ext_resource type="Script" path="res://engine/fsm/states/ActorJump.gd" id="8"]
-[ext_resource type="Script" path="res://engine/fsm/states/ActorFall.gd" id="9"]
-[ext_resource type="Script" path="res://engine/fsm/states/ActorLand.gd" id="10"]
-[ext_resource type="Script" path="res://engine/fsm/states/ActorHurt.gd" id="11"]
-[ext_resource type="Script" path="res://engine/fsm/states/ActorDeath.gd" id="12"]
+[ext_resource type="Script" uid="uid://c2d4tbwgy4eqw" path="res://engine/fsm/StateMachine.gd" id="4"]
+[ext_resource type="Script" uid="uid://r128s4eqbo86" path="res://engine/stats/StatsComponent.gd" id="5"]
+[ext_resource type="Script" uid="uid://d4cfif6puoan7" path="res://engine/fsm/states/ActorIdle.gd" id="6"]
+[ext_resource type="Script" uid="uid://cwgvbbuqenk06" path="res://engine/fsm/states/ActorRun.gd" id="7"]
+[ext_resource type="Script" uid="uid://xdptniwfon8m" path="res://engine/fsm/states/ActorJump.gd" id="8"]
+[ext_resource type="Script" uid="uid://bk1us330fsky" path="res://engine/fsm/states/ActorFall.gd" id="9"]
+[ext_resource type="Script" uid="uid://b02d10wg6s285" path="res://engine/fsm/states/ActorLand.gd" id="10"]
+[ext_resource type="Script" uid="uid://c370ai0q863jg" path="res://engine/fsm/states/ActorHurt.gd" id="11"]
+[ext_resource type="Script" uid="uid://cnsrbg70eyj00" path="res://engine/fsm/states/ActorDeath.gd" id="12"]
 
-[sub_resource type="CapsuleShape2D" id="1"]
-radius = 8.0
-height = 24.0
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(22, 112)
 
-[sub_resource type="CapsuleShape2D" id="2"]
-radius = 8.0
-height = 16.0
+[sub_resource type="RectangleShape2D" id="2"]
+size = Vector2(22, 112)
 
 [node name="EnemyDummy" type="CharacterBody2D"]
 collision_layer = 4
@@ -31,11 +29,11 @@ script = ExtResource("1")
 use_player_input = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -8)
+position = Vector2(0, -56)
 shape = SubResource("1")
 
 [node name="SpriteRoot" type="Node2D" parent="."]
-position = Vector2(0, -8)
+position = Vector2(0, -56)
 
 [node name="Sprite2D" type="Sprite2D" parent="SpriteRoot"]
 texture = ExtResource("3")
@@ -45,7 +43,7 @@ collision_layer = 64
 collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
-position = Vector2(0, -12)
+position = Vector2(0, -56)
 shape = SubResource("2")
 
 [node name="Hitboxes" type="Node2D" parent="."]

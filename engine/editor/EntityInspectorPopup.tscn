@@ -73,79 +73,87 @@ custom_minimum_size = Vector2(70, 0)
 placeholder_text = "y"
 size_flags_horizontal = 2
 
-[node name="Type" type="VBoxContainer" parent="Tabs"]
+[node name="Data" type="VBoxContainer" parent="Tabs"]
+
+[node name="DataInfo" type="RichTextLabel" parent="Tabs/Data"]
+custom_minimum_size = Vector2(0, 120)
+bbcode_enabled = true
+scroll_active = true
+
+[node name="Type" type="VBoxContainer" parent="Tabs/Data"]
 theme_override_constants/separation = 6
 
-[node name="DataId" type="Label" parent="Tabs/Type"]
+[node name="DataId" type="Label" parent="Tabs/Data/Type"]
 text = "Data Id:"
 
-[node name="TypeRow" type="HBoxContainer" parent="Tabs/Type"]
+[node name="TypeRow" type="HBoxContainer" parent="Tabs/Data/Type"]
 theme_override_constants/separation = 6
 
-[node name="TypeLabel" type="Label" parent="Tabs/Type/TypeRow"]
+[node name="TypeLabel" type="Label" parent="Tabs/Data/Type/TypeRow"]
 text = "Type"
 size_flags_horizontal = 1
 size_flags_stretch_ratio = 0.3
 
-[node name="DataType" type="OptionButton" parent="Tabs/Type/TypeRow"]
+[node name="DataType" type="OptionButton" parent="Tabs/Data/Type/TypeRow"]
 size_flags_horizontal = 3
 focus_mode = 0
 
-[node name="OpenData" type="Button" parent="Tabs/Type"]
+[node name="OpenData" type="Button" parent="Tabs/Data/Type"]
 text = "Open in Data Panel"
 
-[node name="Instance" type="VBoxContainer" parent="Tabs"]
+[node name="Instance" type="VBoxContainer" parent="Tabs/Data"]
 theme_override_constants/separation = 6
 
-[node name="TagsRow" type="HBoxContainer" parent="Tabs/Instance"]
+[node name="TagsRow" type="HBoxContainer" parent="Tabs/Data/Instance"]
 theme_override_constants/separation = 6
 
-[node name="TagsLabel" type="Label" parent="Tabs/Instance/TagsRow"]
+[node name="TagsLabel" type="Label" parent="Tabs/Data/Instance/TagsRow"]
 text = "Instance Tags"
 size_flags_horizontal = 1
 size_flags_stretch_ratio = 0.35
 
-[node name="Tags" type="LineEdit" parent="Tabs/Instance/TagsRow"]
+[node name="Tags" type="LineEdit" parent="Tabs/Data/Instance/TagsRow"]
 placeholder_text = "csv tags"
 size_flags_horizontal = 3
 
-[node name="SpriteRow" type="HBoxContainer" parent="Tabs/Instance"]
+[node name="SpriteRow" type="HBoxContainer" parent="Tabs/Data/Instance"]
 theme_override_constants/separation = 6
 
-[node name="SpriteLabel" type="Label" parent="Tabs/Instance/SpriteRow"]
+[node name="SpriteLabel" type="Label" parent="Tabs/Data/Instance/SpriteRow"]
 text = "Sprite Override"
 size_flags_horizontal = 1
 size_flags_stretch_ratio = 0.35
 
-[node name="SpriteOverride" type="LineEdit" parent="Tabs/Instance/SpriteRow"]
+[node name="SpriteOverride" type="LineEdit" parent="Tabs/Data/Instance/SpriteRow"]
 placeholder_text = "res://..."
 size_flags_horizontal = 3
 
-[node name="SpriteLoad" type="Button" parent="Tabs/Instance/SpriteRow"]
+[node name="SpriteLoad" type="Button" parent="Tabs/Data/Instance/SpriteRow"]
 text = "Load"
 
-[node name="CollisionRow" type="HBoxContainer" parent="Tabs/Instance"]
+[node name="CollisionRow" type="HBoxContainer" parent="Tabs/Data/Instance"]
 theme_override_constants/separation = 6
 
-[node name="CollisionLabel" type="Label" parent="Tabs/Instance/CollisionRow"]
+[node name="CollisionLabel" type="Label" parent="Tabs/Data/Instance/CollisionRow"]
 text = "Collision Mask"
 size_flags_horizontal = 1
 size_flags_stretch_ratio = 0.35
 
-[node name="CollisionMask" type="LineEdit" parent="Tabs/Instance/CollisionRow"]
+[node name="CollisionMask" type="LineEdit" parent="Tabs/Data/Instance/CollisionRow"]
 placeholder_text = "mask"
 size_flags_horizontal = 3
 
-[node name="NoProj" type="CheckBox" parent="Tabs/Instance"]
+[node name="NoProj" type="CheckBox" parent="Tabs/Data/Instance"]
 text = "Disable projectile collisions"
 
-[node name="LayerNames" type="Label" parent="Tabs/Instance"]
+[node name="LayerNames" type="Label" parent="Tabs/Data/Instance"]
 text = "Layers:"
 autowrap_mode = 3
 
-[node name="InstanceApply" type="Button" parent="Tabs/Instance"]
+[node name="InstanceApply" type="Button" parent="Tabs/Data/Instance"]
 text = "Apply Overrides"
 
 [node name="TransformTimer" type="Timer" parent="."]
 one_shot = true
 wait_time = 0.2
+

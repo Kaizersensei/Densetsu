@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://engine/projectiles/ActorProjectile2D.gd" id="1"]
 [ext_resource type="Texture2D" path="res://assets/placeholder_enemy_projectile.tres" id="2"]
 
-[sub_resource type="CircleShape2D" id="1"]
-radius = 4.0
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(8, 8)
 
 [node name="EnemyProjectile2D" type="Area2D"]
 collision_layer = 16

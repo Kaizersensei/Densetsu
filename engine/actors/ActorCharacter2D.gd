@@ -13,7 +13,9 @@ signal hurt(damage: int, source_id: int)
 
 var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity", 980.0)
 var move_speed := 140.0
-var jump_speed := -320.0
+# Jump speed tuned for ~4m apex at 64px/m (~2s airtime)
+var jump_speed := -720.0
+var air_jump_speed := -720.0
 var acceleration := 900.0
 var friction_ground := 900.0
 var friction_air := 300.0
@@ -21,23 +23,39 @@ var max_fall_speed := 900.0
 var coyote_time := 0.12
 var jump_buffer_time := 0.12
 var jump_release_gravity_scale := 2.0
+var jump_release_cut := 0.35
 var drop_through_time := 0.25
+var wall_slide_gravity_scale := 0.4
+var wall_jump_speed_x := 200.0
+var wall_jump_speed_y := -320.0
+var min_jump_height := 44.0 # ~0.7m at 64px/m
 var debug_state: String = "idle"
 var walk_threshold_pct := 0.25
 var sprint_threshold_pct := 0.8
 var slope_penalty := 0.5
 
+var max_jumps: int = 2
+var jump_count: int = 0
+var jump_released_flag: bool = true
+
+# Aerial modifiers (scaffolding; behavior toggled by these flags)
+var enable_glide: bool = false
+var glide_gravity_scale: float = 0.3
+var glide_max_fall_speed: float = 300.0
+var enable_flight: bool = false
+var flight_acceleration: float = 600.0
+var flight_max_speed: float = 400.0
+var flight_drag: float = 8.0
+var flight_active: bool = false
+var glide_active: bool = false
+
 var _move_input := 0.0
 var _was_on_floor := false
 var _last_dir := 0.0
-var _coyote_timer := 0.0
-var _jump_buffer := 0.0
 var _jump_held := false
-var _drop_timer := 0.0
-var _dropping_through := false
-var _original_mask := 0
-const ONE_WAY_LAYER_BIT := 0
-const PLAYER_FALLBACK_LAYER_BIT := 2
+var _controller := preload("res://engine/actors/movement/BaselinePlatformController.gd").new()
+var _jump_start_y: float = 0.0
+var _jump_min_reached: bool = true
 
 func _ready() -> void:
 	_cache_nodes()
@@ -52,20 +70,13 @@ func _physics_process(delta: float) -> void:
 	if _is_editor_mode():
 		velocity = Vector2.ZERO
 		return
-	if use_player_input:
-		_process_input(delta)
-	_update_drop_through(delta)
-	_update_coyote_and_buffer(delta)
-	_apply_gravity(delta)
-	_apply_horizontal_accel(delta)
-	_apply_friction(delta)
-	_apply_jump_buffer()
-	_apply_fall_speed_cap()
-	_move_character()
+	var input := _gather_input()
+	if input.get("jump_released", false):
+		jump_released_flag = true
+	_controller.step(self, input, delta)
 	_tick_fsm(delta)
 	if _actor_interface:
 		_actor_interface.on_actor_physics(delta)
-	_check_landing()
 	_update_movement_state()
 
 
@@ -87,34 +98,27 @@ func set_move_input(dir: float) -> void:
 
 
 func _apply_gravity(delta: float) -> void:
-	if not is_on_floor():
-		var g := gravity
-		if velocity.y < 0.0 and not _jump_held:
-			g *= jump_release_gravity_scale
-		velocity.y += g * delta
+	# handled in controller
+	pass
 
 
 func _apply_horizontal_accel(delta: float) -> void:
-	if _move_input != 0.0:
-		var slope_scale := _slope_accel_scale(_move_input)
-		velocity.x = move_toward(velocity.x, _move_input * move_speed, acceleration * slope_scale * delta)
+	# handled in controller
+	pass
 
 
 func _apply_friction(delta: float) -> void:
-	if _move_input == 0.0:
-		var f := friction_ground if is_on_floor() else friction_air
-		velocity.x = move_toward(velocity.x, 0.0, f * delta)
+	# handled in controller
+	pass
 
 
 func _move_character() -> void:
-	move_and_slide()
+	# handled in controller
+	pass
 
 
 func _check_landing() -> void:
-	var on_floor := is_on_floor()
-	if on_floor and not _was_on_floor:
-		landed.emit()
-	_was_on_floor = on_floor
+	pass
 
 
 func _on_hurtbox_area_entered(area: Area2D) -> void:
@@ -130,10 +134,6 @@ func _process_input(delta: float) -> void:
 	var dir := Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
 	set_move_input(dir)
 	_jump_held = Input.is_action_pressed("jump")
-	if Input.is_action_pressed("move_down") and Input.is_action_just_pressed("jump") and is_on_floor():
-		_start_drop_through()
-	elif Input.is_action_just_pressed("jump"):
-		_jump_buffer = jump_buffer_time
 	if Input.is_action_just_released("jump"):
 		_jump_held = false
 
@@ -151,51 +151,26 @@ func get_debug_state() -> String:
 
 
 func _update_coyote_and_buffer(delta: float) -> void:
-	if is_on_floor():
-		_coyote_timer = coyote_time
-	else:
-		_coyote_timer = max(_coyote_timer - delta, 0.0)
-
-	if _jump_buffer > 0.0:
-		_jump_buffer = max(_jump_buffer - delta, 0.0)
+	# handled in controller
+	pass
 
 
 func _apply_jump_buffer() -> void:
-	if _jump_buffer > 0.0 and (is_on_floor() or _coyote_timer > 0.0):
-		_jump_buffer = 0.0
-		jump()
+	pass
 
 
 func _apply_fall_speed_cap() -> void:
-	if velocity.y > max_fall_speed:
-		velocity.y = max_fall_speed
+	pass
 
 
 func jump() -> void:
-	if _can_jump():
-		velocity.y = jump_speed
-		_coyote_timer = 0.0
-		jumped.emit()
-		if _fsm:
-			_fsm.request_state("Jump", {}, true)
-
-
-func _can_jump() -> bool:
-	return is_on_floor() or _coyote_timer > 0.0
+	# controller handles jump
+	pass
 
 
 func _start_drop_through() -> void:
-	if _dropping_through:
-		return
-	_original_mask = collision_mask
-	_dropping_through = true
-	_drop_timer = drop_through_time
-	# Disable collision with one-way platforms (layer 1)
-	var clear_bits := (1 << ONE_WAY_LAYER_BIT) | (1 << PLAYER_FALLBACK_LAYER_BIT)
-	collision_mask = _original_mask & ~clear_bits
-	if velocity.y < 0.0:
-		velocity.y = 0.0
-	velocity.y += 50.0
+	# controller handles drop-through
+	pass
 
 
 func _update_movement_state() -> void:
@@ -228,20 +203,7 @@ func _update_movement_state() -> void:
 
 
 func _slope_accel_scale(dir: float) -> float:
-	if not is_on_floor():
-		return 1.0
-	var n := get_floor_normal()
-	var angle := Vector2.UP.angle_to(n)
-	var slope_ratio: float = clamp(angle / 0.785398, 0.0, 1.0)
-	if dir == 0.0:
-		return 1.0
-	var uphill: bool = sign(dir) != 0 and sign(dir) == -sign(n.x)
-	var downhill: bool = sign(dir) != 0 and sign(dir) == sign(n.x)
-	if uphill:
-		return max(0.1, 1.0 - slope_ratio * slope_penalty)
-	if downhill:
-		return 1.0 + slope_ratio * 0.2
-	return 1.0
+	return 1.0 # handled in controller
 
 
 func _is_downhill() -> bool:
@@ -252,11 +214,8 @@ func _is_downhill() -> bool:
 
 
 func _update_drop_through(delta: float) -> void:
-	if _drop_timer > 0.0:
-		_drop_timer -= delta
-		if _drop_timer <= 0.0:
-			_dropping_through = false
-			collision_mask = _original_mask
+	# handled in controller
+	pass
 
 
 func _is_editor_mode() -> bool:
@@ -264,6 +223,35 @@ func _is_editor_mode() -> bool:
 	if mgr and "editor_mode" in mgr:
 		return mgr.editor_mode
 	return false
+
+
+func _gather_input() -> Dictionary:
+	if not use_player_input:
+		return {
+			"dir": _move_input,
+			"dir_y": 0.0,
+			"jump_pressed": false,
+			"jump_released": false,
+			"jump_held": false,
+			"down_pressed": false,
+		}
+	var dir := Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+	var dir_y := Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
+	set_move_input(dir)
+	_jump_held = Input.is_action_pressed("jump")
+	var jump_pressed := Input.is_action_just_pressed("jump")
+	var jump_released := Input.is_action_just_released("jump")
+	var down_pressed := Input.is_action_pressed("move_down")
+	if jump_released:
+		jump_released_flag = true
+	return {
+		"dir": dir,
+		"dir_y": dir_y,
+		"jump_pressed": jump_pressed,
+		"jump_released": jump_released,
+		"jump_held": _jump_held,
+		"down_pressed": down_pressed,
+	}
 
 
 func _link_fsm() -> void:

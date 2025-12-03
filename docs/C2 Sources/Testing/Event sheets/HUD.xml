@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>HUD</name>
+    <events>
+        <event-block sid="1196449329986468">
+            <conditions>
+                <condition id="-8" name="Is boolean instance variable set" sid="63730453272848" type="deprecated_FONT_HPMP">
+                    <param id="0" name="Instance variable">HP</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="0" name="Set text" sid="4061358014540749" type="deprecated_FONT_HPMP">
+                    <param id="0" name="Text">&quot;&quot;&amp;Self.NumberToShow</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="8169529499704587">
+            <conditions>
+                <condition id="-8" name="Is boolean instance variable set" sid="805973267565787" type="deprecated_FONT_HPMP">
+                    <param id="0" name="Instance variable">MP</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="0" name="Set text" sid="3045447612053938" type="deprecated_FONT_HPMP">
+                    <param id="0" name="Text">&quot;&quot;&amp;Self.NumberToShow</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="707624431650906">
+            <conditions />
+            <actions>
+                <action id="0" name="Set text" sid="9150121505459442" type="deprecated_FONT_Shots">
+                    <param id="0" name="Text">&quot;&quot;&amp;Self.NumberToShow</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="908785899162505">
+            <conditions>
+                <condition id="-2" name="On start of layout" sid="306198222427052" type="System" />
+            </conditions>
+            <actions>
+                <action disabled="1" id="-2" name="Go to layout" sid="115494976938445" type="System">
+                    <param id="0" name="Layout">Template Platform</param>
+                </action>
+                <action disabled="1" id="-20" name="Set layout scale" sid="746352722261075" type="System">
+                    <param id="0" name="Scale">2</param>
+                </action>
+                <action disabled="1" id="-7" name="Scroll to position" sid="432122028261172" type="System">
+                    <param id="0" name="X">-960</param>
+                    <param id="1" name="Y">-540</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>

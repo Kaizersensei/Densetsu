@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>LOGO_RS</name>
+    <events>
+        <event-block sid="331637967975646">
+            <conditions>
+                <condition id="-2" name="On start of layout" sid="919488173912173" type="System" />
+            </conditions>
+            <actions>
+                <action id="-16" name="Set opacity" sid="947588220993991" type="LOGO_Retraissance">
+                    <param id="0" name="Opacity">0</param>
+                </action>
+                <action id="4" name="Set animation" sid="417800565592504" type="LOGO_Retraissance">
+                    <param id="0" name="Animation">&quot;Start&quot;</param>
+                    <param id="1" name="From">1</param>
+                </action>
+                <action behavior="Sine" id="5" name="Set cycle position" sid="224981898524593" type="LOGO_Retraissance">
+                    <param id="0" name="Cycle position">-0.25</param>
+                </action>
+            </actions>
+            <sub-events>
+                <event-block sid="422356823707761">
+                    <conditions />
+                    <actions>
+                        <action id="0" name="Play" sid="135112333173708" type="Audio">
+                            <param id="0" name="Audio file">logo_start</param>
+                            <param id="2" name="Loop">0</param>
+                            <param id="3" name="Volume">0</param>
+                            <param id="1" name="Tag (optional)">&quot;logostart&quot;</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="708718617130329">
+                    <conditions />
+                    <actions>
+                        <action id="-16" name="Wait" sid="318572413869334" type="System">
+                            <param id="0" name="Seconds">4</param>
+                        </action>
+                        <action behavior="Sine" id="2" name="Set magnitude" sid="839387012177181" type="LOGO_Retraissance">
+                            <param id="0" name="Magnitude">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="411403498689245">
+            <conditions>
+                <condition id="4" name="On finished" sid="929478667952737" type="LOGO_Retraissance">
+                    <param id="0" name="Animation">&quot;start&quot;</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="4" name="Set animation" sid="601504856983351" type="LOGO_Retraissance">
+                    <param id="0" name="Animation">&quot;mid&quot;</param>
+                    <param id="1" name="From">1</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="569264520973180">
+            <conditions>
+                <condition id="2" name="Is playing" sid="766331182723718" type="LOGO_Retraissance">
+                    <param id="0" name="Animation">&quot;mid&quot;</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="5" name="Set frame" sid="886241948659759" type="LOGO_Retraissance">
+                    <param id="0" name="Frame number">random(LOGO_Retraissance.AnimationFrameCount)</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="990506182110373">
+            <conditions>
+                <condition id="2" name="Is playing" sid="331099178900004" type="LOGO_Retraissance">
+                    <param id="0" name="Animation">&quot;mid&quot;</param>
+                </condition>
+                <condition id="-8" name="Is boolean instance variable set" sid="720477147181338" type="LOGO_Retraissance">
+                    <param id="0" name="Instance variable">LOADED</param>
+                </condition>
+                <condition id="5" inverted="1" name="Is tag playing" sid="357286381650676" type="Audio">
+                    <param id="0" name="Tag">&quot;logostart&quot;</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="4" name="Set animation" sid="732729901135926" type="LOGO_Retraissance">
+                    <param id="0" name="Animation">&quot;finish&quot;</param>
+                    <param id="1" name="From">1</param>
+                </action>
+                <action behavior="Fade" id="2" name="Set fade-in time" sid="735509040476303" type="LOGO_Retraissance">
+                    <param id="0" name="Fade-in time">0</param>
+                </action>
+                <action behavior="Fade" id="3" name="Set wait time" sid="749975294275567" type="LOGO_Retraissance">
+                    <param id="0" name="Wait time">0</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="515613408068157">
+            <conditions>
+                <condition id="4" name="On finished" sid="667220058412166" type="LOGO_Retraissance">
+                    <param id="0" name="Animation">&quot;finish&quot;</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-16" name="Wait" sid="774442690749420" type="System">
+                    <param id="0" name="Seconds">0.5</param>
+                </action>
+                <action disabled="1" id="-25" name="Go to layout (by name)" sid="251704092188319" type="System">
+                    <param id="0" name="Layout">&quot;TITLE&quot;</param>
+                </action>
+                <action id="-25" name="Go to layout (by name)" sid="110655969454989" type="System">
+                    <param id="0" name="Layout">&quot;Level Select (DEBUG)&quot;</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="711246602900017">
+            <conditions>
+                <condition id="-25" name="On loader layout complete" sid="578830939904214" type="System" />
+            </conditions>
+            <actions>
+                <action id="-13" name="Set boolean" sid="779649344544676" type="LOGO_Retraissance">
+                    <param id="0" name="Instance variable">LOADED</param>
+                    <param id="1" name="Value">1</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="625316912590909">
+            <conditions>
+                <condition id="2" name="Is playing" sid="201238211172352" type="LOGO_Retraissance">
+                    <param id="0" name="Animation">&quot;finish&quot;</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-16" name="Set opacity" sid="609530109925092" type="LOGO_Retraissance">
+                    <param id="0" name="Opacity">lerp(Self.Opacity, 0,  0.1)</param>
+                </action>
+            </actions>
+            <sub-events>
+                <event-block sid="854485617450877">
+                    <conditions>
+                        <condition id="-4" name="Trigger once while true" sid="602585106327545" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Play" sid="110962240282989" type="Audio">
+                            <param id="0" name="Audio file">logo_off</param>
+                            <param id="2" name="Loop">0</param>
+                            <param id="3" name="Volume">0</param>
+                            <param id="1" name="Tag (optional)">&quot;&quot;</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="879220258539320">
+            <conditions>
+                <condition id="-1" name="Every tick" sid="449157273516875" type="System" />
+            </conditions>
+            <actions>
+                <action id="-28" name="Set effect parameter" sid="105538084646009" type="LOGO_Retraissance">
+                    <param id="0" name="Effect">&quot;Pixellate&quot;</param>
+                    <param id="1" name="Parameter index">0</param>
+                    <param id="2" name="Value">Self.Sine.Value</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>

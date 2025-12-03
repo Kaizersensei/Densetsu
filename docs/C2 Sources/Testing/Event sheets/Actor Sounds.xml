@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>Actor Sounds</name>
+    <events>
+        <event-group description="" sid="665206610561643" title="Actor Sound - Footsteps">
+            <sub-events>
+                <event-block sid="296534082100915">
+                    <conditions>
+                        <condition id="5" name="Is tag playing" sid="998410313137728" type="Audio">
+                            <param id="0" name="Tag">&quot;footstep_normal_generic&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="5" name="Set playback rate" sid="120062928433627" type="Audio">
+                            <param id="0" name="Tag">&quot;footstep_normal_generic&quot;</param>
+                            <param id="1" name="Playback rate">ACTORS.PlatformPlus.VectorX*0.01</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="630671477604104">
+                    <conditions>
+                        <condition behavior="PlatformPlus" id="2" name="Is on floor" sid="664080021455442" type="ACTORS" />
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block any="1" sid="208020829154261">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="299557767589117" type="ACTORS">
+                                    <param id="0" name="Animation">&quot;run&quot;</param>
+                                </condition>
+                                <condition id="2" name="Is playing" sid="579809084229683" type="ACTORS">
+                                    <param id="0" name="Animation">&quot;sprint&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block sid="950637840606507">
+                                    <conditions>
+                                        <condition id="3" name="Compare frame" sid="100057692650256" type="ACTORS">
+                                            <param id="0" name="Comparison">0</param>
+                                            <param id="1" name="Number">2</param>
+                                        </condition>
+                                        <condition id="-4" name="Trigger once while true" sid="553828285286650" type="System" />
+                                    </conditions>
+                                    <actions>
+                                        <action id="0" name="Play" sid="402690502821681" type="Audio">
+                                            <param id="0" name="Audio file">step_normal_generic</param>
+                                            <param id="2" name="Loop">0</param>
+                                            <param id="3" name="Volume">-6</param>
+                                            <param id="1" name="Tag (optional)">&quot;footstep_normal_generic&quot;</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="674343734278349">
+                                    <conditions>
+                                        <condition id="3" name="Compare frame" sid="837407870940144" type="ACTORS">
+                                            <param id="0" name="Comparison">0</param>
+                                            <param id="1" name="Number">5</param>
+                                        </condition>
+                                        <condition id="-4" name="Trigger once while true" sid="664447242554225" type="System" />
+                                    </conditions>
+                                    <actions>
+                                        <action id="0" name="Play" sid="745262843946994" type="Audio">
+                                            <param id="0" name="Audio file">step_normal_generic</param>
+                                            <param id="2" name="Loop">0</param>
+                                            <param id="3" name="Volume">-6</param>
+                                            <param id="1" name="Tag (optional)">&quot;footstep_normal_generic&quot;</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-group description="" sid="443381581835049" title="Actor Sound - Landing">
+            <sub-events>
+                <event-block sid="654430104427688">
+                    <conditions>
+                        <condition behavior="PlatformPlus" id="2" inverted="1" name="Is on floor" sid="480647032482777" type="ACTORS" />
+                        <condition id="9" inverted="1" name="Is overlapping at offset" sid="402129226509914" type="ACTORS">
+                            <param id="0" name="Object">Solids</param>
+                            <param id="1" name="Offset X">0</param>
+                            <param id="2" name="Offset Y">3</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-11" name="Add to" sid="236819545767168" type="ACTORS">
+                            <param id="0" name="Instance variable">Airtime</param>
+                            <param id="1" name="Value">dt</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="415892474208880">
+                    <conditions>
+                        <condition id="9" name="Is overlapping at offset" sid="170294441695152" type="ACTORS">
+                            <param id="0" name="Object">Solids</param>
+                            <param id="1" name="Offset X">0</param>
+                            <param id="2" name="Offset Y">3</param>
+                        </condition>
+                        <condition id="-7" name="Compare instance variable" sid="241160709053367" type="ACTORS">
+                            <param id="0" name="Instance variable">Airtime</param>
+                            <param id="1" name="Comparison">4</param>
+                            <param id="2" name="Value">0.2</param>
+                        </condition>
+                        <condition id="-4" name="Trigger once while true" sid="714743989563854" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Play" sid="229276763821370" type="Audio">
+                            <param id="0" name="Audio file">land_normal</param>
+                            <param id="2" name="Loop">0</param>
+                            <param id="3" name="Volume">-12</param>
+                            <param id="1" name="Tag (optional)">&quot;land_normal_generic&quot;</param>
+                        </action>
+                        <action id="-10" name="Set value" sid="417523761978090" type="ACTORS">
+                            <param id="0" name="Instance variable">Airtime</param>
+                            <param id="1" name="Value">0</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="672088738047568">
+                            <conditions />
+                            <actions />
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-group description="" sid="881203084238860" title="Player Only Sounds">
+            <sub-events>
+                <event-group description="" sid="583696055325558" title="Player Sounds - Rolling">
+                    <sub-events>
+                        <event-block sid="716224139911305">
+                            <conditions>
+                                <condition id="-8" name="Is boolean instance variable set" sid="463884328562544" type="deprecated_ACTOR_Player_1">
+                                    <param id="0" name="Instance variable">Rolling</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="5" name="Set playback rate" sid="787816800324476" type="Audio">
+                                    <param id="0" name="Tag">&quot;P1_roll&quot;</param>
+                                    <param id="1" name="Playback rate">deprecated_ACTOR_Player_1.PlatformPlus.Speed*0.0015</param>
+                                </action>
+                                <action id="3" name="Set volume" sid="820022001698669" type="Audio">
+                                    <param id="0" name="Tag">&quot;P1_roll&quot;</param>
+                                    <param id="1" name="dB">clamp(-60+(deprecated_ACTOR_Player_1.PlatformPlus.Speed*0.125),-16, 0)</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block sid="171622770522768">
+                                    <conditions>
+                                        <condition id="-4" name="Trigger once while true" sid="818287539333519" type="System" />
+                                    </conditions>
+                                    <actions>
+                                        <action id="0" name="Play" sid="430281433580775" type="Audio">
+                                            <param id="0" name="Audio file">roll</param>
+                                            <param id="2" name="Loop">1</param>
+                                            <param id="3" name="Volume">0</param>
+                                            <param id="1" name="Tag (optional)">&quot;P1_roll&quot;</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="307858066956394">
+                            <conditions>
+                                <condition id="-8" inverted="1" name="Is boolean instance variable set" sid="499969021271982" type="deprecated_ACTOR_Player_1">
+                                    <param id="0" name="Instance variable">Rolling</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="6" name="Stop" sid="410419246139448" type="Audio">
+                                    <param id="0" name="Tag">&quot;P1_roll&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-group>
+                <event-group description="" sid="913708765349853" title="Player Sounds - Air flow">
+                    <sub-events>
+                        <event-block sid="609246130312914">
+                            <conditions>
+                                <condition behavior="PlatformPlus" id="0" name="Is moving" sid="694542001193209" type="deprecated_ACTOR_Player_1" />
+                            </conditions>
+                            <actions>
+                                <action id="5" name="Set playback rate" sid="959967824493139" type="Audio">
+                                    <param id="0" name="Tag">&quot;P1_airflow&quot;</param>
+                                    <param id="1" name="Playback rate">deprecated_ACTOR_Player_1.PlatformPlus.Speed*0.0005</param>
+                                </action>
+                                <action id="3" name="Set volume" sid="571842251777947" type="Audio">
+                                    <param id="0" name="Tag">&quot;P1_airflow&quot;</param>
+                                    <param id="1" name="dB">clamp(-60+(deprecated_ACTOR_Player_1.PlatformPlus.Speed*0.125),-60,-20)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="630780454722855">
+                            <conditions>
+                                <condition behavior="PlatformPlus" id="0" inverted="1" name="Is moving" sid="868940173544066" type="deprecated_ACTOR_Player_1" />
+                            </conditions>
+                            <actions>
+                                <action id="5" name="Set playback rate" sid="971416163621199" type="Audio">
+                                    <param id="0" name="Tag">&quot;P1_airflow&quot;</param>
+                                    <param id="1" name="Playback rate">lerp(1,0, dt*4)</param>
+                                </action>
+                                <action id="3" name="Set volume" sid="221213611660487" type="Audio">
+                                    <param id="0" name="Tag">&quot;P1_airflow&quot;</param>
+                                    <param id="1" name="dB">-60</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="360491684676288">
+                            <conditions>
+                                <condition id="-2" name="On start of layout" sid="200767840093547" type="System" />
+                            </conditions>
+                            <actions>
+                                <action id="0" name="Play" sid="711148026099577" type="Audio">
+                                    <param id="0" name="Audio file">air_flow</param>
+                                    <param id="2" name="Loop">1</param>
+                                    <param id="3" name="Volume">-60</param>
+                                    <param id="1" name="Tag (optional)">&quot;P1_airflow&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-group>
+            </sub-events>
+        </event-group>
+        <event-group description="" sid="386243025055031" title="Actor Sounds - Water Interaction">
+            <sub-events>
+                <event-block sid="334625517889723">
+                    <conditions>
+                        <condition id="0" name="On collision with another object" sid="947634657731894" type="ACTORS">
+                            <param id="0" name="Object">WATER_Surface</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Play" sid="871312832160926" type="Audio">
+                            <param id="0" name="Audio file">water splash generic</param>
+                            <param id="2" name="Loop">0</param>
+                            <param id="3" name="Volume">-16</param>
+                            <param id="1" name="Tag (optional)">&quot;&quot;</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="184695309038706">
+                    <conditions>
+                        <condition id="0" name="On collision with another object" sid="617368281564462" type="ACTORS">
+                            <param id="0" name="Object">WATER_depth</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Play" sid="169980501368605" type="Audio">
+                            <param id="0" name="Audio file">submerge</param>
+                            <param id="2" name="Loop">0</param>
+                            <param id="3" name="Volume">-16</param>
+                            <param id="1" name="Tag (optional)">&quot;&quot;</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-group>
+    </events>
+</c2eventsheet>

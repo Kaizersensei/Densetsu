@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://3h5dctq1a4cj" path="res://engine/items/ActorItem2D.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://b8k73vpirl0rm" path="res://assets/placeholder_item.tres" id="2"]
 
-[sub_resource type="CircleShape2D" id="1"]
-radius = 6.08276
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(12.1655, 12.1655)
 
 [node name="ActorItem2D" type="Area2D"]
 collision_layer = 64

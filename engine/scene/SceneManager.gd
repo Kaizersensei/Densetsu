@@ -20,6 +20,8 @@ func infer_category_from_id(data_id: String) -> String:
 		if upper.begins_with("ACTOR_DECO"):
 			return "Scenery"
 		return "Actor"
+	if upper.begins_with("MOVEMENT_"):
+		return "Movement"
 	if upper.begins_with("SCENERY_"):
 		return "Scenery"
 	if upper.begins_with("SPAWNER_"):
@@ -96,6 +98,16 @@ func apply_actor_data(node: Node) -> void:
 	var res = reg.get_resource_for_category("Actor", data_id)
 	if res == null:
 		return
+	# Movement template link
+	if "movement_id" in res and res.movement_id != "":
+		var mres = reg.get_resource_for_category("Movement", res.movement_id)
+		if mres:
+			_apply_movement(node, mres)
+	# Movement template link
+	if "movement_id" in res and res.movement_id != "":
+		var mres = reg.get_resource_for_category("Movement", res.movement_id)
+		if mres:
+			_apply_movement(node, mres)
 	# Input source hint
 	if "use_player_input" in node:
 		var wants_player: bool = data_id == "ACTOR_Player"
@@ -127,6 +139,10 @@ func apply_actor_data(node: Node) -> void:
 		var spr_after := node.get_node_or_null("SpriteRoot/Sprite2D") as Sprite2D
 		if spr_after:
 			spr_after.modulate = res.tint
+			spr_after.set_meta("editor_tint", res.tint)
+		elif node is Sprite2D:
+			(node as Sprite2D).modulate = res.tint
+			(node as Sprite2D).set_meta("editor_tint", res.tint)
 	# Persist id/meta so UI and saves stay in sync
 	if "data_id" in node:
 		node.set("data_id", data_id)
@@ -134,6 +150,68 @@ func apply_actor_data(node: Node) -> void:
 		node.set_meta("data_id", data_id)
 	if node is Node2D and node.has_method("reset_base_position"):
 		node.call("reset_base_position")
+
+
+func _apply_movement(node: Node, mv) -> void:
+	if node == null or mv == null:
+		return
+	# Kinematics
+	if "gravity" in node and "gravity" in mv:
+		node.gravity = mv.gravity
+	if "move_speed" in node and "move_speed" in mv:
+		node.move_speed = mv.move_speed
+	if "acceleration" in node and "acceleration" in mv:
+		node.acceleration = mv.acceleration
+	if "friction_ground" in node and "friction_ground" in mv:
+		node.friction_ground = mv.friction_ground
+	if "friction_air" in node and "friction_air" in mv:
+		node.friction_air = mv.friction_air
+	if "max_fall_speed" in node and "max_fall_speed" in mv:
+		node.max_fall_speed = mv.max_fall_speed
+	if "slope_penalty" in node and "slope_penalty" in mv:
+		node.slope_penalty = mv.slope_penalty
+	# Jump
+	if "jump_speed" in node and "jump_speed" in mv:
+		node.jump_speed = mv.jump_speed
+	if "air_jump_speed" in node and "air_jump_speed" in mv:
+		node.air_jump_speed = mv.air_jump_speed
+	if "max_jumps" in node and "max_jumps" in mv:
+		node.max_jumps = mv.max_jumps
+	if "min_jump_height" in node and "min_jump_height" in mv:
+		node.min_jump_height = mv.min_jump_height
+	if "coyote_time" in node and "coyote_time" in mv:
+		node.coyote_time = mv.coyote_time
+	if "jump_buffer_time" in node and "jump_buffer_time" in mv:
+		node.jump_buffer_time = mv.jump_buffer_time
+	if "jump_release_gravity_scale" in node and "jump_release_gravity_scale" in mv:
+		node.jump_release_gravity_scale = mv.jump_release_gravity_scale
+	if "jump_release_cut" in node and "jump_release_cut" in mv:
+		node.jump_release_cut = mv.jump_release_cut
+	if "drop_through_time" in node and "drop_through_time" in mv:
+		node.drop_through_time = mv.drop_through_time
+	# Wall
+	if "wall_slide_gravity_scale" in node and "wall_slide_gravity_scale" in mv:
+		node.wall_slide_gravity_scale = mv.wall_slide_gravity_scale
+	if "wall_jump_speed_x" in node and "wall_jump_speed_x" in mv:
+		node.wall_jump_speed_x = mv.wall_jump_speed_x
+	if "wall_jump_speed_y" in node and "wall_jump_speed_y" in mv:
+		node.wall_jump_speed_y = mv.wall_jump_speed_y
+	# Glide
+	if "enable_glide" in node and "enable_glide" in mv:
+		node.enable_glide = mv.enable_glide
+	if "glide_gravity_scale" in node and "glide_gravity_scale" in mv:
+		node.glide_gravity_scale = mv.glide_gravity_scale
+	if "glide_max_fall_speed" in node and "glide_max_fall_speed" in mv:
+		node.glide_max_fall_speed = mv.glide_max_fall_speed
+	# Flight
+	if "enable_flight" in node and "enable_flight" in mv:
+		node.enable_flight = mv.enable_flight
+	if "flight_acceleration" in node and "flight_acceleration" in mv:
+		node.flight_acceleration = mv.flight_acceleration
+	if "flight_max_speed" in node and "flight_max_speed" in mv:
+		node.flight_max_speed = mv.flight_max_speed
+	if "flight_drag" in node and "flight_drag" in mv:
+		node.flight_drag = mv.flight_drag
 
 
 func apply_data(node: Node) -> void:
@@ -155,17 +233,20 @@ func apply_data(node: Node) -> void:
 	# scene overrides first
 	if "scene" in res and res.scene:
 		apply_scene_overrides(node, res.scene)
-	# apply tint override if provided
+	# apply tint override if provided (covers sprite, polygon, and stores meta)
 	if "tint" in res:
 		var tint: Color = res.tint
 		var spr_all := node.get_node_or_null("SpriteRoot/Sprite2D") as Sprite2D
 		if spr_all:
 			spr_all.modulate = tint
+			spr_all.set_meta("editor_tint", tint)
 		elif node is Sprite2D:
 			(node as Sprite2D).modulate = tint
+			(node as Sprite2D).set_meta("editor_tint", tint)
 		var poly_all := node.get_node_or_null("Visual") as Polygon2D
 		if poly_all:
 			poly_all.color = tint
+			poly_all.set_meta("editor_tint", tint)
 	# item visuals
 	if cat == "Item":
 		if "sprite" in res and res.sprite:
@@ -174,10 +255,12 @@ func apply_data(node: Node) -> void:
 				spr2.texture = res.sprite
 				if "tint" in res:
 					spr2.modulate = res.tint
+					spr2.set_meta("editor_tint", res.tint)
 			elif node is Sprite2D:
 				(node as Sprite2D).texture = res.sprite
 				if "tint" in res:
 					(node as Sprite2D).modulate = res.tint
+					(node as Sprite2D).set_meta("editor_tint", res.tint)
 	# trap/projectile collision/spawner
 	if cat in ["Trap", "Projectile", "Spawner"]:
 		if "collision_layer" in res and "collision_layer" in node:
@@ -198,10 +281,12 @@ func apply_data(node: Node) -> void:
 			(spr as Sprite2D).texture = res.sprite
 			if "tint" in res:
 				(spr as Sprite2D).modulate = res.tint
+				(spr as Sprite2D).set_meta("editor_tint", res.tint)
 		elif node is Sprite2D:
 			(node as Sprite2D).texture = res.sprite
 			if "tint" in res:
 				(node as Sprite2D).modulate = res.tint
+				(node as Sprite2D).set_meta("editor_tint", res.tint)
 	# persist data id
 	if "data_id" in node:
 		node.set("data_id", data_id)

@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>TITLE</name>
+    <events>
+        <event-block sid="458489297988419">
+            <conditions>
+                <condition id="-10" name="Compare opacity" sid="250638133100117" type="BG_TitleSlides">
+                    <param id="0" name="Comparison">4</param>
+                    <param id="1" name="Opacity">50</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-1" name="Set X" sid="488064089004798" type="LOGO_Shuriken">
+                    <param id="0" name="X">min(self.X+10,212)</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="987525566992156">
+            <conditions>
+                <condition id="-1" name="Compare X" sid="808678837540083" type="LOGO_Shuriken">
+                    <param id="0" name="Comparison">0</param>
+                    <param id="1" name="X co-ordinate">212</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action behavior="Rotate" id="0" name="Set speed" sid="498792302340856" type="LOGO_Shuriken">
+                    <param id="0" name="Speed">max(0,self.Rotate.Speed-dt*fps*10)</param>
+                </action>
+                <action id="-16" name="Wait" sid="887977204385148" type="System">
+                    <param id="0" name="Seconds">1.5</param>
+                </action>
+                <action id="-1" name="Set X" sid="532479758679997" type="LOGO_Sword">
+                    <param id="0" name="X">min(self.X+16,212)</param>
+                </action>
+                <action behavior="Rotate" id="0" name="Set speed" sid="507819042574130" type="LOGO_Shuriken">
+                    <param id="0" name="Speed">0</param>
+                </action>
+                <action id="-20" name="Rotate toward angle" sid="333835866544023" type="LOGO_Shuriken">
+                    <param id="0" name="Degrees">dt*30</param>
+                    <param id="1" name="Angle">0</param>
+                </action>
+                <action behavior="Fade" id="1" name="Start fade" sid="734198086176363" type="TITLE_Text" />
+            </actions>
+        </event-block>
+        <event-block sid="647547906648806">
+            <conditions>
+                <condition id="-1" name="Compare X" sid="563864006484171" type="TITLE_Michio">
+                    <param id="0" name="Comparison">1</param>
+                    <param id="1" name="X co-ordinate">800</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-1" name="Set X" sid="378978352375344" type="TITLE_Michio">
+                    <param id="0" name="X">max(self.X-self.X/800,800)</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>

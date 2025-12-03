@@ -1,0 +1,673 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>COMBAT</name>
+    <events>
+        <event-block disabled="1" sid="685878421892610">
+            <conditions>
+                <condition id="0" name="On collision with another object" sid="242022376098644" type="Hitboxes">
+                    <param id="0" name="Object">Enemies</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <comment>0 blunt | 1 cut | 2 pierce</comment>
+                <event-block disabled="1" sid="996766816607933">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="713009453854217" type="Hitboxes">
+                            <param id="0" name="Instance variable">HitType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-10" name="Set value" sid="308726408783050" type="Enemies">
+                            <param id="0" name="Instance variable">HitType</param>
+                            <param id="1" name="Value">&quot;Blunt&quot;</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block disabled="1" sid="930690610688355">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="932785666223903" type="Hitboxes">
+                            <param id="0" name="Instance variable">HitType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">1</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-10" name="Set value" sid="218951397330715" type="Enemies">
+                            <param id="0" name="Instance variable">HitType</param>
+                            <param id="1" name="Value">&quot;Cut&quot;</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block disabled="1" sid="367353024985241">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="844482307057859" type="Hitboxes">
+                            <param id="0" name="Instance variable">HitType</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">2</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-10" name="Set value" sid="401594344859012" type="Enemies">
+                            <param id="0" name="Instance variable">HitType</param>
+                            <param id="1" name="Value">&quot;Pierce&quot;</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-group description="" sid="768752602686562" title="Combat Sounds">
+            <sub-events>
+                <comment>0 blunt | 1 cut | 2 pierce</comment>
+                <event-block sid="686314603492091">
+                    <conditions>
+                        <condition id="0" name="On collision with another object" sid="444850009599475" type="Hitboxes">
+                            <param id="0" name="Object">Enemies</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block sid="468455740176219">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="204001410271378" type="Enemies">
+                                    <param id="0" name="Instance variable">ImpactType</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">&quot;Wood&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block sid="134912833840155">
+                                    <conditions>
+                                        <condition id="-7" name="Compare instance variable" sid="677280259294571" type="Hitboxes">
+                                            <param id="0" name="Instance variable">HitType</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions />
+                                    <sub-events>
+                                        <event-block sid="707346665241722">
+                                            <conditions>
+                                                <condition id="-7" name="Compare instance variable" sid="167935485859653" type="Hitboxes">
+                                                    <param id="0" name="Instance variable">AttackStrength</param>
+                                                    <param id="1" name="Comparison">0</param>
+                                                    <param id="2" name="Value">1</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="0" name="Play" sid="107163588206420" type="Audio">
+                                                    <param id="0" name="Audio file">hit_blunt_wood_low</param>
+                                                    <param id="2" name="Loop">0</param>
+                                                    <param id="3" name="Volume">-10</param>
+                                                    <param id="1" name="Tag (optional)">&quot;&quot;</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <event-block sid="708745876406492">
+                                            <conditions>
+                                                <condition id="-7" name="Compare instance variable" sid="305039714102027" type="Hitboxes">
+                                                    <param id="0" name="Instance variable">AttackStrength</param>
+                                                    <param id="1" name="Comparison">0</param>
+                                                    <param id="2" name="Value">2</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="0" name="Play" sid="304124945773621" type="Audio">
+                                                    <param id="0" name="Audio file">hit_blunt_wood_medium</param>
+                                                    <param id="2" name="Loop">0</param>
+                                                    <param id="3" name="Volume">-20</param>
+                                                    <param id="1" name="Tag (optional)">&quot;&quot;</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <event-block sid="697684608816406">
+                                            <conditions>
+                                                <condition id="-7" name="Compare instance variable" sid="303277888497208" type="Hitboxes">
+                                                    <param id="0" name="Instance variable">AttackStrength</param>
+                                                    <param id="1" name="Comparison">0</param>
+                                                    <param id="2" name="Value">3</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="0" name="Play" sid="527615333042048" type="Audio">
+                                                    <param id="0" name="Audio file">hit_blunt_wood_heavy</param>
+                                                    <param id="2" name="Loop">0</param>
+                                                    <param id="3" name="Volume">-16</param>
+                                                    <param id="1" name="Tag (optional)">&quot;&quot;</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                                <event-block sid="640575251431493">
+                                    <conditions>
+                                        <condition id="-7" name="Compare instance variable" sid="917980031641284" type="Hitboxes">
+                                            <param id="0" name="Instance variable">HitType</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">1</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions />
+                                    <sub-events>
+                                        <event-block sid="669338259142815">
+                                            <conditions>
+                                                <condition id="-7" name="Compare instance variable" sid="576802013023523" type="Hitboxes">
+                                                    <param id="0" name="Instance variable">AttackStrength</param>
+                                                    <param id="1" name="Comparison">0</param>
+                                                    <param id="2" name="Value">1</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="0" name="Play" sid="120588204971440" type="Audio">
+                                                    <param id="0" name="Audio file">hit_blade_wood_low</param>
+                                                    <param id="2" name="Loop">0</param>
+                                                    <param id="3" name="Volume">0</param>
+                                                    <param id="1" name="Tag (optional)">&quot;&quot;</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <event-block sid="695618799560809">
+                                            <conditions>
+                                                <condition id="-7" name="Compare instance variable" sid="531328647505690" type="Hitboxes">
+                                                    <param id="0" name="Instance variable">AttackStrength</param>
+                                                    <param id="1" name="Comparison">0</param>
+                                                    <param id="2" name="Value">2</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="0" name="Play" sid="169484653997759" type="Audio">
+                                                    <param id="0" name="Audio file">hit_blade_wood_medium</param>
+                                                    <param id="2" name="Loop">0</param>
+                                                    <param id="3" name="Volume">-10</param>
+                                                    <param id="1" name="Tag (optional)">&quot;&quot;</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <event-block sid="888728683446159">
+                                            <conditions>
+                                                <condition id="-7" name="Compare instance variable" sid="679506997806583" type="Hitboxes">
+                                                    <param id="0" name="Instance variable">AttackStrength</param>
+                                                    <param id="1" name="Comparison">0</param>
+                                                    <param id="2" name="Value">3</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="0" name="Play" sid="610492588932796" type="Audio">
+                                                    <param id="0" name="Audio file">hit_blade_wood_heavy</param>
+                                                    <param id="2" name="Loop">0</param>
+                                                    <param id="3" name="Volume">0</param>
+                                                    <param id="1" name="Tag (optional)">&quot;&quot;</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                                <event-block sid="302660089535888">
+                                    <conditions>
+                                        <condition id="-7" name="Compare instance variable" sid="911929910092183" type="Hitboxes">
+                                            <param id="0" name="Instance variable">HitType</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">2</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions />
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="899211913853598">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="254991597510057" type="Enemies">
+                                    <param id="0" name="Instance variable">ImpactType</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">&quot;Flesh&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-group description="" sid="136981973139697" title="Hitboxes">
+            <sub-events>
+                <event-block sid="840386202947002">
+                    <conditions>
+                        <condition id="-2" name="On start of layout" sid="139923083687104" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Destroy" sid="211911583860557" type="Hitboxes" />
+                    </actions>
+                </event-block>
+                <event-block sid="587272213916023">
+                    <conditions>
+                        <condition id="-18" name="On created" sid="890828644882484" type="Hitboxes" />
+                    </conditions>
+                    <actions>
+                        <action id="-7" name="Set size" sid="537481147675261" type="Hitboxes">
+                            <param id="0" name="Width">self.SizeX</param>
+                            <param id="1" name="Height">self.SizeY</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <comment>Pin hitbox to player actors</comment>
+                        <event-block sid="789478195312057">
+                            <conditions>
+                                <condition id="-33" name="Pick by comparison" sid="891137196693715" type="System">
+                                    <param id="0" name="Object">Players</param>
+                                    <param id="1" name="Expression">Players.ControlledByPlayerNr</param>
+                                    <param id="2" name="Comparison">0</param>
+                                    <param id="3" name="Value">1</param>
+                                </condition>
+                                <condition id="-33" name="Pick by comparison" sid="975649454200333" type="System">
+                                    <param id="0" name="Object">ACTORS</param>
+                                    <param id="1" name="Expression">actors.ControlledByPlayerNr</param>
+                                    <param id="2" name="Comparison">0</param>
+                                    <param id="3" name="Value">1</param>
+                                </condition>
+                                <condition id="-33" name="Pick by comparison" sid="919669997927104" type="System">
+                                    <param id="0" name="Object">ACTORS</param>
+                                    <param id="1" name="Expression">Actors.HitboxCreated</param>
+                                    <param id="2" name="Comparison">1</param>
+                                    <param id="3" name="Value">0</param>
+                                </condition>
+                                <condition id="-15" name="Pick nearest/furthest" sid="603778406086992" type="Hitboxes">
+                                    <param id="0" name="Which">0</param>
+                                    <param id="1" name="X">actors.X</param>
+                                    <param id="2" name="Y">actors.Y</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="171202299732016" type="Hitboxes">
+                                    <param id="0" name="Instance variable">ownedbyPlayer</param>
+                                    <param id="1" name="Value">1</param>
+                                </action>
+                                <action behavior="PinToImagePoint" id="1" name="Pin to image point" sid="396907059018047" type="Hitboxes">
+                                    <param id="0" name="Pin to">ACTORS</param>
+                                    <param id="1" name="ImagePoint">3</param>
+                                    <param id="2" name="Mode">0</param>
+                                </action>
+                                <action id="-13" name="Set boolean" sid="674437338580916" type="ACTORS">
+                                    <param id="0" name="Instance variable">HitboxCreated</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="240960988504835">
+                            <conditions>
+                                <condition id="-33" name="Pick by comparison" sid="140916205987637" type="System">
+                                    <param id="0" name="Object">Players</param>
+                                    <param id="1" name="Expression">Players.ControlledByPlayerNr</param>
+                                    <param id="2" name="Comparison">0</param>
+                                    <param id="3" name="Value">2</param>
+                                </condition>
+                                <condition id="-33" name="Pick by comparison" sid="212987941749838" type="System">
+                                    <param id="0" name="Object">ACTORS</param>
+                                    <param id="1" name="Expression">actors.ControlledByPlayerNr</param>
+                                    <param id="2" name="Comparison">0</param>
+                                    <param id="3" name="Value">2</param>
+                                </condition>
+                                <condition id="-33" name="Pick by comparison" sid="742579892806808" type="System">
+                                    <param id="0" name="Object">ACTORS</param>
+                                    <param id="1" name="Expression">Actors.HitboxCreated</param>
+                                    <param id="2" name="Comparison">1</param>
+                                    <param id="3" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="766609149592389" type="Hitboxes">
+                                    <param id="0" name="Instance variable">ownedbyPlayer</param>
+                                    <param id="1" name="Value">2</param>
+                                </action>
+                                <action behavior="PinToImagePoint" id="1" name="Pin to image point" sid="446871199059030" type="Hitboxes">
+                                    <param id="0" name="Pin to">ACTORS</param>
+                                    <param id="1" name="ImagePoint">3</param>
+                                    <param id="2" name="Mode">0</param>
+                                </action>
+                                <action id="-13" name="Set boolean" sid="323499494746825" type="ACTORS">
+                                    <param id="0" name="Instance variable">HitboxCreated</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="915149522757607">
+                            <conditions>
+                                <condition id="-33" name="Pick by comparison" sid="565916972958347" type="System">
+                                    <param id="0" name="Object">Players</param>
+                                    <param id="1" name="Expression">Players.ControlledByPlayerNr</param>
+                                    <param id="2" name="Comparison">0</param>
+                                    <param id="3" name="Value">3</param>
+                                </condition>
+                                <condition id="-33" name="Pick by comparison" sid="953977559733487" type="System">
+                                    <param id="0" name="Object">ACTORS</param>
+                                    <param id="1" name="Expression">actors.ControlledByPlayerNr</param>
+                                    <param id="2" name="Comparison">0</param>
+                                    <param id="3" name="Value">3</param>
+                                </condition>
+                                <condition id="-33" name="Pick by comparison" sid="116408358938561" type="System">
+                                    <param id="0" name="Object">ACTORS</param>
+                                    <param id="1" name="Expression">Actors.HitboxCreated</param>
+                                    <param id="2" name="Comparison">1</param>
+                                    <param id="3" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="378093468941887" type="Hitboxes">
+                                    <param id="0" name="Instance variable">ownedbyPlayer</param>
+                                    <param id="1" name="Value">3</param>
+                                </action>
+                                <action behavior="PinToImagePoint" id="1" name="Pin to image point" sid="366141504327754" type="Hitboxes">
+                                    <param id="0" name="Pin to">ACTORS</param>
+                                    <param id="1" name="ImagePoint">3</param>
+                                    <param id="2" name="Mode">0</param>
+                                </action>
+                                <action id="-13" name="Set boolean" sid="345120562525786" type="ACTORS">
+                                    <param id="0" name="Instance variable">HitboxCreated</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="852232421041563">
+                            <conditions>
+                                <condition id="-33" name="Pick by comparison" sid="935361993426056" type="System">
+                                    <param id="0" name="Object">Players</param>
+                                    <param id="1" name="Expression">Players.ControlledByPlayerNr</param>
+                                    <param id="2" name="Comparison">0</param>
+                                    <param id="3" name="Value">4</param>
+                                </condition>
+                                <condition id="-33" name="Pick by comparison" sid="890545708935326" type="System">
+                                    <param id="0" name="Object">ACTORS</param>
+                                    <param id="1" name="Expression">actors.ControlledByPlayerNr</param>
+                                    <param id="2" name="Comparison">0</param>
+                                    <param id="3" name="Value">4</param>
+                                </condition>
+                                <condition id="-33" name="Pick by comparison" sid="675016427467569" type="System">
+                                    <param id="0" name="Object">ACTORS</param>
+                                    <param id="1" name="Expression">Actors.HitboxCreated</param>
+                                    <param id="2" name="Comparison">1</param>
+                                    <param id="3" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="556811245476279" type="Hitboxes">
+                                    <param id="0" name="Instance variable">ownedbyPlayer</param>
+                                    <param id="1" name="Value">4</param>
+                                </action>
+                                <action behavior="PinToImagePoint" id="1" name="Pin to image point" sid="114107334831066" type="Hitboxes">
+                                    <param id="0" name="Pin to">ACTORS</param>
+                                    <param id="1" name="ImagePoint">3</param>
+                                    <param id="2" name="Mode">0</param>
+                                </action>
+                                <action id="-13" name="Set boolean" sid="934872859118799" type="ACTORS">
+                                    <param id="0" name="Instance variable">HitboxCreated</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="522099119938398">
+                    <conditions />
+                    <actions>
+                        <action id="-24" name="Move to top" sid="467124676522411" type="Hitboxes" />
+                        <action id="-24" name="Move to top" sid="593262615355336" type="TEXT_DamageCounter" />
+                    </actions>
+                    <sub-events>
+                        <event-block disabled="1" sid="225543253752910">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="997520753546142" type="Hitboxes">
+                                    <param id="0" name="Instance variable">ownedbyPlayer</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">1</param>
+                                </condition>
+                                <condition id="-33" name="Pick by comparison" sid="185229424944121" type="System">
+                                    <param id="0" name="Object">Players</param>
+                                    <param id="1" name="Expression">Players.ControlledByPlayerNr</param>
+                                    <param id="2" name="Comparison">0</param>
+                                    <param id="3" name="Value">1</param>
+                                </condition>
+                                <condition id="-33" name="Pick by comparison" sid="327516356302616" type="System">
+                                    <param id="0" name="Object">ACTORS</param>
+                                    <param id="1" name="Expression">actors.ControlledByPlayerNr</param>
+                                    <param id="2" name="Comparison">0</param>
+                                    <param id="3" name="Value">1</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-3" name="Set position" sid="366070211558410" type="Hitboxes">
+                                    <param id="0" name="X">lerp(self.X, ACTORS.ImagePointX(3), dt*48)</param>
+                                    <param id="1" name="Y">lerp(self.Y, ACTORS.ImagePointY(3), dt*128)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="644739791458407">
+                    <conditions>
+                        <condition id="-18" name="On created" sid="414130601446495" type="Hitboxes" />
+                        <condition id="-8" name="Is boolean instance variable set" sid="457477440324698" type="Hitboxes">
+                            <param id="0" name="Instance variable">UseTimer</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block sid="317231553898334">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="633398851048650" type="Hitboxes">
+                                    <param id="0" name="Instance variable">ownedbyPlayer</param>
+                                    <param id="1" name="Comparison">1</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                                <condition id="-33" name="Pick by comparison" sid="927979245515288" type="System">
+                                    <param id="0" name="Object">ACTORS</param>
+                                    <param id="1" name="Expression">actors.ControlledByPlayerNr</param>
+                                    <param id="2" name="Comparison">0</param>
+                                    <param id="3" name="Value">Hitboxes.ownedbyPlayer</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-16" name="Wait" sid="709190907400812" type="System">
+                                    <param id="0" name="Seconds">0.05</param>
+                                </action>
+                                <action behavior="Timer" id="0" name="Start timer" sid="831751033269273" type="Hitboxes">
+                                    <param id="0" name="Duration">0.05*actors.AnimationFrameCount</param>
+                                    <param id="1" name="Type">0</param>
+                                    <param id="2" name="Tag">&quot;&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="973297526616058">
+                            <conditions>
+                                <condition id="-22" name="Else" sid="986817248431303" type="System" />
+                            </conditions>
+                            <actions>
+                                <action behavior="Timer" id="0" name="Start timer" sid="528382243308324" type="Hitboxes">
+                                    <param id="0" name="Duration">self.Lifetime</param>
+                                    <param id="1" name="Type">0</param>
+                                    <param id="2" name="Tag">&quot;&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="204045125872266">
+                    <conditions>
+                        <condition behavior="Timer" id="0" name="On timer" sid="744529948013526" type="Hitboxes">
+                            <param id="0" name="Tag">&quot;&quot;</param>
+                        </condition>
+                        <condition id="-8" name="Is boolean instance variable set" sid="392705176379035" type="Hitboxes">
+                            <param id="0" name="Instance variable">UseTimer</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Destroy" sid="712618460030049" type="Hitboxes" />
+                    </actions>
+                </event-block>
+                <event-group description="" sid="654184930400947" title="Damage">
+                    <sub-events>
+                        <comment>damage: enemy to player</comment>
+                        <event-block sid="429333962300215">
+                            <conditions>
+                                <condition id="-8" name="Is boolean instance variable set" sid="367348984656140" type="Hitboxes">
+                                    <param id="0" name="Instance variable">EnemyHitbox</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block sid="545363298036154">
+                                    <conditions>
+                                        <condition id="-33" name="Pick by comparison" sid="762925761747208" type="System">
+                                            <param id="0" name="Object">ACTORS</param>
+                                            <param id="1" name="Expression">ACTORS.ControlledByPlayer</param>
+                                            <param id="2" name="Comparison">1</param>
+                                            <param id="3" name="Value">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions />
+                                    <sub-events>
+                                        <comment>TODO trigger damage on player</comment>
+                                    </sub-events>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <comment>damage player to enemy</comment>
+                        <event-block sid="164603296031102">
+                            <conditions>
+                                <condition id="0" name="On collision with another object" sid="924934829930125" type="Hitboxes">
+                                    <param id="0" name="Object">Enemies</param>
+                                </condition>
+                                <condition id="-7" name="Compare instance variable" sid="430144098164197" type="Hitboxes">
+                                    <param id="0" name="Instance variable">ownedbyPlayer</param>
+                                    <param id="1" name="Comparison">1</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="324651734786710" type="Enemies">
+                                    <param id="0" name="Instance variable">DamageTaken</param>
+                                    <param id="1" name="Value">clamp((hitboxes.Damage-Enemies.DEF),0,Infinity)</param>
+                                </action>
+                                <action id="0" name="Spawn another object" sid="122220141813708" type="Enemies">
+                                    <param id="0" name="Object">TEXT_DamageCounter</param>
+                                    <param id="1" name="Layer">&quot;ACTIVE&quot;</param>
+                                    <param id="2" name="Image point">0</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="675410721606852" type="Enemies">
+                                    <param id="0" name="Instance variable">HP</param>
+                                    <param id="1" name="Value">self.HP-Self.DamageTaken</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="549430689735183">
+                            <conditions>
+                                <condition id="0" name="On collision with another object" sid="466599007949749" type="Hitboxes">
+                                    <param id="0" name="Object">Enemies</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action behavior="Physics" id="16" name="Set density" sid="495133766244552" type="Hitboxes">
+                                    <param id="0" name="Density">clamp((hitboxes.Damage-Enemies.DEF),0,Infinity)*2</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-group>
+                <event-group description="" sid="912902828531563" title="Damage Counters">
+                    <sub-events>
+                        <event-block sid="610921558289782">
+                            <conditions>
+                                <condition id="-6" name="Every X seconds" sid="660556921554737" type="System">
+                                    <param id="0" name="Interval (seconds)">dt*16</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-16" name="Wait" sid="193861225010380" type="System">
+                                    <param id="0" name="Seconds">dt*4</param>
+                                </action>
+                                <action id="4" name="Set font color" sid="407343582651955" type="TEXT_DamageCounter">
+                                    <param id="0" name="Color">rgb(0., 0, 0)</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="908868300351574" type="System">
+                                    <param id="0" name="Seconds">dt*4</param>
+                                </action>
+                                <action id="4" name="Set font color" sid="716947788079033" type="TEXT_DamageCounter">
+                                    <param id="0" name="Color">rgb(255, 0, 0)</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="727174596606421" type="System">
+                                    <param id="0" name="Seconds">dt*4</param>
+                                </action>
+                                <action id="4" name="Set font color" sid="588069308372660" type="TEXT_DamageCounter">
+                                    <param id="0" name="Color">rgb(255, 255, 0)</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="996679382406249" type="System">
+                                    <param id="0" name="Seconds">dt*4</param>
+                                </action>
+                                <action id="4" name="Set font color" sid="381386722023581" type="TEXT_DamageCounter">
+                                    <param id="0" name="Color">rgb(255, 255, 255)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="683057847812954">
+                            <conditions>
+                                <condition id="-1" name="Every tick" sid="223565168950366" type="System" />
+                            </conditions>
+                            <actions>
+                                <action id="-11" name="Add to" sid="838495487333770" type="TEXT_DamageCounter">
+                                    <param id="0" name="Instance variable">offY</param>
+                                    <param id="1" name="Value">dt*256</param>
+                                </action>
+                                <action id="-1" name="Set X" sid="303871890827876" type="TEXT_DamageCounter">
+                                    <param id="0" name="X">self.X-dt*random(-96,96)</param>
+                                </action>
+                                <action id="-2" name="Set Y" sid="920429473249023" type="TEXT_DamageCounter">
+                                    <param id="0" name="Y">self.Y+self.offY*dt</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="141074922770606">
+                            <conditions>
+                                <condition id="-18" name="On created" sid="702460048990634" type="TEXT_DamageCounter" />
+                            </conditions>
+                            <actions>
+                                <action id="-2" name="Set Y" sid="162071279500830" type="TEXT_DamageCounter">
+                                    <param id="0" name="Y">self.Y-96</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="806246845203033" type="TEXT_DamageCounter">
+                                    <param id="0" name="Instance variable">offX</param>
+                                    <param id="1" name="Value">random(-320, -160)</param>
+                                </action>
+                                <action id="-11" name="Add to" sid="646675452835391" type="TEXT_DamageCounter">
+                                    <param id="0" name="Instance variable">offY</param>
+                                    <param id="1" name="Value">self.offX</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block sid="202108195611354">
+                                    <conditions>
+                                        <condition id="-15" name="Pick nearest/furthest" sid="519230340404445" type="Enemies">
+                                            <param id="0" name="Which">0</param>
+                                            <param id="1" name="X">TEXT_DamageCounter.X</param>
+                                            <param id="2" name="Y">TEXT_DamageCounter.Y</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="0" name="Set text" sid="863226440981758" type="TEXT_DamageCounter">
+                                            <param id="0" name="Text">&quot;&quot; &amp;Enemies.DamageTaken</param>
+                                        </action>
+                                        <action id="-10" name="Set value" sid="834350065618491" type="Enemies">
+                                            <param id="0" name="Instance variable">DamageTaken</param>
+                                            <param id="1" name="Value">0</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-group>
+            </sub-events>
+        </event-group>
+    </events>
+</c2eventsheet>

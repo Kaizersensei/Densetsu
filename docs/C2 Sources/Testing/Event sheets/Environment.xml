@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>Environment</name>
+    <events>
+        <include>SKY</include>
+        <event-group description="" sid="478492568346585" title="Water">
+            <sub-events>
+                <event-group description="" sid="418398888913248" title="Water Physics">
+                    <sub-events>
+                        <event-block sid="731299374612449">
+                            <conditions>
+                                <condition id="1" name="Is overlapping another object" sid="707324494079855" type="deprecated_ACTOR_Player_1">
+                                    <param id="0" name="Object">WATER_depth</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-14" name="Set object time scale" sid="192841089058530" type="System">
+                                    <param id="0" name="Object">deprecated_ACTOR_Player_1</param>
+                                    <param id="1" name="Time scale">0.5</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block sid="101530810491511">
+                                    <conditions>
+                                        <condition id="-8" name="Is boolean instance variable set" sid="667144733330210" type="ACTORS">
+                                            <param id="0" name="Instance variable">ControlledByPlayer</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-14" name="Set object time scale" sid="324064305147051" type="System">
+                                            <param id="0" name="Object">ACTORS</param>
+                                            <param id="1" name="Time scale">0.5</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="257700242379018">
+                            <conditions>
+                                <condition id="1" inverted="1" name="Is overlapping another object" sid="873759769066122" type="deprecated_ACTOR_Player_1">
+                                    <param id="0" name="Object">WATER_depth</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-14" name="Set object time scale" sid="266748804888963" type="System">
+                                    <param id="0" name="Object">deprecated_ACTOR_Player_1</param>
+                                    <param id="1" name="Time scale">1</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block sid="100805409364059">
+                                    <conditions>
+                                        <condition id="-8" name="Is boolean instance variable set" sid="184677569479556" type="ACTORS">
+                                            <param id="0" name="Instance variable">ControlledByPlayer</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-14" name="Set object time scale" sid="281629656638923" type="System">
+                                            <param id="0" name="Object">ACTORS</param>
+                                            <param id="1" name="Time scale">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-group>
+                <event-block sid="351282923873594">
+                    <conditions>
+                        <condition id="0" name="On collision with another object" sid="559651513667292" type="deprecated_ACTOR_Player_1">
+                            <param id="0" name="Object">WATER_Surface</param>
+                        </condition>
+                        <condition id="-11" name="Is within angle" sid="825227689096084" type="WATER_Surface">
+                            <param id="0" name="Within">0.5</param>
+                            <param id="1" name="Angle">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-3" name="Create object" sid="740855465865661" type="System">
+                            <param id="0" name="Object to create">PARTICLES_Splash_big</param>
+                            <param id="1" name="Layer">&quot;ACTIVE&quot;</param>
+                            <param id="2" name="X">deprecated_ACTOR_Player_1.X</param>
+                            <param id="3" name="Y">WATER_Surface.Y</param>
+                        </action>
+                        <action id="-3" name="Create object" sid="521682134344679" type="System">
+                            <param id="0" name="Object to create">PARTICLES_Splash_small</param>
+                            <param id="1" name="Layer">&quot;ACTIVE&quot;</param>
+                            <param id="2" name="X">deprecated_ACTOR_Player_1.X</param>
+                            <param id="3" name="Y">WATER_Surface.Y</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="209597838937972">
+                            <conditions>
+                                <condition id="-4" name="Trigger once while true" sid="403851186427981" type="System" />
+                            </conditions>
+                            <actions />
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="538190316726440">
+                    <conditions>
+                        <condition id="0" name="On collision with another object" sid="150746498944779" type="deprecated_ACTOR_Player_1">
+                            <param id="0" name="Object">WATER_Surface</param>
+                        </condition>
+                        <condition id="-11" inverted="1" name="Is within angle" sid="308015023072676" type="WATER_Surface">
+                            <param id="0" name="Within">0.5</param>
+                            <param id="1" name="Angle">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-3" name="Create object" sid="817728956635284" type="System">
+                            <param id="0" name="Object to create">PARTICLES_Splash_big</param>
+                            <param id="1" name="Layer">&quot;ACTIVE&quot;</param>
+                            <param id="2" name="X">deprecated_ACTOR_Player_1.X</param>
+                            <param id="3" name="Y">deprecated_ACTOR_Player_1.Y</param>
+                        </action>
+                        <action id="-3" name="Create object" sid="175891682834758" type="System">
+                            <param id="0" name="Object to create">PARTICLES_Splash_small</param>
+                            <param id="1" name="Layer">&quot;ACTIVE&quot;</param>
+                            <param id="2" name="X">deprecated_ACTOR_Player_1.X</param>
+                            <param id="3" name="Y">deprecated_ACTOR_Player_1.Y</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="306761248173612">
+                            <conditions>
+                                <condition id="-4" name="Trigger once while true" sid="203564811689045" type="System" />
+                            </conditions>
+                            <actions />
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="244225314290117">
+                    <conditions>
+                        <condition id="1" name="Is overlapping another object" sid="838037956143056" type="deprecated_ACTOR_Player_1">
+                            <param id="0" name="Object">WATER_Surface</param>
+                        </condition>
+                        <condition id="-11" name="Is within angle" sid="126123357175381" type="WATER_Surface">
+                            <param id="0" name="Within">0.5</param>
+                            <param id="1" name="Angle">0</param>
+                        </condition>
+                        <condition id="-6" name="Every X seconds" sid="164235462320670" type="System">
+                            <param id="0" name="Interval (seconds)">0.25</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-3" name="Create object" sid="676943274018784" type="System">
+                            <param id="0" name="Object to create">PARTICLES_Splash_small</param>
+                            <param id="1" name="Layer">&quot;ACTIVE&quot;</param>
+                            <param id="2" name="X">deprecated_ACTOR_Player_1.X</param>
+                            <param id="3" name="Y">WATER_Surface.Y</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="729206220785852">
+                    <conditions>
+                        <condition id="1" name="Is overlapping another object" sid="212933737163240" type="deprecated_ACTOR_Player_1">
+                            <param id="0" name="Object">WATER_Surface</param>
+                        </condition>
+                        <condition id="-11" inverted="1" name="Is within angle" sid="785734539908413" type="WATER_Surface">
+                            <param id="0" name="Within">0.5</param>
+                            <param id="1" name="Angle">0</param>
+                        </condition>
+                        <condition id="-6" name="Every X seconds" sid="566057843588834" type="System">
+                            <param id="0" name="Interval (seconds)">0.25</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-3" name="Create object" sid="851957010469814" type="System">
+                            <param id="0" name="Object to create">PARTICLES_Splash_small</param>
+                            <param id="1" name="Layer">&quot;ACTIVE&quot;</param>
+                            <param id="2" name="X">deprecated_ACTOR_Player_1.X</param>
+                            <param id="3" name="Y">deprecated_ACTOR_Player_1.Y</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <variable constant="0" name="WindStrength" sid="872294174633241" static="0" type="number">0</variable>
+        <variable comment="-1 left 1 right 0 not supported" constant="0" name="WindDirection" sid="652268114360380" static="0" type="number">1</variable>
+        <event-group description="" sid="487986719398022" title="Wind" />
+        <event-group description="" sid="109200261440956" title="Logs">
+            <sub-events>
+                <event-block sid="607765209598193">
+                    <conditions>
+                        <condition id="-6" name="Every X seconds" sid="381890960893810" type="System">
+                            <param id="0" name="Interval (seconds)">3</param>
+                        </condition>
+                        <condition id="-16" name="Pick random instance" sid="508638328923009" type="System">
+                            <param id="0" name="Object">SPAWNER_logs</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Spawn another object" sid="527450856725427" type="SPAWNER_logs">
+                            <param id="0" name="Object">PLATFORM_Logs</param>
+                            <param id="1" name="Layer">0</param>
+                            <param id="2" name="Image point">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="318166277051326">
+                    <conditions>
+                        <condition id="0" name="On collision with another object" sid="155062113287466" type="PLATFORM_Logs">
+                            <param id="0" name="Object">COLLISION_box</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Destroy" sid="426973019190646" type="PLATFORM_Logs" />
+                    </actions>
+                </event-block>
+                <event-block sid="658361973609868">
+                    <conditions>
+                        <condition id="1" name="Is overlapping another object" sid="597639190229046" type="PLATFORM_Logs">
+                            <param id="0" name="Object">WATER_Surface</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-8" name="Set angle" sid="769266690027133" type="PLATFORM_Logs">
+                            <param id="0" name="Angle">lerp(self.Angle,90,dt*4)</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="567328330912251">
+                    <conditions>
+                        <condition id="-6" name="Every X seconds" sid="297704867190498" type="System">
+                            <param id="0" name="Interval (seconds)">10</param>
+                        </condition>
+                        <condition id="-16" name="Pick random instance" sid="341787272304810" type="System">
+                            <param id="0" name="Object">PLATFORM_Logs</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-13" name="Set boolean" sid="142005805081717" type="PLATFORM_Logs">
+                            <param id="0" name="Instance variable">Rotate</param>
+                            <param id="1" name="Value">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-block sid="195481179543407">
+            <conditions>
+                <condition id="-8" name="Is boolean instance variable set" sid="895620114785682" type="PLATFORM_Logs">
+                    <param id="0" name="Instance variable">Rotate</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-8" name="Set angle" sid="221140936268952" type="PLATFORM_Logs">
+                    <param id="0" name="Angle">lerp(self.Angle,90,dt*4)</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>

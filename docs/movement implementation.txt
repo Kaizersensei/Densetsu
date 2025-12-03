@@ -1,0 +1,568 @@
+Codex, here is a step-by-step implementation plan for the player’s custom movement mechanics (jump, double jump, wall jump, dash, roll, etc.) as they would be implemented in this Construct 2 project, using a platform-type movement behavior under the hood and additional event logic.
+
+Your goal:
+
+1. Mirror the Construct 2 logic (structure, variables, and plugin calls) well enough to understand it, and
+2. Reproduce it in Godot (or similar) with at least ~60% behavioral accuracy.
+
+---
+
+## 0. Base assumptions and objects
+
+### 0.1 Player body sprite
+
+Create a dedicated player body object, separate from the visual “character art”:
+
+* **Object**: `PlayerBody` (Sprite)
+* **Behaviors**:
+
+  * `Platform` (or a custom platform-like movement plugin).
+  * `Solid pushout` helper if needed (e.g. a “push out of solid” plugin).
+* **Uses**: physics, collision, and movement; all logic runs on this.
+
+Optionally, use a second sprite (e.g. `PlayerVisual`) pinned to `PlayerBody` for Michio’s actual artwork/animations.
+
+### 0.2 Player variables (instance variables on `PlayerBody`)
+
+Add the following instance variables to `PlayerBody`. These are what events read and write:
+
+```text
+# Control state
+ControlsEnabled   : boolean
+CanMove           : number   # 1 = full control, 0 = no control, -1 = limited
+Alive             : boolean
+Restrained        : boolean  # for cutscenes / grabs
+
+# Orientation & input
+Facing            : number   # -1 = left, 1 = right
+InputX            : number   # -1, 0, 1
+InputY            : number   # -1, 0, 1
+
+# Ground / air
+InAir             : boolean
+Falling           : boolean
+Jumping           : boolean
+JumpCount         : number
+CanDoubleJump     : boolean
+AirTime           : number
+HighFall          : boolean
+
+# Wall & climb
+CanWallJump       : boolean
+WallJumping       : boolean
+WallSide          : number   # -1 = wall on left, 1 = wall on right
+
+Climbing          : boolean
+OnLedge           : boolean
+OnPole            : boolean
+
+# Advanced movement
+Dashing           : boolean
+RollActive        : boolean
+Crouching         : boolean
+Sneaking          : boolean
+FallingThrough    : boolean  # drop through one-way platforms
+
+# Speed metrics
+SpeedX            : number
+SpeedY            : number
+SpeedXAbs         : number
+SpeedYAbs         : number
+MovingAtSpeed     : boolean  # e.g. SpeedXAbs > run_threshold
+
+# Input timers
+DoubleTapLeft     : boolean
+DoubleTapRight    : boolean
+DoubleTapTimerL   : number
+DoubleTapTimerR   : number
+
+# Jump gating
+JumpReleased      : boolean  # true only after jump key released once
+```
+
+---
+
+## 1. Input layer and abstraction
+
+### 1.1 Define input
+
+In Construct 2, use:
+
+* `Keyboard` plugin for keys.
+* `Gamepad` plugin for controllers.
+* Optionally an “input manager” plugin that exposes named inputs (if present).
+
+Create **global variables** for key codes (or just hardcode in events):
+
+* `leftKey`, `rightKey`, `upKey`, `downKey`
+* `jumpKey`
+* `dashKey`
+* `rollKey` (or combination)
+* `attackKey`, `blockKey`, etc., as needed.
+
+### 1.2 Build input events → PlayerBody variables
+
+Create a group `Input` that runs every tick:
+
+1. **Horizontal input**:
+
+   * Event:
+
+     * `Keyboard is down(leftKey)` OR gamepad left axis < −threshold
+     * → Set `PlayerBody.InputX = -1`
+   * Event:
+
+     * `Keyboard is down(rightKey)` OR gamepad left axis > threshold
+     * → Set `PlayerBody.InputX = 1`
+   * Else (no horizontal input):
+
+     * Set `PlayerBody.InputX = 0`
+
+2. **Vertical input**:
+
+   * Similar pattern, set `InputY` to −1/0/1 from `upKey` / `downKey`.
+
+3. **Facing direction**:
+
+   * Every tick:
+
+     * If `PlayerBody.InputX ≠ 0` → `PlayerBody.Facing = PlayerBody.InputX`
+
+4. **Jump key edge detection**:
+
+   * Event: `On key pressed jumpKey`:
+
+     * Set a global `JumpPressed = 1`
+   * Event: `On key released jumpKey`:
+
+     * Set `JumpReleasedGlobal = 1`
+
+   The Player movement events will consume these flags, then reset them each tick.
+
+5. **Dash double-tap logic** (for left/right):
+
+   * When `On key pressed leftKey`:
+
+     * If `DoubleTapTimerL > 0` → set `DoubleTapLeft = true`
+     * Else set `DoubleTapTimerL = DoubleTapWindow` (e.g. 0.25 seconds)
+   * Every tick:
+
+     * If `DoubleTapTimerL > 0` → subtract `dt` from `DoubleTapTimerL`
+     * If `DoubleTapTimerL ≤ 0` → set `DoubleTapLeft = false`
+   * Mirror the logic for `rightKey` and `DoubleTapRight/DoubleTapTimerR`.
+
+This matches the behavior seen in typical Construct 2 projects: named inputs from keyboard/gamepad, plus timers for double-taps.
+
+---
+
+## 2. Ground vs air state management
+
+Create a group `Ground / Air State` that runs every tick on `PlayerBody`.
+
+1. **Detect ground and air**:
+
+   * If `Platform is on floor`:
+
+     * If `InAir = true` (just landed):
+
+       * Set `InAir = false`
+       * Set `Falling = false`
+       * Set `AirTime = 0`
+       * Set `JumpCount = 0`
+       * Set `CanDoubleJump = <true if ability unlocked>`
+       * If `HighFall = true`:
+
+         * Trigger landing effect (e.g. spawn dust, set a “stagger” flag).
+         * Set `HighFall = false`
+     * Else:
+
+       * `AirTime = 0` (still grounded)
+   * Else (not on floor):
+
+     * Set `InAir = true`
+     * `AirTime += dt`
+     * Set `Falling = Platform.FallSpeed > 0` (or use `Platform.VectorY > 0` if available).
+
+2. **Track speed metrics**:
+
+   * Every tick:
+
+     * `SpeedX = Platform.VectorX`
+     * `SpeedY = Platform.VectorY`
+     * `SpeedXAbs = abs(SpeedX)`
+     * `SpeedYAbs = abs(SpeedY)`
+     * `MovingAtSpeed = SpeedXAbs > RunThreshold`
+
+3. **High fall detection**:
+
+   * If `InAir = true AND Falling = true AND SpeedYAbs > HighFallSpeedThreshold AND AirTime > HighFallTimeThreshold`:
+
+     * Set `HighFall = true`
+
+This gives the rest of the system consistent ground/air flags and speed metrics.
+
+---
+
+## 3. Horizontal movement (walk / run)
+
+Create a group `Horizontal Movement`:
+
+1. **Skip movement if control disabled**:
+
+   * Add a top-level condition to this group:
+
+     * `PlayerBody.ControlsEnabled = true`
+     * `PlayerBody.CanMove ≠ 0`
+     * `PlayerBody.Alive = true`
+     * `PlayerBody.Restrained = false`
+
+2. **Apply input to Platform behavior**:
+
+   * If `PlayerBody.InputX < 0`:
+
+     * `Platform.Simulate control("Left")`
+   * Else if `PlayerBody.InputX > 0`:
+
+     * `Platform.Simulate control("Right")`
+   * Else:
+
+     * Do not simulate left/right; let deceleration handle slowdown.
+
+3. **Tuning acceleration / deceleration**:
+
+   * At object creation or when state changes (e.g. walk vs sneak vs dash):
+
+     * Use actions:
+
+       * `Platform:Set acceleration(WalkAcceleration)`
+       * `Platform:Set deceleration(WalkDeceleration)`
+       * `Platform:Set max speed(WalkMaxSpeed)`
+
+   For sneaking, you can reduce `max speed` and maybe acceleration; for dashing, you override movement differently (see dash section).
+
+---
+
+## 4. Jump and double jump
+
+Create a group `Jumping`:
+
+### 4.1 Gating conditions
+
+All jump logic should:
+
+* Check `ControlsEnabled`, `CanMove ≠ 0`, `Alive`, `!Restrained`.
+* Use `JumpPressed` and `JumpReleasedGlobal` set by the input layer.
+
+### 4.2 First jump (from ground)
+
+* Event:
+
+  * `PlayerBody` + `JumpPressed = 1`
+  * `PlayerBody.InAir = false` (on ground)
+* Actions:
+
+  * Set `Jumping = true`
+  * Set `JumpCount = 1`
+  * Set `InAir = true`
+  * Set `JumpReleased = false`
+  * `Platform.Simulate control("Jump")` or:
+
+    * `Platform:Set vector Y(-JumpSpeed)`
+  * Reset `JumpPressed = 0` (global), so it’s consumed.
+
+### 4.3 Double jump
+
+* Event:
+
+  * `PlayerBody` + `JumpPressed = 1`
+  * `PlayerBody.InAir = true`
+  * `PlayerBody.CanDoubleJump = true`
+  * `PlayerBody.JumpCount = 1`
+  * `PlayerBody.JumpReleased = true`
+* Actions:
+
+  * Set `JumpCount = 2`
+  * Set `CanDoubleJump = false`
+  * Set `Jumping = true`
+  * Optionally clamp current fall speed before applying jump:
+
+    * If `SpeedY > MaxDownSpeedForDoubleJump` → set `SpeedY = MaxDownSpeedForDoubleJump`
+  * `Platform:Set vector Y(-DoubleJumpSpeed)`
+  * Spawn double jump effect at a dedicated image point.
+  * Reset `JumpPressed = 0`.
+
+### 4.4 Jump release tracking
+
+* Event:
+
+  * `JumpReleasedGlobal = 1`
+* Actions:
+
+  * On `PlayerBody`: `JumpReleased = true`
+  * Reset `JumpReleasedGlobal = 0`
+
+This prevents holding the jump button from triggering the double jump; the player must release once.
+
+---
+
+## 5. Wall detection and wall jump
+
+Create a group `Walls & Wall Jump`:
+
+### 5.1 Detect wall presence
+
+Each tick:
+
+1. **Left wall**:
+
+   * Condition:
+
+     * `PlayerBody.InAir = true`
+     * `PlayerBody.Platform is overlapping offset(-WallCheckOffsetX, WallCheckOffsetY)` with solid wall tiles/objects.
+   * Actions:
+
+     * Set `CanWallJump = true`
+     * Set `WallSide = -1`
+
+2. **Right wall**:
+
+   * Similar, but with positive offset; set `WallSide = 1`.
+
+3. **Clear when not touching wall**:
+
+   * If not overlapping either side:
+
+     * Set `CanWallJump = false`
+     * Set `WallSide = 0`
+
+### 5.2 Wall jump itself
+
+* Event:
+
+  * `PlayerBody` + `JumpPressed = 1`
+  * `CanWallJump = true`
+  * `InAir = true`
+  * `Falling = true` (optional)
+* Actions:
+
+  * Set `WallJumping = true`
+  * Set `Jumping = true`
+  * Set `JumpCount = 1` (reset double jump chain if you like)
+  * `Platform:Set vector Y(-WallJumpUpSpeed)`
+  * `Platform:Set vector X(WallSide * -WallJumpPushSpeed)` (push away from the wall)
+  * Set `Facing = -WallSide` (face away from the wall)
+  * Reset `JumpPressed = 0`
+
+Optional: apply a short “stick” to wall by reducing gravity while touching.
+
+---
+
+## 6. Dash (double-tap or button)
+
+Create a group `Dash`:
+
+### 6.1 Dash trigger from double-tap
+
+* Event:
+
+  * `PlayerBody.DoubleTapLeft = true`
+  * `CanMove = 1`
+  * `InAir = false`  (ground dash; optional)
+
+* Actions:
+
+  * Call a function or sub-event: `BeginDash(direction = -1)`
+
+* Event:
+
+  * `PlayerBody.DoubleTapRight = true`
+  * same conditions
+
+* Actions:
+
+  * `BeginDash(direction = 1)`
+
+### 6.2 Dash trigger from dedicated key (optional)
+
+* Event:
+
+  * `On key pressed dashKey`
+  * `CanMove = 1`
+* Actions:
+
+  * `BeginDash(direction = Facing)`
+
+### 6.3 BeginDash implementation
+
+Inside `BeginDash`:
+
+* Set `Dashing = true`
+* Set `CanMove = 0`   (no normal walk input during dash)
+* Set `RollActive = false` (if you treat dash and roll separately)
+* Force horizontal velocity:
+
+  * `Platform:Set acceleration(0)`
+  * `Platform:Set deceleration(0)`
+  * `Platform:Set vector X(direction * DashSpeed)`
+* Optionally lower friction or ignore certain collisions for a very short time.
+* Start a dash timer (global or instance var) e.g. `DashTime = 0.25`.
+
+### 6.4 Dash update and stop
+
+* Event (every tick):
+
+  * If `Dashing = true`:
+
+    * `DashTime -= dt`
+    * If `DashTime ≤ 0`:
+
+      * Set `Dashing = false`
+      * Set `CanMove = 1`
+      * Restore normal movement:
+
+        * `Platform:Set acceleration(NormalAccel)`
+        * `Platform:Set deceleration(NormalDecel)`
+
+Optionally stop dash immediately on collision with a wall or when starting a roll.
+
+---
+
+## 7. Roll
+
+Roll can share structure with dash but with different parameters and posture.
+
+Create a group `Roll`:
+
+### 7.1 Roll trigger
+
+* Event:
+
+  * `On key pressed rollKey` OR `(InputY > 0 AND JumpPressed = 1)` while on ground
+  * `CanMove = 1`
+  * `Alive = true`, `!Restrained`
+* Actions:
+
+  * Set `RollActive = true`
+  * Set `Dashing = false`
+  * Set `CanMove = 0`
+  * Optionally set `Crouching = true`
+  * Shrink collision box or switch animation to roll.
+  * `Platform:Set acceleration(0)`
+  * `Platform:Set deceleration(0)`
+  * `Platform:Set vector X(Facing * RollSpeed)`
+  * `RollTime = RollDuration`
+
+### 7.2 Roll update and stop
+
+* Event:
+
+  * If `RollActive = true`:
+
+    * `RollTime -= dt`
+    * If `RollTime ≤ 0`:
+
+      * Set `RollActive = false`
+      * Set `Crouching = false`
+      * Set `CanMove = 1`
+      * Restore normal Platform accel/decel.
+
+You can add “low profile” collision using a different animation frame with a smaller collision polygon.
+
+---
+
+## 8. Drop-through (fall-through one-way platforms)
+
+Create a group `DropThrough`:
+
+### 8.1 Trigger
+
+* Event:
+
+  * `PlayerBody.InAir = false` (on ground)
+  * `InputY > 0` (pressing down)
+  * `JumpPressed = 1` (or dedicated drop key)
+* Actions:
+
+  * `Platform: Fall through` (built-in action for one-way platforms)
+  * Set `FallingThrough = true`
+  * `FallThroughTime = 0.2`
+  * Reset `JumpPressed = 0`
+
+### 8.2 Reset falling through
+
+* Event:
+
+  * If `FallingThrough = true`:
+
+    * `FallThroughTime -= dt`
+    * If `FallThroughTime ≤ 0`:
+
+      * Set `FallingThrough = false`
+
+This matches typical C2 patterns where “fall through” only temporarily disables the platform hook.
+
+---
+
+## 9. Crouch, sneak, and animation hooks
+
+Create a group `Posture & Animation Hooks`:
+
+1. **Crouch**:
+
+   * If `InAir = false`, `InputY > 0` and not rolling:
+
+     * Set `Crouching = true`
+     * Reduce movement speed:
+
+       * `Platform:Set max speed(CrouchSpeed)`
+   * Else:
+
+     * Set `Crouching = false`
+     * Restore `max speed` to normal (if not in dash/roll).
+
+2. **Sneak**:
+
+   * If a “sneak” button is held:
+
+     * Set `Sneaking = true`
+     * `Platform:Set max speed(SneakSpeed)`
+   * Else:
+
+     * `Sneaking = false`
+
+3. **Animation decisions**:
+
+   * Use the combination of:
+
+     * `InAir`, `Falling`, `Dashing`, `RollActive`, `Crouching`, `MovingAtSpeed`, `HighFall`.
+   * Trigger animations on the visual sprite:
+
+     * e.g. `Set animation "run"`, `"idle"`, `"jump"`, `"fall"`, `"dash"`, `"roll"`, `"crouch"`.
+
+---
+
+## 10. How Codex should port this to Godot / Densetsu
+
+When you implement this in Godot:
+
+1. Replace **Platform behavior** calls with:
+
+   * `velocity.x`, `velocity.y`, and `move_and_slide()`.
+   * “Simulate control left/right” becomes adjusting `velocity.x` based on `InputX`, acceleration, and deceleration.
+   * “Set vector X/Y” directly writes to velocities.
+
+2. Keep **the same flags and variables** on the player’s script:
+
+   * `InAir`, `JumpCount`, `CanDoubleJump`, `CanWallJump`, `WallSide`, `Dashing`, `RollActive`, etc.
+   * Use them as FSM context and for animation decisions.
+
+3. Recreate **grouped logic** as functions or state-update sections:
+
+   * `_update_ground_air_state()`, `_update_jump_logic()`, `_update_wall_jump()`, `_update_dash()`, `_update_roll()`, `_update_drop_through()`.
+
+4. Keep input abstraction and timers:
+
+   * You still need double-tap detection.
+   * You still need one-shot jump pressed / released flags.
+
+If you follow these steps and mirror the variable semantics, you should reproduce at least ~60% of the original movement behavior, with room to refine using the FSM and Stats systems later.

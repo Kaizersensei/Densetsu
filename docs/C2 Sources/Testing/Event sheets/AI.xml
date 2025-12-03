@@ -1,0 +1,255 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>AI</name>
+    <events>
+        <event-block disabled="1" sid="551125567898728">
+            <conditions>
+                <condition id="-8" name="Is boolean instance variable set" sid="289468394939963" type="Enemies">
+                    <param id="0" name="Instance variable">UseAI</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-block disabled="1" sid="820563637239114">
+                    <conditions>
+                        <condition id="1" name="Is overlapping another object" sid="916133592307827" type="Enemies">
+                            <param id="0" name="Object">AI_NavMark</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block disabled="1" sid="378830473565095">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="409995892342049" type="AI_NavMark">
+                                    <param id="0" name="Animation">&quot;Default&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="508725008707662" type="Enemies">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Value">&quot;stop&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block disabled="1" sid="722539207394985">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="651227863916457" type="AI_NavMark">
+                                    <param id="0" name="Animation">&quot;L&quot;</param>
+                                </condition>
+                                <condition id="-7" name="Compare instance variable" sid="414308937375953" type="Enemies">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Comparison">1</param>
+                                    <param id="2" name="Value">&quot;left&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="941948422500340" type="Enemies">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Value">&quot;left&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block disabled="1" sid="752339124134948">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="937253992001487" type="AI_NavMark">
+                                    <param id="0" name="Animation">&quot;R&quot;</param>
+                                </condition>
+                                <condition id="-7" name="Compare instance variable" sid="415221528391570" type="Enemies">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Comparison">1</param>
+                                    <param id="2" name="Value">&quot;right&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="742517012892380" type="Enemies">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Value">&quot;right&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block disabled="1" sid="347008774197960">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="477764997126677" type="AI_NavMark">
+                                    <param id="0" name="Animation">&quot;LR&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block disabled="1" sid="191473098888417">
+                                    <conditions>
+                                        <condition id="-7" name="Compare instance variable" sid="332641051201997" type="Enemies">
+                                            <param id="0" name="Instance variable">AIState</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">&quot;left&quot;</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-10" name="Set value" sid="245341408756444" type="Enemies">
+                                            <param id="0" name="Instance variable">AIState</param>
+                                            <param id="1" name="Value">&quot;left&quot;</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block disabled="1" sid="720620560715018">
+                                    <conditions>
+                                        <condition id="-7" name="Compare instance variable" sid="220768710275350" type="Enemies">
+                                            <param id="0" name="Instance variable">AIState</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">&quot;right&quot;</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-10" name="Set value" sid="573565541136345" type="Enemies">
+                                            <param id="0" name="Instance variable">AIState</param>
+                                            <param id="1" name="Value">&quot;right&quot;</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block disabled="1" sid="988715608189197">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="581913913504933" type="AI_NavMark">
+                                    <param id="0" name="Animation">&quot;J&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="473937264382097" type="Enemies">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Value">&quot;jump&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block disabled="1" sid="784538456845477">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="989533087584439" type="AI_NavMark">
+                                    <param id="0" name="Animation">&quot;JL&quot;</param>
+                                </condition>
+                                <condition id="-7" name="Compare instance variable" sid="206292352556940" type="Enemies">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Comparison">1</param>
+                                    <param id="2" name="Value">&quot;right&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="621649841421398" type="Enemies">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Value">&quot;jumpleft&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block disabled="1" sid="762877522271924">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="962666975566869" type="AI_NavMark">
+                                    <param id="0" name="Animation">&quot;JR&quot;</param>
+                                </condition>
+                                <condition id="-7" name="Compare instance variable" sid="545980362689842" type="Enemies">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Comparison">1</param>
+                                    <param id="2" name="Value">&quot;left&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="768781949468368" type="Enemies">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Value">&quot;jumpright&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block disabled="1" sid="191175051521707">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="495943910515474" type="AI_NavMark">
+                                    <param id="0" name="Animation">&quot;JD&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="668053294071369" type="Enemies">
+                                    <param id="0" name="Instance variable">AIState</param>
+                                    <param id="1" name="Value">&quot;jumpdown&quot;</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block disabled="1" sid="548378679547689">
+                    <conditions>
+                        <condition id="-6" name="Every X seconds" sid="251034429513105" type="System">
+                            <param id="0" name="Interval (seconds)">0.25</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Spawn another object" sid="940401897504188" type="Enemies">
+                            <param id="0" name="Object">AI_LOSRay</param>
+                            <param id="1" name="Layer">self.LayerNumber</param>
+                            <param id="2" name="Image point">&quot;eye&quot;</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block disabled="1" sid="307046577095853">
+            <conditions>
+                <condition id="-18" name="On created" sid="832117856972766" type="AI_LOSRay" />
+            </conditions>
+            <actions>
+                <action id="-8" name="Set angle" sid="348352430041411" type="AI_LOSRay">
+                    <param id="0" name="Angle">-58</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block disabled="1" sid="102477324170227">
+            <conditions>
+                <condition id="-23" name="While" sid="180039871695821" type="System" />
+                <condition id="1" inverted="1" name="Is overlapping another object" sid="504427174425158" type="AI_LOSRay">
+                    <param id="0" name="Object">ACTOR_Michio</param>
+                </condition>
+                <condition id="-5" name="Compare width" sid="786757228125324" type="AI_LOSRay">
+                    <param id="0" name="Comparison">3</param>
+                    <param id="1" name="Width">160</param>
+                </condition>
+                <condition id="-13" name="Is between angles" sid="755975606277289" type="AI_LOSRay">
+                    <param id="0" name="First angle">-60</param>
+                    <param id="1" name="Second angle">60</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-5" name="Set width" sid="580678516938130" type="AI_LOSRay">
+                    <param id="0" name="Width">Self.Width+4</param>
+                </action>
+                <action id="-8" name="Set angle" sid="833845227806822" type="AI_LOSRay">
+                    <param id="0" name="Angle">Self.Angle+2</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block any="1" disabled="1" sid="513809616556541">
+            <conditions>
+                <condition id="-5" name="Compare width" sid="819721566023407" type="AI_LOSRay">
+                    <param id="0" name="Comparison">5</param>
+                    <param id="1" name="Width">160</param>
+                </condition>
+                <condition id="-13" name="Is between angles" sid="146439969406627" type="AI_LOSRay">
+                    <param id="0" name="First angle">61</param>
+                    <param id="1" name="Second angle">300</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-9" name="Destroy" sid="494204444833407" type="AI_LOSRay" />
+            </actions>
+        </event-block>
+        <event-block disabled="1" sid="414094375215004">
+            <conditions>
+                <condition id="0" name="On collision with another object" sid="245232255156309" type="AI_LOSRay">
+                    <param id="0" name="Object">ACTOR_Michio</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-9" name="Destroy" sid="809490565584109" type="AI_LOSRay" />
+                <action id="-10" name="Set value" sid="366969893821793" type="Enemies">
+                    <param id="0" name="Instance variable">AIAlertLevel</param>
+                    <param id="1" name="Value">2</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>

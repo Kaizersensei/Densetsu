@@ -1,0 +1,270 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>scraps</name>
+    <events>
+        <event-group description="" sid="156655125177452" title="Item Selector">
+            <sub-events>
+                <event-block sid="374743981547258">
+                    <conditions>
+                        <condition id="-2" name="On start of layout" sid="699929694571821" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="-16" name="Set opacity" sid="828004890224194" type="HUD_ItemWheelPetal">
+                            <param id="0" name="Opacity">0</param>
+                        </action>
+                        <action id="-16" name="Set opacity" sid="176781703998701" type="HUD_ItemWheel">
+                            <param id="0" name="Opacity">0</param>
+                        </action>
+                        <action id="9" name="Set scale" sid="112736160195162" type="HUD_ItemWheel">
+                            <param id="0" name="Scale">0</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="229648955964340">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="688640132399048" type="HUD_ItemWheel">
+                                    <param id="0" name="Animation">&quot;Default&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action behavior="PinToImagePoint" id="1" name="Pin to image point" sid="195502399801065" type="HUD_ItemWheelPetal">
+                                    <param id="0" name="Pin to">HUD_ItemWheel</param>
+                                    <param id="1" name="ImagePoint">0</param>
+                                    <param id="2" name="Mode">0</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="909783996210107">
+                    <conditions>
+                        <condition id="5" name="Compare axis" sid="785991292579773" type="Gamepad">
+                            <param id="0" name="Gamepad">0</param>
+                            <param id="1" name="Axis">2</param>
+                            <param id="2" name="Comparison">4</param>
+                            <param id="3" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                </event-block>
+                <event-block sid="839828309919755">
+                    <conditions>
+                        <condition id="5" name="Compare axis" sid="726351758654260" type="Gamepad">
+                            <param id="0" name="Gamepad">0</param>
+                            <param id="1" name="Axis">2</param>
+                            <param id="2" name="Comparison">2</param>
+                            <param id="3" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                </event-block>
+                <event-block sid="364906092276566">
+                    <conditions>
+                        <condition id="5" name="Compare axis" sid="317652231107548" type="Gamepad">
+                            <param id="0" name="Gamepad">0</param>
+                            <param id="1" name="Axis">3</param>
+                            <param id="2" name="Comparison">4</param>
+                            <param id="3" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                </event-block>
+                <event-block sid="790702095552490">
+                    <conditions>
+                        <condition id="5" name="Compare axis" sid="614486006950118" type="Gamepad">
+                            <param id="0" name="Gamepad">0</param>
+                            <param id="1" name="Axis">3</param>
+                            <param id="2" name="Comparison">2</param>
+                            <param id="3" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                </event-block>
+                <event-block sid="843571729420756">
+                    <conditions>
+                        <condition id="5" name="Compare axis" sid="331681094466081" type="Gamepad">
+                            <param id="0" name="Gamepad">0</param>
+                            <param id="1" name="Axis">2</param>
+                            <param id="2" name="Comparison">0</param>
+                            <param id="3" name="Value">0</param>
+                        </condition>
+                        <condition id="5" name="Compare axis" sid="719418872353370" type="Gamepad">
+                            <param id="0" name="Gamepad">0</param>
+                            <param id="1" name="Axis">3</param>
+                            <param id="2" name="Comparison">0</param>
+                            <param id="3" name="Value">0</param>
+                        </condition>
+                        <condition id="-1" name="Every tick" sid="453100688157789" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="-16" name="Set opacity" sid="184516624148164" type="HUD_ItemWheel">
+                            <param id="0" name="Opacity">lerp(self.Opacity, 0, 0.66)</param>
+                        </action>
+                        <action id="-16" name="Set opacity" sid="342884085810329" type="HUD_ItemWheelPetal">
+                            <param id="0" name="Opacity">lerp(self.Opacity, 0, 0.66)</param>
+                        </action>
+                        <action id="9" name="Set scale" sid="539480499562116" type="HUD_ItemWheel">
+                            <param id="0" name="Scale">self.scale*0.25</param>
+                        </action>
+                        <action id="9" name="Set scale" sid="958820002216316" type="HUD_ItemWheelPetal">
+                            <param id="0" name="Scale">self.scale*1.25</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="252808981996141">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="423872600625991" type="HUD_ItemWheel">
+                                    <param id="0" name="Animation">&quot;Default&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="102032772539370" type="HUD_ItemWheel">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Value">lerp(self.scale, 0, 0.1)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="575160106288712">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="226609752337762" type="HUD_ItemWheel">
+                                    <param id="0" name="Animation">&quot;Circle1&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="296572728720267" type="HUD_ItemWheelPetal">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Value">lerp(Self.scale, 0, 0.25)</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="760229224220993" type="HUD_ItemWheel">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Value">lerp(Self.scale, 0, 0.25)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="809465165685614">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="251003962843412" type="HUD_ItemWheel">
+                                    <param id="0" name="Animation">&quot;Circle2&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="332152741615289" type="HUD_ItemWheel">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Value">lerp(Self.scale, 0, 0.33)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="868001822423419">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="444585760719662" type="HUD_ItemWheel">
+                                    <param id="0" name="Animation">&quot;Circle3&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="576565634126037" type="HUD_ItemWheel">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Value">lerp(Self.scale, 0, 0.5)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="442553174582695">
+                    <conditions>
+                        <condition id="5" name="Compare axis" sid="669961468872598" type="Gamepad">
+                            <param id="0" name="Gamepad">0</param>
+                            <param id="1" name="Axis">2</param>
+                            <param id="2" name="Comparison">1</param>
+                            <param id="3" name="Value">0</param>
+                        </condition>
+                        <condition id="5" name="Compare axis" sid="106291255805385" type="Gamepad">
+                            <param id="0" name="Gamepad">0</param>
+                            <param id="1" name="Axis">3</param>
+                            <param id="2" name="Comparison">1</param>
+                            <param id="3" name="Value">0</param>
+                        </condition>
+                        <condition id="-1" name="Every tick" sid="646891176130754" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="-16" name="Set opacity" sid="302754258472506" type="HUD_ItemWheel">
+                            <param id="0" name="Opacity">lerp(self.Opacity, 100, 0.66)</param>
+                        </action>
+                        <action id="-16" name="Set opacity" sid="594872914917308" type="HUD_ItemWheelPetal">
+                            <param id="0" name="Opacity">lerp(self.Opacity, 100, 0.66)</param>
+                        </action>
+                        <action id="9" name="Set scale" sid="612964021921087" type="HUD_ItemWheel">
+                            <param id="0" name="Scale">self.scale*0.25</param>
+                        </action>
+                        <action id="-10" name="Set value" sid="836144797446808" type="HUD_ItemWheelPetal">
+                            <param id="0" name="Instance variable">scale</param>
+                            <param id="1" name="Value">lerp(Self.scale, 1, 0.25)</param>
+                        </action>
+                        <action id="9" name="Set scale" sid="571970077181253" type="HUD_ItemWheelPetal">
+                            <param id="0" name="Scale">self.scale*1.15</param>
+                        </action>
+                        <action id="-21" name="Rotate toward position" sid="651684677379088" type="HUD_ItemWheelPetal">
+                            <param id="0" name="Degrees">dt*3600</param>
+                            <param id="1" name="X">self.X+Gamepad.Axis(0,2)</param>
+                            <param id="2" name="Y">self.Y+Gamepad.Axis(0,3)</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="666536039809593">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="728126612792322" type="HUD_ItemWheel">
+                                    <param id="0" name="Animation">&quot;Default&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="825574314779319" type="HUD_ItemWheel">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Value">lerp(self.scale, 1, 0.1)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="928734672102094">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="585586203162922" type="HUD_ItemWheel">
+                                    <param id="0" name="Animation">&quot;Circle1&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="300461308606451" type="HUD_ItemWheel">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Value">lerp(Self.scale, 1, 0.25)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="110103454991167">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="300734831871297" type="HUD_ItemWheel">
+                                    <param id="0" name="Animation">&quot;Circle2&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="463109943997469" type="HUD_ItemWheel">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Value">lerp(self.scale, 1, 0.33)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="318720443105663">
+                            <conditions>
+                                <condition id="2" name="Is playing" sid="638469719616620" type="HUD_ItemWheel">
+                                    <param id="0" name="Animation">&quot;Circle3&quot;</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="517294523055197" type="HUD_ItemWheel">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Value">lerp(Self.scale, 1, 0.5)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-group>
+    </events>
+</c2eventsheet>

@@ -1,8 +1,9 @@
 extends Node2D
 
 @export var enabled: bool = true
-@export var snap_size: float = 8.0
+@export var snap_size: float = 64.0
 @export var tile_color: Color = Color(0.6, 0.6, 0.6, 0.3)
+const PIXELS_PER_METER := 64.0
 
 var editor_camera: Camera2D
 var _tiles: Dictionary = {}
@@ -54,7 +55,7 @@ func _draw() -> void:
 
 
 func _prebuild_tiles() -> void:
-	var sizes = [4, 8, 16, 32, 64]
+	var sizes = [4, 8, 16, 32, 64, PIXELS_PER_METER]
 	for s in sizes:
 		var img := Image.create(s, s, false, Image.FORMAT_RGBA8)
 		img.fill(Color(0, 0, 0, 0))
@@ -64,7 +65,7 @@ func _prebuild_tiles() -> void:
 
 
 func _get_tile_for_snap(value: float) -> Texture2D:
-	var sizes = [4, 8, 16, 32, 64]
+	var sizes = [4, 8, 16, 32, 64, PIXELS_PER_METER]
 	var nearest: int = sizes[0]
 	for s in sizes:
 		if absf(value - s) < absf(value - nearest):

@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>SKY</name>
+    <events>
+        <include>WEATHER</include>
+        <variable constant="0" name="farParallaxBrightness" sid="519184139164333" static="0" type="number">50</variable>
+        <variable constant="0" name="midParallaxBrightness" sid="509228080968450" static="0" type="number">50</variable>
+        <variable constant="0" name="skyB" sid="626831374463269" static="0" type="number">0</variable>
+        <variable constant="0" name="skyG" sid="739949361120412" static="0" type="number">0</variable>
+        <variable constant="0" name="skyR" sid="841806808138094" static="0" type="number">0</variable>
+        <variable constant="0" name="earlierTime" sid="718314770707125" static="0" type="number">0</variable>
+        <variable constant="0" name="laterTime" sid="660321668002928" static="0" type="number">1</variable>
+        <event-block sid="573436927601548">
+            <conditions>
+                <condition id="-6" name="Every X seconds" sid="855381402500084" type="System">
+                    <param id="0" name="Interval (seconds)">5</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="0" name="Set spraying" sid="976076542659928" type="SKY_Clouds">
+                    <param id="0" name="State">1</param>
+                </action>
+                <action id="-16" name="Wait" sid="257403430118156" type="System">
+                    <param id="0" name="Seconds">1</param>
+                </action>
+                <action id="0" name="Set spraying" sid="309704445034408" type="SKY_Clouds">
+                    <param id="0" name="State">0</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="939338932547169">
+            <conditions>
+                <condition id="-2" name="On start of layout" sid="697325425405672" type="System" />
+            </conditions>
+            <actions>
+                <action id="-16" name="Wait" sid="761502050621949" type="System">
+                    <param id="0" name="Seconds">1</param>
+                </action>
+                <action id="0" name="Set spraying" sid="191495675758248" type="SKY_Clouds">
+                    <param id="0" name="State">0</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block disabled="1" sid="314896427474131">
+            <conditions>
+                <condition id="-1" name="Every tick" sid="727346776120657" type="System" />
+            </conditions>
+            <actions>
+                <action id="-34" name="Set layer background color" sid="921812461522718" type="System">
+                    <param id="0" name="Layer">&quot;SKY&quot;</param>
+                    <param id="1" name="Color">rgb(secondsToColor+22, secondsToColor+48, secondsToColor+96)</param>
+                </action>
+                <action id="-34" name="Set layer background color" sid="299614285172874" type="System">
+                    <param id="0" name="Layer">&quot;GLOBAL_LIGHTING&quot;</param>
+                    <param id="1" name="Color">rgb(max(secondsToColor*2,128), max(secondsToColor*2, 128), max(secondsToColor*2,96))</param>
+                </action>
+                <action id="-32" name="Set layer effect parameter" sid="572361085225286" type="System">
+                    <param id="0" name="Layer">&quot;Parallax Mid&quot;</param>
+                    <param id="1" name="Effect">&quot;Brightness&quot;</param>
+                    <param id="2" name="Parameter index">0</param>
+                    <param id="3" name="Value">max(50,(secondsToColor+secondsToColor+secondsToColor)/2.5)</param>
+                </action>
+                <action id="-32" name="Set layer effect parameter" sid="662755962924274" type="System">
+                    <param id="0" name="Layer">&quot;Parallax Far&quot;</param>
+                    <param id="1" name="Effect">&quot;Brightness&quot;</param>
+                    <param id="2" name="Parameter index">0</param>
+                    <param id="3" name="Value">max(50,(secondsToColor+secondsToColor+secondsToColor)/2.5)</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="522296671026747">
+            <conditions>
+                <condition id="-14" name="Compare variable" sid="722862119529571" type="System">
+                    <param id="0" name="Variable">totalSeconds</param>
+                    <param id="1" name="Comparison">4</param>
+                    <param id="2" name="Value">0</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-9" name="Set value" sid="307057325867912" type="System">
+                    <param id="0" name="Variable">skyR</param>
+                    <param id="1" name="Value">int(lerp(Sunny.At(1,clockSegment),Sunny.At(1,clockSegment+1),timeLerp))</param>
+                </action>
+                <action id="-9" name="Set value" sid="681788106300496" type="System">
+                    <param id="0" name="Variable">skyG</param>
+                    <param id="1" name="Value">int(lerp(Sunny.At(2,clockSegment),Sunny.At(2,clockSegment+1),timeLerp))</param>
+                </action>
+                <action id="-9" name="Set value" sid="635492887690469" type="System">
+                    <param id="0" name="Variable">skyB</param>
+                    <param id="1" name="Value">int(lerp(Sunny.At(3,clockSegment),Sunny.At(3,clockSegment+1),timeLerp))</param>
+                </action>
+                <action id="-9" name="Set value" sid="156916343107091" type="System">
+                    <param id="0" name="Variable">farParallaxBrightness</param>
+                    <param id="1" name="Value">lerp(Sunny.At(5,clockSegment),Sunny.At(5,clockSegment+1),timeLerp)</param>
+                </action>
+                <action id="-9" name="Set value" sid="990862847992813" type="System">
+                    <param id="0" name="Variable">midParallaxBrightness</param>
+                    <param id="1" name="Value">lerp(Sunny.At(6,clockSegment),Sunny.At(6,clockSegment+1),timeLerp)</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="737982086703380">
+            <conditions />
+            <actions>
+                <action id="22" name="Floodfill canvas with color" sid="985282636806233" type="Canvas">
+                    <param id="0" name="x">0</param>
+                    <param id="1" name="y">0</param>
+                    <param id="2" name="color">&quot;rgb(&quot; &amp; int(skyR) &amp; &quot;,&quot; &amp; int(skyG) &amp; &quot;,&quot; &amp; int(skyB) &amp; &quot;)&quot;</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="903195338320671">
+            <conditions>
+                <condition id="-8" name="Compare two values" sid="736534177552580" type="System">
+                    <param id="0" name="First value">timeLerp</param>
+                    <param id="1" name="Comparison">4</param>
+                    <param id="2" name="Second value">1</param>
+                </condition>
+                <condition id="-4" name="Trigger once while true" sid="529252427544687" type="System" />
+            </conditions>
+            <actions>
+                <action id="-10" name="Add to" sid="633633841425726" type="System">
+                    <param id="0" name="Variable">clockSegment</param>
+                    <param id="1" name="Value">1</param>
+                </action>
+                <action id="-9" name="Set value" sid="885947671468207" type="System">
+                    <param id="0" name="Variable">earlierTime</param>
+                    <param id="1" name="Value">Sunny.At(4,clockSegment)*3600</param>
+                </action>
+                <action id="-9" name="Set value" sid="121062689165847" type="System">
+                    <param id="0" name="Variable">laterTime</param>
+                    <param id="1" name="Value">Sunny.At(4,clockSegment+1)*3600</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="197166978867581">
+            <conditions>
+                <condition id="-8" name="Compare two values" sid="996460677543383" type="System">
+                    <param id="0" name="First value">clockSegment</param>
+                    <param id="1" name="Comparison">5</param>
+                    <param id="2" name="Second value">8</param>
+                </condition>
+                <condition id="-14" name="Compare variable" sid="218062111258790" type="System">
+                    <param id="0" name="Variable">totalSeconds</param>
+                    <param id="1" name="Comparison">2</param>
+                    <param id="2" name="Value">1000</param>
+                </condition>
+                <condition id="-4" name="Trigger once while true" sid="289109600455841" type="System" />
+            </conditions>
+            <actions>
+                <action id="-9" name="Set value" sid="565523338375972" type="System">
+                    <param id="0" name="Variable">clockSegment</param>
+                    <param id="1" name="Value">1</param>
+                </action>
+                <action id="-9" name="Set value" sid="323248507732673" type="System">
+                    <param id="0" name="Variable">earlierTime</param>
+                    <param id="1" name="Value">Sunny.At(4,1)*3600</param>
+                </action>
+                <action id="-9" name="Set value" sid="193633383299521" type="System">
+                    <param id="0" name="Variable">laterTime</param>
+                    <param id="1" name="Value">Sunny.At(4,2)*3600</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="395368175854023">
+            <conditions>
+                <condition id="-37" inverted="1" name="Is number NaN" sid="974808326493125" type="System">
+                    <param id="0" name="Number">skyR</param>
+                </condition>
+                <condition id="-37" inverted="1" name="Is number NaN" sid="716477049947472" type="System">
+                    <param id="0" name="Number">skyG</param>
+                </condition>
+                <condition id="-37" inverted="1" name="Is number NaN" sid="800667570884522" type="System">
+                    <param id="0" name="Number">skyB</param>
+                </condition>
+                <condition id="-14" inverted="1" name="Compare variable" sid="427852134577977" type="System">
+                    <param id="0" name="Variable">skyR</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">Infinity</param>
+                </condition>
+                <condition id="-14" inverted="1" name="Compare variable" sid="424796280707447" type="System">
+                    <param id="0" name="Variable">skyG</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">Infinity</param>
+                </condition>
+                <condition id="-14" inverted="1" name="Compare variable" sid="561808961193702" type="System">
+                    <param id="0" name="Variable">skyB</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">Infinity</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-34" name="Set layer background color" sid="112427239233137" type="System">
+                    <param id="0" name="Layer">&quot;SKY&quot;</param>
+                    <param id="1" name="Color">rgb(SkyR,SkyG,SkyB)</param>
+                </action>
+                <action id="-34" name="Set layer background color" sid="630696366321556" type="System">
+                    <param id="0" name="Layer">&quot;GLOBAL_LIGHTING&quot;</param>
+                    <param id="1" name="Color">rgb(max(skyR,100), max(skyG, 100), max(skyB,80))</param>
+                </action>
+                <action id="-32" name="Set layer effect parameter" sid="562070206549497" type="System">
+                    <param id="0" name="Layer">&quot;Parallax Mid&quot;</param>
+                    <param id="1" name="Effect">&quot;Brightness&quot;</param>
+                    <param id="2" name="Parameter index">0</param>
+                    <param id="3" name="Value">midParallaxBrightness</param>
+                </action>
+                <action id="-32" name="Set layer effect parameter" sid="629289204935971" type="System">
+                    <param id="0" name="Layer">&quot;Parallax Far&quot;</param>
+                    <param id="1" name="Effect">&quot;Brightness&quot;</param>
+                    <param id="2" name="Parameter index">0</param>
+                    <param id="3" name="Value">farParallaxBrightness</param>
+                </action>
+            </actions>
+            <sub-events>
+                <event-block disabled="1" sid="935163565940842">
+                    <conditions />
+                    <actions>
+                        <action id="-32" name="Set layer effect parameter" sid="955860607472715" type="System">
+                            <param id="0" name="Layer">&quot;Parallax Mid&quot;</param>
+                            <param id="1" name="Effect">&quot;Brightness&quot;</param>
+                            <param id="2" name="Parameter index">0</param>
+                            <param id="3" name="Value">max(50,(skyR+skyG+skyB)/5)</param>
+                        </action>
+                        <action id="-32" name="Set layer effect parameter" sid="869064651071376" type="System">
+                            <param id="0" name="Layer">&quot;Parallax Far&quot;</param>
+                            <param id="1" name="Effect">&quot;Brightness&quot;</param>
+                            <param id="2" name="Parameter index">0</param>
+                            <param id="3" name="Value">max(50,(skyR+skyG+skyB)/5)</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="555984450921071">
+            <conditions>
+                <condition id="-6" name="Every X seconds" sid="741587446897397" type="System">
+                    <param id="0" name="Interval (seconds)">random(10)+5+random(5)</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-10" name="Set value" sid="406092478410010" type="PARALLAX_Waterfall_Clouds">
+                    <param id="0" name="Instance variable">scroll</param>
+                    <param id="1" name="Value">lerp(Self.scroll, random(-4,4), dt)</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="549965812106727">
+            <conditions>
+                <condition id="-7" name="Compare instance variable" sid="333884674677471" type="PARALLAX_Waterfall_Clouds">
+                    <param id="0" name="Instance variable">scroll</param>
+                    <param id="1" name="Comparison">1</param>
+                    <param id="2" name="Value">0</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-1" name="Set X" sid="997176229591177" type="PARALLAX_Waterfall_Clouds">
+                    <param id="0" name="X">self.X+self.scroll</param>
+                </action>
+            </actions>
+        </event-block>
+        <comment>1 Day cycle = 3600 Seconds (Red Sine) Add daytime control</comment>
+        <event-block sid="197712702539824">
+            <conditions>
+                <condition id="-2" name="On start of layout" sid="463599717772303" type="System" />
+            </conditions>
+            <actions>
+                <action behavior="Red" id="5" name="Set cycle position" sid="265541775334893" type="HELPER_skycolorchanger">
+                    <param id="0" name="Cycle position">0.5</param>
+                </action>
+                <action behavior="Blue" id="5" name="Set cycle position" sid="521698419970323" type="HELPER_skycolorchanger">
+                    <param id="0" name="Cycle position">0.5</param>
+                </action>
+                <action behavior="Green" id="5" name="Set cycle position" sid="117133212140283" type="HELPER_skycolorchanger">
+                    <param id="0" name="Cycle position">0.5</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>

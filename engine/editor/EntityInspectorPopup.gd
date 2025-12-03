@@ -9,22 +9,24 @@ const MARGIN := 10.0
 @onready var _scale_x: LineEdit = $Tabs/Transform/RotScaleRow/ScaleX
 @onready var _scale_y: LineEdit = $Tabs/Transform/RotScaleRow/ScaleY
 
-@onready var _data_id: Label = $Tabs/Type/DataId
-@onready var _data_type: OptionButton = $Tabs/Type/TypeRow/DataType
-@onready var _open_data: Button = $Tabs/Type/OpenData
+@onready var _data_id: Label = $Tabs/Data/Type/DataId
+@onready var _data_type: OptionButton = $Tabs/Data/Type/TypeRow/DataType
+@onready var _open_data: Button = $Tabs/Data/Type/OpenData
 
-@onready var _inst_tags: LineEdit = $Tabs/Instance/TagsRow/Tags
-@onready var _inst_sprite: LineEdit = $Tabs/Instance/SpriteRow/SpriteOverride
-@onready var _inst_sprite_load: Button = $Tabs/Instance/SpriteRow/SpriteLoad
-@onready var _inst_collision_mask: LineEdit = $Tabs/Instance/CollisionRow/CollisionMask
-@onready var _inst_no_proj: CheckBox = $Tabs/Instance/NoProj
-@onready var _inst_layers_label: Label = $Tabs/Instance/LayerNames
-@onready var _inst_apply: Button = $Tabs/Instance/InstanceApply
+@onready var _inst_tags: LineEdit = $Tabs/Data/Instance/TagsRow/Tags
+@onready var _inst_sprite: LineEdit = $Tabs/Data/Instance/SpriteRow/SpriteOverride
+@onready var _inst_sprite_load: Button = $Tabs/Data/Instance/SpriteRow/SpriteLoad
+@onready var _inst_collision_mask: LineEdit = $Tabs/Data/Instance/CollisionRow/CollisionMask
+@onready var _inst_no_proj: CheckBox = $Tabs/Data/Instance/NoProj
+@onready var _inst_layers_label: Label = $Tabs/Data/Instance/LayerNames
+@onready var _inst_apply: Button = $Tabs/Data/Instance/InstanceApply
 @onready var _transform_timer: Timer = $TransformTimer
+@onready var _data_info: RichTextLabel = $Tabs/Data/DataInfo
 
 var _current_node: Node = null
 
 func _ready() -> void:
+	_ensure_data_tab()
 	if _data_type:
 		_data_type.item_selected.connect(_on_type_selected)
 	if _transform_timer:
@@ -164,6 +166,8 @@ func _populate(node: Node) -> void:
 		_inst_no_proj.button_pressed = bool(node.get_meta("instance_no_projectile", false))
 	if _inst_layers_label:
 		_inst_layers_label.text = _format_layer_names()
+	if _data_info:
+		_data_info.text = _build_data_debug_text(node, data_id, data_cat, data_res)
 
 
 func _get_screen_position(node: Node, viewport_rect: Rect2) -> Vector2:
@@ -333,6 +337,57 @@ func _read_meta(node: Node, key: String, default_val: Variant) -> String:
 		var v = node.get_meta(key)
 		return str(v)
 	return str(default_val)
+
+
+func _ensure_data_tab() -> void:
+	if _tabs == null:
+		return
+	var tab := _tabs.get_node_or_null("Data")
+	if tab == null:
+		tab = VBoxContainer.new()
+		tab.name = "Data"
+		_tabs.add_child(tab)
+		_tabs.set_tab_title(_tabs.get_tab_count() - 1, "Data")
+	var lbl := _tabs.get_node_or_null("Data/DataInfo")
+	if lbl == null:
+		lbl = RichTextLabel.new()
+		lbl.name = "DataInfo"
+		lbl.bbcode_enabled = true
+		lbl.scroll_active = true
+		tab.add_child(lbl)
+	_data_info = lbl as RichTextLabel
+	if _data_info:
+		_data_info.text = ""
+
+
+func _build_data_debug_text(node: Node, data_id: String, data_cat: String, data_res: Resource) -> String:
+	var lines: Array[String] = []
+	lines.append("[b]Node:[/b] %s" % node.name)
+	lines.append("[b]Category:[/b] %s" % data_cat)
+	lines.append("[b]Data Id:[/b] %s" % data_id)
+	if data_res:
+		lines.append("[b]%s Fields[/b]" % data_cat)
+		for prop in data_res.get_property_list():
+			var n: String = prop.name
+			if n == "resource_name" or n == "resource_path":
+				continue
+			var v = data_res.get(n)
+			lines.append("  %s: %s" % [n, str(v)])
+	if data_cat == "Actor" and data_res and "movement_id" in data_res:
+		var mv_id: String = data_res.movement_id
+		lines.append("[b]Movement Id:[/b] %s" % mv_id)
+		var reg = _get_registry()
+		if reg and mv_id != "" and reg.has_method("get_resource_for_category"):
+			var mv_res = reg.get_resource_for_category("Movement", mv_id)
+			if mv_res:
+				lines.append("[b]Movement Fields[/b]")
+				for prop in mv_res.get_property_list():
+					var n2: String = prop.name
+					if n2 == "resource_name" or n2 == "resource_path":
+						continue
+					var v2 = mv_res.get(n2)
+					lines.append("  %s: %s" % [n2, str(v2)])
+	return "\n".join(lines)
 
 
 func _apply_overrides() -> void:

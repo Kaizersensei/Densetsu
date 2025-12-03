@@ -1,0 +1,1107 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>MENU</name>
+    <events>
+        <variable constant="0" name="MenuOption" sid="222805308012405" static="0" type="number">0</variable>
+        <variable constant="0" name="MenuPage" sid="562263319287421" static="0" type="number">0</variable>
+        <variable constant="0" name="CanUseMenu" sid="790859374462508" static="0" type="number">1</variable>
+        <variable constant="0" name="currentMainPosition" sid="205867777648066" static="0" type="number">0</variable>
+        <event-group description="" sid="716834399158061" title="Display Details">
+            <sub-events>
+                <comment>Fix C2&apos;s lazy font loading</comment>
+                <event-block sid="699478377616387">
+                    <conditions />
+                    <actions>
+                        <action id="5" name="Set web font" sid="870415201674468" type="TextMenu">
+                            <param id="0" name="Family name">&quot;caveat&quot;</param>
+                            <param id="1" name="CSS URL">&quot;stylesheet.css&quot;</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <comment>Set up font sizes and arrays</comment>
+                <event-block sid="173504094449630">
+                    <conditions>
+                        <condition id="-2" name="On start of layout" sid="641427144299733" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="3" name="Set font size" sid="333608857350535" type="TEXT_MenuHuge">
+                            <param id="0" name="Size (pt)">56</param>
+                        </action>
+                        <action id="3" name="Set font size" sid="522590966208349" type="TEXT_MenuBig">
+                            <param id="0" name="Size (pt)">36</param>
+                        </action>
+                        <action id="3" name="Set font size" sid="501619969298604" type="TEXT_MenuMediumNames">
+                            <param id="0" name="Size (pt)">30</param>
+                        </action>
+                        <action id="3" name="Set font size" sid="549015532796212" type="TEXT_MenuMedium">
+                            <param id="0" name="Size (pt)">24</param>
+                        </action>
+                        <action id="3" name="Set font size" sid="893331684480402" type="TEXT_MenuSmall">
+                            <param id="0" name="Size (pt)">18</param>
+                        </action>
+                        <action id="2" name="Set at X" sid="482316489363131" type="Monthnames">
+                            <param id="0" name="X">0</param>
+                            <param id="1" name="Value">&quot;Janure&quot;</param>
+                        </action>
+                        <action id="2" name="Set at X" sid="530831846993854" type="Monthnames">
+                            <param id="0" name="X">1</param>
+                            <param id="1" name="Value">&quot;Febure&quot;</param>
+                        </action>
+                        <action id="2" name="Set at X" sid="928801061658000" type="Monthnames">
+                            <param id="0" name="X">2</param>
+                            <param id="1" name="Value">&quot;Masu&quot;</param>
+                        </action>
+                        <action id="2" name="Set at X" sid="609099903429798" type="Monthnames">
+                            <param id="0" name="X">3</param>
+                            <param id="1" name="Value">&quot;Apuri&quot;</param>
+                        </action>
+                        <action id="2" name="Set at X" sid="425575946744986" type="Monthnames">
+                            <param id="0" name="X">4</param>
+                            <param id="1" name="Value">&quot;Mai&quot;</param>
+                        </action>
+                        <action id="2" name="Set at X" sid="946873103165155" type="Monthnames">
+                            <param id="0" name="X">5</param>
+                            <param id="1" name="Value">&quot;Junin&quot;</param>
+                        </action>
+                        <action id="2" name="Set at X" sid="893330070385150" type="Monthnames">
+                            <param id="0" name="X">6</param>
+                            <param id="1" name="Value">&quot;Jurin&quot;</param>
+                        </action>
+                        <action id="2" name="Set at X" sid="392853525897015" type="Monthnames">
+                            <param id="0" name="X">7</param>
+                            <param id="1" name="Value">&quot;Augutsu&quot;</param>
+                        </action>
+                        <action id="2" name="Set at X" sid="963242335903708" type="Monthnames">
+                            <param id="0" name="X">8</param>
+                            <param id="1" name="Value">&quot;Sotenbo&quot;</param>
+                        </action>
+                        <action id="2" name="Set at X" sid="905783513119254" type="Monthnames">
+                            <param id="0" name="X">9</param>
+                            <param id="1" name="Value">&quot;Okutoba&quot;</param>
+                        </action>
+                        <action id="2" name="Set at X" sid="864645413110061" type="Monthnames">
+                            <param id="0" name="X">10</param>
+                            <param id="1" name="Value">&quot;Nofenba&quot;</param>
+                        </action>
+                        <action id="2" name="Set at X" sid="379831867887396" type="Monthnames">
+                            <param id="0" name="X">11</param>
+                            <param id="1" name="Value">&quot;Dezemba&quot;</param>
+                        </action>
+                        <action id="-6" name="Set height" sid="682518081350235" type="UI_ScrollBig">
+                            <param id="0" name="Height">32</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="155984325602981">
+                            <conditions>
+                                <condition id="-11" name="For Each" sid="768127638881156" type="System">
+                                    <param id="0" name="Object">TextMenu</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block any="1" sid="404964020705585">
+                                    <conditions>
+                                        <condition id="-7" name="Compare instance variable" sid="870491413438052" type="TextMenu">
+                                            <param id="0" name="Instance variable">tag</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">&quot;Objective_Title&quot;</param>
+                                        </condition>
+                                        <condition id="-7" name="Compare instance variable" sid="388287908144291" type="TextMenu">
+                                            <param id="0" name="Instance variable">tag</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">&quot;Objective&quot;</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions />
+                                    <sub-events>
+                                        <event-block sid="660732317179176">
+                                            <conditions>
+                                                <condition id="-7" name="Compare instance variable" sid="870941015817926" type="UI_ScrollBig">
+                                                    <param id="0" name="Instance variable">Section</param>
+                                                    <param id="1" name="Comparison">0</param>
+                                                    <param id="2" name="Value">1</param>
+                                                </condition>
+                                                <condition id="-15" name="Pick nearest/furthest" sid="790782669428132" type="UI_ScrollBig">
+                                                    <param id="0" name="Which">0</param>
+                                                    <param id="1" name="X">TextMenu.X</param>
+                                                    <param id="2" name="Y">TextMenu.Y</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action behavior="Pin" id="0" name="Pin to object" sid="822624753658792" type="TextMenu">
+                                                    <param id="0" name="Pin to">UI_ScrollBig</param>
+                                                    <param id="1" name="Mode">1</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                                <event-block sid="251321424449604">
+                                    <conditions>
+                                        <condition id="-7" name="Compare instance variable" sid="158818092284683" type="TextMenu">
+                                            <param id="0" name="Instance variable">tag</param>
+                                            <param id="1" name="Comparison">1</param>
+                                            <param id="2" name="Value">&quot;Objective_Title&quot;</param>
+                                        </condition>
+                                        <condition id="-7" name="Compare instance variable" sid="428318962359855" type="TextMenu">
+                                            <param id="0" name="Instance variable">tag</param>
+                                            <param id="1" name="Comparison">1</param>
+                                            <param id="2" name="Value">&quot;Objective&quot;</param>
+                                        </condition>
+                                        <condition id="-7" name="Compare instance variable" sid="829701182129553" type="UI_ScrollBig">
+                                            <param id="0" name="Instance variable">Section</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">0</param>
+                                        </condition>
+                                        <condition id="-15" name="Pick nearest/furthest" sid="967192248335126" type="UI_ScrollBig">
+                                            <param id="0" name="Which">0</param>
+                                            <param id="1" name="X">TextMenu.X</param>
+                                            <param id="2" name="Y">TextMenu.Y</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action behavior="Pin" id="0" name="Pin to object" sid="790429863272521" type="TextMenu">
+                                            <param id="0" name="Pin to">UI_ScrollBig</param>
+                                            <param id="1" name="Mode">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="731831187287584">
+                            <conditions>
+                                <condition id="-15" name="Pick nearest/furthest" sid="482240029555088" type="UI_ScrollBig">
+                                    <param id="0" name="Which">0</param>
+                                    <param id="1" name="X">UI_Daytime.X</param>
+                                    <param id="2" name="Y">UI_Daytime.Y</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action behavior="Pin" id="0" name="Pin to object" sid="805834453140104" type="UI_Daytime">
+                                    <param id="0" name="Pin to">UI_ScrollBig</param>
+                                    <param id="1" name="Mode">1</param>
+                                </action>
+                                <action behavior="Pin" id="0" name="Pin to object" sid="233975864961819" type="UI_Weather">
+                                    <param id="0" name="Pin to">UI_ScrollBig</param>
+                                    <param id="1" name="Mode">1</param>
+                                </action>
+                                <action behavior="Pin" id="0" name="Pin to object" sid="734926984749230" type="UI_Location_Pin">
+                                    <param id="0" name="Pin to">UI_ScrollBig</param>
+                                    <param id="1" name="Mode">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="614841698456386">
+                            <conditions>
+                                <condition id="-15" name="Pick nearest/furthest" sid="211258182330442" type="UI_ScrollBig">
+                                    <param id="0" name="Which">0</param>
+                                    <param id="1" name="X">HUD_Portraits.X</param>
+                                    <param id="2" name="Y">HUD_Portraits.Y</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action behavior="Pin" id="0" name="Pin to object" sid="286488258429120" type="HUD_Portraits">
+                                    <param id="0" name="Pin to">UI_ScrollBig</param>
+                                    <param id="1" name="Mode">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block disabled="1" sid="379409945959608">
+                            <conditions>
+                                <condition id="-15" name="Pick nearest/furthest" sid="634359187011627" type="UI_ScrollBig">
+                                    <param id="0" name="Which">0</param>
+                                    <param id="1" name="X">HUD_Portraits.X</param>
+                                    <param id="2" name="Y">HUD_Portraits.Y</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action behavior="Pin" id="0" name="Pin to object" sid="713637652006095" type="MENUBG_wood_lightthin">
+                                    <param id="0" name="Pin to">UI_ScrollBig</param>
+                                    <param id="1" name="Mode">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="173381283411600">
+                            <conditions>
+                                <condition id="-15" name="Pick nearest/furthest" sid="534159834780019" type="UI_PauseBlock">
+                                    <param id="0" name="Which">0</param>
+                                    <param id="1" name="X">TEXT_MenuHuge.X</param>
+                                    <param id="2" name="Y">TEXT_MenuHuge.Y</param>
+                                </condition>
+                                <condition id="-4" name="Trigger once while true" sid="197741262919429" type="System" />
+                            </conditions>
+                            <actions>
+                                <action behavior="Pin" id="0" name="Pin to object" sid="931370134043823" type="TEXT_MenuHuge">
+                                    <param id="0" name="Pin to">UI_PauseBlock</param>
+                                    <param id="1" name="Mode">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="277397677276884">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="976935488824870" type="TextMenu">
+                            <param id="0" name="Instance variable">tag</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">&quot;Day&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set text" sid="217804630535180" type="TextMenu">
+                            <param id="0" name="Text">&quot;&quot; &amp;day</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="764496945858598">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="920002456712098" type="TextMenu">
+                            <param id="0" name="Instance variable">tag</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">&quot;Year&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set text" sid="702880588024887" type="TextMenu">
+                            <param id="0" name="Text">&quot;&quot; &amp;year</param>
+                        </action>
+                        <action id="3" name="Set font size" sid="402679161738567" type="TextMenu">
+                            <param id="0" name="Size (pt)">14</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="398922820861396">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="147026830236586" type="TextMenu">
+                            <param id="0" name="Instance variable">tag</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">&quot;Month&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set text" sid="285834748977956" type="TextMenu">
+                            <param id="0" name="Text">Monthnames.At(month-1)</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="266048003520351">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="159189297591960" type="TextMenu">
+                            <param id="0" name="Instance variable">tag</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">&quot;Era&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="3" name="Set font size" sid="137695982939142" type="TextMenu">
+                            <param id="0" name="Size (pt)">14</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="156457771841201">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="592081310617213" type="TextMenu">
+                            <param id="0" name="Instance variable">tag</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">&quot;Clock&quot;</param>
+                        </condition>
+                        <condition id="-14" name="Compare variable" sid="284760091018733" type="System">
+                            <param id="0" name="Variable">hour</param>
+                            <param id="1" name="Comparison">2</param>
+                            <param id="2" name="Value">10</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set text" sid="847050085811998" type="TextMenu">
+                            <param id="0" name="Text">&quot; &quot;&amp;hour</param>
+                        </action>
+                        <action id="3" name="Set font size" sid="163885692986899" type="TextMenu">
+                            <param id="0" name="Size (pt)">24</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="324246932061025">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="633673934547104" type="TextMenu">
+                            <param id="0" name="Instance variable">tag</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">&quot;Clock&quot;</param>
+                        </condition>
+                        <condition id="-14" name="Compare variable" sid="794388223549575" type="System">
+                            <param id="0" name="Variable">hour</param>
+                            <param id="1" name="Comparison">5</param>
+                            <param id="2" name="Value">10</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="0" name="Set text" sid="584582290925656" type="TextMenu">
+                            <param id="0" name="Text">&quot;&quot; &amp;hour</param>
+                        </action>
+                        <action id="3" name="Set font size" sid="141686031286070" type="TextMenu">
+                            <param id="0" name="Size (pt)">24</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="931599030902324">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="204277704272899" type="TextMenu">
+                            <param id="0" name="Instance variable">tag</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">&quot;Clock&quot;</param>
+                        </condition>
+                        <condition id="-14" name="Compare variable" sid="967871045946852" type="System">
+                            <param id="0" name="Variable">minute</param>
+                            <param id="1" name="Comparison">2</param>
+                            <param id="2" name="Value">10</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="1" name="Append text" sid="320470257716649" type="TextMenu">
+                            <param id="0" name="Text">&quot;:0&quot;&amp;minute&amp; &quot;&quot;</param>
+                        </action>
+                        <action id="3" name="Set font size" sid="417107506658729" type="TextMenu">
+                            <param id="0" name="Size (pt)">24</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="379591956895939">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="244067987712900" type="TextMenu">
+                            <param id="0" name="Instance variable">tag</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">&quot;Clock&quot;</param>
+                        </condition>
+                        <condition id="-14" name="Compare variable" sid="260821347895377" type="System">
+                            <param id="0" name="Variable">minute</param>
+                            <param id="1" name="Comparison">5</param>
+                            <param id="2" name="Value">10</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="1" name="Append text" sid="322720760277079" type="TextMenu">
+                            <param id="0" name="Text">&quot;:&quot;&amp;minute&amp; &quot;&quot;</param>
+                        </action>
+                        <action id="3" name="Set font size" sid="400251034345117" type="TextMenu">
+                            <param id="0" name="Size (pt)">24</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block disabled="1" sid="838696960830068">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="684151803732351" type="System">
+                            <param id="0" name="Variable">MenuPage</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">1</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block disabled="1" sid="404811764696193">
+                            <conditions>
+                                <condition id="-17" name="Compare opacity" sid="800009482296721" type="System">
+                                    <param id="0" name="Layer">&quot;MENU&quot;</param>
+                                    <param id="1" name="Comparison">1</param>
+                                    <param id="2" name="Opacity">100</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-18" name="Set layer opacity" sid="863109601811005" type="System">
+                                    <param id="0" name="Layer">&quot;MENU&quot;</param>
+                                    <param id="1" name="Opacity">100</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block disabled="1" sid="107822513762068">
+                                    <conditions>
+                                        <condition id="-17" name="Compare opacity" sid="124009689695053" type="System">
+                                            <param id="0" name="Layer">&quot;MENU&quot;</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Opacity">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions />
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-group description="" sid="100487832709631" title="Menu Input Handling">
+            <sub-events>
+                <variable constant="1" name="MAIN_POSITION_X" sid="591735648227649" static="0" type="number">48</variable>
+                <comment>main menu positions</comment>
+                <variable constant="1" name="MAIN_POSITION_Y_00" sid="295675801703412" static="1" type="number">528</variable>
+                <variable constant="1" name="MAIN_POSITION_01_Y" sid="464643081614407" static="1" type="number">580</variable>
+                <variable constant="1" name="MAIN_POSITION_02_Y" sid="866355262618553" static="1" type="number">634</variable>
+                <variable constant="1" name="MAIN_POSITION_03_Y" sid="865192383938512" static="1" type="number">687</variable>
+                <variable constant="1" name="MAIN_POSITION_04_Y" sid="576222386658272" static="1" type="number">744</variable>
+                <variable constant="1" name="MAIN_POSITION_05_Y" sid="441264139209232" static="1" type="number">800</variable>
+                <variable constant="1" name="SUB_DEFAULT_POSITION" sid="193186951805662" static="1" type="number">-32</variable>
+                <comment>quit menu positions</comment>
+                <variable constant="1" name="SUB_QUIT_POSITION_X" sid="993577818999788" static="1" type="number">1144</variable>
+                <variable constant="1" name="SUB_QUIT_POSITION_Y_00" sid="513244229682311" static="1" type="number">276</variable>
+                <variable constant="1" name="SUB_QUIT_POSITION_Y_01" sid="839390449476820" static="1" type="number">332</variable>
+                <variable constant="1" name="SUB_QUIT_POSITION_Y_02" sid="375866615960490" static="1" type="number">388</variable>
+                <variable constant="1" name="SUB_QUIT_POSITION_Y_03" sid="895075696513264" static="1" type="number">444</variable>
+                <variable constant="0" name="mainMenuActive" sid="723345651437341" static="0" type="number">1</variable>
+                <event-block sid="357287061982888">
+                    <conditions>
+                        <condition id="-2" name="On start of layout" sid="916608538929139" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="-3" name="Set position" sid="759100297193439" type="UI_MenuCursor2">
+                            <param id="0" name="X">SUB_DEFAULT_POSITION</param>
+                            <param id="1" name="Y">SUB_DEFAULT_POSITION</param>
+                        </action>
+                        <action disabled="1" id="-4" name="Set layer visible" sid="669155908960176" type="System">
+                            <param id="0" name="Layer">&quot;QuitOptions&quot;</param>
+                            <param id="1" name="Visibility">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="933878354730322">
+                    <conditions>
+                        <condition id="5" name="On input pressed" sid="734418273179248" type="InputManager">
+                            <param id="0" name="Input">&quot;down&quot;</param>
+                            <param id="1" name="Seconds">0.25</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block sid="262499615719215">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="887784776123447" type="System">
+                                    <param id="0" name="Variable">currentMainPosition</param>
+                                    <param id="1" name="Comparison">2</param>
+                                    <param id="2" name="Value">5</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Add to" sid="801052252317738" type="System">
+                                    <param id="0" name="Variable">currentMainPosition</param>
+                                    <param id="1" name="Value">1</param>
+                                </action>
+                                <action id="14" name="Log" sid="771450094009829" type="Browser">
+                                    <param id="0" name="Type">0</param>
+                                    <param id="1" name="Message">currentMainPosition</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block sid="605554432511537">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="344740167816592" type="System">
+                                            <param id="0" name="Variable">currentMainPosition</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Set position" sid="634787530363235" type="UI_MenuCursor">
+                                            <param id="0" name="X">MAIN_POSITION_X</param>
+                                            <param id="1" name="Y">MAIN_POSITION_Y_00</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="887497572441785">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="113997953141470" type="System">
+                                            <param id="0" name="Variable">currentMainPosition</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">1</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Set position" sid="805845219625164" type="UI_MenuCursor">
+                                            <param id="0" name="X">MAIN_POSITION_X</param>
+                                            <param id="1" name="Y">MAIN_POSITION_01_Y</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="666231844647265">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="363434077638467" type="System">
+                                            <param id="0" name="Variable">currentMainPosition</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">2</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Set position" sid="350700027789133" type="UI_MenuCursor">
+                                            <param id="0" name="X">MAIN_POSITION_X</param>
+                                            <param id="1" name="Y">MAIN_POSITION_02_Y</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="179603232491751">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="470889038479127" type="System">
+                                            <param id="0" name="Variable">currentMainPosition</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">3</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Set position" sid="584976421622085" type="UI_MenuCursor">
+                                            <param id="0" name="X">MAIN_POSITION_X</param>
+                                            <param id="1" name="Y">MAIN_POSITION_03_Y</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="531718757483526">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="809735123602578" type="System">
+                                            <param id="0" name="Variable">currentMainPosition</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">4</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Set position" sid="368041242261188" type="UI_MenuCursor">
+                                            <param id="0" name="X">MAIN_POSITION_X</param>
+                                            <param id="1" name="Y">MAIN_POSITION_04_Y</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="335172373246303">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="232151643909511" type="System">
+                                            <param id="0" name="Variable">currentMainPosition</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">5</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Set position" sid="597760438637989" type="UI_MenuCursor">
+                                            <param id="0" name="X">MAIN_POSITION_X</param>
+                                            <param id="1" name="Y">MAIN_POSITION_05_Y</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="402255646436768">
+                            <conditions>
+                                <condition id="-22" name="Else" sid="149039126698288" type="System" />
+                            </conditions>
+                            <actions>
+                                <action id="-9" name="Set value" sid="893962913863745" type="System">
+                                    <param id="0" name="Variable">currentMainPosition</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-3" name="Set position" sid="251810724432200" type="UI_MenuCursor">
+                                    <param id="0" name="X">MAIN_POSITION_X</param>
+                                    <param id="1" name="Y">MAIN_POSITION_Y_00</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="766277796763659">
+                    <conditions>
+                        <condition id="5" name="On input pressed" sid="302690262413304" type="InputManager">
+                            <param id="0" name="Input">&quot;up&quot;</param>
+                            <param id="1" name="Seconds">0.25</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block sid="133977370813717">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="910777442781106" type="System">
+                                    <param id="0" name="Variable">currentMainPosition</param>
+                                    <param id="1" name="Comparison">4</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-11" name="Subtract from" sid="368896300800909" type="System">
+                                    <param id="0" name="Variable">currentMainPosition</param>
+                                    <param id="1" name="Value">1</param>
+                                </action>
+                                <action id="14" name="Log" sid="134013371733632" type="Browser">
+                                    <param id="0" name="Type">0</param>
+                                    <param id="1" name="Message">currentMainPosition</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block sid="215364671602672">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="738186109518291" type="System">
+                                            <param id="0" name="Variable">currentMainPosition</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Set position" sid="508216964211495" type="UI_MenuCursor">
+                                            <param id="0" name="X">MAIN_POSITION_X</param>
+                                            <param id="1" name="Y">MAIN_POSITION_Y_00</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="249626132900000">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="848717788229464" type="System">
+                                            <param id="0" name="Variable">currentMainPosition</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">1</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Set position" sid="895562957270036" type="UI_MenuCursor">
+                                            <param id="0" name="X">MAIN_POSITION_X</param>
+                                            <param id="1" name="Y">MAIN_POSITION_01_Y</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="754599914707250">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="769467739390265" type="System">
+                                            <param id="0" name="Variable">currentMainPosition</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">2</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Set position" sid="123119985152698" type="UI_MenuCursor">
+                                            <param id="0" name="X">MAIN_POSITION_X</param>
+                                            <param id="1" name="Y">MAIN_POSITION_02_Y</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="131293909226139">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="296769825525539" type="System">
+                                            <param id="0" name="Variable">currentMainPosition</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">3</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Set position" sid="633190556251811" type="UI_MenuCursor">
+                                            <param id="0" name="X">MAIN_POSITION_X</param>
+                                            <param id="1" name="Y">MAIN_POSITION_03_Y</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="668410735646825">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="210504155179275" type="System">
+                                            <param id="0" name="Variable">currentMainPosition</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">4</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Set position" sid="716430733011282" type="UI_MenuCursor">
+                                            <param id="0" name="X">MAIN_POSITION_X</param>
+                                            <param id="1" name="Y">MAIN_POSITION_04_Y</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="396452930006397">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="632120987829805" type="System">
+                                            <param id="0" name="Variable">currentMainPosition</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Value">5</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Set position" sid="286310015113377" type="UI_MenuCursor">
+                                            <param id="0" name="X">MAIN_POSITION_X</param>
+                                            <param id="1" name="Y">MAIN_POSITION_05_Y</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="349201071894923">
+                            <conditions>
+                                <condition id="-22" name="Else" sid="348390446615054" type="System" />
+                            </conditions>
+                            <actions>
+                                <action id="-9" name="Set value" sid="922954812672081" type="System">
+                                    <param id="0" name="Variable">currentMainPosition</param>
+                                    <param id="1" name="Value">5</param>
+                                </action>
+                                <action id="-3" name="Set position" sid="915101600415682" type="UI_MenuCursor">
+                                    <param id="0" name="X">MAIN_POSITION_X</param>
+                                    <param id="1" name="Y">MAIN_POSITION_05_Y</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <comment>Confirm</comment>
+                <event-block sid="702187001738400">
+                    <conditions>
+                        <condition id="1" name="On input down" sid="138306831390504" type="InputManager">
+                            <param id="0" name="Input">&quot;jump&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Set value" sid="766806843099073" type="System">
+                            <param id="0" name="Variable">mainMenuActive</param>
+                            <param id="1" name="Value">0</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <comment>Inventory Logic</comment>
+                        <event-block sid="645004019340301">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="594437278564341" type="System">
+                                    <param id="0" name="Variable">currentMainPosition</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                        </event-block>
+                        <comment>Subweapons Logic</comment>
+                        <event-block sid="252707137208527">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="615024257777728" type="System">
+                                    <param id="0" name="Variable">currentMainPosition</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">1</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                        </event-block>
+                        <comment>Full Status Logic</comment>
+                        <event-block sid="188680374607790">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="448805848271809" type="System">
+                                    <param id="0" name="Variable">currentMainPosition</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">2</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                        </event-block>
+                        <comment>Map Logic</comment>
+                        <event-block sid="502181595427498">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="288406775528993" type="System">
+                                    <param id="0" name="Variable">currentMainPosition</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">3</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                        </event-block>
+                        <comment>Options Logic</comment>
+                        <event-block sid="713047836355598">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="175442541305945" type="System">
+                                    <param id="0" name="Variable">currentMainPosition</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">4</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                        </event-block>
+                        <comment>Quit Logic</comment>
+                        <event-block sid="421944775936781">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="379602471228358" type="System">
+                                    <param id="0" name="Variable">currentMainPosition</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">5</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-4" name="Set layer visible" sid="491542732446761" type="System">
+                                    <param id="0" name="Layer">&quot;QuitOptions&quot;</param>
+                                    <param id="1" name="Visibility">1</param>
+                                </action>
+                                <action id="-26" name="Move to layer" sid="194986943902003" type="UI_MenuCursor2">
+                                    <param id="0" name="Layer">&quot;QuitOptions&quot;</param>
+                                </action>
+                                <action id="-24" name="Move to top" sid="325350183656666" type="UI_MenuCursor2" />
+                                <action id="-3" name="Set position" sid="394223082122238" type="UI_MenuCursor2">
+                                    <param id="0" name="X">SUB_QUIT_POSITION_X</param>
+                                    <param id="1" name="Y">SUB_QUIT_POSITION_Y_00</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <comment>New events to port</comment>
+        <event-block sid="327992386957614">
+            <conditions>
+                <condition id="-1" name="Every tick" sid="521683551204453" type="System" />
+                <condition id="-14" name="Compare variable" sid="710469026107755" type="System">
+                    <param id="0" name="Variable">Pause</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">1</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-18" name="Set layer opacity" sid="730018599680240" type="System">
+                    <param id="0" name="Layer">&quot;MENU&quot;</param>
+                    <param id="1" name="Opacity">lerp(LayerOpacity(&quot;MENU&quot;), 100, 0.25)</param>
+                </action>
+                <action id="-1" name="Set X" sid="242113223037400" type="UI_PauseBlock">
+                    <param id="0" name="X">lerp(self.X, 8, 0.33)</param>
+                </action>
+            </actions>
+            <sub-events>
+                <event-block sid="168344547887062">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="563883161745885" type="UI_ScrollBig">
+                            <param id="0" name="Instance variable">Section</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-1" name="Set X" sid="551666210888842" type="UI_ScrollBig">
+                            <param id="0" name="X">lerp(self.X, 8, 0.15)</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="562807808890895">
+                            <conditions />
+                            <actions />
+                        </event-block>
+                        <event-block sid="855500042557507">
+                            <conditions />
+                            <actions>
+                                <action disabled="1" id="-16" name="Wait" sid="434724547894799" type="System">
+                                    <param id="0" name="Seconds">0.5</param>
+                                </action>
+                                <action id="-6" name="Set height" sid="663921708987672" type="UI_ScrollBig">
+                                    <param id="0" name="Height">lerp(self.Height, Self.TargetSizeY, 0.2)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="192394299194074">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="982503047100842" type="UI_ScrollBig">
+                            <param id="0" name="Instance variable">Section</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">1</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-1" name="Set X" sid="700041234221665" type="UI_ScrollBig">
+                            <param id="0" name="X">lerp(self.X, 512, 0.33)</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="688611988681034">
+                            <conditions />
+                            <actions>
+                                <action id="-6" name="Set height" sid="200389484339944" type="UI_ScrollBig">
+                                    <param id="0" name="Height">lerp(self.Height, Self.TargetSizeY, 0.2)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="450316942189824">
+            <conditions>
+                <condition id="-14" name="Compare variable" sid="411493291671223" type="System">
+                    <param id="0" name="Variable">Pause</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">1</param>
+                </condition>
+                <condition id="-4" name="Trigger once while true" sid="336852654125483" type="System" />
+            </conditions>
+            <actions>
+                <action id="-16" name="Wait" sid="745107403172233" type="System">
+                    <param id="0" name="Seconds">0.1</param>
+                </action>
+                <action id="-13" name="Set time scale" sid="217774124142986" type="System">
+                    <param id="0" name="Time scale">0</param>
+                </action>
+                <action id="-13" name="Set boolean" sid="675940429039043" type="deprecated_ACTOR_Player_1">
+                    <param id="0" name="Instance variable">Enabled</param>
+                    <param id="1" name="Value">0</param>
+                </action>
+                <action disabled="1" id="6" name="Set speed" sid="255194924070374" type="ACTORS">
+                    <param id="0" name="Speed">0</param>
+                </action>
+                <action disabled="1" id="-4" name="Set layer visible" sid="997490859016345" type="System">
+                    <param id="0" name="Layer">&quot;MENU&quot;</param>
+                    <param id="1" name="Visibility">1</param>
+                </action>
+                <action id="-15" name="Set visible" sid="918285547826836" type="TextMenu">
+                    <param id="0" name="Visibility">1</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="783419930188149">
+            <conditions>
+                <condition id="-1" name="Every tick" sid="757505430285883" type="System" />
+                <condition id="-14" name="Compare variable" sid="803559124163269" type="System">
+                    <param id="0" name="Variable">Pause</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">0</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-1" name="Set X" sid="860536678492577" type="UI_PauseBlock">
+                    <param id="0" name="X">lerp(self.X, -256, 0.15)</param>
+                </action>
+                <action id="-13" name="Set time scale" sid="637013879480552" type="System">
+                    <param id="0" name="Time scale">lerp(timescale, 1.0, 0.25)</param>
+                </action>
+            </actions>
+            <sub-events>
+                <event-block sid="530067508551443">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="185150917879519" type="UI_ScrollBig">
+                            <param id="0" name="Instance variable">Section</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">1</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-1" name="Set X" sid="289541397269318" type="UI_ScrollBig">
+                            <param id="0" name="X">lerp(self.X, 4000, 0.33)</param>
+                        </action>
+                        <action id="-7" name="Set size" sid="833158833734476" type="UI_ScrollBig">
+                            <param id="0" name="Width">self.Width</param>
+                            <param id="1" name="Height">lerp(self.Height, 32, 0.2)</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="725572144301796">
+                    <conditions>
+                        <condition id="-7" name="Compare instance variable" sid="592959471278808" type="UI_ScrollBig">
+                            <param id="0" name="Instance variable">Section</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-1" name="Set X" sid="828184464961245" type="UI_ScrollBig">
+                            <param id="0" name="X">lerp(self.X, -256, 0.15)</param>
+                        </action>
+                        <action id="-7" name="Set size" sid="306236550209684" type="UI_ScrollBig">
+                            <param id="0" name="Width">self.Width</param>
+                            <param id="1" name="Height">lerp(self.Height, 32, 0.2)</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="251725597790702">
+            <conditions>
+                <condition id="-14" name="Compare variable" sid="565243304610707" type="System">
+                    <param id="0" name="Variable">Pause</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">0</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action disabled="1" id="6" name="Set speed" sid="966854415999772" type="ACTORS">
+                    <param id="0" name="Speed">self.animFPS</param>
+                </action>
+                <action id="-13" name="Set boolean" sid="943001585651938" type="deprecated_ACTOR_Player_1">
+                    <param id="0" name="Instance variable">Enabled</param>
+                    <param id="1" name="Value">1</param>
+                </action>
+                <action disabled="1" id="-4" name="Set layer visible" sid="822365796858443" type="System">
+                    <param id="0" name="Layer">&quot;MENU&quot;</param>
+                    <param id="1" name="Visibility">0</param>
+                </action>
+                <action id="-15" name="Set visible" sid="763110241333220" type="TextMenu">
+                    <param id="0" name="Visibility">0</param>
+                </action>
+            </actions>
+            <sub-events>
+                <event-block sid="395945239198826">
+                    <conditions>
+                        <condition id="-17" name="Compare opacity" sid="134642606712057" type="System">
+                            <param id="0" name="Layer">&quot;MENU&quot;</param>
+                            <param id="1" name="Comparison">1</param>
+                            <param id="2" name="Opacity">0</param>
+                        </condition>
+                        <condition id="-1" name="Every tick" sid="744918417418081" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="-18" name="Set layer opacity" sid="805929116952636" type="System">
+                            <param id="0" name="Layer">&quot;MENU&quot;</param>
+                            <param id="1" name="Opacity">lerp(LayerOpacity(&quot;MENU&quot;), 0, 0.25)</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="795216197809508">
+            <conditions>
+                <condition id="-2" name="On start of layout" sid="490619178694793" type="System" />
+            </conditions>
+            <actions>
+                <action id="1" name="Set pause state" sid="478630014106034" type="Pause">
+                    <param id="0" name="State">1</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block disabled="1" sid="743231364399347">
+            <conditions>
+                <condition id="2" inverted="1" name="Is playing" sid="784572986340838" type="ACTORS">
+                    <param id="0" name="Animation">&quot;&quot;</param>
+                </condition>
+                <condition id="-8" name="Is boolean instance variable set" sid="475920954078287" type="ACTORS">
+                    <param id="0" name="Instance variable">ControlledByPlayer</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="6" name="Set speed" sid="474611229557726" type="ACTORS">
+                    <param id="0" name="Speed">self.animFPS</param>
+                </action>
+            </actions>
+        </event-block>
+        <comment>DEBUG</comment>
+        <event-block sid="702420346641017">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="678324339003258" type="Keyboard">
+                    <param id="0" name="Key">189</param>
+                </condition>
+                <condition id="-14" name="Compare variable" sid="934305839918689" type="System">
+                    <param id="0" name="Variable">month</param>
+                    <param id="1" name="Comparison">4</param>
+                    <param id="2" name="Value">0</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-11" name="Subtract from" sid="860855726675951" type="System">
+                    <param id="0" name="Variable">month</param>
+                    <param id="1" name="Value">1</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="700861252066913">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="489577817606149" type="Keyboard">
+                    <param id="0" name="Key">190</param>
+                </condition>
+                <condition id="-14" name="Compare variable" sid="811817058627084" type="System">
+                    <param id="0" name="Variable">month</param>
+                    <param id="1" name="Comparison">2</param>
+                    <param id="2" name="Value">12</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-10" name="Add to" sid="899529679831773" type="System">
+                    <param id="0" name="Variable">month</param>
+                    <param id="1" name="Value">1</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>

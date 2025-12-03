@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2uistate>
+    <!--This is a UI state file - its content describes the user interface settings when the project was last open.
+It is entirely optional and the project will load without it.  If you are placing the project under source control,
+you probably do not want to add any .uistate.xml files to the repository.-->
+    <configurations>
+        <active>
+            <configuration name="HTML5" />
+        </active>
+        <display name="HTML5" />
+    </configurations>
+    <open-tabs>
+        <layout order="0">Level Select (DEBUG)</layout>
+        <layout order="1">Template Platform</layout>
+        <layout order="2">OBJECT POOL</layout>
+        <layout order="3">Hirogawa</layout>
+        <layout order="4">Timebroken Forest</layout>
+        <layout order="5">Infinitree</layout>
+        <layout order="6">Waterfalls</layout>
+        <layout order="7">Daimyo</layout>
+        <layout active="1" order="8">Woods</layout>
+    </open-tabs>
+    <properties>
+        <property expanded="1" name="About" />
+        <property expanded="1" name="Project settings" />
+        <property expanded="0" name="Window Size" />
+        <property expanded="1" name="Configuration Settings" />
+    </properties>
+    <families-expanded root="1">
+        <family expanded="0" name="Shots" />
+        <family expanded="0" name="Explosions" />
+        <family expanded="0" name="M7_Scenery" />
+        <family expanded="0" name="FOLIAGE_Leaf" />
+        <family expanded="0" name="Trunks_Swing" />
+        <family expanded="0" name="Enemies" />
+        <family expanded="0" name="Hitboxes" />
+        <family expanded="0" name="Bitfonts" />
+        <family expanded="0" name="ACTORS" />
+        <family expanded="0" name="FxBG" />
+        <family expanded="0" name="CLOUDS" />
+        <family expanded="0" name="TextMenu" />
+        <family expanded="0" name="WeatherParticles" />
+        <family expanded="0" name="Solids" />
+        <family expanded="0" name="Players" />
+        <family expanded="0" name="Fx_Particle" />
+        <family expanded="0" name="Physics" />
+        <family expanded="0" name="9TEX_base" />
+        <family expanded="0" name="MultispriteBG" />
+        <family expanded="0" name="FOLIAGE_Tree" />
+        <family expanded="0" name="MULTISPRITE_base" />
+        <family expanded="0" name="FOLIAGE_Grass" />
+    </families-expanded>
+    <folders-expanded>
+        <folder expanded="1" path="object-folder/" />
+        <folder expanded="1" path="object-folder/Level Components/" />
+        <folder expanded="1" path="object-folder/Level Components/Building Blocks/" />
+        <folder expanded="0" path="object-folder/Level Components/Building Blocks/Hirogawa/" />
+        <folder expanded="0" path="object-folder/Level Components/Building Blocks/Hirogawa/Infinitree/" />
+        <folder expanded="0" path="object-folder/Level Components/Building Blocks/Hirogawa/Waterfalls/" />
+        <folder expanded="0" path="object-folder/Level Components/Building Blocks/Hirogawa/Woods/" />
+        <folder expanded="0" path="object-folder/Level Components/Building Blocks/Textures/" />
+        <folder expanded="0" path="object-folder/Level Components/Building Blocks/Galport/" />
+        <folder expanded="0" path="object-folder/Level Components/Collisions/" />
+        <folder expanded="1" path="object-folder/Level Components/Foliage/" />
+        <folder expanded="1" path="object-folder/Level Components/Foliage/Grass/" />
+        <folder expanded="1" path="object-folder/Level Components/Foliage/Branch/" />
+        <folder expanded="0" path="object-folder/Level Components/Parallax/" />
+        <folder expanded="1" path="object-folder/Level Components/Trees/" />
+        <folder expanded="0" path="object-folder/Level Components/BG/" />
+        <folder expanded="1" path="object-folder/World/" />
+        <folder expanded="0" path="object-folder/World/Weather/" />
+        <folder expanded="0" path="object-folder/World/Sky/" />
+        <folder expanded="1" path="object-folder/World/Water/" />
+        <folder expanded="0" path="object-folder/Actors/" />
+        <folder expanded="0" path="object-folder/Actors/Actor AI/" />
+        <folder expanded="0" path="object-folder/Actors/Actor Sprites/" />
+        <folder expanded="0" path="object-folder/Actors/Hitboxes/" />
+        <folder expanded="0" path="object-folder/UI Elements/" />
+        <folder expanded="0" path="object-folder/System/" />
+        <folder expanded="0" path="object-folder/Player/" />
+        <folder expanded="1" path="object-folder/Player/Mode7/" />
+        <folder expanded="0" path="object-folder/Player/Sidescroller/" />
+        <folder expanded="0" path="object-folder/Level Objects/" />
+        <folder expanded="0" path="object-folder/Level Objects/Mode7/" />
+        <folder expanded="1" path="object-folder/Level Objects/Sidescroller/" />
+        <folder expanded="1" path="object-folder/Effects/" />
+        <folder expanded="0" path="object-folder/Effects/Animated/" />
+        <folder expanded="0" path="object-folder/Effects/Particle/" />
+        <folder expanded="0" path="object-folder/Effects/Masks/" />
+        <folder expanded="0" path="object-folder/Level Layouts (One image)/" />
+        <folder expanded="0" path="object-folder/Subweapons/" />
+        <folder expanded="0" path="object-folder/Helper Objects &amp; Debug/" />
+        <folder expanded="1" path="layout-folder/" />
+        <folder expanded="0" path="layout-folder/!DEBUG/" />
+        <folder expanded="0" path="layout-folder/!GLOBAL/" />
+        <folder expanded="0" path="layout-folder/UI/" />
+        <folder expanded="1" path="layout-folder/Areas/" />
+        <folder expanded="1" path="layout-folder/Areas/Templates/" />
+        <folder expanded="1" path="layout-folder/Areas/Levels/" />
+        <folder expanded="0" path="layout-folder/Areas/Levels/Galport/" />
+        <folder expanded="1" path="layout-folder/Areas/Levels/Hirogawa/" />
+        <folder expanded="1" path="layout-folder/Areas/Levels/Eddara/" />
+        <folder expanded="1" path="layout-folder/SYSTEM/" />
+        <folder expanded="0" path="event-folder/" />
+        <folder expanded="0" path="event-folder/Enemies/" />
+        <folder expanded="1" path="event-folder/scraps/" />
+        <folder expanded="0" path="file-folder/" />
+        <folder expanded="0" path="sound-folder/" />
+        <folder expanded="1" path="music-folder/" />
+        <folder expanded="1" path="file-folder/Icons/" />
+        <folder expanded="1" path="file-folder/Fonts/" />
+        <folder expanded="1" path="file-folder/Arrays/" />
+        <folder expanded="1" path="sound-folder/System/" />
+        <folder expanded="1" path="sound-folder/Environment/" />
+        <folder expanded="1" path="sound-folder/Actors/" />
+        <folder expanded="1" path="sound-folder/Impacts/" />
+        <folder expanded="1" path="animation-folder/infinitree/" />
+        <folder expanded="1" path="animation-folder/infinitreeCliff/" />
+        <folder expanded="1" path="animation-folder/InfinitreeGate/" />
+        <folder expanded="1" path="animation-folder/infinitreeRootsAndBranches/" />
+        <folder expanded="1" path="animation-folder/infinitreeRootsAndBranches2/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_infinitreebranch/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_BG_waterfallcliff_flattop/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_BG_waterfallcliff_singletall_/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_BG_waterfallcliff_spike/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_waterfall_bigcliff/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_waterfall_caverock/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_waterfall_caverock2/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_waterfall_floorplates/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_waterfallrocks_flattop/" />
+        <folder expanded="1" path="animation-folder/waterfall_floors/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_waterfall_arches/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_woods_1/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_Hirogawa_Houses/" />
+        <folder expanded="1" path="animation-folder/Multisprite_Hirogawa_rocks/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_Hirogawa_terrains/" />
+        <folder expanded="1" path="animation-folder/BG_Hirogawa_Multisprite_trees/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_Hirogawa_grasspatch/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_Hirogawa_terraindetailed/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_Hirogawa_deco/" />
+        <folder expanded="1" path="animation-folder/FX_Hirogawa_potfire/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_Hirogawa_cliffrocks/" />
+        <folder expanded="1" path="animation-folder/PLACEHOLDER_hirogawa_farmhouse/" />
+        <folder expanded="1" path="animation-folder/PLACEHOLDER_hirogawa_farmhouse2/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_Hirogawa_grasspatch2/" />
+        <folder expanded="1" path="animation-folder/lighthouse/" />
+        <folder expanded="1" path="animation-folder/galport_BG/" />
+        <folder expanded="1" path="animation-folder/galport_FG/" />
+        <folder expanded="1" path="animation-folder/SCENERY_CaveParts/" />
+        <folder expanded="1" path="animation-folder/COLLISION_box/" />
+        <folder expanded="1" path="animation-folder/COLLISION_box_jt/" />
+        <folder expanded="1" path="animation-folder/COLLISION_Floating/" />
+        <folder expanded="1" path="animation-folder/FOLIAGE_grasses/" />
+        <folder expanded="1" path="animation-folder/FOLIAGE_multi/" />
+        <folder expanded="1" path="animation-folder/PARALLAX_cliffWaterfall/" />
+        <folder expanded="1" path="animation-folder/PARALLAX_Hirogawa_Mountain_BG/" />
+        <folder expanded="1" path="animation-folder/PARALLAX_hirogawaWaterfallBG/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_bigtrees/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_trees/" />
+        <folder expanded="1" path="animation-folder/BG_cave_tunnel/" />
+        <folder expanded="1" path="animation-folder/BG_hirogawa_dojo_fakeinside/" />
+        <folder expanded="1" path="animation-folder/WEATHER_DustCheck/" />
+        <folder expanded="1" path="animation-folder/HELPER_skycolorchanger/" />
+        <folder expanded="1" path="animation-folder/M7_mapSky/" />
+        <folder expanded="1" path="animation-folder/SKY_CloudLayer/" />
+        <folder expanded="1" path="animation-folder/skyMask/" />
+        <folder expanded="1" path="animation-folder/skyMask2/" />
+        <folder expanded="1" path="animation-folder/WATER_Surface/" />
+        <folder expanded="1" path="animation-folder/WATER_Surfacesimple/" />
+        <folder expanded="1" path="animation-folder/WATER_waterfallold/" />
+        <folder expanded="1" path="animation-folder/WATER_waterfallold2/" />
+        <folder expanded="1" path="animation-folder/WATER_Waterfall_bottomripple/" />
+        <folder expanded="1" path="animation-folder/WATER_waterfall_topcurve/" />
+        <folder expanded="1" path="animation-folder/WATER_waterfall_basicthin/" />
+        <folder expanded="1" path="animation-folder/WATER_seacrash/" />
+        <folder expanded="1" path="animation-folder/WATER_seasmooth/" />
+        <folder expanded="1" path="animation-folder/WATER_seawave/" />
+        <folder expanded="1" path="animation-folder/AI_LOSRay/" />
+        <folder expanded="1" path="animation-folder/AI_NavMark/" />
+        <folder expanded="1" path="animation-folder/ACTOR_Bigrat/" />
+        <folder expanded="1" path="animation-folder/ACTOR_CREATURE_RIDEABLE_BigRat/" />
+        <folder expanded="1" path="animation-folder/ACTOR_ENEMY_ACTIVE_GreenGrunt/" />
+        <folder expanded="1" path="animation-folder/ACTOR_ENEMY_PASSIVE_Training_Dummy/" />
+        <folder expanded="1" path="animation-folder/ACTOR_Michio/" />
+        <folder expanded="1" path="animation-folder/ACTOR_Michio/Michio/" />
+        <folder expanded="1" path="animation-folder/ACTOR_ENEMY_PASSIVE_Barrel_generic/" />
+        <folder expanded="1" path="animation-folder/HITBOX_BigRat/" />
+        <folder expanded="1" path="animation-folder/HITBOX_Enemy_generic/" />
+        <folder expanded="1" path="animation-folder/HITBOX_Player_blunt_heavy/" />
+        <folder expanded="1" path="animation-folder/HITBOX_Player_blunt_light/" />
+        <folder expanded="1" path="animation-folder/HITBOX_Player_blunt_medium/" />
+        <folder expanded="1" path="animation-folder/HITBOX_Player_generic/" />
+        <folder expanded="1" path="animation-folder/HITBOX_Player_sword_horizontal/" />
+        <folder expanded="1" path="animation-folder/HITBOX_Player_sword_vertical/" />
+        <folder expanded="1" path="animation-folder/PLAYER_SwordFX/" />
+        <folder expanded="1" path="animation-folder/M7_player_face/" />
+        <folder expanded="1" path="animation-folder/PLAYER_MotionShadow/" />
+        <folder expanded="1" path="animation-folder/ACTOR_Physics/" />
+        <folder expanded="1" path="animation-folder/BAR_Container/" />
+        <folder expanded="1" path="animation-folder/BAR_HP/" />
+        <folder expanded="1" path="animation-folder/BAR_HP2/" />
+        <folder expanded="1" path="animation-folder/BAR_Level/" />
+        <folder expanded="1" path="animation-folder/BG_TitleSlides/" />
+        <folder expanded="1" path="animation-folder/BG_clock_black/" />
+        <folder expanded="1" path="animation-folder/CameraFocus/" />
+        <folder expanded="1" path="animation-folder/CURSOR_Mouse/" />
+        <folder expanded="1" path="animation-folder/HELPER_ShotPath/" />
+        <folder expanded="1" path="animation-folder/HUD_crosshair/" />
+        <folder expanded="1" path="animation-folder/HUD_HPBar/" />
+        <folder expanded="1" path="animation-folder/HUD_ItemWheel/" />
+        <folder expanded="1" path="animation-folder/HUD_ItemWheelPetal/" />
+        <folder expanded="1" path="animation-folder/HUD_Dayphase_L/" />
+        <folder expanded="1" path="animation-folder/HUD_MPBar/" />
+        <folder expanded="1" path="animation-folder/HUD_PortraitBG/" />
+        <folder expanded="1" path="animation-folder/HUD_Portraits/" />
+        <folder expanded="1" path="animation-folder/HUD_Dayphase_R/" />
+        <folder expanded="1" path="animation-folder/HUD_ShotType/" />
+        <folder expanded="1" path="animation-folder/HudArea/" />
+        <folder expanded="1" path="animation-folder/LOGO_Retraissance/" />
+        <folder expanded="1" path="animation-folder/LOGO_Shuriken/" />
+        <folder expanded="1" path="animation-folder/LOGO_Sword/" />
+        <folder expanded="1" path="animation-folder/TITLE_Michio/" />
+        <folder expanded="1" path="animation-folder/TITLE_Text/" />
+        <folder expanded="1" path="animation-folder/UI_bar/" />
+        <folder expanded="1" path="animation-folder/UI_Daytime/" />
+        <folder expanded="1" path="animation-folder/UI_Gauge/" />
+        <folder expanded="1" path="animation-folder/UI_Line/" />
+        <folder expanded="1" path="animation-folder/UI_Location_Pin/" />
+        <folder expanded="1" path="animation-folder/UI_MenuCursor/" />
+        <folder expanded="1" path="animation-folder/UI_MenuCursor2/" />
+        <folder expanded="1" path="animation-folder/UI_PauseBlock/" />
+        <folder expanded="1" path="animation-folder/UI_stats_bg/" />
+        <folder expanded="1" path="animation-folder/UI_SubSlot/" />
+        <folder expanded="1" path="animation-folder/UI_Weather/" />
+        <folder expanded="1" path="animation-folder/M7_player/" />
+        <folder expanded="1" path="animation-folder/M7_backcam/" />
+        <folder expanded="1" path="animation-folder/ACTOR_Player_1234/" />
+        <folder expanded="1" path="animation-folder/HELPER_Ledge/" />
+        <folder expanded="1" path="animation-folder/HELPER_TunnelPusher/" />
+        <folder expanded="1" path="animation-folder/deprecated_ACTOR_Player_1/" />
+        <folder expanded="1" path="animation-folder/deprecated_ACTOR_Player_2/" />
+        <folder expanded="1" path="animation-folder/deprecated_ACTOR_Player_3/" />
+        <folder expanded="1" path="animation-folder/deprecated_ACTOR_Player_4/" />
+        <folder expanded="1" path="animation-folder/M7_ScenerySpawner/" />
+        <folder expanded="1" path="animation-folder/SCENERY_Grass/" />
+        <folder expanded="1" path="animation-folder/SCENERY_Rocks/" />
+        <folder expanded="1" path="animation-folder/SCENERY_Trunks_Branches/" />
+        <folder expanded="1" path="animation-folder/SCENERY_TreePine/" />
+        <folder expanded="1" path="animation-folder/M7_WaterPlane/" />
+        <folder expanded="1" path="animation-folder/PLATFORM_Logs/" />
+        <folder expanded="1" path="animation-folder/IOBJ_Barrel/" />
+        <folder expanded="1" path="animation-folder/SPAWNER_logs/" />
+        <folder expanded="1" path="animation-folder/LOBJ_boat/" />
+        <folder expanded="1" path="animation-folder/LOBJ_Boat_back/" />
+        <folder expanded="1" path="animation-folder/LOBJ_Boat_Front/" />
+        <folder expanded="1" path="animation-folder/FX_ExplosionDirectionalSmall/" />
+        <folder expanded="1" path="animation-folder/FX_ExplosionSmall/" />
+        <folder expanded="1" path="animation-folder/FX_WaterFoam/" />
+        <folder expanded="1" path="animation-folder/FX_WatersplashL/" />
+        <folder expanded="1" path="animation-folder/FX_Foam/" />
+        <folder expanded="1" path="animation-folder/PARTICLES_cave_splash/" />
+        <folder expanded="1" path="animation-folder/MASK_Cave_Mask/" />
+        <folder expanded="1" path="animation-folder/MASK_Cave_Mask_noevents/" />
+        <folder expanded="1" path="animation-folder/MASK_water_depthmask/" />
+        <folder expanded="1" path="animation-folder/MASK_doormask/" />
+        <folder expanded="1" path="animation-folder/LAYOUT_Hirogawa_hub/" />
+        <folder expanded="1" path="animation-folder/LAYOUT_waterfall1/" />
+        <folder expanded="1" path="animation-folder/M7_map_cartesian/" />
+        <folder expanded="1" path="animation-folder/M7_map_projected/" />
+        <folder expanded="1" path="animation-folder/SHOT_Bomb/" />
+        <folder expanded="1" path="animation-folder/SHOT_Explosive/" />
+        <folder expanded="1" path="animation-folder/SHOT_Kunai/" />
+        <folder expanded="1" path="animation-folder/SHOT_Shuriken/" />
+        <folder expanded="1" path="animation-folder/HELPER_M7_OnRails/" />
+        <folder expanded="1" path="animation-folder/HELPER_Physics/" />
+        <folder expanded="1" path="animation-folder/Sprite/" />
+        <folder expanded="1" path="animation-folder/SIZEREF_128/" />
+        <folder expanded="1" path="animation-folder/SIZEREF_64/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_daimyoTerrain/" />
+        <folder expanded="1" path="animation-folder/PLACEHOLDER_daimyomansion_struct/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_koipondparts/" />
+        <folder expanded="1" path="animation-folder/MULTISPRITE_koipondparts2/" />
+        <folder expanded="1" path="animation-folder/WATER_daimyo_pond/" />
+    </folders-expanded>
+</c2uistate>

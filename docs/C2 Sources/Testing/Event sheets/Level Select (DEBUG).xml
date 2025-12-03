@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>Level Select (DEBUG)</name>
+    <events>
+        <include>SKY</include>
+        <event-block sid="389935162129534">
+            <conditions>
+                <condition id="-2" name="On start of layout" sid="751392422094107" type="System" />
+            </conditions>
+            <actions>
+                <action id="-17" name="Set layer scale" sid="114687769315499" type="System">
+                    <param id="0" name="Layer">&quot;select&quot;</param>
+                    <param id="1" name="Scale">2</param>
+                </action>
+                <action id="-14" name="Set object time scale" sid="314487105081924" type="System">
+                    <param id="0" name="Object">CLOUDS</param>
+                    <param id="1" name="Time scale">20</param>
+                </action>
+                <action id="-17" name="Set layer scale" sid="552125253653683" type="System">
+                    <param id="0" name="Layer">&quot;Clouds&quot;</param>
+                    <param id="1" name="Scale">0.75</param>
+                </action>
+                <action id="4" name="Set speed" sid="760102705621833" type="CLOUDS">
+                    <param id="0" name="Speed">12</param>
+                </action>
+                <action id="5" name="Set size" sid="674705193662662" type="CLOUDS">
+                    <param id="0" name="Size">512</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="159704788957564">
+            <conditions />
+            <actions />
+            <sub-events>
+                <event-block sid="861435658642198">
+                    <conditions>
+                        <condition id="4" name="Compare selected item text" sid="421707448425755" type="LevelList">
+                            <param id="0" name="Text to compare">&quot;platformer&quot;</param>
+                            <param id="1" name="Case sensitivity">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-2" name="Go to layout" sid="951641564060810" type="System">
+                            <param id="0" name="Layout">Template Platform</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="692793492024751">
+                    <conditions>
+                        <condition id="4" name="Compare selected item text" sid="903070736064671" type="LevelList">
+                            <param id="0" name="Text to compare">&quot;overworld&quot;</param>
+                            <param id="1" name="Case sensitivity">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-2" name="Go to layout" sid="151079542445975" type="System">
+                            <param id="0" name="Layout">Template M7</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="409441888686560">
+                    <conditions>
+                        <condition id="4" name="Compare selected item text" sid="959867727052643" type="LevelList">
+                            <param id="0" name="Text to compare">&quot;wagon&quot;</param>
+                            <param id="1" name="Case sensitivity">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-2" name="Go to layout" sid="806147317680334" type="System">
+                            <param id="0" name="Layout">Wagon Chase</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="214630527116488">
+                    <conditions>
+                        <condition id="4" name="Compare selected item text" sid="758650824280956" type="LevelList">
+                            <param id="0" name="Text to compare">&quot;galport1&quot;</param>
+                            <param id="1" name="Case sensitivity">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-2" name="Go to layout" sid="214058434683784" type="System">
+                            <param id="0" name="Layout">Level Select (DEBUG)</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="380681326653490">
+                    <conditions>
+                        <condition id="4" name="Compare selected item text" sid="861730902979898" type="LevelList">
+                            <param id="0" name="Text to compare">&quot;galport2&quot;</param>
+                            <param id="1" name="Case sensitivity">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-2" name="Go to layout" sid="941494542217276" type="System">
+                            <param id="0" name="Layout">Level Select (DEBUG)</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="516393309090598">
+                    <conditions>
+                        <condition id="4" name="Compare selected item text" sid="146368387377668" type="LevelList">
+                            <param id="0" name="Text to compare">&quot;galport3&quot;</param>
+                            <param id="1" name="Case sensitivity">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-2" name="Go to layout" sid="693035956284117" type="System">
+                            <param id="0" name="Layout">Level Select (DEBUG)</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+    </events>
+</c2eventsheet>

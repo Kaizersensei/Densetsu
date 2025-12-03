@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>Interactive Objects</name>
+    <events>
+        <event-group description="" sid="209058029039393" title="Barrel Generic">
+            <sub-events>
+                <event-block sid="562023993462876">
+                    <conditions>
+                        <condition id="0" name="On collision with another object" sid="509417339284607" type="ACTOR_ENEMY_PASSIVE_Barrel_generic">
+                            <param id="0" name="Object">Hitboxes</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action behavior="Physics" id="5" name="Apply impulse at angle" sid="779857705417281" type="ACTOR_ENEMY_PASSIVE_Barrel_generic">
+                            <param id="0" name="Impulse">clamp((hitboxes.Damage-Enemies.DEF),0,Infinity)*4</param>
+                            <param id="1" name="Angle">angle(Hitboxes.X, Hitboxes.Y, ACTOR_ENEMY_PASSIVE_Barrel_generic.X, ACTOR_ENEMY_PASSIVE_Barrel_generic.Y)</param>
+                            <param id="2" name="Image point">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="564987175793222">
+                    <conditions>
+                        <condition id="0" name="On collision with another object" sid="517177225268702" type="ACTOR_ENEMY_PASSIVE_Barrel_generic">
+                            <param id="0" name="Object">Hitboxes</param>
+                        </condition>
+                        <condition id="2" name="Is playing" sid="523129486578610" type="ACTOR_ENEMY_PASSIVE_Barrel_generic">
+                            <param id="0" name="Animation">&quot;Default&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="4" name="Set animation" sid="922924316375949" type="ACTOR_ENEMY_PASSIVE_Barrel_generic">
+                            <param id="0" name="Animation">&quot;tumble&quot;</param>
+                            <param id="1" name="From">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="404595076480832">
+                    <conditions>
+                        <condition id="4" name="On finished" sid="667929405332626" type="ACTOR_ENEMY_PASSIVE_Barrel_generic">
+                            <param id="0" name="Animation">&quot;tumble&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="4" name="Set animation" sid="620917165994616" type="ACTOR_ENEMY_PASSIVE_Barrel_generic">
+                            <param id="0" name="Animation">&quot;roll&quot;</param>
+                            <param id="1" name="From">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="928684050559618">
+                    <conditions>
+                        <condition id="0" name="On collision with another object" sid="690466760597319" type="ACTOR_ENEMY_PASSIVE_Barrel_generic">
+                            <param id="0" name="Object">Players</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action behavior="Physics" id="5" name="Apply impulse at angle" sid="572498789756851" type="ACTOR_ENEMY_PASSIVE_Barrel_generic">
+                            <param id="0" name="Impulse">Players.PlatformPlus.Speed*0.1</param>
+                            <param id="1" name="Angle">angle(Players.X, Players.Y, players.PlatformPlus.VectorX, -Players.PlatformPlus.VectorY)</param>
+                            <param id="2" name="Image point">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-group>
+    </events>
+</c2eventsheet>

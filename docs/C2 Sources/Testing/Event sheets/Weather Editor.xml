@@ -1,0 +1,405 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>Weather Editor</name>
+    <events>
+        <variable constant="0" name="clock_resume" sid="690824947478270" static="0" type="number">1</variable>
+        <variable constant="0" name="editingWeather" sid="242735346611425" static="0" type="number">0</variable>
+        <variable constant="0" name="SelectedPhase" sid="114112159813150" static="0" type="number">1</variable>
+        <event-block sid="221048866467287">
+            <conditions>
+                <condition id="-2" name="On start of layout" sid="741536459974642" type="System" />
+            </conditions>
+            <actions>
+                <action id="-16" name="Wait" sid="961792852913803" type="System">
+                    <param id="0" name="Seconds">0.1</param>
+                </action>
+                <action id="8" name="Set Value" sid="607683617530828" type="ColorPicker">
+                    <param id="0" name="R">skyR</param>
+                    <param id="1" name="G">skyG</param>
+                    <param id="2" name="B">skyB</param>
+                </action>
+                <action id="-4" name="Set layer visible" sid="157397586148401" type="System">
+                    <param id="0" name="Layer">&quot;Weather Editor&quot;</param>
+                    <param id="1" name="Visibility">0</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="541279574409760">
+            <conditions>
+                <condition id="-9" name="Layer is visible" sid="689657781274697" type="System">
+                    <param id="0" name="Layer">&quot;Weather Editor&quot;</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="0" name="Set text" sid="693252446586903" type="ClockText">
+                    <param id="0" name="Text">zeropad(hour,2) &amp; &quot;:&quot; &amp; zeropad(minute,2) &amp; &quot;:&quot; &amp; zeropad(second,2) &amp; newline &amp; totalSeconds &amp; newline &amp; sineTotalSeconds &amp; newline &amp; int(skyR) &amp; &quot;,&quot; &amp; int(SkyG) &amp; &quot;,&quot; &amp; int(SkyB)</param>
+                </action>
+                <action id="0" name="Set text" sid="397639048517787" type="rightSideDebugText">
+                    <param id="0" name="Text">left(str(timeLerp),5) &amp; newline &amp; clockSegment &amp; &quot; - &quot; &amp; Sunny.At(0,clockSegment) &amp; newline &amp; &quot;midBrightness = &quot; &amp; right(str(int(midParallaxBrightness)),2) &amp; newline &amp; &quot;farBrightness = &quot; &amp; right(str(int(farParallaxBrightness)),2)</param>
+                </action>
+                <action id="0" name="Set text" sid="530645563801667" type="PhaseSelectorText">
+                    <param id="0" name="Text">&quot;Phase : &quot; &amp; sunny.At(0,clockSegment)</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="336929162822798">
+            <conditions>
+                <condition id="3" name="On touched object" sid="245480190005807" type="Touch">
+                    <param id="0" name="Object">HUD_Dayphase_L</param>
+                </condition>
+                <condition id="-9" name="Layer is visible" sid="523105944402390" type="System">
+                    <param id="0" name="Layer">&quot;Weather Editor&quot;</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-block sid="270922998369370">
+                    <conditions />
+                    <actions />
+                    <sub-events>
+                        <event-block sid="913309992010566">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="645395905895030" type="System">
+                                    <param id="0" name="Variable">hour</param>
+                                    <param id="1" name="Comparison">4</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-9" name="Set value" sid="961891771911360" type="System">
+                                    <param id="0" name="Variable">editingWeather</param>
+                                    <param id="1" name="Value">1</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="941582533578099" type="System">
+                                    <param id="0" name="Seconds">0.01</param>
+                                </action>
+                                <action id="-11" name="Subtract from" sid="977488748727329" type="System">
+                                    <param id="0" name="Variable">hour</param>
+                                    <param id="1" name="Value">3</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="795529188748490" type="System">
+                                    <param id="0" name="Variable">minute</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="119859221885562" type="System">
+                                    <param id="0" name="Variable">second</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="591814027112740" type="System">
+                                    <param id="0" name="Seconds">0.05</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="607157843039798" type="System">
+                                    <param id="0" name="Variable">editingWeather</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="613734426939873" type="System">
+                                    <param id="0" name="Seconds">0.05</param>
+                                </action>
+                                <action id="8" name="Set Value" sid="408663326306790" type="ColorPicker">
+                                    <param id="0" name="R">skyR</param>
+                                    <param id="1" name="G">skyG</param>
+                                    <param id="2" name="B">skyB</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="278554542699132">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="494576632722845" type="System">
+                                    <param id="0" name="Variable">hour</param>
+                                    <param id="1" name="Comparison">3</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-9" name="Set value" sid="644532699025500" type="System">
+                                    <param id="0" name="Variable">editingWeather</param>
+                                    <param id="1" name="Value">1</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="419896992865535" type="System">
+                                    <param id="0" name="Seconds">0.01</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="727839730994963" type="System">
+                                    <param id="0" name="Variable">hour</param>
+                                    <param id="1" name="Value">21</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="979066561972103" type="System">
+                                    <param id="0" name="Variable">minute</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="659214119601766" type="System">
+                                    <param id="0" name="Variable">second</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="308088104877191" type="System">
+                                    <param id="0" name="Seconds">0.05</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="877289733148612" type="System">
+                                    <param id="0" name="Variable">editingWeather</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="186869823684419" type="System">
+                                    <param id="0" name="Seconds">0.05</param>
+                                </action>
+                                <action id="8" name="Set Value" sid="644850053404838" type="ColorPicker">
+                                    <param id="0" name="R">skyR</param>
+                                    <param id="1" name="G">skyG</param>
+                                    <param id="2" name="B">skyB</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="924390940994388">
+            <conditions>
+                <condition id="3" name="On touched object" sid="160855272819143" type="Touch">
+                    <param id="0" name="Object">HUD_Dayphase_R</param>
+                </condition>
+                <condition id="-9" name="Layer is visible" sid="655792851537164" type="System">
+                    <param id="0" name="Layer">&quot;Weather Editor&quot;</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-block sid="212927711590803">
+                    <conditions />
+                    <actions />
+                    <sub-events>
+                        <event-block sid="536382091815366">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="651037463924462" type="System">
+                                    <param id="0" name="Variable">hour</param>
+                                    <param id="1" name="Comparison">2</param>
+                                    <param id="2" name="Value">21</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-9" name="Set value" sid="954235132343708" type="System">
+                                    <param id="0" name="Variable">editingWeather</param>
+                                    <param id="1" name="Value">1</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="387770188678715" type="System">
+                                    <param id="0" name="Seconds">0.01</param>
+                                </action>
+                                <action id="-10" name="Add to" sid="297313238934881" type="System">
+                                    <param id="0" name="Variable">hour</param>
+                                    <param id="1" name="Value">3</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="810854300693734" type="System">
+                                    <param id="0" name="Variable">minute</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="635684837282908" type="System">
+                                    <param id="0" name="Variable">second</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="736800080654684" type="System">
+                                    <param id="0" name="Seconds">0.05</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="330748403389186" type="System">
+                                    <param id="0" name="Variable">editingWeather</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="728517177597343" type="System">
+                                    <param id="0" name="Seconds">0.05</param>
+                                </action>
+                                <action id="8" name="Set Value" sid="717051966579889" type="ColorPicker">
+                                    <param id="0" name="R">skyR</param>
+                                    <param id="1" name="G">skyG</param>
+                                    <param id="2" name="B">skyB</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="755309437672691">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="162715041825624" type="System">
+                                    <param id="0" name="Variable">hour</param>
+                                    <param id="1" name="Comparison">5</param>
+                                    <param id="2" name="Value">21</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-9" name="Set value" sid="741222323655887" type="System">
+                                    <param id="0" name="Variable">editingWeather</param>
+                                    <param id="1" name="Value">1</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="583087911654177" type="System">
+                                    <param id="0" name="Seconds">0.01</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="817340706249970" type="System">
+                                    <param id="0" name="Variable">hour</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="964735827154505" type="System">
+                                    <param id="0" name="Variable">minute</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="226355336767049" type="System">
+                                    <param id="0" name="Variable">second</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="241712404581626" type="System">
+                                    <param id="0" name="Seconds">0.05</param>
+                                </action>
+                                <action id="-9" name="Set value" sid="502502558843364" type="System">
+                                    <param id="0" name="Variable">editingWeather</param>
+                                    <param id="1" name="Value">0</param>
+                                </action>
+                                <action id="-16" name="Wait" sid="511757798226422" type="System">
+                                    <param id="0" name="Seconds">0.05</param>
+                                </action>
+                                <action id="8" name="Set Value" sid="264826568874675" type="ColorPicker">
+                                    <param id="0" name="R">skyR</param>
+                                    <param id="1" name="G">skyG</param>
+                                    <param id="2" name="B">skyB</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="702259778922794">
+            <conditions>
+                <condition id="1" name="On change" sid="101470562747986" type="ColorPicker" />
+                <condition id="-9" name="Layer is visible" sid="178668559512073" type="System">
+                    <param id="0" name="Layer">&quot;Weather Editor&quot;</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-9" name="Set value" sid="126089435483465" type="System">
+                    <param id="0" name="Variable">editingWeather</param>
+                    <param id="1" name="Value">1</param>
+                </action>
+                <action id="3" name="Set at XY" sid="868141548227129" type="Sunny">
+                    <param id="0" name="X">1</param>
+                    <param id="1" name="Y">clockSegment</param>
+                    <param id="2" name="Value">int(colorpicker.R)</param>
+                </action>
+                <action id="3" name="Set at XY" sid="877866841746640" type="Sunny">
+                    <param id="0" name="X">2</param>
+                    <param id="1" name="Y">clockSegment</param>
+                    <param id="2" name="Value">int(colorpicker.G)</param>
+                </action>
+                <action id="3" name="Set at XY" sid="625585938279352" type="Sunny">
+                    <param id="0" name="X">3</param>
+                    <param id="1" name="Y">clockSegment</param>
+                    <param id="2" name="Value">int(colorpicker.B)</param>
+                </action>
+                <action id="-16" name="Wait" sid="746490487739095" type="System">
+                    <param id="0" name="Seconds">0.05</param>
+                </action>
+                <action id="-9" name="Set value" sid="400420364840670" type="System">
+                    <param id="0" name="Variable">editingWeather</param>
+                    <param id="1" name="Value">0</param>
+                </action>
+                <action id="-9" name="Set value" sid="520857076907235" type="System">
+                    <param id="0" name="Variable">skyR</param>
+                    <param id="1" name="Value">int(colorpicker.R)</param>
+                </action>
+                <action id="-9" name="Set value" sid="335398749655888" type="System">
+                    <param id="0" name="Variable">skyG</param>
+                    <param id="1" name="Value">int(colorpicker.G)</param>
+                </action>
+                <action id="-9" name="Set value" sid="386342794534820" type="System">
+                    <param id="0" name="Variable">skyB</param>
+                    <param id="1" name="Value">int(colorpicker.B)</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="505214324286853">
+            <conditions />
+            <actions />
+        </event-block>
+        <event-block sid="601225756630346">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="809656376403795" type="Keyboard">
+                    <param id="0" name="Key">84</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-block sid="825860577099141">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="194876895524659" type="System">
+                            <param id="0" name="Variable">clock_resume</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">1</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-16" name="Wait" sid="316541687240809" type="System">
+                            <param id="0" name="Seconds">0.1</param>
+                        </action>
+                        <action id="-9" name="Set value" sid="445361979935684" type="System">
+                            <param id="0" name="Variable">clock_resume</param>
+                            <param id="1" name="Value">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="605731461506606">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="620060347692772" type="System">
+                            <param id="0" name="Variable">clock_resume</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-16" name="Wait" sid="250816888560172" type="System">
+                            <param id="0" name="Seconds">0.1</param>
+                        </action>
+                        <action id="-9" name="Set value" sid="270664422834534" type="System">
+                            <param id="0" name="Variable">clock_resume</param>
+                            <param id="1" name="Value">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block sid="441177525996335">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="245741719102918" type="Keyboard">
+                    <param id="0" name="Key">72</param>
+                </condition>
+            </conditions>
+            <actions />
+            <sub-events>
+                <event-block sid="119621186699740">
+                    <conditions>
+                        <condition id="-9" inverted="1" name="Layer is visible" sid="775499332852173" type="System">
+                            <param id="0" name="Layer">&quot;Weather Editor&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-16" name="Wait" sid="406981551745168" type="System">
+                            <param id="0" name="Seconds">0.1</param>
+                        </action>
+                        <action id="-4" name="Set layer visible" sid="334621025415868" type="System">
+                            <param id="0" name="Layer">&quot;Weather Editor&quot;</param>
+                            <param id="1" name="Visibility">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="658063771376751">
+                    <conditions>
+                        <condition id="-9" name="Layer is visible" sid="346071897445275" type="System">
+                            <param id="0" name="Layer">&quot;Weather Editor&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-16" name="Wait" sid="145705696153417" type="System">
+                            <param id="0" name="Seconds">0.1</param>
+                        </action>
+                        <action id="-4" name="Set layer visible" sid="489604011568523" type="System">
+                            <param id="0" name="Layer">&quot;Weather Editor&quot;</param>
+                            <param id="1" name="Visibility">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-block>
+    </events>
+</c2eventsheet>

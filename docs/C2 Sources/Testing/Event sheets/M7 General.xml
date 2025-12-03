@@ -1,0 +1,1165 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>M7 General</name>
+    <events>
+        <include>MAIN+m7</include>
+        <variable constant="0" name="P7AngleInRadians" sid="535138941463327" static="0" type="number">0</variable>
+        <variable constant="0" name="M7ScaleFactorX" sid="620559353884664" static="0" type="number">0</variable>
+        <variable constant="0" name="M7ScaleFactorY" sid="374531778097200" static="0" type="number">0</variable>
+        <comment>MODE 7 SETTINGS FOR WORLD MAP&#x0D;&#x0A;horizon 0.5 fov 0.33 scale_x 0.005 scale_y 0.01 image ?&#x0D;&#x0A;player logic pos 0 0 for testing (top right corner)</comment>
+        <comment>if not on rails pathing is determined by event logic. Tunnel levels don&apos;t use M7 position/projection logic, only the visuals&#x0D;&#x0A;consider adding global fade in/out effects instead of speeding up timescale</comment>
+        <event-block sid="396329933837718">
+            <conditions>
+                <condition id="-2" name="On start of layout" sid="616498923206719" type="System" />
+            </conditions>
+            <actions>
+                <action disabled="1" id="-13" name="Set time scale" sid="891470175752347" type="System">
+                    <param id="0" name="Time scale">60</param>
+                </action>
+                <action id="-10" name="Set value" sid="978982127992868" type="LOBJ_Boat_Front">
+                    <param id="0" name="Instance variable">rnd</param>
+                    <param id="1" name="Value">random(17)</param>
+                </action>
+            </actions>
+            <sub-events>
+                <event-block sid="450850133117613">
+                    <conditions>
+                        <condition id="-8" name="Compare two values" sid="899566538031896" type="System">
+                            <param id="0" name="First value">HELPER_M7_OnRails.Count</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Second value">0</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-8" name="Set angle" sid="129484632703832" type="M7_player">
+                            <param id="0" name="Angle">120</param>
+                        </action>
+                        <action id="-10" name="Set value" sid="998333012028865" type="M7_player">
+                            <param id="0" name="Instance variable">sx</param>
+                            <param id="1" name="Value">self.x*cos(-P7AngleInRadians)-self.y*sin(-P7AngleInRadians)</param>
+                        </action>
+                        <action id="-10" name="Set value" sid="561087309853680" type="M7_player">
+                            <param id="0" name="Instance variable">sy</param>
+                            <param id="1" name="Value">self.x*sin(-P7AngleInRadians)+self.y*cos(-P7AngleInRadians)</param>
+                        </action>
+                        <action behavior="Perspective" id="13" name="Set logic position" sid="747840222472169" type="M7_player">
+                            <param id="0" name="Logic X">Self.sx*M7ScaleFactorX</param>
+                            <param id="1" name="Logic Y">self.sy*M7ScaleFactorY</param>
+                        </action>
+                        <action behavior="Ground" id="1" name="Set camera" sid="360043212707743" type="M7_map_projected">
+                            <param id="0" name="Camera">M7_player</param>
+                        </action>
+                        <action behavior="Ground" id="1" name="Set camera" sid="352692864469679" type="M7_WaterPlane">
+                            <param id="0" name="Camera">M7_backcam</param>
+                        </action>
+                        <action id="-26" name="Move to layer" sid="340420820300451" type="M7_player_face">
+                            <param id="0" name="Layer">&quot;objects&quot;</param>
+                        </action>
+                        <action id="-3" name="Set position" sid="712317863220541" type="M7_backcam">
+                            <param id="0" name="X">0</param>
+                            <param id="1" name="Y">0</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="260479491617201">
+                    <conditions>
+                        <condition id="-22" name="Else" sid="487012573229672" type="System" />
+                    </conditions>
+                    <actions>
+                        <action behavior="Ground" id="1" name="Set camera" sid="687674466995780" type="M7_WaterPlane">
+                            <param id="0" name="Camera">M7_player</param>
+                        </action>
+                        <action behavior="Perspective" id="13" name="Set logic position" sid="679774126265672" type="M7_player">
+                            <param id="0" name="Logic X">0.5</param>
+                            <param id="1" name="Logic Y">0</param>
+                        </action>
+                        <action behavior="PinToImagePoint" id="1" name="Pin to image point" sid="965149510896781" type="LOBJ_Boat_Front">
+                            <param id="0" name="Pin to">LOBJ_Boat_back</param>
+                            <param id="1" name="ImagePoint">1</param>
+                            <param id="2" name="Mode">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="275242126212062">
+                    <conditions>
+                        <condition id="-12" name="Repeat" sid="971932392631183" type="System">
+                            <param id="0" name="Count">10</param>
+                        </condition>
+                        <condition id="-11" name="For Each" sid="239739913858798" type="System">
+                            <param id="0" name="Object">M7_ScenerySpawner</param>
+                        </condition>
+                    </conditions>
+                    <actions />
+                    <sub-events>
+                        <event-block sid="745028479754893">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="586711902852647" type="M7_ScenerySpawner">
+                                    <param id="0" name="Instance variable">Type</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-3" name="Create object" sid="781143901404340" type="System">
+                                    <param id="0" name="Object to create">SCENERY_Grass</param>
+                                    <param id="1" name="Layer">&quot;objects&quot;</param>
+                                    <param id="2" name="X">M7_ScenerySpawner.X+random(-12, 12)</param>
+                                    <param id="3" name="Y">M7_ScenerySpawner.Y-random(-12, 12)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="330425079025926">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="535104574921422" type="M7_ScenerySpawner">
+                                    <param id="0" name="Instance variable">Type</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">1</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-3" name="Create object" sid="920795918862534" type="System">
+                                    <param id="0" name="Object to create">SCENERY_TreePine</param>
+                                    <param id="1" name="Layer">&quot;objects&quot;</param>
+                                    <param id="2" name="X">M7_ScenerySpawner.X+random(-16, 16)</param>
+                                    <param id="3" name="Y">M7_ScenerySpawner.Y-random(-16, 16)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="100900781199131">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="527339139318998" type="M7_ScenerySpawner">
+                                    <param id="0" name="Instance variable">Type</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">2</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-3" name="Create object" sid="998718008276497" type="System">
+                                    <param id="0" name="Object to create">SCENERY_Rocks</param>
+                                    <param id="1" name="Layer">&quot;objects&quot;</param>
+                                    <param id="2" name="X">M7_ScenerySpawner.X+random(-16, 16)</param>
+                                    <param id="3" name="Y">M7_ScenerySpawner.Y-random(-16, 16)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-block>
+        <event-block disabled="1" sid="864093242922603">
+            <conditions>
+                <condition id="-7" name="Compare time" sid="949116298972830" type="System">
+                    <param id="0" name="Comparison">5</param>
+                    <param id="1" name="Time (seconds)">60</param>
+                </condition>
+                <condition id="-4" name="Trigger once while true" sid="629351668425986" type="System" />
+            </conditions>
+            <actions>
+                <action id="-13" name="Set time scale" sid="596191172279456" type="System">
+                    <param id="0" name="Time scale">1</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="769493999482399">
+            <conditions />
+            <actions>
+                <action id="-9" name="Set value" sid="554543414670564" type="System">
+                    <param id="0" name="Variable">P7AngleInRadians</param>
+                    <param id="1" name="Value">M7_player.Angle*(pi/180)</param>
+                </action>
+                <action id="-9" name="Set value" sid="767211629972872" type="System">
+                    <param id="0" name="Variable">M7ScaleFactorX</param>
+                    <param id="1" name="Value">(1+M7_map_projected.scalex)</param>
+                </action>
+                <action id="-9" name="Set value" sid="985997259657516" type="System">
+                    <param id="0" name="Variable">M7ScaleFactorY</param>
+                    <param id="1" name="Value">(1+M7_map_projected.scaley)</param>
+                </action>
+                <action id="-10" name="Set value" sid="863180256110787" type="M7_player">
+                    <param id="0" name="Instance variable">sx</param>
+                    <param id="1" name="Value">self.x*cos(-P7AngleInRadians)-self.y*sin(-P7AngleInRadians)</param>
+                </action>
+                <action id="-10" name="Set value" sid="557729162020598" type="M7_player">
+                    <param id="0" name="Instance variable">sy</param>
+                    <param id="1" name="Value">self.x*sin(-P7AngleInRadians)+self.y*cos(-P7AngleInRadians)</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="850974309966531">
+            <conditions>
+                <condition id="-6" name="Every X seconds" sid="399439052963682" type="System">
+                    <param id="0" name="Interval (seconds)">1.0</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="1" name="Set rate" sid="161294190009816" type="CLOUDS">
+                    <param id="0" name="Rate">random(1, 5)*0.1</param>
+                </action>
+                <action id="4" name="Set speed" sid="999201553099389" type="CLOUDS">
+                    <param id="0" name="Speed">random(1, 16)</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block sid="462300128217535">
+            <conditions>
+                <condition id="-18" name="On created" sid="839142021557350" type="Trunks_Swing" />
+            </conditions>
+            <actions>
+                <action behavior="Sine" id="5" name="Set cycle position" sid="696958629455068" type="Trunks_Swing">
+                    <param id="0" name="Cycle position">random(1, 1000)/1000</param>
+                </action>
+                <action behavior="Sine" id="6" name="Update initial state" sid="765184667618762" type="Trunks_Swing" />
+            </actions>
+        </event-block>
+        <comment>Pathing</comment>
+        <event-block sid="765846458515647">
+            <conditions>
+                <condition disabled="1" id="-8" name="Compare two values" sid="432730932855766" type="System">
+                    <param id="0" name="First value">timescale</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Second value">1</param>
+                </condition>
+            </conditions>
+            <actions />
+        </event-block>
+        <comment>DEBUG</comment>
+        <event-block sid="674628207043630">
+            <conditions>
+                <condition id="0" name="On key pressed" sid="484969290639762" type="Keyboard">
+                    <param id="0" name="Key">116</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-26" name="Restart layout" sid="641386024411062" type="System" />
+            </actions>
+        </event-block>
+        <event-group description="" sid="471359943808155" title="M7 Debug">
+            <sub-events>
+                <event-block sid="606302216887877">
+                    <conditions>
+                        <condition disabled="1" id="-8" name="Compare two values" sid="820793766250378" type="System">
+                            <param id="0" name="First value">LayoutName</param>
+                            <param id="1" name="Comparison">0</param>
+                            <param id="2" name="Second value">&quot;Template M7&quot;</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="9" name="Set scale" sid="855646888398322" type="ACTORS">
+                            <param id="0" name="Scale">3</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="669719515992785">
+                            <conditions>
+                                <condition id="2" name="Key is down" sid="585757482719662" type="Keyboard">
+                                    <param id="0" name="Key">65</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-19" name="Rotate counter-clockwise" sid="271291249647406" type="M7_player">
+                                    <param id="0" name="Degrees">dt*90</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="488295925608194">
+                            <conditions>
+                                <condition id="2" name="Key is down" sid="364520314346617" type="Keyboard">
+                                    <param id="0" name="Key">68</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-18" name="Rotate clockwise" sid="252119943465636" type="M7_player">
+                                    <param id="0" name="Degrees">dt*90</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="133856773979154">
+                            <conditions>
+                                <condition id="2" name="Key is down" sid="708772092498277" type="Keyboard">
+                                    <param id="0" name="Key">87</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-17" name="Move forward" sid="849187957053817" type="M7_player">
+                                    <param id="0" name="Distance">dt*self.ShiftBoost</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="620313283583956">
+                            <conditions>
+                                <condition id="2" name="Key is down" sid="745231792013186" type="Keyboard">
+                                    <param id="0" name="Key">83</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-17" name="Move forward" sid="771334170192931" type="M7_player">
+                                    <param id="0" name="Distance">-dt*self.ShiftBoost</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="124284794625746">
+                            <conditions>
+                                <condition id="2" name="Key is down" sid="901633187924482" type="Keyboard">
+                                    <param id="0" name="Key">16</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="214433516445770" type="M7_player">
+                                    <param id="0" name="Instance variable">ShiftBoost</param>
+                                    <param id="1" name="Value">10</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="391728875252010">
+                            <conditions>
+                                <condition id="2" inverted="1" name="Key is down" sid="937494256016594" type="Keyboard">
+                                    <param id="0" name="Key">16</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="195407550867278" type="M7_player">
+                                    <param id="0" name="Instance variable">ShiftBoost</param>
+                                    <param id="1" name="Value">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-group description="" sid="370325771834684" title="M7 Object interaction">
+            <sub-events>
+                <event-group description="" sid="116346465705046" title="M7 Roam mode">
+                    <sub-events>
+                        <comment>setup roam mode</comment>
+                        <event-block sid="284063802535364">
+                            <conditions>
+                                <condition id="-8" name="Compare two values" sid="482000000572965" type="System">
+                                    <param id="0" name="First value">HELPER_M7_OnRails.Count</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Second value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-8" name="Set angle" sid="644052447695850" type="M7_backcam">
+                                    <param id="0" name="Angle">M7_player.Angle-180</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="642058570533562" type="M7_Scenery">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Value">(self.Width/self.baseWidth)</param>
+                                </action>
+                                <action id="0" name="Sort all Objects in layer by Y" sid="439565213721082" type="ZSorter">
+                                    <param id="0" name="Layer">&quot;objects&quot;</param>
+                                </action>
+                                <action id="9" name="Set scale" sid="663823170407079" type="M7_Scenery">
+                                    <param id="0" name="Scale">self.scale*2</param>
+                                </action>
+                                <action id="9" name="Set scale" sid="921025463083852" type="SCENERY_Rocks">
+                                    <param id="0" name="Scale">self.scale*8</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="374608825656528">
+                            <conditions>
+                                <condition id="-18" name="On created" sid="814411733993655" type="M7_Scenery" />
+                                <condition id="-8" name="Compare two values" sid="274868158235153" type="System">
+                                    <param id="0" name="First value">HELPER_M7_OnRails.Count</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Second value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Set value" sid="129064932832736" type="M7_Scenery">
+                                    <param id="0" name="Instance variable">baseWidth</param>
+                                    <param id="1" name="Value">self.Width</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="917069154612157" type="M7_Scenery">
+                                    <param id="0" name="Instance variable">baseHeight</param>
+                                    <param id="1" name="Value">self.Height</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="289900668312649" type="M7_Scenery">
+                                    <param id="0" name="Instance variable">sx</param>
+                                    <param id="1" name="Value">self.x*cos(-P7AngleInRadians)-self.y*sin(-P7AngleInRadians)</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="385725680313784" type="M7_Scenery">
+                                    <param id="0" name="Instance variable">sy</param>
+                                    <param id="1" name="Value">self.x*sin(-P7AngleInRadians)+self.y*cos(-P7AngleInRadians)</param>
+                                </action>
+                                <action id="-26" name="Move to layer" sid="460944495447435" type="M7_Scenery">
+                                    <param id="0" name="Layer">&quot;objects&quot;</param>
+                                </action>
+                                <action id="5" name="Set frame" sid="530153709845683" type="M7_Scenery">
+                                    <param id="0" name="Frame number">random(Self.AnimationFrameCount+1)</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block sid="904630141826008">
+                                    <conditions>
+                                        <condition id="-8" name="Compare two values" sid="696400003411183" type="System">
+                                            <param id="0" name="First value">HELPER_M7_OnRails.Count</param>
+                                            <param id="1" name="Comparison">0</param>
+                                            <param id="2" name="Second value">0</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action behavior="Perspective2" id="1" name="Set ground" sid="482889439396831" type="M7_Scenery">
+                                            <param id="0" name="Ground">M7_map_projected</param>
+                                        </action>
+                                        <action behavior="Perspective2" id="13" name="Set logic position" sid="382149604298565" type="M7_Scenery">
+                                            <param id="0" name="Logic X">Self.sx*(1+M7_map_projected.scalex)*0.993</param>
+                                            <param id="1" name="Logic Y">self.sy*(1+M7_map_projected.scaley)*1.85</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="891125397760226">
+                                    <conditions>
+                                        <condition id="-22" name="Else" sid="193035905448609" type="System" />
+                                    </conditions>
+                                    <actions />
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <comment>move camera</comment>
+                        <event-block sid="287359400182172">
+                            <conditions>
+                                <condition id="-8" name="Compare two values" sid="541422628525436" type="System">
+                                    <param id="0" name="First value">HELPER_M7_OnRails.Count</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Second value">0</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <variable constant="0" name="WagonSpeed" sid="449003682522892" static="0" type="number">1</variable>
+                                <event-block disabled="1" sid="661564391032051">
+                                    <conditions />
+                                    <actions>
+                                        <action id="-10" name="Add to" sid="216632208254023" type="System">
+                                            <param id="0" name="Variable">WagonSpeed</param>
+                                            <param id="1" name="Value">1*dt</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="653404326336356">
+                                    <conditions />
+                                    <actions>
+                                        <action id="-17" name="Move forward" sid="861772140138385" type="M7_player">
+                                            <param id="0" name="Distance">WagonSpeed*dt</param>
+                                        </action>
+                                    </actions>
+                                    <sub-events>
+                                        <event-block sid="672101273820434">
+                                            <conditions>
+                                                <condition id="-1" name="Compare X" sid="531555662661559" type="M7_player">
+                                                    <param id="0" name="Comparison">2</param>
+                                                    <param id="1" name="X co-ordinate">-34</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-8" name="Set angle" sid="597120090351128" type="M7_player">
+                                                    <param id="0" name="Angle">lerp(Self.Angle, 110, dt)</param>
+                                                </action>
+                                            </actions>
+                                            <sub-events>
+                                                <event-block sid="871808310708263">
+                                                    <conditions>
+                                                        <condition id="-1" name="Compare X" sid="853335703873324" type="M7_player">
+                                                            <param id="0" name="Comparison">2</param>
+                                                            <param id="1" name="X co-ordinate">-40</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions>
+                                                        <action id="-8" name="Set angle" sid="475022833952378" type="M7_player">
+                                                            <param id="0" name="Angle">lerp(Self.Angle, 105, dt)</param>
+                                                        </action>
+                                                    </actions>
+                                                    <sub-events>
+                                                        <event-block sid="468157053070417">
+                                                            <conditions>
+                                                                <condition id="-1" name="Compare X" sid="926962969150742" type="M7_player">
+                                                                    <param id="0" name="Comparison">2</param>
+                                                                    <param id="1" name="X co-ordinate">-57</param>
+                                                                </condition>
+                                                            </conditions>
+                                                            <actions>
+                                                                <action id="-8" name="Set angle" sid="758782985129827" type="M7_player">
+                                                                    <param id="0" name="Angle">lerp(Self.Angle, 110, dt)</param>
+                                                                </action>
+                                                            </actions>
+                                                        </event-block>
+                                                    </sub-events>
+                                                </event-block>
+                                            </sub-events>
+                                        </event-block>
+                                        <event-block sid="256575499073276">
+                                            <conditions>
+                                                <condition id="-1" name="Compare X" sid="108017186655555" type="M7_player">
+                                                    <param id="0" name="Comparison">4</param>
+                                                    <param id="1" name="X co-ordinate">-34</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-8" name="Set angle" sid="657296531398561" type="M7_player">
+                                                    <param id="0" name="Angle">lerp(Self.Angle, 118, dt)</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                                <event-block sid="267552107006763">
+                                    <conditions>
+                                        <condition id="-4" name="Trigger once while true" sid="456092869634139" type="System" />
+                                    </conditions>
+                                    <actions>
+                                        <action id="-8" name="Set angle" sid="886223403856465" type="M7_player">
+                                            <param id="0" name="Angle">118</param>
+                                        </action>
+                                        <action id="-3" name="Set position" sid="815464757495040" type="M7_player">
+                                            <param id="0" name="X">-25</param>
+                                            <param id="1" name="Y">4</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-group>
+                <event-group description="" sid="324594926226166" title="M7 Tunnel mode">
+                    <sub-events>
+                        <comment>move camera</comment>
+                        <event-block sid="456313607084052">
+                            <conditions>
+                                <condition id="-8" name="Compare two values" sid="444217611957477" type="System">
+                                    <param id="0" name="First value">HELPER_M7_OnRails.Count</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Second value">1</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-17" name="Move forward" sid="298181252874167" type="M7_player">
+                                    <param id="0" name="Distance">-clamp(abs(HELPER_M7_OnRails.Speed.Value) ,0.1, Infinity)*dt*M7ScaleFactorX*0.5</param>
+                                </action>
+                                <action behavior="Ground" id="11" name="Set horizon" sid="188533451960456" type="M7_WaterPlane">
+                                    <param id="0" name="horizon">0.05-(HELPER_M7_OnRails.VFactor.Value*dt*0.01)</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <comment>spawn scaled sprites</comment>
+                                <event-block sid="958757861219851">
+                                    <conditions>
+                                        <condition id="-6" name="Every X seconds" sid="624674988938216" type="System">
+                                            <param id="0" name="Interval (seconds)">dt*12</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Create object" sid="879559556979676" type="System">
+                                            <param id="0" name="Object to create">SCENERY_CaveParts</param>
+                                            <param id="1" name="Layer">&quot;objects&quot;</param>
+                                            <param id="2" name="X">960+HELPER_M7_OnRails.HFactor.Value</param>
+                                            <param id="3" name="Y">512+HELPER_M7_OnRails.VFactor.value*0.33</param>
+                                        </action>
+                                    </actions>
+                                    <sub-events>
+                                        <event-block sid="858645511443881">
+                                            <conditions>
+                                                <condition id="-12" name="Repeat" sid="766016515093085" type="System">
+                                                    <param id="0" name="Count">6</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-3" name="Create object" sid="956886471104479" type="System">
+                                                    <param id="0" name="Object to create">FX_Foam</param>
+                                                    <param id="1" name="Layer">&quot;Water&quot;</param>
+                                                    <param id="2" name="X">512+HELPER_M7_OnRails.HFactor.Value+(160*loopindex)</param>
+                                                    <param id="3" name="Y">512+random(-128,128)+HELPER_M7_OnRails.VFactor.value*0.33</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                                <event-block disabled="1" sid="566147323676181">
+                                    <conditions>
+                                        <condition id="-6" name="Every X seconds" sid="228220089048621" type="System">
+                                            <param id="0" name="Interval (seconds)">0.5</param>
+                                        </condition>
+                                        <condition id="-2" name="Compare Y" sid="647010593793345" type="SCENERY_CaveParts">
+                                            <param id="0" name="Comparison">4</param>
+                                            <param id="1" name="Y co-ordinate">720</param>
+                                        </condition>
+                                        <condition id="-11" name="For Each" sid="998163839357330" type="System">
+                                            <param id="0" name="Object">SCENERY_CaveParts</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="0" name="Spawn another object" sid="208417931770540" type="SCENERY_CaveParts">
+                                            <param id="0" name="Object">FX_WatersplashL</param>
+                                            <param id="1" name="Layer">&quot;objects&quot;</param>
+                                            <param id="2" name="Image point">1</param>
+                                        </action>
+                                        <action id="0" name="Spawn another object" sid="991994105803932" type="SCENERY_CaveParts">
+                                            <param id="0" name="Object">FX_WaterFoam</param>
+                                            <param id="1" name="Layer">&quot;objects&quot;</param>
+                                            <param id="2" name="Image point">2</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="282920235302323">
+                                    <conditions>
+                                        <condition id="-6" name="Every X seconds" sid="376891476296545" type="System">
+                                            <param id="0" name="Interval (seconds)">LOBJ_Boat_Front.rnd*0.5</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action behavior="Sine" id="2" name="Set magnitude" sid="956087607973889" type="LOBJ_Boat_Front">
+                                            <param id="0" name="Magnitude">lerp(self.sine.Magnitude, self.rnd, dt*2)</param>
+                                        </action>
+                                        <action behavior="Sine" id="1" name="Set period" sid="553314066803609" type="LOBJ_Boat_Front">
+                                            <param id="0" name="Period">lerp(self.sine.Period, self.rnd*0.33, dt*3)</param>
+                                        </action>
+                                        <action id="-10" name="Set value" sid="130290843133502" type="LOBJ_Boat_Front">
+                                            <param id="0" name="Instance variable">rnd</param>
+                                            <param id="1" name="Value">random(17)</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="728990928218196">
+                                    <conditions>
+                                        <condition id="-6" name="Every X seconds" sid="747215757659703" type="System">
+                                            <param id="0" name="Interval (seconds)">clamp(LOBJ_Boat_Front.rnd*0.15,0.5, 2)</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="0" name="Spawn another object" sid="458954636322572" type="LOBJ_Boat_back">
+                                            <param id="0" name="Object">PARTICLES_cave_splash</param>
+                                            <param id="1" name="Layer">&quot;ACTIVE&quot;</param>
+                                            <param id="2" name="Image point">0</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="187994366068511">
+                                    <conditions />
+                                    <actions>
+                                        <action id="-1" name="Set X" sid="266864225617716" type="SCENERY_CaveParts">
+                                            <param id="0" name="X">lerp(self.x, 960, dt*HELPER_M7_OnRails.Speed.Value*0.1)</param>
+                                        </action>
+                                        <action id="-2" name="Set Y" sid="617297056223516" type="SCENERY_CaveParts">
+                                            <param id="0" name="Y">lerp(self.Y+HELPER_M7_OnRails.VFactor.Value*self.scale*0.01, 800+HELPER_M7_OnRails.VFactor.Value, dt)</param>
+                                        </action>
+                                        <action id="-10" name="Set value" sid="260714322083422" type="SCENERY_CaveParts">
+                                            <param id="0" name="Instance variable">scale</param>
+                                            <param id="1" name="Value">(self.scale+(clamp(abs(HELPER_M7_OnRails.Speed.Value^3), 1, Infinity)*dt)*0.1*self.scale)*1.01</param>
+                                        </action>
+                                        <action id="9" name="Set scale" sid="566803223549566" type="SCENERY_CaveParts">
+                                            <param id="0" name="Scale">self.scale</param>
+                                        </action>
+                                        <action id="-21" name="Rotate toward position" sid="459503442609662" type="SCENERY_CaveParts">
+                                            <param id="0" name="Degrees">dt</param>
+                                            <param id="1" name="X">960</param>
+                                            <param id="2" name="Y">1080</param>
+                                        </action>
+                                        <action id="-1" name="Set X" sid="875575510513707" type="FX_Foam">
+                                            <param id="0" name="X">lerp(self.x, (WindowWidth*0.5)+HELPER_M7_OnRails.HFactor.Value, dt*HELPER_M7_OnRails.Speed.Value)</param>
+                                        </action>
+                                        <action id="-2" name="Set Y" sid="384700218131398" type="FX_Foam">
+                                            <param id="0" name="Y">lerp(self.Y+HELPER_M7_OnRails.VFactor.Value*self.scale*0.01, WATER_Surface.Y+HELPER_M7_OnRails.VFactor.Value, dt)</param>
+                                        </action>
+                                        <action id="-10" name="Set value" sid="977584587145796" type="FX_Foam">
+                                            <param id="0" name="Instance variable">scale</param>
+                                            <param id="1" name="Value">(self.scale+(clamp(abs(HELPER_M7_OnRails.Speed.Value^3), 1, Infinity)*dt)*0.1*self.scale)*1.03</param>
+                                        </action>
+                                        <action id="9" name="Set scale" sid="702595872476550" type="FX_Foam">
+                                            <param id="0" name="Scale">self.scale*0.5</param>
+                                        </action>
+                                        <action id="-5" name="Set width" sid="996602544678403" type="FX_Foam">
+                                            <param id="0" name="Width">(64+random(64))*self.scale*10</param>
+                                        </action>
+                                        <action disabled="1" id="-18" name="Rotate clockwise" sid="670421597337067" type="FX_Foam">
+                                            <param id="0" name="Degrees">dt*LOBJ_Boat_Front.rnd*8</param>
+                                        </action>
+                                        <action behavior="Ground" id="11" name="Set horizon" sid="650639922163339" type="M7_WaterPlane">
+                                            <param id="0" name="horizon">-(HELPER_M7_OnRails.VFactor.Value*dt*0.1)</param>
+                                        </action>
+                                        <action id="-8" name="Set angle" sid="140308885515248" type="LOBJ_Boat_back">
+                                            <param id="0" name="Angle">anglelerp(self.Angle, LOBJ_Boat_Front.Sine.Value, dt*0.25)</param>
+                                        </action>
+                                        <action id="-6" name="Set height" sid="191840821776850" type="PARTICLES_cave_splash">
+                                            <param id="0" name="Height">self.Height+(LOBJ_Boat_front.rnd*dt)</param>
+                                        </action>
+                                        <action id="-5" name="Set width" sid="980834851352540" type="PARTICLES_cave_splash">
+                                            <param id="0" name="Width">self.Height</param>
+                                        </action>
+                                        <action id="-8" name="Set angle" sid="239752770675245" type="PARTICLES_cave_splash">
+                                            <param id="0" name="Angle">choose(0,180)</param>
+                                        </action>
+                                    </actions>
+                                    <sub-events>
+                                        <event-block sid="181051449068283">
+                                            <conditions>
+                                                <condition id="-17" name="Pick top/bottom" sid="451138480064150" type="SCENERY_CaveParts">
+                                                    <param id="0" name="Which">0</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-8" name="Set angle" sid="370061434006517" type="WATER_depth">
+                                                    <param id="0" name="Angle">SCENERY_CaveParts.Angle</param>
+                                                </action>
+                                                <action id="-8" name="Set angle" sid="530698226983877" type="WATER_Surface">
+                                                    <param id="0" name="Angle">SCENERY_CaveParts.Angle</param>
+                                                </action>
+                                            </actions>
+                                            <sub-events>
+                                                <event-block sid="917067338401699">
+                                                    <conditions>
+                                                        <condition id="2" name="Is playing" sid="680823557006497" type="MASK_Cave_Mask">
+                                                            <param id="0" name="Animation">&quot;gradient&quot;</param>
+                                                        </condition>
+                                                    </conditions>
+                                                    <actions>
+                                                        <action id="-8" name="Set angle" sid="140114008592552" type="MASK_Cave_Mask">
+                                                            <param id="0" name="Angle">SCENERY_CaveParts.Angle</param>
+                                                        </action>
+                                                    </actions>
+                                                </event-block>
+                                            </sub-events>
+                                        </event-block>
+                                        <event-block sid="904728280798373">
+                                            <conditions>
+                                                <condition id="-17" name="Pick top/bottom" sid="203355258968146" type="SCENERY_CaveParts">
+                                                    <param id="0" name="Which">1</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-8" name="Set angle" sid="234874851456617" type="M7_player">
+                                                    <param id="0" name="Angle">-clamp(SCENERY_CaveParts.Angle-27.5,-45, 45)</param>
+                                                </action>
+                                                <action id="-1" name="Set X" sid="121141771193784" type="LOBJ_Boat_back">
+                                                    <param id="0" name="X">lerp(self.X,SCENERY_CaveParts.X,dt)</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <event-block sid="657195990777506">
+                                            <conditions>
+                                                <condition id="-33" name="Pick by comparison" sid="831454365274629" type="System">
+                                                    <param id="0" name="Object">WATER_Surface</param>
+                                                    <param id="1" name="Expression">WATER_Surface.Y</param>
+                                                    <param id="2" name="Comparison">3</param>
+                                                    <param id="3" name="Value">932</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-2" name="Set Y" sid="708487328213727" type="WATER_Surface">
+                                                    <param id="0" name="Y">920+HELPER_M7_OnRails.VFactor.Value*0.5</param>
+                                                </action>
+                                                <action id="-2" name="Set Y" sid="825158225064578" type="LOBJ_Boat_back">
+                                                    <param id="0" name="Y">WATER_Surface.Y+(HELPER_M7_OnRails.VFactor.Value*0.5)+(HELPER_M7_OnRails.HFactor.Value*0.0125)</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                        <variable constant="0" name="horizon" sid="115967610686730" static="0" type="number">0</variable>
+                                        <event-block sid="112931605247907">
+                                            <conditions>
+                                                <condition id="-15" name="Pick nearest/furthest" sid="669917379179631" type="SCENERY_CaveParts">
+                                                    <param id="0" name="Which">0</param>
+                                                    <param id="1" name="X">LOBJ_Boat_front.X</param>
+                                                    <param id="2" name="Y">LOBJ_Boat_front.Y</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="-9" name="Set value" sid="910704894779493" type="System">
+                                                    <param id="0" name="Variable">horizon</param>
+                                                    <param id="1" name="Value">SCENERY_CaveParts.Y</param>
+                                                </action>
+                                                <action id="-6" name="Set height" sid="929360832518055" type="LOBJ_Boat_Front">
+                                                    <param id="0" name="Height">(horizon*0.05)+(Self.Sine.Value)</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                                <event-block disabled="1" sid="286339193746133">
+                                    <conditions>
+                                        <condition id="-2" name="On start of layout" sid="174115111108964" type="System" />
+                                        <condition id="-10" name="For" sid="553733634396261" type="System">
+                                            <param id="0" name="Name">&quot;&quot;</param>
+                                            <param id="1" name="Start index">1</param>
+                                            <param id="2" name="End index">100</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-3" name="Create object" sid="674012785970912" type="System">
+                                            <param id="0" name="Object to create">SCENERY_CaveParts</param>
+                                            <param id="1" name="Layer">&quot;objects&quot;</param>
+                                            <param id="2" name="X">960+HELPER_M7_OnRails.HFactor.Value</param>
+                                            <param id="3" name="Y">320+HELPER_M7_OnRails.VFactor.value</param>
+                                        </action>
+                                        <action id="-10" name="Set value" sid="369856378029393" type="SCENERY_CaveParts">
+                                            <param id="0" name="Instance variable">scale</param>
+                                            <param id="1" name="Value">loopindex*0.05</param>
+                                        </action>
+                                        <action id="9" name="Set scale" sid="995358774364898" type="SCENERY_CaveParts">
+                                            <param id="0" name="Scale">self.scale</param>
+                                        </action>
+                                        <action id="-25" name="Move to bottom" sid="848772341197337" type="SCENERY_CaveParts" />
+                                        <action id="5" name="Set frame" sid="995348972415562" type="SCENERY_CaveParts">
+                                            <param id="0" name="Frame number">random(Self.AnimationFrameCount+1)</param>
+                                        </action>
+                                        <action id="-15" name="Set visible" sid="784024764235561" type="SCENERY_CaveParts">
+                                            <param id="0" name="Visibility">1</param>
+                                        </action>
+                                        <action id="-23" name="Set layer angle" sid="224256223831179" type="System">
+                                            <param id="0" name="Layer">&quot;objects&quot;</param>
+                                            <param id="1" name="Angle">(anglelerp(LayerAngle(&quot;objects&quot;), angle(960,1080,SCENERY_CaveParts.X,SCENERY_CaveParts.Y)+90, dt))*0.5</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="597444275793904">
+                            <conditions>
+                                <condition id="-18" name="On created" sid="930678165214232" type="SCENERY_CaveParts" />
+                            </conditions>
+                            <actions>
+                                <action behavior="Perspective2" disabled="1" id="13" name="Set logic position" sid="363127155280803" type="SCENERY_CaveParts">
+                                    <param id="0" name="Logic X">0.5</param>
+                                    <param id="1" name="Logic Y">-0.5</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="968634077682543" type="SCENERY_CaveParts">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Value">0.1</param>
+                                </action>
+                                <action id="9" name="Set scale" sid="661717877969440" type="SCENERY_CaveParts">
+                                    <param id="0" name="Scale">self.scale</param>
+                                </action>
+                                <action id="-25" name="Move to bottom" sid="290850790731683" type="SCENERY_CaveParts" />
+                                <action id="-15" name="Set visible" sid="550227911238357" type="SCENERY_CaveParts">
+                                    <param id="0" name="Visibility">1</param>
+                                </action>
+                                <action id="5" name="Set frame" sid="132900295105350" type="SCENERY_CaveParts">
+                                    <param id="0" name="Frame number">random(Self.AnimationFrameCount+1)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="290130790249009">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="119481695753907" type="SCENERY_CaveParts">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Comparison">4</param>
+                                    <param id="2" name="Value">5</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-9" name="Destroy" sid="670562427260626" type="SCENERY_CaveParts" />
+                            </actions>
+                        </event-block>
+                        <event-block sid="320842971827354">
+                            <conditions>
+                                <condition id="-18" name="On created" sid="950412493857147" type="FX_Foam" />
+                            </conditions>
+                            <actions>
+                                <action behavior="Perspective2" disabled="1" id="13" name="Set logic position" sid="904078881044857" type="FX_Foam">
+                                    <param id="0" name="Logic X">0.5</param>
+                                    <param id="1" name="Logic Y">-0.5</param>
+                                </action>
+                                <action id="-10" name="Set value" sid="905714822507550" type="FX_Foam">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Value">0.1</param>
+                                </action>
+                                <action id="9" name="Set scale" sid="369394700356260" type="FX_Foam">
+                                    <param id="0" name="Scale">self.scale</param>
+                                </action>
+                                <action id="-29" name="Move to object" sid="978447087124172" type="FX_Foam">
+                                    <param id="0" name="Where">1</param>
+                                    <param id="1" name="Object">FX_Foam</param>
+                                </action>
+                                <action id="-15" name="Set visible" sid="252627672303178" type="FX_Foam">
+                                    <param id="0" name="Visibility">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="986468966151850">
+                            <conditions>
+                                <condition id="-7" name="Compare instance variable" sid="299857985047958" type="FX_Foam">
+                                    <param id="0" name="Instance variable">scale</param>
+                                    <param id="1" name="Comparison">4</param>
+                                    <param id="2" name="Value">8</param>
+                                </condition>
+                            </conditions>
+                            <actions>
+                                <action id="-9" name="Destroy" sid="714387805418548" type="FX_Foam" />
+                            </actions>
+                        </event-block>
+                    </sub-events>
+                </event-group>
+                <event-group description="" sid="328187022082811" title="M7 Rowboat">
+                    <sub-events>
+                        <event-block sid="758498516657550">
+                            <conditions>
+                                <condition id="-2" name="On start of layout" sid="553155157595333" type="System" />
+                            </conditions>
+                            <actions>
+                                <action behavior="PinToImagePoint2" id="1" name="Pin to image point" sid="616185631706936" type="PARTICLES_Splash_small_boat">
+                                    <param id="0" name="Pin to">LOBJ_Boat_back</param>
+                                    <param id="1" name="ImagePoint">0</param>
+                                    <param id="2" name="Mode">0</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block sid="252333014551200">
+                                    <conditions>
+                                        <condition id="-15" name="Pick nearest/furthest" sid="925598859132380" type="WATER_Surface">
+                                            <param id="0" name="Which">0</param>
+                                            <param id="1" name="X">PARTICLES_Sparkles.X</param>
+                                            <param id="2" name="Y">PARTICLES_Sparkles.Y</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action behavior="PinToImagePoint" id="1" name="Pin to image point" sid="107835498379935" type="PARTICLES_Sparkles">
+                                            <param id="0" name="Pin to">WATER_Surface</param>
+                                            <param id="1" name="ImagePoint">0</param>
+                                            <param id="2" name="Mode">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="161504444647570">
+                            <conditions>
+                                <condition id="-1" name="Every tick" sid="896175432787415" type="System" />
+                            </conditions>
+                            <actions>
+                                <action id="4" name="Set speed" sid="453158057124676" type="PARTICLES_Splash_small_boat">
+                                    <param id="0" name="Speed">HELPER_M7_OnRails.Speed.Value</param>
+                                </action>
+                                <action id="4" name="Set speed" sid="166508860140807" type="PARTICLES_Splash_small_boat3">
+                                    <param id="0" name="Speed">HELPER_M7_OnRails.Speed.Value</param>
+                                </action>
+                                <action id="-8" name="Set angle" sid="848312648043349" type="PARTICLES_Splash_small_boat">
+                                    <param id="0" name="Angle">WATER_Surface.Angle</param>
+                                </action>
+                                <action id="-8" name="Set angle" sid="115007895588829" type="PARTICLES_Splash_small_boat3">
+                                    <param id="0" name="Angle">WATER_Surface.Angle</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block disabled="1" sid="373650355746711">
+                                    <conditions>
+                                        <condition id="-17" name="Pick top/bottom" sid="358475725992260" type="WATER_Surface">
+                                            <param id="0" name="Which">1</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="0" name="Spawn another object" sid="827522056079007" type="WATER_Surface">
+                                            <param id="0" name="Object">PARTICLES_Splash_small_boat</param>
+                                            <param id="1" name="Layer">&quot;ACTIVE&quot;</param>
+                                            <param id="2" name="Image point">1+random(9)</param>
+                                        </action>
+                                        <action id="0" name="Spawn another object" sid="208917895863440" type="WATER_Surface">
+                                            <param id="0" name="Object">PARTICLES_Splash_small_boat3</param>
+                                            <param id="1" name="Layer">&quot;ACTIVE&quot;</param>
+                                            <param id="2" name="Image point">1+random(9)</param>
+                                        </action>
+                                        <action id="0" name="Spawn another object" sid="745903499092115" type="WATER_Surface">
+                                            <param id="0" name="Object">PARTICLES_Splash_small_boat</param>
+                                            <param id="1" name="Layer">&quot;ACTIVE&quot;</param>
+                                            <param id="2" name="Image point">1+random(9)</param>
+                                        </action>
+                                        <action id="0" name="Spawn another object" sid="199901700160361" type="WATER_Surface">
+                                            <param id="0" name="Object">PARTICLES_Splash_small_boat3</param>
+                                            <param id="1" name="Layer">&quot;ACTIVE&quot;</param>
+                                            <param id="2" name="Image point">1+random(9)</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="258565733611693">
+                            <conditions>
+                                <condition id="-18" name="On created" sid="793225898749645" type="PARTICLES_Splash_small_boat_once" />
+                            </conditions>
+                            <actions>
+                                <action id="0" name="Set spraying" sid="309197480374337" type="PARTICLES_Splash_small_boat_once">
+                                    <param id="0" name="State">0</param>
+                                </action>
+                                <action id="-29" name="Move to object" sid="555059797973599" type="PARTICLES_Splash_small_boat_once">
+                                    <param id="0" name="Where">0</param>
+                                    <param id="1" name="Object">LOBJ_Boat_back</param>
+                                </action>
+                                <action id="5" name="Set size" sid="891074981688874" type="PARTICLES_Splash_small_boat_once">
+                                    <param id="0" name="Size">320</param>
+                                </action>
+                                <action id="11" name="Set size randomiser" sid="766785514196012" type="PARTICLES_Splash_small_boat_once">
+                                    <param id="0" name="Size randomiser">128</param>
+                                </action>
+                                <action id="8" name="Set X randomiser" sid="214528747472421" type="PARTICLES_Splash_small_boat_once">
+                                    <param id="0" name="X randomiser">320</param>
+                                </action>
+                                <action id="14" name="Set gravity" sid="782082041991142" type="PARTICLES_Splash_small_boat_once">
+                                    <param id="0" name="Gravity">1920</param>
+                                </action>
+                                <action id="-22" name="Set angle toward position" sid="255272423908999" type="PARTICLES_Splash_small_boat_once">
+                                    <param id="0" name="X">960</param>
+                                    <param id="1" name="Y">2000</param>
+                                </action>
+                                <action id="0" name="Set spraying" sid="319812664169536" type="PARTICLES_Splash_small_boat_once">
+                                    <param id="0" name="State">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="358896565898634">
+                            <conditions>
+                                <condition id="-18" name="On created" sid="424002646414203" type="PARTICLES_Splash_small_boat3" />
+                            </conditions>
+                            <actions>
+                                <action id="0" name="Set spraying" sid="603200204483536" type="PARTICLES_Splash_small_boat3">
+                                    <param id="0" name="State">0</param>
+                                </action>
+                                <action disabled="1" id="-1" name="Set X" sid="666489200703951" type="PARTICLES_Splash_small_boat3">
+                                    <param id="0" name="X">self.X+random(-64,64)</param>
+                                </action>
+                                <action disabled="1" id="-8" name="Set angle" sid="689304666557805" type="PARTICLES_Splash_small_boat3">
+                                    <param id="0" name="Angle">-90+random(-15, 15)</param>
+                                </action>
+                                <action id="5" name="Set size" sid="696419885559444" type="PARTICLES_Splash_small_boat3">
+                                    <param id="0" name="Size">320</param>
+                                </action>
+                                <action id="8" name="Set X randomiser" sid="334834388735192" type="PARTICLES_Splash_small_boat3">
+                                    <param id="0" name="X randomiser">256</param>
+                                </action>
+                                <action id="11" name="Set size randomiser" sid="631561063222114" type="PARTICLES_Splash_small_boat3">
+                                    <param id="0" name="Size randomiser">320</param>
+                                </action>
+                                <action id="-29" name="Move to object" sid="394479074257963" type="PARTICLES_Splash_small_boat3">
+                                    <param id="0" name="Where">1</param>
+                                    <param id="1" name="Object">LOBJ_Boat_Front</param>
+                                </action>
+                                <action id="-22" name="Set angle toward position" sid="610457109561601" type="PARTICLES_Splash_small_boat3">
+                                    <param id="0" name="X">960</param>
+                                    <param id="1" name="Y">2000</param>
+                                </action>
+                                <action id="0" name="Set spraying" sid="321375940038242" type="PARTICLES_Splash_small_boat3">
+                                    <param id="0" name="State">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block disabled="1" sid="232412844130626">
+                            <conditions>
+                                <condition id="-1" name="Every tick" sid="655241711139951" type="System" />
+                            </conditions>
+                            <actions>
+                                <action id="-18" name="Rotate clockwise" sid="363864215333804" type="FX_WatersplashL">
+                                    <param id="0" name="Degrees">random(-360, 360)*dt</param>
+                                </action>
+                                <action id="-18" name="Rotate clockwise" sid="384396079586816" type="FX_WaterFoam">
+                                    <param id="0" name="Degrees">random(-360, 360)*dt</param>
+                                </action>
+                            </actions>
+                            <sub-events>
+                                <event-block disabled="1" sid="986209410417970">
+                                    <conditions>
+                                        <condition id="-15" name="Pick nearest/furthest" sid="409746520344281" type="SCENERY_CaveParts">
+                                            <param id="0" name="Which">0</param>
+                                            <param id="1" name="X">FX_WatersplashL.X</param>
+                                            <param id="2" name="Y">FX_WatersplashL.Y+16</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-1" name="Set X" sid="758659014632456" type="FX_WatersplashL">
+                                            <param id="0" name="X">SCENERY_CaveParts.ImagePointX(1)</param>
+                                        </action>
+                                        <action id="-2" name="Set Y" sid="492155524676576" type="FX_WatersplashL">
+                                            <param id="0" name="Y">SCENERY_CaveParts.Y</param>
+                                        </action>
+                                        <action id="9" name="Set scale" sid="878166758427380" type="FX_WatersplashL">
+                                            <param id="0" name="Scale">0.5*SCENERY_CaveParts.scale</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block disabled="1" sid="207157827927954">
+                                    <conditions>
+                                        <condition id="-15" name="Pick nearest/furthest" sid="539107096110805" type="SCENERY_CaveParts">
+                                            <param id="0" name="Which">0</param>
+                                            <param id="1" name="X">FX_WaterFoam.X</param>
+                                            <param id="2" name="Y">FX_WaterFoam.Y+16</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-1" name="Set X" sid="551970256740332" type="FX_WaterFoam">
+                                            <param id="0" name="X">SCENERY_CaveParts.ImagePointX(2)</param>
+                                        </action>
+                                        <action id="-2" name="Set Y" sid="863567770393673" type="FX_WaterFoam">
+                                            <param id="0" name="Y">SCENERY_CaveParts.Y</param>
+                                        </action>
+                                        <action id="9" name="Set scale" sid="399850894140949" type="FX_WaterFoam">
+                                            <param id="0" name="Scale">0.5*SCENERY_CaveParts.scale</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="318692042117388">
+                            <conditions>
+                                <condition id="-18" name="On created" sid="303017172772657" type="FX_WatersplashL" />
+                            </conditions>
+                            <actions>
+                                <action id="-8" name="Set angle" sid="246262536824406" type="FX_WatersplashL">
+                                    <param id="0" name="Angle">random(-180, 180)</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block any="1" sid="662371596803886">
+                            <conditions>
+                                <condition disabled="1" id="1" name="Is overlapping another object" sid="290573051932594" type="LOBJ_Boat_back">
+                                    <param id="0" name="Object">WATER_depth</param>
+                                </condition>
+                                <condition disabled="1" id="1" name="Is overlapping another object" sid="884390312683712" type="LOBJ_Boat_back">
+                                    <param id="0" name="Object">WATER_Surface</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block sid="644626637394255">
+                                    <conditions>
+                                        <condition id="-6" name="Every X seconds" sid="999907250684896" type="System">
+                                            <param id="0" name="Interval (seconds)">clamp(LOBJ_Boat_Front.rnd*0.01, 0.1, 0.5)</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions />
+                                    <sub-events>
+                                        <event-block sid="200384636326696">
+                                            <conditions>
+                                                <condition id="-12" name="Repeat" sid="666768366670170" type="System">
+                                                    <param id="0" name="Count">1+random(2)</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions />
+                                        </event-block>
+                                        <event-block sid="310662357781520">
+                                            <conditions>
+                                                <condition id="-12" name="Repeat" sid="596979588677036" type="System">
+                                                    <param id="0" name="Count">1+random(2)</param>
+                                                </condition>
+                                            </conditions>
+                                            <actions>
+                                                <action id="0" name="Spawn another object" sid="348533624556681" type="LOBJ_Boat_back">
+                                                    <param id="0" name="Object">PARTICLES_Splash_small_boat_once</param>
+                                                    <param id="1" name="Layer">LOBJ_Boat_Front.LayerNumber</param>
+                                                    <param id="2" name="Image point">0</param>
+                                                </action>
+                                                <action id="0" name="Spawn another object" sid="387745295021928" type="LOBJ_Boat_Front">
+                                                    <param id="0" name="Object">PARTICLES_Splash_small_boat3</param>
+                                                    <param id="1" name="Layer">LOBJ_Boat_Back.LayerNumber</param>
+                                                    <param id="2" name="Image point">0</param>
+                                                </action>
+                                            </actions>
+                                        </event-block>
+                                    </sub-events>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-group>
+            </sub-events>
+        </event-group>
+    </events>
+</c2eventsheet>

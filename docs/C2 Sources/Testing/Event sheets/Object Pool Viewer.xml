@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>Object Pool Viewer</name>
+    <events>
+        <event-block sid="496616438307489">
+            <conditions>
+                <condition id="-1" name="Every tick" sid="563098901042151" type="System" />
+            </conditions>
+            <actions>
+                <action id="-7" name="Scroll to position" sid="321479401559924" type="System">
+                    <param id="0" name="X">lerp(scrollx,mouse.X, dt)</param>
+                    <param id="1" name="Y">lerp(scrolly, mouse.Y, dt)</param>
+                </action>
+            </actions>
+        </event-block>
+        <event-block any="1" sid="176119104749196">
+            <conditions>
+                <condition id="7" name="Cursor is over object" sid="215740585339518" type="Mouse">
+                    <param id="0" name="Object">ACTORS</param>
+                </condition>
+                <condition id="7" name="Cursor is over object" sid="361251326469969" type="Mouse">
+                    <param id="0" name="Object">CLOUDS</param>
+                </condition>
+                <condition id="7" name="Cursor is over object" sid="989350567001109" type="Mouse">
+                    <param id="0" name="Object">Enemies</param>
+                </condition>
+                <condition id="7" name="Cursor is over object" sid="317804078481608" type="Mouse">
+                    <param id="0" name="Object">Explosions</param>
+                </condition>
+                <condition id="7" name="Cursor is over object" sid="915912413460453" type="Mouse">
+                    <param id="0" name="Object">FOLIAGE_Leaf</param>
+                </condition>
+                <condition id="7" name="Cursor is over object" sid="319042884648137" type="Mouse">
+                    <param id="0" name="Object">Fx_Particle</param>
+                </condition>
+                <condition id="7" name="Cursor is over object" sid="867498464398191" type="Mouse">
+                    <param id="0" name="Object">FxBG</param>
+                </condition>
+                <condition id="7" name="Cursor is over object" sid="174551418607219" type="Mouse">
+                    <param id="0" name="Object">Hitboxes</param>
+                </condition>
+                <condition id="7" name="Cursor is over object" sid="155059979474547" type="Mouse">
+                    <param id="0" name="Object">M7_Scenery</param>
+                </condition>
+            </conditions>
+            <actions />
+        </event-block>
+        <event-block sid="288422100792705">
+            <conditions>
+                <condition id="-2" name="On start of layout" sid="192453314510422" type="System" />
+                <condition id="-15" name="Pick nearest/furthest" sid="520426448400420" type="SIZEREF_128">
+                    <param id="0" name="Which">0</param>
+                    <param id="1" name="X">0</param>
+                    <param id="2" name="Y">0</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action id="-7" name="Scroll to position" sid="955254915867849" type="System">
+                    <param id="0" name="X">SIZEREF_128.X</param>
+                    <param id="1" name="Y">SIZEREF_128.Y</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>

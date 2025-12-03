@@ -1,0 +1,801 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<c2eventsheet>
+    <!--All the 'name' attributes are ignored by Construct 2 - they are there for readability only.-->
+    <name>Clock</name>
+    <events>
+        <variable constant="0" name="timeLerp" sid="291413984807192" static="0" type="number">0</variable>
+        <variable constant="0" name="clockSegment" sid="512044442860653" static="0" type="number">4</variable>
+        <variable constant="0" name="BaseMidNight" sid="364391980314944" static="0" type="text"></variable>
+        <variable constant="0" name="BaseEvening" sid="804751859332491" static="0" type="text"></variable>
+        <variable constant="0" name="BaseNoon" sid="635695854542905" static="0" type="text"></variable>
+        <variable constant="0" name="baseMorning" sid="935952949549332" static="0" type="text"></variable>
+        <variable constant="0" name="baseDawn" sid="548738061910651" static="0" type="text"></variable>
+        <variable constant="0" name="baseWeather" sid="336106111349068" static="0" type="text"></variable>
+        <variable constant="0" name="currentWeather" sid="176530320011529" static="0" type="text"></variable>
+        <variable constant="0" name="currentDawn" sid="683779648393485" static="0" type="text"></variable>
+        <variable constant="0" name="currentMorning" sid="336851692092432" static="0" type="text"></variable>
+        <variable constant="0" name="currentMidDay" sid="702226823102371" static="0" type="text"></variable>
+        <variable constant="0" name="currentEvening" sid="739907609690746" static="0" type="text"></variable>
+        <variable constant="0" name="currentMidnight" sid="180295238742763" static="0" type="text"></variable>
+        <variable constant="0" name="secondsMultiplier" sid="345767209530483" static="0" type="number">30</variable>
+        <variable constant="0" name="sineTotalSeconds" sid="176021754999116" static="0" type="number">0</variable>
+        <variable constant="0" name="halfDaySeconds" sid="838646488014802" static="0" type="number">43200</variable>
+        <variable constant="0" name="fullDaySeconds" sid="154137218471690" static="0" type="number">86400</variable>
+        <variable constant="0" name="secondsToColor" sid="967904433547388" static="0" type="number">0</variable>
+        <variable constant="0" name="totalSeconds" sid="593575685364902" static="0" type="number">0</variable>
+        <variable constant="0" name="hour" sid="268375586084988" static="0" type="number">12</variable>
+        <variable constant="0" name="minute" sid="122181754778403" static="0" type="number">0</variable>
+        <variable constant="0" name="second" sid="547305253511061" static="0" type="number">0</variable>
+        <variable comment="1-31 according to gregorian calendar" constant="0" name="day" sid="915884142870983" static="0" type="number">30</variable>
+        <variable comment="1-12" constant="0" name="month" sid="316180738017716" static="0" type="number">12</variable>
+        <variable comment="- BE + AE" constant="0" name="year" sid="240688652045138" static="0" type="number">1326</variable>
+        <event-group description="" sid="582663686742504" title="[GD] SUNNY Weather Setup">
+            <sub-events>
+                <event-block sid="438609225780328">
+                    <conditions>
+                        <condition id="-2" name="On start of layout" sid="328011299123401" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="1" name="Add comment" sid="405696059179590" type="Comments">
+                            <param id="0" name="Comment">&quot;Name of the weather&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="916740195528094" type="Sunny">
+                            <param id="0" name="X">0</param>
+                            <param id="1" name="Y">0</param>
+                            <param id="2" name="Value">&quot;Sunny&quot;</param>
+                        </action>
+                        <action id="1" name="Add comment" sid="177253577442320" type="Comments">
+                            <param id="0" name="Comment">&quot;time of the day name&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="945326076661692" type="Sunny">
+                            <param id="0" name="X">0</param>
+                            <param id="1" name="Y">1</param>
+                            <param id="2" name="Value">&quot;Midnight&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="809474172523961" type="Sunny">
+                            <param id="0" name="X">0</param>
+                            <param id="1" name="Y">2</param>
+                            <param id="2" name="Value">&quot;3am&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="334657062997486" type="Sunny">
+                            <param id="0" name="X">0</param>
+                            <param id="1" name="Y">3</param>
+                            <param id="2" name="Value">&quot;Dawn&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="385312637658140" type="Sunny">
+                            <param id="0" name="X">0</param>
+                            <param id="1" name="Y">4</param>
+                            <param id="2" name="Value">&quot;Morning&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="665698317442389" type="Sunny">
+                            <param id="0" name="X">0</param>
+                            <param id="1" name="Y">5</param>
+                            <param id="2" name="Value">&quot;Noon&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="162438642276870" type="Sunny">
+                            <param id="0" name="X">0</param>
+                            <param id="1" name="Y">6</param>
+                            <param id="2" name="Value">&quot;15:00&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="301134850823867" type="Sunny">
+                            <param id="0" name="X">0</param>
+                            <param id="1" name="Y">7</param>
+                            <param id="2" name="Value">&quot;Evening&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="213093832644361" type="Sunny">
+                            <param id="0" name="X">0</param>
+                            <param id="1" name="Y">8</param>
+                            <param id="2" name="Value">&quot;Late Evening&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="865710791054970" type="Sunny">
+                            <param id="0" name="X">0</param>
+                            <param id="1" name="Y">9</param>
+                            <param id="2" name="Value">&quot;Midnight&quot;</param>
+                        </action>
+                        <action id="1" name="Add comment" sid="381735923201220" type="Comments">
+                            <param id="0" name="Comment">&quot;red&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="138517164556922" type="Sunny">
+                            <param id="0" name="X">1</param>
+                            <param id="1" name="Y">1</param>
+                            <param id="2" name="Value">20</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="780968801863532" type="Sunny">
+                            <param id="0" name="X">1</param>
+                            <param id="1" name="Y">2</param>
+                            <param id="2" name="Value">100</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="543219107913650" type="Sunny">
+                            <param id="0" name="X">1</param>
+                            <param id="1" name="Y">3</param>
+                            <param id="2" name="Value">150</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="812775062699239" type="Sunny">
+                            <param id="0" name="X">1</param>
+                            <param id="1" name="Y">4</param>
+                            <param id="2" name="Value">160</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="707484535994782" type="Sunny">
+                            <param id="0" name="X">1</param>
+                            <param id="1" name="Y">5</param>
+                            <param id="2" name="Value">170</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="583619537442570" type="Sunny">
+                            <param id="0" name="X">1</param>
+                            <param id="1" name="Y">6</param>
+                            <param id="2" name="Value">180</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="514512841655718" type="Sunny">
+                            <param id="0" name="X">1</param>
+                            <param id="1" name="Y">7</param>
+                            <param id="2" name="Value">200</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="314071765573283" type="Sunny">
+                            <param id="0" name="X">1</param>
+                            <param id="1" name="Y">8</param>
+                            <param id="2" name="Value">150</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="236947348350539" type="Sunny">
+                            <param id="0" name="X">1</param>
+                            <param id="1" name="Y">9</param>
+                            <param id="2" name="Value">20</param>
+                        </action>
+                        <action id="1" name="Add comment" sid="130266977146347" type="Comments">
+                            <param id="0" name="Comment">&quot;green&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="572962363765615" type="Sunny">
+                            <param id="0" name="X">2</param>
+                            <param id="1" name="Y">1</param>
+                            <param id="2" name="Value">20</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="298983237768478" type="Sunny">
+                            <param id="0" name="X">2</param>
+                            <param id="1" name="Y">2</param>
+                            <param id="2" name="Value">100</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="152903608686032" type="Sunny">
+                            <param id="0" name="X">2</param>
+                            <param id="1" name="Y">3</param>
+                            <param id="2" name="Value">50</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="757284882883372" type="Sunny">
+                            <param id="0" name="X">2</param>
+                            <param id="1" name="Y">4</param>
+                            <param id="2" name="Value">160</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="341974141843012" type="Sunny">
+                            <param id="0" name="X">2</param>
+                            <param id="1" name="Y">5</param>
+                            <param id="2" name="Value">170</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="981972576306775" type="Sunny">
+                            <param id="0" name="X">2</param>
+                            <param id="1" name="Y">6</param>
+                            <param id="2" name="Value">175</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="534416621845093" type="Sunny">
+                            <param id="0" name="X">2</param>
+                            <param id="1" name="Y">7</param>
+                            <param id="2" name="Value">150</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="591870315063975" type="Sunny">
+                            <param id="0" name="X">2</param>
+                            <param id="1" name="Y">8</param>
+                            <param id="2" name="Value">100</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="963106891182271" type="Sunny">
+                            <param id="0" name="X">2</param>
+                            <param id="1" name="Y">9</param>
+                            <param id="2" name="Value">20</param>
+                        </action>
+                        <action id="1" name="Add comment" sid="679369945535812" type="Comments">
+                            <param id="0" name="Comment">&quot;blue&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="473177627994456" type="Sunny">
+                            <param id="0" name="X">3</param>
+                            <param id="1" name="Y">1</param>
+                            <param id="2" name="Value">100</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="920666899741205" type="Sunny">
+                            <param id="0" name="X">3</param>
+                            <param id="1" name="Y">2</param>
+                            <param id="2" name="Value">20</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="633988589445066" type="Sunny">
+                            <param id="0" name="X">3</param>
+                            <param id="1" name="Y">3</param>
+                            <param id="2" name="Value">40</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="119991069038922" type="Sunny">
+                            <param id="0" name="X">3</param>
+                            <param id="1" name="Y">4</param>
+                            <param id="2" name="Value">180</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="178556979809999" type="Sunny">
+                            <param id="0" name="X">3</param>
+                            <param id="1" name="Y">5</param>
+                            <param id="2" name="Value">170</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="669928422916714" type="Sunny">
+                            <param id="0" name="X">3</param>
+                            <param id="1" name="Y">6</param>
+                            <param id="2" name="Value">170</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="851758823588223" type="Sunny">
+                            <param id="0" name="X">3</param>
+                            <param id="1" name="Y">7</param>
+                            <param id="2" name="Value">150</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="836747517151154" type="Sunny">
+                            <param id="0" name="X">3</param>
+                            <param id="1" name="Y">8</param>
+                            <param id="2" name="Value">150</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="106690111327594" type="Sunny">
+                            <param id="0" name="X">3</param>
+                            <param id="1" name="Y">9</param>
+                            <param id="2" name="Value">100</param>
+                        </action>
+                        <action id="1" name="Add comment" sid="979855530204006" type="Comments">
+                            <param id="0" name="Comment">&quot;hour&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="756642049523075" type="Sunny">
+                            <param id="0" name="X">4</param>
+                            <param id="1" name="Y">1</param>
+                            <param id="2" name="Value">0</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="819240913935583" type="Sunny">
+                            <param id="0" name="X">4</param>
+                            <param id="1" name="Y">2</param>
+                            <param id="2" name="Value">3</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="507868205210814" type="Sunny">
+                            <param id="0" name="X">4</param>
+                            <param id="1" name="Y">3</param>
+                            <param id="2" name="Value">6</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="459417632069754" type="Sunny">
+                            <param id="0" name="X">4</param>
+                            <param id="1" name="Y">4</param>
+                            <param id="2" name="Value">9</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="332432648614508" type="Sunny">
+                            <param id="0" name="X">4</param>
+                            <param id="1" name="Y">5</param>
+                            <param id="2" name="Value">12</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="379440015430136" type="Sunny">
+                            <param id="0" name="X">4</param>
+                            <param id="1" name="Y">6</param>
+                            <param id="2" name="Value">15</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="578906686122323" type="Sunny">
+                            <param id="0" name="X">4</param>
+                            <param id="1" name="Y">7</param>
+                            <param id="2" name="Value">18</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="580749043586371" type="Sunny">
+                            <param id="0" name="X">4</param>
+                            <param id="1" name="Y">8</param>
+                            <param id="2" name="Value">21</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="634899349531724" type="Sunny">
+                            <param id="0" name="X">4</param>
+                            <param id="1" name="Y">9</param>
+                            <param id="2" name="Value">24</param>
+                        </action>
+                        <action id="-9" name="Set value" sid="353250507571271" type="System">
+                            <param id="0" name="Variable">earlierTime</param>
+                            <param id="1" name="Value">Sunny.At(4,clockSegment)*3600</param>
+                        </action>
+                        <action id="-9" name="Set value" sid="553976540549021" type="System">
+                            <param id="0" name="Variable">laterTime</param>
+                            <param id="1" name="Value">Sunny.At(4,clockSegment+1)*3600</param>
+                        </action>
+                        <action id="1" name="Add comment" sid="979450806510458" type="Comments">
+                            <param id="0" name="Comment">&quot;far parallax brightness&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="269109439190373" type="Sunny">
+                            <param id="0" name="X">5</param>
+                            <param id="1" name="Y">1</param>
+                            <param id="2" name="Value">20</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="989816149420384" type="Sunny">
+                            <param id="0" name="X">5</param>
+                            <param id="1" name="Y">2</param>
+                            <param id="2" name="Value">60</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="345123038977809" type="Sunny">
+                            <param id="0" name="X">5</param>
+                            <param id="1" name="Y">3</param>
+                            <param id="2" name="Value">70</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="869245780040815" type="Sunny">
+                            <param id="0" name="X">5</param>
+                            <param id="1" name="Y">4</param>
+                            <param id="2" name="Value">80</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="142173848227393" type="Sunny">
+                            <param id="0" name="X">5</param>
+                            <param id="1" name="Y">5</param>
+                            <param id="2" name="Value">90</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="786309868713305" type="Sunny">
+                            <param id="0" name="X">5</param>
+                            <param id="1" name="Y">6</param>
+                            <param id="2" name="Value">100</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="898948916601374" type="Sunny">
+                            <param id="0" name="X">5</param>
+                            <param id="1" name="Y">7</param>
+                            <param id="2" name="Value">40</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="682875518206832" type="Sunny">
+                            <param id="0" name="X">5</param>
+                            <param id="1" name="Y">8</param>
+                            <param id="2" name="Value">25</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="206488261688132" type="Sunny">
+                            <param id="0" name="X">5</param>
+                            <param id="1" name="Y">9</param>
+                            <param id="2" name="Value">20</param>
+                        </action>
+                        <action id="1" name="Add comment" sid="395269179175181" type="Comments">
+                            <param id="0" name="Comment">&quot;mid parallax brightness&quot;</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="411060209256248" type="Sunny">
+                            <param id="0" name="X">6</param>
+                            <param id="1" name="Y">1</param>
+                            <param id="2" name="Value">20</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="470818799383285" type="Sunny">
+                            <param id="0" name="X">6</param>
+                            <param id="1" name="Y">2</param>
+                            <param id="2" name="Value">60</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="101501766725877" type="Sunny">
+                            <param id="0" name="X">6</param>
+                            <param id="1" name="Y">3</param>
+                            <param id="2" name="Value">70</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="282982267817334" type="Sunny">
+                            <param id="0" name="X">6</param>
+                            <param id="1" name="Y">4</param>
+                            <param id="2" name="Value">80</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="808517539642136" type="Sunny">
+                            <param id="0" name="X">6</param>
+                            <param id="1" name="Y">5</param>
+                            <param id="2" name="Value">90</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="892756588626172" type="Sunny">
+                            <param id="0" name="X">6</param>
+                            <param id="1" name="Y">6</param>
+                            <param id="2" name="Value">100</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="142852390601174" type="Sunny">
+                            <param id="0" name="X">6</param>
+                            <param id="1" name="Y">7</param>
+                            <param id="2" name="Value">40</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="812815693412207" type="Sunny">
+                            <param id="0" name="X">6</param>
+                            <param id="1" name="Y">8</param>
+                            <param id="2" name="Value">25</param>
+                        </action>
+                        <action id="3" name="Set at XY" sid="905028717599824" type="Sunny">
+                            <param id="0" name="X">5</param>
+                            <param id="1" name="Y">9</param>
+                            <param id="2" name="Value">20</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-group description="" sid="866316217714444" title="Clock &amp; Calendar">
+            <sub-events>
+                <event-block sid="950433453383930">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="574054636021995" type="System">
+                            <param id="0" name="Variable">second</param>
+                            <param id="1" name="Comparison">2</param>
+                            <param id="2" name="Value">60</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-10" name="Add to" sid="447135128630108" type="System">
+                            <param id="0" name="Variable">second</param>
+                            <param id="1" name="Value">secondsMultiplier</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="694598875292350">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="631097277737599" type="System">
+                            <param id="0" name="Variable">second</param>
+                            <param id="1" name="Comparison">5</param>
+                            <param id="2" name="Value">60</param>
+                        </condition>
+                        <condition id="-14" name="Compare variable" sid="836546259452631" type="System">
+                            <param id="0" name="Variable">minute</param>
+                            <param id="1" name="Comparison">2</param>
+                            <param id="2" name="Value">60</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Set value" sid="277264190522262" type="System">
+                            <param id="0" name="Variable">second</param>
+                            <param id="1" name="Value">0</param>
+                        </action>
+                        <action id="-10" name="Add to" sid="448245874405740" type="System">
+                            <param id="0" name="Variable">minute</param>
+                            <param id="1" name="Value">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="330736016852841">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="913905045987269" type="System">
+                            <param id="0" name="Variable">minute</param>
+                            <param id="1" name="Comparison">5</param>
+                            <param id="2" name="Value">60</param>
+                        </condition>
+                        <condition id="-14" name="Compare variable" sid="962529401072375" type="System">
+                            <param id="0" name="Variable">hour</param>
+                            <param id="1" name="Comparison">2</param>
+                            <param id="2" name="Value">24</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Set value" sid="485759801313145" type="System">
+                            <param id="0" name="Variable">minute</param>
+                            <param id="1" name="Value">0</param>
+                        </action>
+                        <action id="-10" name="Add to" sid="361759700884501" type="System">
+                            <param id="0" name="Variable">hour</param>
+                            <param id="1" name="Value">1</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="387457066502573">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="880266582882782" type="System">
+                            <param id="0" name="Variable">hour</param>
+                            <param id="1" name="Comparison">5</param>
+                            <param id="2" name="Value">24</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Set value" sid="734082157348357" type="System">
+                            <param id="0" name="Variable">hour</param>
+                            <param id="1" name="Value">0</param>
+                        </action>
+                    </actions>
+                    <sub-events>
+                        <event-block sid="375346676611889">
+                            <conditions>
+                                <condition id="-4" name="Trigger once while true" sid="558065845148196" type="System" />
+                            </conditions>
+                            <actions>
+                                <action id="-10" name="Add to" sid="787749906689328" type="System">
+                                    <param id="0" name="Variable">day</param>
+                                    <param id="1" name="Value">1</param>
+                                </action>
+                            </actions>
+                        </event-block>
+                        <event-block sid="322179321533552">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="710533235319654" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">12</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block sid="842794813103571">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="366565273780977" type="System">
+                                            <param id="0" name="Variable">day</param>
+                                            <param id="1" name="Comparison">5</param>
+                                            <param id="2" name="Value">32</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-9" name="Set value" sid="142734900959604" type="System">
+                                            <param id="0" name="Variable">day</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                        <action id="-9" name="Set value" sid="486638934911681" type="System">
+                                            <param id="0" name="Variable">month</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                        <action id="-10" name="Add to" sid="153658437495972" type="System">
+                                            <param id="0" name="Variable">year</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block any="1" sid="573525254066830">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="417001864604697" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">1</param>
+                                </condition>
+                                <condition id="-14" name="Compare variable" sid="484635536181656" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">3</param>
+                                </condition>
+                                <condition id="-14" name="Compare variable" sid="445018219553886" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">5</param>
+                                </condition>
+                                <condition id="-14" name="Compare variable" sid="144921769274056" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">7</param>
+                                </condition>
+                                <condition id="-14" name="Compare variable" sid="754217812172901" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">8</param>
+                                </condition>
+                                <condition id="-14" name="Compare variable" sid="362244283037091" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">10</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block sid="590635965735941">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="811006493997228" type="System">
+                                            <param id="0" name="Variable">day</param>
+                                            <param id="1" name="Comparison">5</param>
+                                            <param id="2" name="Value">32</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-9" name="Set value" sid="451450998823709" type="System">
+                                            <param id="0" name="Variable">day</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                        <action id="-10" name="Add to" sid="496295404255303" type="System">
+                                            <param id="0" name="Variable">month</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block sid="611689509886551">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="413117093068905" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">2</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block sid="416813467553041">
+                                    <conditions>
+                                        <condition id="-4" name="Trigger once while true" sid="679305767740446" type="System" />
+                                    </conditions>
+                                    <actions>
+                                        <action id="-10" name="Add to" sid="322353898535025" type="System">
+                                            <param id="0" name="Variable">day</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="219005505396139">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="381916387176654" type="System">
+                                            <param id="0" name="Variable">day</param>
+                                            <param id="1" name="Comparison">5</param>
+                                            <param id="2" name="Value">29</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-9" name="Set value" sid="446227773211721" type="System">
+                                            <param id="0" name="Variable">day</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                        <action id="-10" name="Add to" sid="650628823948638" type="System">
+                                            <param id="0" name="Variable">month</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                        <event-block any="1" sid="564606036889167">
+                            <conditions>
+                                <condition id="-14" name="Compare variable" sid="880860311727034" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">2</param>
+                                </condition>
+                                <condition id="-14" name="Compare variable" sid="895132032222531" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">4</param>
+                                </condition>
+                                <condition id="-14" name="Compare variable" sid="541038139829480" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">6</param>
+                                </condition>
+                                <condition id="-14" name="Compare variable" sid="949124605222452" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">9</param>
+                                </condition>
+                                <condition id="-14" name="Compare variable" sid="848156764637101" type="System">
+                                    <param id="0" name="Variable">month</param>
+                                    <param id="1" name="Comparison">0</param>
+                                    <param id="2" name="Value">11</param>
+                                </condition>
+                            </conditions>
+                            <actions />
+                            <sub-events>
+                                <event-block sid="252260144513851">
+                                    <conditions>
+                                        <condition id="-4" name="Trigger once while true" sid="440386799022682" type="System" />
+                                    </conditions>
+                                    <actions>
+                                        <action id="-10" name="Add to" sid="220876832171613" type="System">
+                                            <param id="0" name="Variable">day</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                                <event-block sid="227557937279351">
+                                    <conditions>
+                                        <condition id="-14" name="Compare variable" sid="399677973064036" type="System">
+                                            <param id="0" name="Variable">day</param>
+                                            <param id="1" name="Comparison">5</param>
+                                            <param id="2" name="Value">31</param>
+                                        </condition>
+                                    </conditions>
+                                    <actions>
+                                        <action id="-9" name="Set value" sid="310626710227613" type="System">
+                                            <param id="0" name="Variable">day</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                        <action id="-10" name="Add to" sid="953708201350324" type="System">
+                                            <param id="0" name="Variable">month</param>
+                                            <param id="1" name="Value">1</param>
+                                        </action>
+                                    </actions>
+                                </event-block>
+                            </sub-events>
+                        </event-block>
+                    </sub-events>
+                </event-block>
+                <event-block sid="377676284850659">
+                    <conditions />
+                    <actions>
+                        <action id="-9" name="Set value" sid="169570921205292" type="System">
+                            <param id="0" name="Variable">totalSeconds</param>
+                            <param id="1" name="Value">hour*3600+minute*60+second</param>
+                        </action>
+                        <action id="0" name="Set text" sid="635252756143326" type="ClockText">
+                            <param id="0" name="Text">zeropad(hour,2) &amp; &quot;:&quot; &amp; zeropad(minute,2) &amp; &quot;:&quot; &amp; zeropad(second,2) &amp; newline &amp; totalSeconds &amp; newline &amp; sineTotalSeconds &amp; newline &amp; int(skyR) &amp; &quot;,&quot; &amp; int(SkyG) &amp; &quot;,&quot; &amp; int(SkyB)</param>
+                        </action>
+                        <action id="-9" name="Set value" sid="799673840944957" type="System">
+                            <param id="0" name="Variable">secondsToColor</param>
+                            <param id="1" name="Value">sineTotalSeconds/350</param>
+                        </action>
+                        <action id="0" name="Set text" sid="621089834556666" type="rightSideDebugText">
+                            <param id="0" name="Text">left(str(timeLerp),5) &amp; newline &amp; clockSegment &amp; &quot; - &quot; &amp; Sunny.At(0,clockSegment) &amp; newline &amp; &quot;midBrightness = &quot; &amp; right(str(int(midParallaxBrightness)),2) &amp; newline &amp; &quot;farBrightness = &quot; &amp; right(str(int(farParallaxBrightness)),2)</param>
+                        </action>
+                        <action id="-9" name="Set value" sid="893019794974470" type="System">
+                            <param id="0" name="Variable">timeLerp</param>
+                            <param id="1" name="Value">(totalSeconds-earlierTime)/(laterTime-earlierTime)</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="896718695935508">
+                    <conditions>
+                        <condition id="-2" name="On start of layout" sid="549941970853499" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Set value" sid="332407427074085" type="System">
+                            <param id="0" name="Variable">sineTotalSeconds</param>
+                            <param id="1" name="Value">totalSeconds</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="540403250424880">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="818135543199508" type="System">
+                            <param id="0" name="Variable">totalSeconds</param>
+                            <param id="1" name="Comparison">2</param>
+                            <param id="2" name="Value">halfDaySeconds</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Set value" sid="631328970462795" type="System">
+                            <param id="0" name="Variable">sineTotalSeconds</param>
+                            <param id="1" name="Value">totalSeconds</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="974318725864130">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="202053349407700" type="System">
+                            <param id="0" name="Variable">totalSeconds</param>
+                            <param id="1" name="Comparison">5</param>
+                            <param id="2" name="Value">halfDaySeconds</param>
+                        </condition>
+                        <condition id="-4" name="Trigger once while true" sid="574341334823150" type="System" />
+                    </conditions>
+                    <actions>
+                        <action id="-9" name="Set value" sid="944683056041664" type="System">
+                            <param id="0" name="Variable">sineTotalSeconds</param>
+                            <param id="1" name="Value">totalSeconds</param>
+                        </action>
+                    </actions>
+                </event-block>
+                <event-block sid="484735340793556">
+                    <conditions>
+                        <condition id="-14" name="Compare variable" sid="640637563135139" type="System">
+                            <param id="0" name="Variable">totalSeconds</param>
+                            <param id="1" name="Comparison">5</param>
+                            <param id="2" name="Value">halfDaySeconds</param>
+                        </condition>
+                        <condition disabled="1" id="-14" name="Compare variable" sid="193679144872582" type="System">
+                            <param id="0" name="Variable">totalSeconds</param>
+                            <param id="1" name="Comparison">2</param>
+                            <param id="2" name="Value">fullDaySeconds</param>
+                        </condition>
+                    </conditions>
+                    <actions>
+                        <action id="-11" name="Subtract from" sid="679815886878465" type="System">
+                            <param id="0" name="Variable">sineTotalSeconds</param>
+                            <param id="1" name="Value">secondsMultiplier</param>
+                        </action>
+                    </actions>
+                </event-block>
+            </sub-events>
+        </event-group>
+        <event-block disabled="1" sid="700332102774726">
+            <conditions>
+                <condition disabled="1" id="-14" name="Compare variable" sid="131170988684203" type="System">
+                    <param id="0" name="Variable">second</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">0</param>
+                </condition>
+                <condition disabled="1" id="-14" name="Compare variable" sid="918156238474486" type="System">
+                    <param id="0" name="Variable">minute</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">0</param>
+                </condition>
+                <condition disabled="1" id="-14" name="Compare variable" sid="961268661802076" type="System">
+                    <param id="0" name="Variable">hour</param>
+                    <param id="1" name="Comparison">0</param>
+                    <param id="2" name="Value">12</param>
+                </condition>
+            </conditions>
+            <actions>
+                <action behavior="Red" id="5" name="Set cycle position" sid="810702383809574" type="HELPER_skycolorchanger">
+                    <param id="0" name="Cycle position">3600</param>
+                </action>
+                <action behavior="Green" id="5" name="Set cycle position" sid="900479402669946" type="HELPER_skycolorchanger">
+                    <param id="0" name="Cycle position">900</param>
+                </action>
+                <action behavior="Blue" id="5" name="Set cycle position" sid="759450541971648" type="HELPER_skycolorchanger">
+                    <param id="0" name="Cycle position">900</param>
+                </action>
+            </actions>
+        </event-block>
+    </events>
+</c2eventsheet>
