@@ -40,3 +40,15 @@ class_name MovementData
 @export var flight_acceleration: float = 600.0
 @export var flight_max_speed: float = 400.0
 @export var flight_drag: float = 8.0
+
+# Swim (scaffolding)
+@export var enable_swim: bool = false
+@export var swim_speed: float = 120.0
+@export var swim_drag: float = 6.0
+@export var swim_gravity_scale: float = 0.3
+@export var swim_jump_speed: float = -360.0
+
+# Flap (scaffolding)
+@export var enable_flap: bool = false
+@export var max_flaps: int = 0
+@export var flap_impulse: float = -500.0

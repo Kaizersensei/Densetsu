@@ -94,6 +94,15 @@ func set_footer(text: String) -> void:
 				lbl.text = text
 
 func set_hover_info(text: String, pos: Vector2 = Vector2.ZERO) -> void:
+	# Suppress hover tips while any panel is open
+	if _current_panel != "":
+		if has_node("HoverTip"):
+			var tip := get_node("HoverTip") as Control
+			if tip:
+				tip.visible = false
+		if _hover_label:
+			_hover_label.text = ""
+		return
 	if _hover_label:
 		_hover_label.text = ""
 	if has_node("HoverTip"):

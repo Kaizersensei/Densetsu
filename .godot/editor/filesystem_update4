@@ -11,3 +11,4 @@ res://engine/editor/EditorOverlay.gd
 res://engine/actors/ActorCharacter2D.gd
 res://engine/actors/movement/BaselinePlatformController.gd
 res://engine/scene/SceneManager.gd
+res://engine/editor/DataEditor.gd

@@ -48,6 +48,14 @@ var flight_max_speed: float = 400.0
 var flight_drag: float = 8.0
 var flight_active: bool = false
 var glide_active: bool = false
+var enable_swim: bool = false
+var swim_speed: float = 120.0
+var swim_drag: float = 6.0
+var swim_gravity_scale: float = 0.3
+var swim_jump_speed: float = -360.0
+var enable_flap: bool = false
+var max_flaps: int = 0
+var flap_impulse: float = -500.0
 
 var _move_input := 0.0
 var _was_on_floor := false

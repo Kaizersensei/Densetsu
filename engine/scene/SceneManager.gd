@@ -212,6 +212,24 @@ func _apply_movement(node: Node, mv) -> void:
 		node.flight_max_speed = mv.flight_max_speed
 	if "flight_drag" in node and "flight_drag" in mv:
 		node.flight_drag = mv.flight_drag
+	# Swim
+	if "enable_swim" in node and "enable_swim" in mv:
+		node.enable_swim = mv.enable_swim
+	if "swim_speed" in node and "swim_speed" in mv:
+		node.swim_speed = mv.swim_speed
+	if "swim_drag" in node and "swim_drag" in mv:
+		node.swim_drag = mv.swim_drag
+	if "swim_gravity_scale" in node and "swim_gravity_scale" in mv:
+		node.swim_gravity_scale = mv.swim_gravity_scale
+	if "swim_jump_speed" in node and "swim_jump_speed" in mv:
+		node.swim_jump_speed = mv.swim_jump_speed
+	# Flap
+	if "enable_flap" in node and "enable_flap" in mv:
+		node.enable_flap = mv.enable_flap
+	if "max_flaps" in node and "max_flaps" in mv:
+		node.max_flaps = mv.max_flaps
+	if "flap_impulse" in node and "flap_impulse" in mv:
+		node.flap_impulse = mv.flap_impulse
 
 
 func apply_data(node: Node) -> void:
