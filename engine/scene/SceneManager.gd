@@ -42,6 +42,8 @@ func infer_category_from_id(data_id: String) -> String:
 		return "LootTable"
 	if upper.begins_with("STATS_"):
 		return "Stats"
+	if upper.begins_with("TELEPORTER_"):
+		return "Teleporter"
 	return ""
 
 
@@ -143,6 +145,26 @@ func apply_actor_data(node: Node) -> void:
 		elif node is Sprite2D:
 			(node as Sprite2D).modulate = res.tint
 			(node as Sprite2D).set_meta("editor_tint", res.tint)
+		var poly_after := node.get_node_or_null("Visual") as Polygon2D
+		if poly_after:
+			poly_after.color = res.tint
+			poly_after.set_meta("editor_tint", res.tint)
+	# Teleporter-specific assignments
+	if infer_category_from_id(data_id) == "Teleporter":
+		if "exit_only" in res and "exit_only" in node:
+			node.exit_only = res.exit_only
+		if "activation_mode" in res and "activation_mode" in node:
+			node.activation_mode = res.activation_mode
+		if "activation_action" in res and "activation_action" in node:
+			node.activation_action = res.activation_action
+		if "destination_scene" in res and "destination_scene" in node:
+			node.destination_scene = res.destination_scene
+		if "dropoff_mode" in res and "dropoff_mode" in node:
+			node.dropoff_mode = res.dropoff_mode
+		if "dropoff_target" in res and "dropoff_target" in node:
+			node.dropoff_target = res.dropoff_target
+		if "dropoff_margin" in res and "dropoff_margin" in node:
+			node.dropoff_margin = res.dropoff_margin
 	# Persist id/meta so UI and saves stay in sync
 	if "data_id" in node:
 		node.set("data_id", data_id)

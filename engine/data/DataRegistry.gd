@@ -24,6 +24,7 @@ const CATEGORY_DIRS := {
 	"Strings": "res://data/strings",
 	"Trap": "res://data/traps",
 	"Trigger": "res://data/triggers",
+	"Teleporter": "res://data/teleporters",
 	"Weather": "res://data/weather",
 }
 

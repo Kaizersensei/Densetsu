@@ -53,9 +53,11 @@ var swim_speed: float = 120.0
 var swim_drag: float = 6.0
 var swim_gravity_scale: float = 0.3
 var swim_jump_speed: float = -360.0
+var in_water: bool = false
 var enable_flap: bool = false
 var max_flaps: int = 0
 var flap_impulse: float = -500.0
+var flap_count: int = 0
 
 var _move_input := 0.0
 var _was_on_floor := false
@@ -259,6 +261,7 @@ func _gather_input() -> Dictionary:
 		"jump_released": jump_released,
 		"jump_held": _jump_held,
 		"down_pressed": down_pressed,
+		"in_water": in_water,
 	}
 
 

@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://teleporter_scene"]
+
+[ext_resource type="Script" path="res://engine/teleport/Teleporter2D.gd" id="1_x8y8v"]
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(64, 96)
+
+[node name="Teleporter" type="Area2D"]
+collision_layer = 1
+collision_mask = 2
+script = ExtResource("1_x8y8v")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0)
+shape = SubResource("1")
+
+[node name="Visual" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-32, -48, 32, -48, 32, 48, -32, 48)
+color = Color(0.4, 0.6, 1, 0.25)
+z_index = -1

@@ -22,6 +22,8 @@ const MARGIN := 10.0
 @onready var _inst_apply: Button = $Tabs/Data/Instance/InstanceApply
 @onready var _transform_timer: Timer = $TransformTimer
 @onready var _data_info: RichTextLabel = $Tabs/Data/DataInfo
+var _tele_fields: Dictionary = {}
+var _tele_apply: Button = null
 
 var _current_node: Node = null
 
@@ -47,6 +49,7 @@ func _ready() -> void:
 		_inst_sprite_load.pressed.connect(_browse_sprite)
 	if _open_data:
 		_open_data.pressed.connect(_open_in_data_panel)
+	_setup_teleporter_controls()
 
 func show_for(node: Node, viewport_rect: Rect2, ribbon_h: float, sidebar_w: float) -> void:
 	if node == null:
@@ -168,6 +171,7 @@ func _populate(node: Node) -> void:
 		_inst_layers_label.text = _format_layer_names()
 	if _data_info:
 		_data_info.text = _build_data_debug_text(node, data_id, data_cat, data_res)
+	_update_teleporter_fields(node)
 
 
 func _get_screen_position(node: Node, viewport_rect: Rect2) -> Vector2:
@@ -358,6 +362,7 @@ func _ensure_data_tab() -> void:
 	_data_info = lbl as RichTextLabel
 	if _data_info:
 		_data_info.text = ""
+	_setup_teleporter_controls()
 
 
 func _build_data_debug_text(node: Node, data_id: String, data_cat: String, data_res: Resource) -> String:
@@ -390,6 +395,78 @@ func _build_data_debug_text(node: Node, data_id: String, data_cat: String, data_
 	return "\n".join(lines)
 
 
+func _add_line_row(parent: VBoxContainer, label_text: String) -> LineEdit:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 6)
+	var lbl := Label.new()
+	lbl.text = label_text
+	lbl.custom_minimum_size = Vector2(120, 0)
+	var le := LineEdit.new()
+	le.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(lbl)
+	row.add_child(le)
+	parent.add_child(row)
+	return le
+
+
+func _add_bool_row(parent: VBoxContainer, label_text: String) -> CheckBox:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 6)
+	var lbl := Label.new()
+	lbl.text = label_text
+	lbl.custom_minimum_size = Vector2(120, 0)
+	var cb := CheckBox.new()
+	row.add_child(lbl)
+	row.add_child(cb)
+	parent.add_child(row)
+	return cb
+
+
+func _add_option_row(parent: VBoxContainer, label_text: String, options: Array) -> OptionButton:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 6)
+	var lbl := Label.new()
+	lbl.text = label_text
+	lbl.custom_minimum_size = Vector2(120, 0)
+	var ob := OptionButton.new()
+	for i in range(options.size()):
+		ob.add_item(options[i], i)
+	row.add_child(lbl)
+	row.add_child(ob)
+	parent.add_child(row)
+	return ob
+
+
+func _setup_teleporter_controls() -> void:
+	if _tele_fields.size() > 0:
+		return
+	if _tabs == null:
+		return
+	var tab := _tabs.get_node_or_null("Data")
+	if tab == null:
+		return
+	var box := tab.get_node_or_null("TeleporterBox") as VBoxContainer
+	if box == null:
+		box = VBoxContainer.new()
+		box.name = "TeleporterBox"
+		box.visible = false
+		box.add_theme_constant_override("separation", 6)
+		tab.add_child(box)
+	_tele_fields["box"] = box
+	_tele_fields["exit_only"] = _add_bool_row(box, "Exit Only")
+	_tele_fields["activation_mode"] = _add_option_row(box, "Activation", ["collision", "input"])
+	_tele_fields["activation_action"] = _add_line_row(box, "Action")
+	_tele_fields["destination_scene"] = _add_line_row(box, "Destination Scene")
+	_tele_fields["dropoff_mode"] = _add_option_row(box, "Dropoff Mode", ["teleporter", "left_edge", "right_edge"])
+	_tele_fields["dropoff_target"] = _add_line_row(box, "Dropoff Target")
+	_tele_fields["dropoff_margin"] = _add_line_row(box, "Dropoff Margin")
+	_tele_apply = Button.new()
+	_tele_apply.text = "Apply Teleporter"
+	_tele_apply.theme = box.theme
+	box.add_child(_tele_apply)
+	_tele_apply.pressed.connect(_apply_teleporter)
+
+
 func _apply_overrides() -> void:
 	if _current_node == null:
 		return
@@ -408,6 +485,95 @@ func _apply_overrides() -> void:
 		if _current_node.has_meta("instance_sprite_override"):
 			_current_node.remove_meta("instance_sprite_override")
 	_populate(_current_node)
+
+
+func _apply_teleporter() -> void:
+	if _current_node == null:
+		return
+	if not ("exit_only" in _current_node):
+		return
+	if _tele_fields.has("exit_only") and _tele_fields["exit_only"] is CheckBox:
+		_current_node.exit_only = (_tele_fields["exit_only"] as CheckBox).button_pressed
+	if _tele_fields.has("activation_mode") and _tele_fields["activation_mode"] is OptionButton:
+		var ob := _tele_fields["activation_mode"] as OptionButton
+		_current_node.activation_mode = ob.get_item_text(ob.selected)
+	if _tele_fields.has("activation_action") and _tele_fields["activation_action"] is LineEdit:
+		_current_node.activation_action = (_tele_fields["activation_action"] as LineEdit).text.strip_edges()
+	if _tele_fields.has("destination_scene") and _tele_fields["destination_scene"] is LineEdit:
+		var path := (_tele_fields["destination_scene"] as LineEdit).text.strip_edges()
+		if path != "" and ResourceLoader.exists(path):
+			var ps := ResourceLoader.load(path) as PackedScene
+			_current_node.destination_scene = ps
+	if _tele_fields.has("dropoff_mode") and _tele_fields["dropoff_mode"] is OptionButton:
+		var ob2 := _tele_fields["dropoff_mode"] as OptionButton
+		_current_node.dropoff_mode = ob2.get_item_text(ob2.selected)
+	if _tele_fields.has("dropoff_target") and _tele_fields["dropoff_target"] is LineEdit:
+		_current_node.dropoff_target = (_tele_fields["dropoff_target"] as LineEdit).text.strip_edges()
+	if _tele_fields.has("dropoff_margin") and _tele_fields["dropoff_margin"] is LineEdit:
+		var txt := (_tele_fields["dropoff_margin"] as LineEdit).text.strip_edges()
+		if txt != "":
+			_current_node.dropoff_margin = float(txt)
+	_populate(_current_node)
+
+
+func _is_teleporter_node(node: Node) -> bool:
+	if node == null:
+		return false
+	if node is Teleporter2D:
+		return true
+	if node.is_in_group("teleporters"):
+		return true
+	# duck-type on properties
+	return ("exit_only" in node) and ("dropoff_mode" in node) and ("activation_mode" in node)
+
+
+func _update_teleporter_fields(node: Node) -> void:
+	if not _tele_fields.has("box"):
+		return
+	var box := _tele_fields["box"] as VBoxContainer
+	if box == null:
+		return
+	if not _is_teleporter_node(node):
+		box.visible = false
+		return
+	box.visible = true
+	if _tele_fields.has("exit_only") and _tele_fields["exit_only"] is CheckBox:
+		var exit_val = _read_prop(node, "exit_only", false)
+		var exit_bool := false
+		if exit_val is bool:
+			exit_bool = exit_val
+		elif exit_val is String:
+			exit_bool = exit_val.to_lower() in ["1", "true", "yes", "on"]
+		else:
+			exit_bool = bool(exit_val)
+		(_tele_fields["exit_only"] as CheckBox).button_pressed = exit_bool
+	if _tele_fields.has("activation_mode") and _tele_fields["activation_mode"] is OptionButton:
+		var ob := _tele_fields["activation_mode"] as OptionButton
+		var mode: String = str(_read_prop(node, "activation_mode", "collision"))
+		for i in range(ob.item_count):
+			if ob.get_item_text(i) == mode:
+				ob.select(i)
+				break
+	if _tele_fields.has("activation_action") and _tele_fields["activation_action"] is LineEdit:
+		(_tele_fields["activation_action"] as LineEdit).text = str(_read_prop(node, "activation_action", "interact"))
+	if _tele_fields.has("destination_scene") and _tele_fields["destination_scene"] is LineEdit:
+		var path := ""
+		if "destination_scene" in node:
+			var ps = node.get("destination_scene")
+			if ps is PackedScene:
+				path = ps.resource_path
+		(_tele_fields["destination_scene"] as LineEdit).text = path
+	if _tele_fields.has("dropoff_mode") and _tele_fields["dropoff_mode"] is OptionButton:
+		var ob2 := _tele_fields["dropoff_mode"] as OptionButton
+		var mode2: String = str(_read_prop(node, "dropoff_mode", "teleporter"))
+		for i2 in range(ob2.item_count):
+			if ob2.get_item_text(i2) == mode2:
+				ob2.select(i2)
+				break
+	if _tele_fields.has("dropoff_target") and _tele_fields["dropoff_target"] is LineEdit:
+		(_tele_fields["dropoff_target"] as LineEdit).text = str(_read_prop(node, "dropoff_target", ""))
+	if _tele_fields.has("dropoff_margin") and _tele_fields["dropoff_margin"] is LineEdit:
+		(_tele_fields["dropoff_margin"] as LineEdit).text = "%.2f" % float(_read_prop(node, "dropoff_margin", 0.0))
 
 
 func _try_apply_sprite(node: Node, path: String) -> void:

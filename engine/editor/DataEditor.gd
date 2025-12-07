@@ -302,6 +302,10 @@ const CATEGORY_SCHEMA := {
 	"Particles": ["particle_path", "looping", "spawn_rate"],
 	"Sound": ["file_path", "category", "loop", "volume", "attack_decay"],
 	"Trigger": ["trigger_type", "conditions", "actions", "region_id"],
+	"Teleporter": [
+		"exit_only", "activation_mode", "activation_action",
+		"destination_scene", "dropoff_mode", "dropoff_target", "dropoff_margin", "tint"
+	],
 }
 const CATEGORY_SCRIPTS := {
 	"Actor": "res://engine/actors/resources/ActorData.gd",
@@ -325,6 +329,7 @@ const CATEGORY_SCRIPTS := {
 	"Trigger": "res://engine/data/resources/TriggerData.gd",
 	"Weather": "res://engine/data/resources/WeatherData.gd",
 	"PolygonTemplate": "res://engine/data/resources/PolygonTemplateData.gd",
+	"Teleporter": "res://engine/data/resources/TeleporterData.gd",
 }
 const CATEGORY_TIPS := {
 	"Actor": "Entities with behaviors/inputs; set sprite/scene/collider, AI params, stats.",
@@ -343,6 +348,7 @@ const CATEGORY_TIPS := {
 	"Sound": "Sound cues/presets for reuse.",
 	"Strings": "Localized or in-game text entries.",
 	"Quests": "Quest definitions, objectives, and flow hints.",
+	"Teleporter": "Teleport pads; configure activation, destination, dropoff, and tint.",
 }
 
 func _ready() -> void:
@@ -652,8 +658,46 @@ func _set_block_visible(nodes: Array, flag: bool) -> void:
 
 
 func _apply_category_visibility(cat: String, res: Resource = null) -> void:
-	return
+	# Default: show everything
+	for k in _inspector_rows.keys():
+		var info = _inspector_rows[k]
+		if info.has("row") and info.row:
+			info.row.visible = true
+	if cat != "Movement":
+		return
+	var enable_glide := _read_bool_field("enable_glide", res)
+	var enable_flight := _read_bool_field("enable_flight", res)
+	var enable_swim := _read_bool_field("enable_swim", res)
+	var enable_flap := _read_bool_field("enable_flap", res)
 
+	var glide_fields := ["glide_gravity_scale", "glide_max_fall_speed"]
+	var flight_fields := ["flight_acceleration", "flight_max_speed", "flight_drag"]
+	var swim_fields := ["swim_speed", "swim_drag", "swim_gravity_scale", "swim_jump_speed"]
+	var flap_fields := ["max_flaps", "flap_impulse"]
+
+	for f in glide_fields:
+		if _inspector_rows.has(f):
+			_inspector_rows[f]["row"].visible = enable_glide
+	for f in flight_fields:
+		if _inspector_rows.has(f):
+			_inspector_rows[f]["row"].visible = enable_flight
+	for f in swim_fields:
+		if _inspector_rows.has(f):
+			_inspector_rows[f]["row"].visible = enable_swim
+	for f in flap_fields:
+		if _inspector_rows.has(f):
+			_inspector_rows[f]["row"].visible = enable_flap
+
+
+# Helper to read a bool from a current checkbox or fallback resource
+func _read_bool_field(field: String, res: Resource = null) -> bool:
+	if _inspector_rows.has(field):
+		var ctrl = _inspector_rows[field].get("ctrl", null)
+		if ctrl and ctrl is CheckBox:
+			return (ctrl as CheckBox).button_pressed
+	if res != null and _res_has(res, field):
+		return bool(res.get(field))
+	return false
 
 func _set_all_keys_visible(flag: bool) -> void:
 	return
@@ -782,6 +826,9 @@ func _build_inspector(cat: String, res: Resource = null, res_path: String = "") 
 		if ftype == "bool":
 			var cb := CheckBox.new()
 			ctrl = cb
+			# For movement module toggles, re-apply visibility when toggled
+			if cat == "Movement" and key in ["enable_glide", "enable_flight", "enable_swim", "enable_flap"]:
+				cb.toggled.connect(func(_val): _apply_category_visibility(cat, _current_res))
 		else:
 			var le := LineEdit.new()
 			le.placeholder_text = key
@@ -822,6 +869,8 @@ func _build_inspector(cat: String, res: Resource = null, res_path: String = "") 
 		else:
 			if key == "path" and res_path != "" and ctrl is LineEdit:
 				(ctrl as LineEdit).text = res_path
+	# Apply category-specific visibility (e.g., hide module fields)
+	_apply_category_visibility(cat, res)
 
 
 func _browse_scene() -> void:

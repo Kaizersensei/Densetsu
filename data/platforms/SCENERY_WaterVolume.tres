@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="PlatformData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://engine/data/resources/PlatformData.gd" id="1_n4s7d"]
+[ext_resource type="PackedScene" path="res://engine/platforms/WaterVolume.tscn" id="2_1x0c6"]
+
+[resource]
+script = ExtResource("1_n4s7d")
+id = "SCENERY_WaterVolume"
+name = "Water Volume"
+description = "Swimming volume"
+scene = ExtResource("2_1x0c6")
+platform_type = "water"
+slope_direction = ""
+speed = 0.0
+movement_path_id = ""
+allow_projectile_collision = false
+tint = Color(0.4, 0.8, 1, 0.25)

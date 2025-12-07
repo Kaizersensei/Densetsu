@@ -1,3 +1,5 @@
+res://engine/scene/SceneManager.gd
+res://engine/teleport/Teleporter2D.gd
 res://game/levels/CollisionTest.tscn
 res://assets/placeholder_enemy_projectile.tres
 res://assets/placeholder_player.tres
@@ -6,9 +8,6 @@ res://assets/placeholder_deco.tres
 res://assets/placeholder_trap.tres
 res://assets/placeholder_item.tres
 res://assets/placeholder_projectile.tres
+res://game/MainMenu.tscn
 res://engine/editor/EditorManager.gd
-res://engine/editor/EditorOverlay.gd
-res://engine/actors/ActorCharacter2D.gd
-res://engine/actors/movement/BaselinePlatformController.gd
-res://engine/scene/SceneManager.gd
-res://engine/editor/DataEditor.gd
+res://engine/editor/EntityInspectorPopup.gd

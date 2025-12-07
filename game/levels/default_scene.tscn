@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="Script" path="res://game/levels/CollisionTest.gd" id="1_72cau"]
 [ext_resource type="PackedScene" path="res://engine/actors/ActorCharacter2D.tscn" id="2_fgkak"]
@@ -14,8 +14,8 @@
 [ext_resource type="Script" path="res://engine/debug/DebugOverlay.gd" id="12_a3q6m"]
 [ext_resource type="Script" path="res://game/levels/KillZone.gd" id="13_5wey4"]
 [ext_resource type="PackedScene" path="res://engine/platforms/PlatformSolid.tscn" id="14_iy6jq"]
-[ext_resource type="PackedScene" path="res://engine/terrain/PolygonTerrain2D.tscn" id="15_5vrk0"]
-[ext_resource type="Script" path="res://engine/terrain/PolygonTerrain2D.gd" id="16_868x5"]
+[ext_resource type="PackedScene" path="res://engine/platforms/WaterVolume.tscn" id="15_5vrk0"]
+[ext_resource type="Script" path="res://engine/platforms/WaterVolume.gd" id="16_868x5"]
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(400, 20)
@@ -23,11 +23,23 @@ size = Vector2(400, 20)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5wey4"]
 size = Vector2(64, 64)
 
-[node name="_Node2D_300" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_72cau"]
+size = Vector2(128, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fgkak"]
+size = Vector2(64, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mxyps"]
+size = Vector2(64, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v5d7l"]
+size = Vector2(64, 64)
+
+[node name="@Node2D@294" type="Node2D"]
 script = ExtResource("1_72cau")
 
 [node name="Player" type="CharacterBody2D" parent="." instance=ExtResource("2_fgkak")]
-position = Vector2(-76.9253, 70.5133)
+position = Vector2(-104, 72)
 wall_min_slide_angle = 0.436332
 platform_floor_layers = 1
 platform_wall_layers = 1
@@ -35,7 +47,7 @@ script = ExtResource("3_mxyps")
 metadata/data_id = "ACTOR_Player"
 
 [node name="Enemy" type="CharacterBody2D" parent="." instance=ExtResource("4_v5d7l")]
-position = Vector2(140, 70.5092)
+position = Vector2(140, 71.9958)
 wall_min_slide_angle = 0.436332
 platform_floor_layers = 1
 platform_wall_layers = 1
@@ -44,7 +56,7 @@ use_player_input = false
 metadata/data_id = "ACTOR_Enemy"
 
 [node name="NPC" type="CharacterBody2D" parent="." instance=ExtResource("5_c1veu")]
-position = Vector2(100, 70.5129)
+position = Vector2(100, 71.9995)
 wall_min_slide_angle = 0.436332
 platform_floor_layers = 1
 platform_wall_layers = 1
@@ -63,14 +75,14 @@ script = ExtResource("9_ps66i")
 metadata/data_id = "TRAP_Basic"
 
 [node name="PlatformOneWay" type="StaticBody2D" parent="." instance=ExtResource("10_h11mw")]
-position = Vector2(-162, -77)
-scale = Vector2(2.19445, 0.290106)
+position = Vector2(-88, -48)
+scale = Vector2(2.4, 0.3)
 collision_layer = 9
 collision_mask = 2
 metadata/data_id = "PLATFORM_OneWay_Default"
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(-76.9253, 59.517)
+position = Vector2(-76.9253, 71.9999)
 enabled = false
 
 [node name="DebugOverlay" type="Node2D" parent="." instance=ExtResource("11_cxfv6")]
@@ -95,7 +107,7 @@ color = Color(0.1, 0, 0, 0.5)
 polygon = PackedVector2Array(-200, -10, 200, -10, 200, 10, -200, 10)
 
 [node name="Solid" type="StaticBody2D" parent="." instance=ExtResource("14_iy6jq")]
-position = Vector2(12.0747, 102.517)
+position = Vector2(16, 104)
 scale = Vector2(7.58333, 1)
 collision_mask = 2
 metadata/data_id = "PLATFORM_SolidGround"
@@ -108,16 +120,61 @@ color = Color(0.2, 0.2, 0.2, 1)
 polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 metadata/editor_tint = Color(0.2, 0.2, 0.2, 1)
 
-[node name="PolygonTerrain" type="StaticBody2D" parent="." instance=ExtResource("15_5vrk0")]
-position = Vector2(-76.9253, 59.517)
-rotation = 2.33779
+[node name="Water" type="Area2D" parent="." instance=ExtResource("15_5vrk0")]
+position = Vector2(-400, 32)
+scale = Vector2(2.65, 1)
+collision_layer = 0
+collision_mask = 2147483647
 script = ExtResource("16_868x5")
-vertices = Array[Vector2]([Vector2(-32, 18.475), Vector2(-25.8214, 332.793), Vector2(78.6397, 70.6102), Vector2(3.62604, -4.88383), Vector2(0, -36.95)])
+metadata/data_id = "SCENERY_WaterVolume"
 
-[node name="Visual" type="Polygon2D" parent="PolygonTerrain"]
-color = Color(0.2, 0.7, 1, 0.25)
-antialiased = true
-polygon = PackedVector2Array(-32, 18.475, -25.8214, 332.793, 78.6397, 70.6102, 3.62604, -4.88383, 0, -36.95)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Water"]
+shape = SubResource("RectangleShape2D_72cau")
 
-[node name="Collider" type="CollisionPolygon2D" parent="PolygonTerrain"]
-polygon = PackedVector2Array(-32, 18.475, -25.8214, 332.793, 78.6397, 70.6102, 3.62604, -4.88383, 0, -36.95)
+[node name="Visual" type="Polygon2D" parent="Water"]
+z_index = -1
+color = Color(0.4, 0.8, 1, 0.25)
+polygon = PackedVector2Array(-64, -64, 64, -64, 64, 64, -64, 64)
+metadata/editor_tint = Color(0.4, 0.8, 1, 0.25)
+
+[node name="Solid2" type="StaticBody2D" parent="." instance=ExtResource("14_iy6jq")]
+position = Vector2(-432, 128)
+scale = Vector2(6.4375, 1)
+collision_mask = 2
+metadata/data_id = "PLATFORM_SolidGround"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Solid2"]
+shape = SubResource("RectangleShape2D_fgkak")
+
+[node name="Visual" type="Polygon2D" parent="Solid2"]
+color = Color(0.2, 0.2, 0.2, 1)
+polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+metadata/editor_tint = Color(0.2, 0.2, 0.2, 1)
+
+[node name="Solid3" type="StaticBody2D" parent="." instance=ExtResource("14_iy6jq")]
+position = Vector2(-600, 32)
+scale = Vector2(1, 2)
+collision_mask = 2
+metadata/data_id = "PLATFORM_SolidGround"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Solid3"]
+shape = SubResource("RectangleShape2D_mxyps")
+
+[node name="Visual" type="Polygon2D" parent="Solid3"]
+color = Color(0.2, 0.2, 0.2, 1)
+polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+metadata/editor_tint = Color(0.2, 0.2, 0.2, 1)
+
+[node name="Solid4" type="StaticBody2D" parent="." instance=ExtResource("14_iy6jq")]
+position = Vector2(-192, 8)
+scale = Vector2(1, 2.0625)
+collision_mask = 2
+metadata/data_id = "PLATFORM_SolidGround"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Solid4"]
+shape = SubResource("RectangleShape2D_v5d7l")
+
+[node name="Visual" type="Polygon2D" parent="Solid4"]
+color = Color(0.2, 0.2, 0.2, 1)
+polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+metadata/editor_tint = Color(0.2, 0.2, 0.2, 1)

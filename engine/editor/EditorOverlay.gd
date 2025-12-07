@@ -53,11 +53,14 @@ extends CanvasLayer
 @onready var _place_item: Button = $SidebarLeft/PrefabList/PrefabTabs/Actors/PlaceItem
 @onready var _place_solid: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceSolid
 @onready var _place_one_way: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceOneWay
+@onready var _place_water: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceWater
+@onready var _place_teleporter: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceTeleporter
 @onready var _place_deco: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceDeco
 @onready var _place_deco_solid: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlaceDecoSolid
 @onready var _place_polygon: Button = $SidebarLeft/PrefabList/PrefabTabs/Building/PlacePolygon
 @onready var _delete_button: Button = $SidebarLeft/PrefabList/DeleteButton
 @onready var _close_panels: Button = $Ribbon/ClosePanels
+@onready var _main_menu_button: Button = $Ribbon/MainMenuButton
 
 var _inspector_signal_block := false
 var _prefab_handler: Callable = Callable()
@@ -185,6 +188,8 @@ func connect_prefab_buttons(handler: Callable) -> void:
 		_poly_cancel_button.pressed.connect(handler.bind("cancel_polygon"))
 	if _close_panels:
 		_close_panels.pressed.connect(handler.bind("close_panels"))
+	if _main_menu_button:
+		_main_menu_button.pressed.connect(handler.bind("main_menu"))
 	if _place_player:
 		_place_player.pressed.connect(handler.bind("player"))
 	if _place_enemy:
@@ -205,6 +210,10 @@ func connect_prefab_buttons(handler: Callable) -> void:
 		_place_solid.pressed.connect(handler.bind("solid"))
 	if _place_one_way:
 		_place_one_way.pressed.connect(handler.bind("one_way"))
+	if _place_water:
+		_place_water.pressed.connect(handler.bind("water"))
+	if _place_teleporter:
+		_place_teleporter.pressed.connect(handler.bind("teleporter"))
 	if _place_polygon:
 		_place_polygon.pressed.connect(handler.bind("polygon"))
 	if _undo_button:

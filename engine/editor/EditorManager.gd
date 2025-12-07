@@ -70,6 +70,8 @@ var show_hitboxes := false
 const PREFAB_NAMES := {
 	"solid": "Solid",
 	"one_way": "One-Way",
+	"water": "Water",
+	"teleporter": "Teleporter",
 	"deco": "Deco",
 	"deco_solid": "Solid Deco",
 	"trap": "Trap",
@@ -86,6 +88,8 @@ const PREFAB_DEFAULT_DATA := {
 	"npc": "ACTOR_NPC",
 	"solid": "PLATFORM_SolidGround",
 	"one_way": "PLATFORM_OneWay_Default",
+	"water": "SCENERY_WaterVolume",
+	"teleporter": "TELEPORTER_Default",
 	"trap": "TRAP_Basic",
 	"item": "ITEM_Floating",
 	"deco": "SCENERY_Deco",
@@ -159,6 +163,17 @@ func _ready() -> void:
 		get_tree().node_removed.connect(_on_tree_node_removed)
 	_center_game_camera(true)
 	_reapply_all_tints()
+	_check_enter_editor_flag()
+
+
+func _check_enter_editor_flag() -> void:
+	var tree := get_tree()
+	if tree == null:
+		return
+	if tree.has_meta("enter_editor_next") and tree.get_meta("enter_editor_next") == true:
+		tree.set_meta("enter_editor_next", false)
+		if not editor_mode:
+			_toggle_editor()
 
 
 func _capture_transform(n: Node2D) -> Dictionary:
@@ -353,8 +368,13 @@ func _enter_editor_mode() -> void:
 	if _baseline_snapshot == null:
 		_baseline_snapshot = _make_scene_snapshot()
 	_game_camera = _find_current_camera()
+	var start_pos := Vector2.ZERO
+	if _primary_player:
+		start_pos = _primary_player.global_position
+	elif _game_camera:
+		start_pos = _game_camera.global_position
 	if editor_camera:
-		editor_camera.global_position = _game_camera.global_position if _game_camera else Vector2.ZERO
+		editor_camera.global_position = start_pos
 		editor_camera.zoom = _game_camera.zoom if _game_camera else Vector2.ONE
 		editor_camera.enabled = true
 		editor_camera.visible = true
@@ -514,6 +534,8 @@ func _center_game_camera(show_msg: bool = false) -> void:
 		if show_msg:
 			_show_footer_message("Camera centered on player")
 	else:
+		_game_camera.global_position = Vector2.ZERO
+		_game_camera.make_current()
 		if show_msg:
 			_show_footer_message("You must add a player to play the level")
 
@@ -659,24 +681,25 @@ func _ensure_hitbox_toggle_action() -> void:
 
 func _ensure_editor_camera_actions() -> void:
 	var cam_actions := {
-		"editor_cam_left": KEY_LEFT,
-		"editor_cam_right": KEY_RIGHT,
-		"editor_cam_up": KEY_UP,
-		"editor_cam_down": KEY_DOWN,
+		"editor_cam_left": [KEY_LEFT, KEY_A],
+		"editor_cam_right": [KEY_RIGHT, KEY_D],
+		"editor_cam_up": [KEY_UP, KEY_W],
+		"editor_cam_down": [KEY_DOWN, KEY_S],
 	}
 	for action in cam_actions.keys():
 		if not InputMap.has_action(action):
 			InputMap.add_action(action)
-		var keycode: int = cam_actions[action]
-		var exists := false
-		for ev in InputMap.action_get_events(action):
-			if ev is InputEventKey and ev.keycode == keycode:
-				exists = true
-				break
-		if not exists:
-			var ev := InputEventKey.new()
-			ev.keycode = keycode
-			InputMap.action_add_event(action, ev)
+		var allowed: Array = cam_actions[action]
+		for keycode in allowed:
+			var exists := false
+			for ev in InputMap.action_get_events(action):
+				if ev is InputEventKey and ev.keycode == keycode:
+					exists = true
+					break
+			if not exists:
+				var ev := InputEventKey.new()
+				ev.keycode = keycode
+				InputMap.action_add_event(action, ev)
 
 
 func _ensure_select_parent_action() -> void:
@@ -1182,7 +1205,9 @@ func _is_unselectable_node(n: Node2D) -> bool:
 	return false
 
 
-func _is_player_node(n: Node2D) -> bool:
+func _is_player_node(n: Node) -> bool:
+	if n == null or not (n is Node2D):
+		return false
 	var meta_id := ""
 	if n.has_meta("data_id"):
 		var mv = n.get_meta("data_id")
@@ -1195,6 +1220,27 @@ func _is_player_node(n: Node2D) -> bool:
 	if meta_id.to_upper() == "ACTOR_PLAYER":
 		return true
 	return n.name.to_lower() == "player"
+
+
+func _is_teleporter_node(n: Node) -> bool:
+	if n == null:
+		return false
+	if n.get_class() == "Teleporter2D":
+		return true
+	return n.is_in_group("teleporters")
+
+
+func _teleporter_needs_partner(n: Node2D) -> bool:
+	if not _is_teleporter_node(n):
+		return false
+	if not ("dropoff_mode" in n):
+		return false
+	if n.dropoff_mode != "teleporter":
+		return false
+	var others: Array = []
+	if get_tree() and get_tree().current_scene:
+		others = get_tree().get_nodes_in_group("teleporters")
+	return others.size() <= 1
 
 
 func _is_scene_root(n: Node2D) -> bool:
@@ -1283,6 +1329,12 @@ func _on_prefab_selected(kind: String, data: Variant = null) -> void:
 	if kind == "close_panels":
 		if _overlay:
 			_overlay.call_deferred("_set_active_panel", "")
+		return
+	if kind == "main_menu":
+		_exit_editor_mode()
+		var err := get_tree().change_scene_to_file("res://game/MainMenu.tscn")
+		if err != OK:
+			push_error("Failed to load main menu, err %d" % err)
 		return
 	if kind == "delete":
 		_delete_mode = true
@@ -1376,6 +1428,10 @@ func _get_prefab_scene(kind: String) -> PackedScene:
 			return preload("res://engine/platforms/PlatformSolid.tscn")
 		"one_way":
 			return preload("res://engine/platforms/PlatformOneWay.tscn")
+		"water":
+			return preload("res://engine/platforms/WaterVolume.tscn")
+		"teleporter":
+			return preload("res://engine/teleport/Teleporter2D.tscn")
 		_:
 			return null
 
@@ -1509,6 +1565,8 @@ func _infer_category_from_id(data_id: String) -> String:
 		return "Scenery"
 	if upper.begins_with("PLATFORM_") or upper.begins_with("ACTOR_DECO"):
 		return "Scenery"
+	if upper.begins_with("TELEPORTER_"):
+		return "Teleporter"
 	if upper.begins_with("AIPROFILE_"):
 		return "AIProfile"
 	if upper.begins_with("FACTION_"):
@@ -1621,6 +1679,22 @@ func _apply_data_to_node(node: Node) -> void:
 			node.set("collision_layer", res.collision_layer)
 		if "collision_mask" in res and "collision_mask" in node:
 			node.set("collision_mask", res.collision_mask)
+	# teleporter props
+	if cat == "Teleporter":
+		if "exit_only" in res and "exit_only" in node:
+			node.exit_only = res.exit_only
+		if "activation_mode" in res and "activation_mode" in node:
+			node.activation_mode = res.activation_mode
+		if "activation_action" in res and "activation_action" in node:
+			node.activation_action = res.activation_action
+		if "destination_scene" in res and "destination_scene" in node:
+			node.destination_scene = res.destination_scene
+		if "dropoff_mode" in res and "dropoff_mode" in node:
+			node.dropoff_mode = res.dropoff_mode
+		if "dropoff_target" in res and "dropoff_target" in node:
+			node.dropoff_target = res.dropoff_target
+		if "dropoff_margin" in res and "dropoff_margin" in node:
+			node.dropoff_margin = res.dropoff_margin
 	# apply collision if present
 	if "collision_layer" in res and "collision_layer" in node:
 		node.set("collision_layer", res.collision_layer)
@@ -1704,6 +1778,9 @@ func _update_hover_info() -> void:
 		txt = "Sel:%s | Type:%s(%s) | Pos:%.1f,%.1f | Rot:%.1f | Scale:%.2f,%.2f" % [
 			n.name, data_id, cat, pos.x, pos.y, rot, sc.x, sc.y
 		]
+		if _teleporter_needs_partner(n):
+			txt += " | No teleporter in scene"
+			_show_footer_message("Add another teleporter or set dropoff to edge.")
 		if click_hint == "":
 			if _delete_mode:
 				click_hint = "Click to delete"
@@ -2484,14 +2561,12 @@ func _handle_editor_camera_move(delta: float) -> void:
 	if editor_camera == null:
 		return
 	var dir := Vector2.ZERO
-	if Input.is_action_pressed("editor_cam_left"):
-		dir.x -= 1.0
-	if Input.is_action_pressed("editor_cam_right"):
-		dir.x += 1.0
-	if Input.is_action_pressed("editor_cam_up"):
-		dir.y -= 1.0
-	if Input.is_action_pressed("editor_cam_down"):
-		dir.y += 1.0
+	dir.x = Input.get_action_strength("editor_cam_right") - Input.get_action_strength("editor_cam_left")
+	dir.y = Input.get_action_strength("editor_cam_down") - Input.get_action_strength("editor_cam_up")
+	# Fallback to player move actions if custom cam actions are missing
+	if dir == Vector2.ZERO:
+		dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+		dir.y = Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
 	if dir != Vector2.ZERO:
 		dir = dir.normalized()
 		editor_camera.global_position += dir * camera_pan_speed * delta

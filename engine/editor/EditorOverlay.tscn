@@ -76,11 +76,13 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 
 [node name="Footer" type="Panel" parent="."]
 visible = false
+mouse_filter = 2
 anchor_right = 1.0
 offset_left = 0.0
 offset_right = 0.0
 offset_bottom = 32.0
 custom_styles/panel = SubResource("bg_gradient")
+z_index = 0
 
 [node name="FooterLabel" type="Label" parent="Footer"]
 anchor_left = 0.5
@@ -91,6 +93,21 @@ offset_right = 400.0
 offset_bottom = 26.0
 text = ""
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+
+[node name="MainMenuButton" type="Button" parent="Ribbon"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -140.0
+offset_top = 4.0
+offset_right = -20.0
+offset_bottom = 36.0
+text = "Main Menu"
+tooltip_text = "Return to main menu"
+custom_styles/normal = SubResource("button_black")
+theme_override_colors/font_color = Color(1, 0.9, 0.2, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 0.5, 1)
+modulate = Color(1, 1, 0, 1)
+z_index = 1500
 
 [node name="Undo" type="Button" parent="Ribbon"]
 offset_left = 540.0
@@ -283,6 +300,18 @@ custom_styles/normal = SubResource("button_black")
 [node name="PlaceOneWay" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
 text = "One-Way"
 tooltip_text = "Place One-Way platform"
+focus_mode = 0
+custom_styles/normal = SubResource("button_black")
+
+[node name="PlaceWater" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
+text = "Water"
+tooltip_text = "Place water volume"
+focus_mode = 0
+custom_styles/normal = SubResource("button_black")
+
+[node name="PlaceTeleporter" type="Button" parent="SidebarLeft/PrefabList/PrefabTabs/Building"]
+text = "Teleporter"
+tooltip_text = "Place teleporter"
 focus_mode = 0
 custom_styles/normal = SubResource("button_black")
 
