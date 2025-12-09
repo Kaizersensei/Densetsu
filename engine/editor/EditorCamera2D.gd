@@ -9,6 +9,9 @@ extends Camera2D
 func _process(delta: float) -> void:
 	if not is_current():
 		return
+	var focus := get_viewport().gui_get_focus_owner()
+	if focus and (focus is LineEdit or focus is TextEdit or focus is OptionButton or focus is Button):
+		return
 	var dir := Vector2.ZERO
 	dir.x = _strength("editor_cam_right") - _strength("editor_cam_left")
 	dir.y = _strength("editor_cam_down") - _strength("editor_cam_up")
@@ -18,18 +21,7 @@ func _process(delta: float) -> void:
 	if Input.is_key_pressed(KEY_SHIFT):
 		speed *= accel_multiplier
 	global_position += dir * speed * delta
-	_update_zoom()
-
-
-func _update_zoom() -> void:
-	var z := zoom
-	if _just("camera_zoom_in"):
-		z -= Vector2(zoom_step, zoom_step)
-	if _just("camera_zoom_out"):
-		z += Vector2(zoom_step, zoom_step)
-	z.x = clamp(z.x, min_zoom, max_zoom)
-	z.y = clamp(z.y, min_zoom, max_zoom)
-	zoom = z
+	# zoom handled by EditorManager keyboard controls
 
 
 func _strength(action: String) -> float:

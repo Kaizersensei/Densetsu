@@ -74,7 +74,7 @@ var _data_panel: Control = null
 func set_editor_mode(active: bool) -> void:
 	visible = active
 	if _status:
-		_status.text = "EDITOR MODE" if active else "GAME"
+		_status.text = "EDITOR MODE"
 
 
 func set_selection_name(name: String) -> void:
@@ -123,6 +123,34 @@ func set_hover_info(text: String, pos: Vector2 = Vector2.ZERO) -> void:
 				target.x = clamp(target.x, 0.0, vr.size.x - tip_size.x)
 				target.y = clamp(target.y, 0.0, vr.size.y - tip_size.y)
 				tip.position = target
+
+
+func is_mouse_over_ui() -> bool:
+	var pos := get_viewport().get_mouse_position()
+	var controls: Array = [
+		_ribbon,
+		_sidebar_left,
+		_polygon_toolbar,
+		_save_panel,
+		_load_panel,
+		_modal_blocker,
+		$Inspector if has_node("Inspector") else null,
+		$Footer if has_node("Footer") else null,
+		$HoverTip if has_node("HoverTip") else null,
+		$SavePanel/SaveDialog if has_node("SavePanel/SaveDialog") else null,
+		$LoadPanel/LoadDialog if has_node("LoadPanel/LoadDialog") else null
+	]
+	for c in controls:
+		if c == null:
+			continue
+		if not (c is Control):
+			continue
+		if not c.visible:
+			continue
+		var rect := (c as Control).get_global_rect()
+		if rect.has_point(pos):
+			return true
+	return false
 
 
 func get_snap_enabled() -> bool:

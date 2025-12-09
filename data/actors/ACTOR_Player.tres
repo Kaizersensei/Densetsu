@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="ActorData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="ActorData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://engine/actors/resources/ActorData.gd" id="1"]
 [ext_resource type="Texture2D" path="res://assets/placeholder_player.tres" id="2"]
 [ext_resource type="PackedScene" path="res://engine/actors/ActorCharacter2D.tscn" id="3"]
+[ext_resource type="Resource" path="res://data/sprites/SPRITE_ActorMichio.tres" id="4"]
 
 [resource]
 script = ExtResource("1")
@@ -15,3 +16,4 @@ sprite = ExtResource("2")
 scene = ExtResource("3")
 tint = Color(0.2, 0.6, 1, 1)
 movement_id = "MOVEMENT_Base"
+sprite_data_id = "SPRITE_ActorMichio"

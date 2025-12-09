@@ -12,6 +12,7 @@ const CATEGORY_DIRS := {
 	"Particles": "res://data/particles",
 	"Movement": "res://data/movement",
 	"Scenery": "res://data/platforms",
+	"Sprite": "res://data/sprites",
 	"Prefab": "res://data/prefabs",
 	"Projectile": "res://data/projectiles",
 	"PolygonTemplate": "res://data/polygon_templates",

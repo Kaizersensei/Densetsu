@@ -35,6 +35,7 @@ class_name ActorData
 @export var scale: Vector2 = Vector2.ONE
 @export var collision_layers: int = 1
 @export var collision_mask: int = 1
+@export var sprite_data_id: String = ""
 @export var sprite: Texture2D
 @export var tint: Color = Color(1, 1, 1, 1)
 @export var collider_shape: Resource

@@ -46,6 +46,7 @@ var _undo_stack: Array = []
 var _redo_stack: Array = []
 var _drag_start_state: Dictionary = {}
 var _drag_start_node: Node2D
+var _drag_start_screen: Vector2 = Vector2.ZERO
 var _baseline_snapshot: PackedScene
 var _save_path_primary := "res://editor_saves/last_scene.tscn"
 var _save_path_fallback := "user://editor_save.tscn"
@@ -298,6 +299,15 @@ func _make_delete_entry(node: Node) -> Dictionary:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	# Global early guard: never let wheel events pass when pointer is over UI
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			if _mouse_over_ui():
+				return
+			# Consume wheel entirely to prevent zoom
+			if editor_mode:
+				get_viewport().set_input_as_handled()
+				return
 	if event.is_action_pressed(toggle_action):
 		if editor_mode:
 			_exit_editor_mode()
@@ -308,17 +318,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_F12 or event.physical_keycode == KEY_F12:
 			_toggle_editor()
 			get_viewport().set_input_as_handled()
-	# Handle zoom early to avoid UI consuming it
-	if editor_mode and event is InputEventMouseButton and editor_camera:
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			var ctrl_down: bool = event.ctrl_pressed if "ctrl_pressed" in event else false
-			var ctrl_key: bool = Input.is_key_pressed(KEY_CTRL)
-			if not ctrl_down and not ctrl_key:
-				return
-			if _ui_blocking_input():
-				return
-			_handle_zoom(event)
-			get_viewport().set_input_as_handled()
+	# Mouse wheel zoom is disabled per request
 
 
 func _input(event: InputEvent) -> void:
@@ -343,18 +343,46 @@ func _input(event: InputEvent) -> void:
 			_toggle_editor()
 			print("Editor toggle via KEY_F12 fallback; editor_mode now:", editor_mode)
 			get_viewport().set_input_as_handled()
-		elif event.is_action_pressed(select_parent_action):
-			_select_parent()
+		# Keyboard zoom with numpad +/- when not typing
+		if editor_mode and editor_camera and (event.keycode == KEY_KP_SUBTRACT or event.keycode == KEY_PLUS or event.keycode == KEY_EQUAL) and event.pressed:
+			if not _ui_blocking_input() and not _mouse_over_ui():
+				_apply_keyboard_zoom(-0.1)
 			get_viewport().set_input_as_handled()
-		elif event.keycode == KEY_DELETE:
+		if editor_mode and editor_camera and (event.keycode == KEY_KP_ADD or event.keycode == KEY_MINUS) and event.pressed:
+			if not _ui_blocking_input() and not _mouse_over_ui():
+				_apply_keyboard_zoom(0.1)
+			get_viewport().set_input_as_handled()
+	elif event.is_action_pressed(select_parent_action):
+		_select_parent()
+		get_viewport().set_input_as_handled()
+	elif event is InputEventKey and event.keycode == KEY_DELETE:
+		var focus := get_viewport().gui_get_focus_owner()
+		if _inspector_visible():
+			return
+		if focus == null or not (focus is LineEdit or focus is TextEdit):
 			_delete_selected()
 			get_viewport().set_input_as_handled()
 	if not editor_mode:
 		return
+	# Suppress editor hotkeys/camera while typing in inspector/UI fields
+	if event is InputEventKey and event.pressed:
+		var focus2 := get_viewport().gui_get_focus_owner()
+		if _inspector_visible() or _mouse_over_ui():
+			return
+		if focus2 and (focus2 is LineEdit or focus2 is TextEdit or focus2 is OptionButton or focus2 is Button):
+			return
 	if event is InputEventMouseButton:
+		if _inspector_visible() or _mouse_over_ui():
+			if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				return
 		_handle_mouse_button(event)
 	elif event is InputEventMouseMotion:
-		if _dragging:
+		if _dragging and _drag_mode == "pan" and editor_camera:
+			var mp := get_viewport().get_mouse_position()
+			var delta_screen := mp - _drag_start_screen
+			var world_delta := delta_screen * editor_camera.zoom
+			editor_camera.global_position = _initial_center - world_delta
+		elif _dragging:
 			_drag_selection()
 		else:
 			_update_hover_info()
@@ -367,11 +395,12 @@ func _enter_editor_mode() -> void:
 	editor_mode = true
 	if _baseline_snapshot == null:
 		_baseline_snapshot = _make_scene_snapshot()
+	_primary_player = _find_primary_player()
 	_game_camera = _find_current_camera()
 	var start_pos := Vector2.ZERO
-	if _primary_player:
+	if _primary_player and is_instance_valid(_primary_player):
 		start_pos = _primary_player.global_position
-	elif _game_camera:
+	elif _game_camera and is_instance_valid(_game_camera):
 		start_pos = _game_camera.global_position
 	if editor_camera:
 		editor_camera.global_position = start_pos
@@ -817,15 +846,19 @@ func _update_snap_from_overlay() -> void:
 
 
 func _handle_mouse_button(event: InputEventMouseButton) -> void:
+	if _mouse_over_ui():
+		if _dragging and not event.pressed:
+			_dragging = false
+			_drag_mode = ""
+			_drag_start_node = null
+			_drag_start_state = {}
+		return
 	if event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			_drag_mode = ""
 			_active_handle = -1
 			var handled := _pick_handle_at_mouse()
 			if handled != "":
-				return
-			var ui_hit: Control = get_viewport().gui_get_hovered_control()
-			if ui_hit != null:
 				return
 			if _polygon_mode:
 				var idx := _polygon_pick_vertex(_get_mouse_world_pos())
@@ -854,6 +887,19 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 					if picked is Node2D:
 						_drag_start_node = picked
 						_drag_start_state = _capture_transform(picked)
+				else:
+					# Clicked empty space: clear selection
+					set_selection(null)
+	elif event.button_index == MOUSE_BUTTON_MIDDLE and editor_camera:
+		if event.pressed:
+			_dragging = true
+			_drag_mode = "pan"
+			_drag_start_screen = get_viewport().get_mouse_position()
+			_initial_center = editor_camera.global_position
+		else:
+			if _drag_mode == "pan":
+				_dragging = false
+				_drag_mode = ""
 	else:
 		if _dragging and _drag_start_node and is_instance_valid(_drag_start_node):
 			var end_state := _capture_transform(_drag_start_node)
@@ -1476,6 +1522,7 @@ func _apply_actor_data_to_node(node: Node) -> void:
 	var sm: Node = _get_scene_manager()
 	if sm and sm.has_method("apply_actor_data"):
 		sm.apply_actor_data(node)
+		_apply_instance_overrides(node)
 		if node == _selected:
 			_update_highlight()
 		return
@@ -1627,6 +1674,7 @@ func _apply_data_to_node(node: Node) -> void:
 	var sm: Node = _get_scene_manager()
 	if sm and sm.has_method("apply_data"):
 		sm.apply_data(node)
+		_apply_instance_overrides(node)
 		_reapply_tint(node)
 		if node == _selected:
 			_update_highlight()
@@ -1739,8 +1787,154 @@ func _apply_data_to_node(node: Node) -> void:
 		node.set_meta("data_id", data_id)
 	if node is Node2D and node.has_method("reset_base_position"):
 		node.call("reset_base_position")
+	_apply_instance_overrides(node)
 	if node == _selected:
 		_update_highlight()
+
+
+# Apply per-instance overrides stored on the node (meta or dictionary)
+func _apply_instance_overrides(node: Node) -> void:
+	if node == null:
+		return
+	var overrides: Dictionary = {}
+	if node.has_meta("instance_overrides"):
+		var ov = node.get_meta("instance_overrides")
+		if ov is Dictionary:
+			overrides = ov
+	# legacy support
+	if node.has_meta("instance_tags") and not overrides.has("tags"):
+		overrides["tags"] = node.get_meta("instance_tags")
+	if node.has_meta("instance_sprite_override") and not overrides.has("sprite"):
+		overrides["sprite"] = node.get_meta("instance_sprite_override")
+	if node.has_meta("instance_collision_mask") and not overrides.has("collision_mask"):
+		overrides["collision_mask"] = node.get_meta("instance_collision_mask")
+	if node.has_meta("instance_no_projectile") and not overrides.has("no_projectile"):
+		overrides["no_projectile"] = node.get_meta("instance_no_projectile")
+
+	# tags
+	if overrides.has("tags"):
+		var tags_val = overrides["tags"]
+		node.set_meta("instance_tags", tags_val)
+		if "tags" in node and tags_val is String:
+			node.set("tags", tags_val)
+	# sprite override
+	if overrides.has("sprite"):
+		var sp := str(overrides["sprite"])
+		node.set_meta("instance_sprite_override", sp)
+		_set_sprite_from_path(node, sp)
+	# collision mask
+	if overrides.has("collision_mask") and "collision_mask" in node:
+		var cm_val = overrides["collision_mask"]
+		if cm_val is int:
+			node.set("collision_mask", cm_val)
+			node.set_meta("instance_collision_mask", cm_val)
+	# no projectile
+	if overrides.has("no_projectile"):
+		node.set_meta("instance_no_projectile", overrides["no_projectile"])
+	# tint
+	if overrides.has("tint"):
+		var tint_col = overrides["tint"]
+		if tint_col is Color:
+			_apply_tint_value(node, tint_col)
+	# resource overrides for teleporters etc.
+	if overrides.has("destination_scene") and "destination_scene" in node:
+		var pth := str(overrides["destination_scene"])
+		if pth != "" and ResourceLoader.exists(pth):
+			var ps := ResourceLoader.load(pth) as PackedScene
+			node.destination_scene = ps
+	# transform overrides
+	if overrides.has("pos") and node is Node2D:
+		var p = overrides["pos"]
+		if p is Vector2:
+			(node as Node2D).global_position = p
+	if overrides.has("rot") and node is Node2D:
+		var r = overrides["rot"]
+		if r is float or r is int:
+			(node as Node2D).global_rotation = float(r)
+	if overrides.has("scale") and node is Node2D:
+		var s = overrides["scale"]
+		if s is Vector2:
+			(node as Node2D).global_scale = s
+	# teleporter-specific
+	if overrides.has("exit_only") and "exit_only" in node:
+		node.exit_only = bool(overrides["exit_only"])
+	if overrides.has("activation_mode") and "activation_mode" in node:
+		node.activation_mode = str(overrides["activation_mode"])
+	if overrides.has("activation_action") and "activation_action" in node:
+		node.activation_action = str(overrides["activation_action"])
+	if overrides.has("destination_scene") and "destination_scene" in node:
+		var pth := str(overrides["destination_scene"])
+		if pth != "" and ResourceLoader.exists(pth):
+			var ps2 := ResourceLoader.load(pth) as PackedScene
+			node.destination_scene = ps2
+	if overrides.has("dropoff_mode") and "dropoff_mode" in node:
+		node.dropoff_mode = str(overrides["dropoff_mode"])
+	if overrides.has("dropoff_target") and "dropoff_target" in node:
+		node.dropoff_target = str(overrides["dropoff_target"])
+	if overrides.has("dropoff_margin") and "dropoff_margin" in node:
+		var dm = overrides["dropoff_margin"]
+		if dm is float or dm is int:
+			node.dropoff_margin = float(dm)
+	# movement template override
+	if overrides.has("movement_id") and "movement_id" in node:
+		var mid := str(overrides["movement_id"])
+		node.set("movement_id", mid)
+		var sm: Node = _get_scene_manager()
+		if sm and sm.has_method("_registry") and sm.has_method("_apply_movement"):
+			var reg = sm._registry()
+			if reg and reg.has_method("get_resource_for_category"):
+				var mres = reg.get_resource_for_category("Movement", mid)
+				if mres:
+					sm._apply_movement(node, mres)
+	# movement property overrides (per-field)
+	var movement_keys := [
+		"move_speed", "acceleration", "friction_ground", "friction_air", "max_fall_speed", "slope_penalty",
+		"jump_speed", "air_jump_speed", "max_jumps", "coyote_time", "jump_buffer_time", "min_jump_height",
+		"jump_release_gravity_scale", "jump_release_cut", "drop_through_time",
+		"wall_slide_gravity_scale", "wall_jump_speed_x", "wall_jump_speed_y",
+		"enable_glide", "glide_gravity_scale", "glide_max_fall_speed",
+		"enable_flight", "flight_acceleration", "flight_max_speed", "flight_drag",
+		"enable_swim", "swim_speed", "swim_drag", "swim_gravity_scale", "swim_jump_speed",
+		"enable_flap", "max_flaps", "flap_impulse"
+	]
+	for mk in movement_keys:
+		if overrides.has(mk) and mk in node:
+			node.set(mk, overrides[mk])
+
+
+func _set_sprite_from_path(node: Node, path: String) -> void:
+	if path == "":
+		return
+	var tex := load(path)
+	if tex == null:
+		return
+	if node is Sprite2D:
+		(node as Sprite2D).texture = tex
+		return
+	var spr := node.get_node_or_null("SpriteRoot/Sprite2D")
+	if spr and spr is Sprite2D:
+		(spr as Sprite2D).texture = tex
+		return
+	for child in node.get_children():
+		if child is Sprite2D:
+			(child as Sprite2D).texture = tex
+			return
+
+
+func _apply_tint_value(node: Node, col: Color) -> void:
+	var spr := node.get_node_or_null("SpriteRoot/Sprite2D") as Sprite2D
+	if spr:
+		spr.modulate = col
+		spr.set_meta("editor_tint", col)
+	elif node is Sprite2D:
+		(node as Sprite2D).modulate = col
+		(node as Sprite2D).set_meta("editor_tint", col)
+	var poly := node.get_node_or_null("Visual") as Polygon2D
+	if poly:
+		poly.color = col
+		poly.set_meta("editor_tint", col)
+	if not spr and not (node is Sprite2D) and not poly:
+		node.set_meta("editor_tint", col)
 
 
 func _update_hover_info() -> void:
@@ -1749,6 +1943,16 @@ func _update_hover_info() -> void:
 	var txt := ""
 	var click_hint := ""
 	var mouse_pos := get_viewport().get_mouse_position()
+	# If pointer is over UI, suppress scene hover info
+	if _mouse_over_ui():
+		if _overlay and _overlay.has_method("set_hover_info"):
+			_overlay.call("set_hover_info", "", Vector2.ZERO)
+		return
+	var editor_rect := _editor_area_rect()
+	if not editor_rect.has_point(mouse_pos):
+		if _overlay and _overlay.has_method("set_hover_info"):
+			_overlay.call("set_hover_info", "", Vector2.ZERO)
+		return
 	var node := _pick_node_at_mouse_top()
 	_hovered = node
 	_handle_hover_index = _handle_under_mouse()
@@ -1869,7 +2073,7 @@ func _refresh_inspector_sidebar() -> void:
 		return
 	var mgr := self
 	if mgr.has_method("_update_entity_popup"):
-		mgr.call_deferred("_update_entity_popup", true)
+		mgr.call_deferred("_update_entity_popup", false)
 
 
 func _pick_node_at_mouse_top() -> Node:
@@ -1981,7 +2185,8 @@ func _update_handles() -> void:
 	]
 	var center_world := n.global_transform * (local_rect.position + local_rect.size * 0.5)
 	var up := n.global_transform.basis_xform(Vector2.UP).normalized()
-	_rotation_handle_pos = center_world + up * (local_rect.size.length() * 0.25 + 24.0)
+	var radius := local_rect.size.length() * 0.6 + 32.0
+	_rotation_handle_pos = center_world + up * radius
 	for i in range(_handle_gizmos.size()):
 		_handle_gizmos[i].visible = false
 	for i in range(min(8, _handle_positions.size())):
@@ -2528,6 +2733,19 @@ func _load_scene(path_override: String = "") -> void:
 
 
 func _reload_scene() -> void:
+	var scene := get_tree().current_scene
+	var path := ""
+	if scene:
+		# scene_file_path is the stable way to get the packed scene path for a running scene
+		if "scene_file_path" in scene and scene.scene_file_path != "":
+			path = scene.scene_file_path
+	if path != "":
+		var packed := ResourceLoader.load(path) as PackedScene
+		if packed:
+			get_tree().change_scene_to_packed(packed)
+			_baseline_snapshot = _make_scene_snapshot()
+			return
+	# fallback to baseline snapshot if no path
 	if _baseline_snapshot == null:
 		_baseline_snapshot = _make_scene_snapshot()
 	_replace_current_scene(_baseline_snapshot)
@@ -2536,16 +2754,7 @@ func _reload_scene() -> void:
 func _handle_zoom(event: InputEventMouseButton) -> void:
 	if editor_camera == null:
 		return
-	var factor := 1.0 - zoom_step if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0 + zoom_step
-	var target := editor_camera.zoom * factor
-	target.x = clamp(target.x, zoom_min, zoom_max)
-	target.y = clamp(target.y, zoom_min, zoom_max)
-	editor_camera.zoom = target
-	editor_camera.queue_redraw()
-	if _overlay and _overlay.has_method("update"):
-		_overlay.update()
-	_update_snap_from_overlay()
-	print("Zoom applied. Button:", event.button_index, "New zoom:", editor_camera.zoom, "is_current:", editor_camera.is_current())
+	# mouse wheel zoom disabled
 
 
 func _toggle_data_editor() -> void:
@@ -2560,6 +2769,8 @@ func _toggle_data_editor() -> void:
 func _handle_editor_camera_move(delta: float) -> void:
 	if editor_camera == null:
 		return
+	if _inspector_visible():
+		return
 	var dir := Vector2.ZERO
 	dir.x = Input.get_action_strength("editor_cam_right") - Input.get_action_strength("editor_cam_left")
 	dir.y = Input.get_action_strength("editor_cam_down") - Input.get_action_strength("editor_cam_up")
@@ -2570,6 +2781,17 @@ func _handle_editor_camera_move(delta: float) -> void:
 	if dir != Vector2.ZERO:
 		dir = dir.normalized()
 		editor_camera.global_position += dir * camera_pan_speed * delta
+
+
+func _apply_keyboard_zoom(delta_factor: float) -> void:
+	if editor_camera == null:
+		return
+	var target := editor_camera.zoom * (1.0 + delta_factor)
+	target.x = clamp(target.x, zoom_min, zoom_max)
+	target.y = clamp(target.y, zoom_min, zoom_max)
+	editor_camera.zoom = target
+	editor_camera.queue_redraw()
+	_update_snap_from_overlay()
 
 
 func _ui_blocking_input() -> bool:
@@ -2618,6 +2840,52 @@ func _get_scene_manager():
 	if has_node("/root/SceneManager"):
 		return get_node("/root/SceneManager")
 	return null
+
+
+func _inspector_visible() -> bool:
+	return _entity_popup != null and _entity_popup.visible
+
+
+func _mouse_over_ui() -> bool:
+	var hovered := get_viewport().gui_get_hovered_control()
+	if hovered:
+		return true
+	var mp := get_viewport().get_mouse_position()
+	if _entity_popup and _entity_popup.visible and _entity_popup is Control:
+		if (_entity_popup as Control).get_global_rect().has_point(mp):
+			return true
+	if _overlay and _overlay.has_method("is_mouse_over_ui"):
+		if _overlay.call("is_mouse_over_ui"):
+			return true
+		# Fallback: check common overlay panels' rects
+		for name in ["DataEditor", "SavePanel", "LoadPanel", "MainMenu", "PolygonOverlay", "PolygonToolbar", "Footer", "Ribbon", "SidebarLeft", "Inspector", "HoverTip", "ModalBlocker"]:
+			var panel := _overlay.get_node_or_null(name)
+			if panel and panel is Control and panel.visible:
+				if (panel as Control).get_global_rect().has_point(mp):
+					return true
+	return false
+
+
+func _editor_area_rect() -> Rect2:
+	var vr := get_viewport().get_visible_rect()
+	var left := 0.0
+	var right := vr.size.x
+	var top := 0.0
+	var bottom := vr.size.y
+	if _overlay:
+		var rib := _overlay.get_node_or_null("Ribbon") as Control
+		if rib:
+			top = max(top, rib.size.y)
+		var side := _overlay.get_node_or_null("SidebarLeft") as Control
+		if side:
+			left = max(left, side.size.x)
+		var foot := _overlay.get_node_or_null("Footer") as Control
+		if foot and foot.visible:
+			bottom = min(bottom, foot.global_position.y)
+		var insp := _overlay.get_node_or_null("Inspector") as Control
+		if insp and insp.visible:
+			right = min(right, insp.global_position.x)
+	return Rect2(Vector2(left, top), Vector2(max(0.0, right - left), max(0.0, bottom - top)))
 
 
 # Registry helper (fallback for legacy paths)

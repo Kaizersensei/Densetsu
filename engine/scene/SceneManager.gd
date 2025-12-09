@@ -44,6 +44,8 @@ func infer_category_from_id(data_id: String) -> String:
 		return "Stats"
 	if upper.begins_with("TELEPORTER_"):
 		return "Teleporter"
+	if upper.begins_with("SPRITE_"):
+		return "Sprite"
 	return ""
 
 
@@ -105,6 +107,11 @@ func apply_actor_data(node: Node) -> void:
 		var mres = reg.get_resource_for_category("Movement", res.movement_id)
 		if mres:
 			_apply_movement(node, mres)
+	# Sprite data link
+	if "sprite_data_id" in res and res.sprite_data_id != "":
+		var sd = reg.get_resource_for_category("Sprite", res.sprite_data_id)
+		if sd:
+			_apply_sprite_data(node, sd)
 	# Movement template link
 	if "movement_id" in res and res.movement_id != "":
 		var mres = reg.get_resource_for_category("Movement", res.movement_id)
@@ -364,3 +371,60 @@ func _find_collision_shape(node: Node) -> CollisionShape2D:
 		if deeper:
 			return deeper
 	return null
+
+
+func _apply_sprite_data(node: Node, sd) -> void:
+	if sd == null:
+		return
+	var tint := Color(1, 1, 1, 1)
+	if "tint" in sd:
+		tint = sd.tint
+	var offset := Vector2.ZERO
+	if "offset" in sd:
+		offset = sd.offset
+	var frames = null
+	if "frames" in sd:
+		frames = sd.frames
+	var anim_name := ""
+	if "default_animation" in sd:
+		anim_name = sd.default_animation
+	var speed := 1.0
+	if "playback_speed" in sd:
+		speed = sd.playback_speed
+	var flip_h := false
+	var flip_v := false
+	if "flip_h" in sd:
+		flip_h = sd.flip_h
+	if "flip_v" in sd:
+		flip_v = sd.flip_v
+
+	var anim: AnimatedSprite2D = node.get_node_or_null("SpriteRoot/AnimatedSprite2D") as AnimatedSprite2D
+	if anim == null:
+		for child in node.get_children():
+			if child is AnimatedSprite2D:
+				anim = child
+				break
+	if anim and frames:
+		anim.sprite_frames = frames
+		if anim_name != "":
+			anim.animation = anim_name
+		anim.speed_scale = speed
+		anim.flip_h = flip_h
+		anim.flip_v = flip_v
+		anim.position = offset
+		anim.modulate = tint
+		return
+
+	var spr2: Sprite2D = node.get_node_or_null("SpriteRoot/Sprite2D") as Sprite2D
+	if spr2:
+		if frames:
+			var use_anim: String = anim_name if anim_name != "" else (frames.get_animation_names()[0] if frames.get_animation_names().size() > 0 else "")
+			if use_anim != "" and frames.has_animation(use_anim) and frames.get_frame_count(use_anim) > 0:
+				var tex: Texture2D = frames.get_frame_texture(use_anim, 0)
+				if tex:
+					spr2.texture = tex
+		spr2.flip_h = flip_h
+		spr2.flip_v = flip_v
+		spr2.modulate = tint
+		spr2.position = offset
+		spr2.set_meta("editor_tint", tint)
