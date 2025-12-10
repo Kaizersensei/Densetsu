@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=26 format=3]
 
 [ext_resource type="Script" path="res://game/levels/CollisionTest.gd" id="1_72cau"]
 [ext_resource type="PackedScene" path="res://engine/actors/ActorCharacter2D.tscn" id="2_fgkak"]
@@ -16,6 +16,8 @@
 [ext_resource type="PackedScene" path="res://engine/platforms/PlatformSolid.tscn" id="14_iy6jq"]
 [ext_resource type="PackedScene" path="res://engine/platforms/WaterVolume.tscn" id="15_5vrk0"]
 [ext_resource type="Script" path="res://engine/platforms/WaterVolume.gd" id="16_868x5"]
+[ext_resource type="PackedScene" path="res://engine/teleport/Teleporter2D.tscn" id="17_o2myb"]
+[ext_resource type="Script" path="res://engine/teleport/Teleporter2D.gd" id="18_v4603"]
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(400, 20)
@@ -23,23 +25,28 @@ size = Vector2(400, 20)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5wey4"]
 size = Vector2(64, 64)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_72cau"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o2myb"]
 size = Vector2(128, 128)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_fgkak"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v4603"]
 size = Vector2(64, 64)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_mxyps"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_s1a7g"]
 size = Vector2(64, 64)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_v5d7l"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_m3kpt"]
 size = Vector2(64, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rcfo8"]
+size = Vector2(64, 96)
 
 [node name="@Node2D@294" type="Node2D"]
 script = ExtResource("1_72cau")
 
 [node name="Player" type="CharacterBody2D" parent="." instance=ExtResource("2_fgkak")]
-position = Vector2(-104, 72)
+position = Vector2(87.5, 71.9879)
+collision_layer = 2
+collision_mask = 165
 wall_min_slide_angle = 0.436332
 platform_floor_layers = 1
 platform_wall_layers = 1
@@ -47,7 +54,9 @@ script = ExtResource("3_mxyps")
 metadata/data_id = "ACTOR_Player"
 
 [node name="Enemy" type="CharacterBody2D" parent="." instance=ExtResource("4_v5d7l")]
-position = Vector2(140, 71.9958)
+position = Vector2(140.072, 71.924)
+collision_layer = 4
+collision_mask = 163
 wall_min_slide_angle = 0.436332
 platform_floor_layers = 1
 platform_wall_layers = 1
@@ -57,6 +66,8 @@ metadata/data_id = "ACTOR_Enemy"
 
 [node name="NPC" type="CharacterBody2D" parent="." instance=ExtResource("5_c1veu")]
 position = Vector2(100, 71.9995)
+collision_layer = 2
+collision_mask = 165
 wall_min_slide_angle = 0.436332
 platform_floor_layers = 1
 platform_wall_layers = 1
@@ -71,6 +82,8 @@ metadata/data_id = "SCENERY_Deco"
 
 [node name="Trap" type="StaticBody2D" parent="." instance=ExtResource("8_6ridi")]
 position = Vector2(49, 316)
+collision_layer = 64
+collision_mask = 6
 script = ExtResource("9_ps66i")
 metadata/data_id = "TRAP_Basic"
 
@@ -82,7 +95,7 @@ collision_mask = 2
 metadata/data_id = "PLATFORM_OneWay_Default"
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(-76.9253, 71.9999)
+position = Vector2(-535.667, -32.0001)
 enabled = false
 
 [node name="DebugOverlay" type="Node2D" parent="." instance=ExtResource("11_cxfv6")]
@@ -90,7 +103,7 @@ script = ExtResource("12_a3q6m")
 player_path = NodePath("../Player")
 
 [node name="KillZone" type="Area2D" parent="."]
-position = Vector2(1, 250)
+position = Vector2(0, 248)
 scale = Vector2(3, 1)
 collision_layer = 64
 collision_mask = 2
@@ -107,8 +120,8 @@ color = Color(0.1, 0, 0, 0.5)
 polygon = PackedVector2Array(-200, -10, 200, -10, 200, 10, -200, 10)
 
 [node name="Solid" type="StaticBody2D" parent="." instance=ExtResource("14_iy6jq")]
-position = Vector2(16, 104)
-scale = Vector2(7.58333, 1)
+position = Vector2(104, 104)
+scale = Vector2(10.4, 1)
 collision_mask = 2
 metadata/data_id = "PLATFORM_SolidGround"
 
@@ -129,7 +142,7 @@ script = ExtResource("16_868x5")
 metadata/data_id = "SCENERY_WaterVolume"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Water"]
-shape = SubResource("RectangleShape2D_72cau")
+shape = SubResource("RectangleShape2D_o2myb")
 
 [node name="Visual" type="Polygon2D" parent="Water"]
 z_index = -1
@@ -138,13 +151,13 @@ polygon = PackedVector2Array(-64, -64, 64, -64, 64, 64, -64, 64)
 metadata/editor_tint = Color(0.4, 0.8, 1, 0.25)
 
 [node name="Solid2" type="StaticBody2D" parent="." instance=ExtResource("14_iy6jq")]
-position = Vector2(-432, 128)
-scale = Vector2(6.4375, 1)
+position = Vector2(-464, 136)
+scale = Vector2(7.45, 1.5)
 collision_mask = 2
 metadata/data_id = "PLATFORM_SolidGround"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Solid2"]
-shape = SubResource("RectangleShape2D_fgkak")
+shape = SubResource("RectangleShape2D_v4603")
 
 [node name="Visual" type="Polygon2D" parent="Solid2"]
 color = Color(0.2, 0.2, 0.2, 1)
@@ -153,12 +166,12 @@ metadata/editor_tint = Color(0.2, 0.2, 0.2, 1)
 
 [node name="Solid3" type="StaticBody2D" parent="." instance=ExtResource("14_iy6jq")]
 position = Vector2(-600, 32)
-scale = Vector2(1, 2)
+scale = Vector2(3.45, 2)
 collision_mask = 2
 metadata/data_id = "PLATFORM_SolidGround"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Solid3"]
-shape = SubResource("RectangleShape2D_mxyps")
+shape = SubResource("RectangleShape2D_s1a7g")
 
 [node name="Visual" type="Polygon2D" parent="Solid3"]
 color = Color(0.2, 0.2, 0.2, 1)
@@ -167,14 +180,71 @@ metadata/editor_tint = Color(0.2, 0.2, 0.2, 1)
 
 [node name="Solid4" type="StaticBody2D" parent="." instance=ExtResource("14_iy6jq")]
 position = Vector2(-192, 8)
-scale = Vector2(1, 2.0625)
+scale = Vector2(1.15, 2.05)
 collision_mask = 2
 metadata/data_id = "PLATFORM_SolidGround"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Solid4"]
-shape = SubResource("RectangleShape2D_v5d7l")
+shape = SubResource("RectangleShape2D_m3kpt")
 
 [node name="Visual" type="Polygon2D" parent="Solid4"]
 color = Color(0.2, 0.2, 0.2, 1)
 polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
 metadata/editor_tint = Color(0.2, 0.2, 0.2, 1)
+
+[node name="Teleporter" type="Area2D" parent="." instance=ExtResource("17_o2myb")]
+position = Vector2(-675, -129)
+scale = Vector2(1, 2)
+collision_mask = 2
+script = ExtResource("18_v4603")
+data_id = "TELEPORTER_Default"
+destination_scene = ExtResource("17_o2myb")
+dropoff_mode = "left_edge"
+dropoff_target = "Teleporter2"
+dropoff_margin = 64.0
+metadata/instance_overrides = {
+"activation_action": "interact",
+"activation_mode": "collision",
+"destination_scene": "res://engine/teleport/Teleporter2D.tscn",
+"dropoff_margin": 64.0,
+"dropoff_mode": "left_edge",
+"dropoff_target": "Teleporter2",
+"exit_only": false
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Teleporter"]
+shape = SubResource("RectangleShape2D_rcfo8")
+
+[node name="Visual" type="Polygon2D" parent="Teleporter"]
+z_index = -1
+color = Color(0.4, 0.6, 1, 0.25)
+polygon = PackedVector2Array(-32, -48, 32, -48, 32, 48, -32, 48)
+metadata/editor_tint = Color(0.4, 0.6, 1, 0.25)
+
+[node name="Teleporter2" type="Area2D" parent="." instance=ExtResource("17_o2myb")]
+position = Vector2(224, -24)
+scale = Vector2(1, 1.95)
+collision_mask = 2
+script = ExtResource("18_v4603")
+data_id = "TELEPORTER_Default"
+destination_scene = ExtResource("17_o2myb")
+dropoff_target = "Teleporter"
+dropoff_margin = 64.0
+metadata/instance_overrides = {
+"activation_action": "interact",
+"activation_mode": "collision",
+"destination_scene": "res://engine/teleport/Teleporter2D.tscn",
+"dropoff_margin": 64.0,
+"dropoff_mode": "right_edge",
+"dropoff_target": "Teleporter",
+"exit_only": false
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Teleporter2"]
+shape = SubResource("RectangleShape2D_rcfo8")
+
+[node name="Visual" type="Polygon2D" parent="Teleporter2"]
+z_index = -1
+color = Color(0.4, 0.6, 1, 0.25)
+polygon = PackedVector2Array(-32, -48, 32, -48, 32, 48, -32, 48)
+metadata/editor_tint = Color(0.4, 0.6, 1, 0.25)

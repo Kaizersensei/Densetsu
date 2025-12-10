@@ -280,6 +280,22 @@ func apply_data(node: Node) -> void:
 	# scene overrides first
 	if "scene" in res and res.scene:
 		apply_scene_overrides(node, res.scene)
+	# teleporter props
+	if cat == "Teleporter":
+		if "exit_only" in res and "exit_only" in node:
+			node.exit_only = res.exit_only
+		if "activation_mode" in res and "activation_mode" in node:
+			node.activation_mode = res.activation_mode
+		if "activation_action" in res and "activation_action" in node:
+			node.activation_action = res.activation_action
+		if "destination_scene" in res and "destination_scene" in node:
+			node.destination_scene = res.destination_scene
+		if "dropoff_mode" in res and "dropoff_mode" in node:
+			node.dropoff_mode = res.dropoff_mode
+		if "dropoff_target" in res and "dropoff_target" in node:
+			node.dropoff_target = res.dropoff_target
+		if "dropoff_margin" in res and "dropoff_margin" in node:
+			node.dropoff_margin = res.dropoff_margin
 	# apply tint override if provided (covers sprite, polygon, and stores meta)
 	if "tint" in res:
 		var tint: Color = res.tint

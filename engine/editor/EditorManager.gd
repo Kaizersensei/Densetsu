@@ -663,9 +663,10 @@ func _process(delta: float) -> void:
 	if _toggle_lock > 0.0:
 		_toggle_lock = max(_toggle_lock - delta, 0.0)
 	if not editor_mode:
+		_follow_primary_player()
 		return
 	_handle_editor_camera_move(delta)
-	if _dragging:
+	if _dragging and _drag_mode != "pan":
 		_drag_selection()
 	elif _inspector_dirty and _overlay:
 		if _overlay.has_method("populate_inspector"):
@@ -891,6 +892,7 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 					# Clicked empty space: clear selection
 					set_selection(null)
 	elif event.button_index == MOUSE_BUTTON_MIDDLE and editor_camera:
+		# Pan camera only; do not move selection
 		if event.pressed:
 			_dragging = true
 			_drag_mode = "pan"
@@ -928,8 +930,6 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 		_drag_mode = ""
 		_dragging = false
 		Input.set_default_cursor_shape(Input.CURSOR_ARROW)
-		_dragging = false
-		_drag_mode = ""
 
 
 func _pick_node_at_mouse() -> Node:
@@ -2769,15 +2769,13 @@ func _toggle_data_editor() -> void:
 func _handle_editor_camera_move(delta: float) -> void:
 	if editor_camera == null:
 		return
-	if _inspector_visible():
+	# Block camera movement when typing or UI focused
+	var focus := get_viewport().gui_get_focus_owner()
+	if _inspector_visible() or (focus and (focus is LineEdit or focus is TextEdit or focus is OptionButton or focus is Button)):
 		return
 	var dir := Vector2.ZERO
 	dir.x = Input.get_action_strength("editor_cam_right") - Input.get_action_strength("editor_cam_left")
 	dir.y = Input.get_action_strength("editor_cam_down") - Input.get_action_strength("editor_cam_up")
-	# Fallback to player move actions if custom cam actions are missing
-	if dir == Vector2.ZERO:
-		dir.x = Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
-		dir.y = Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
 	if dir != Vector2.ZERO:
 		dir = dir.normalized()
 		editor_camera.global_position += dir * camera_pan_speed * delta

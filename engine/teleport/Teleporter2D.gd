@@ -6,13 +6,14 @@ class_name Teleporter2D
 @export var activation_mode: String = "collision" # collision | input
 @export var activation_action: String = "interact"
 @export var destination_scene: PackedScene
-@export var dropoff_mode: String = "teleporter" # teleporter | left_edge | right_edge
+@export var dropoff_mode: String = "right_edge" # left_edge | right_edge | top_edge | bottom_edge
 @export var dropoff_target: String = ""
 @export var dropoff_margin: float = 960.0
 @export var tint: Color = Color(0.4, 0.6, 1.0, 0.25)
 
 var _overlapping: Array[Node] = []
 var _cooldown: Dictionary = {}
+const TELEPORT_INTERVAL_MS := 200
 
 func _ready() -> void:
 	monitoring = true
@@ -52,7 +53,7 @@ func _try_teleport(body: Node) -> void:
 		return
 	var now: int = Time.get_ticks_msec()
 	var last: int = _cooldown.get(body.get_instance_id(), 0)
-	if now - last < 200:
+	if now - last < TELEPORT_INTERVAL_MS:
 		return
 	_cooldown[body.get_instance_id()] = now
 
@@ -61,22 +62,38 @@ func _try_teleport(body: Node) -> void:
 		(body as Node2D).global_position = target_pos
 		if "velocity" in body:
 			body.set("velocity", Vector2.ZERO)
+	_overlapping.erase(body)
 
 
 func _compute_dropoff(body: Node) -> Vector2:
-	var src_pos := global_position
-	var vpr := get_viewport_rect()
-	var margin: float = max(dropoff_margin, vpr.size.x * 0.5)
+	var target := _find_target_teleporter()
+	if target == null:
+		target = self
+	var dir := Vector2.RIGHT
 	match dropoff_mode:
 		"left_edge":
-			return Vector2(src_pos.x - margin, src_pos.y)
+			dir = Vector2.LEFT
 		"right_edge":
-			return Vector2(src_pos.x + margin, src_pos.y)
-		"teleporter":
-			var target := _find_target_teleporter()
-			if target and target != self:
-				return target.global_position
-	return src_pos
+			dir = Vector2.RIGHT
+		"top_edge":
+			dir = Vector2.UP
+		"bottom_edge":
+			dir = Vector2.DOWN
+		_:
+			dir = Vector2.RIGHT
+	return target.global_position + _edge_safe_offset(dir, target)
+
+
+func _edge_safe_offset(dir: Vector2, t: Teleporter2D) -> Vector2:
+	var extent := Vector2(32, 48)
+	var cs := t.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if cs and cs.shape is RectangleShape2D:
+		var rs := cs.shape as RectangleShape2D
+		extent = rs.size * 0.5
+	var safety := 12.0
+	var extra: float = max(dropoff_margin, 0.0)
+	var dist: float = max(extent.x, extent.y) + safety + extra
+	return dir.normalized() * dist
 
 
 func _find_target_teleporter() -> Teleporter2D:
@@ -95,7 +112,7 @@ func _find_target_teleporter() -> Teleporter2D:
 			var mv = t.get_meta("data_id")
 			if mv is String:
 				id = mv
-		if id != "" and dropoff_target != "" and id == dropoff_target:
+		if dropoff_target != "" and (t.name == dropoff_target or id == dropoff_target):
 			return t
 		if dropoff_target == "" and id != "":
 			return t

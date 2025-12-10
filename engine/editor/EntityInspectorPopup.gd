@@ -576,8 +576,8 @@ func _setup_teleporter_controls() -> void:
 	_tele_fields["activation_mode"] = _add_option_row(box, "Activation", ["collision", "input"])
 	_tele_fields["activation_action"] = _add_line_row(box, "Action")
 	_tele_fields["destination_scene"] = _add_line_row(box, "Destination Scene")
-	_tele_fields["dropoff_mode"] = _add_option_row(box, "Dropoff Mode", ["teleporter", "left_edge", "right_edge"])
-	_tele_fields["dropoff_target"] = _add_line_row(box, "Dropoff Target")
+	_tele_fields["dropoff_mode"] = _add_option_row(box, "Dropoff Mode", ["left_edge", "right_edge", "top_edge", "bottom_edge"])
+	_tele_fields["dropoff_target"] = _add_option_row(box, "Dropoff Target", ["Add another teleporter"])
 	_tele_fields["dropoff_margin"] = _add_line_row(box, "Dropoff Margin")
 	_tele_apply = Button.new()
 	_tele_apply.text = "Apply Teleporter"
@@ -913,9 +913,6 @@ func _apply_overrides() -> void:
 		if _current_node.has_meta("instance_sprite_override"):
 			_current_node.remove_meta("instance_sprite_override")
 			overrides.erase("sprite")
-	overrides.erase("pos")
-	overrides.erase("rot")
-	overrides.erase("scale")
 	if overrides.size() > 0:
 		_current_node.set_meta("instance_overrides", overrides)
 	elif _current_node.has_meta("instance_overrides"):
@@ -960,15 +957,25 @@ func _apply_teleporter() -> void:
 		var dom := ob2.get_item_text(ob2.selected)
 		_current_node.dropoff_mode = dom
 		overrides["dropoff_mode"] = dom
-	if _tele_fields.has("dropoff_target") and _tele_fields["dropoff_target"] is LineEdit:
-		var dt := (_tele_fields["dropoff_target"] as LineEdit).text.strip_edges()
-		_current_node.dropoff_target = dt
-		overrides["dropoff_target"] = dt
+	if _tele_fields.has("dropoff_target") and _tele_fields["dropoff_target"] is OptionButton:
+		var ob_target := _tele_fields["dropoff_target"] as OptionButton
+		if ob_target.item_count > 0:
+			var meta: Variant = ob_target.get_selected_metadata()
+			var target_name: String = ""
+			if meta is String:
+				target_name = meta
+			elif ob_target.get_item_text(ob_target.selected) != "":
+				target_name = ob_target.get_item_text(ob_target.selected)
+			if not ob_target.disabled and target_name != "":
+				_current_node.dropoff_target = target_name
+				overrides["dropoff_target"] = target_name
 	if _tele_fields.has("dropoff_margin") and _tele_fields["dropoff_margin"] is LineEdit:
 		var txt := (_tele_fields["dropoff_margin"] as LineEdit).text.strip_edges()
+		var margin := 64.0
 		if txt != "":
-			_current_node.dropoff_margin = float(txt)
-			overrides["dropoff_margin"] = float(txt)
+			margin = float(txt)
+		_current_node.dropoff_margin = margin
+		overrides["dropoff_margin"] = margin
 	if overrides.size() > 0:
 		_current_node.set_meta("instance_overrides", overrides)
 	elif _current_node.has_meta("instance_overrides"):
@@ -1033,8 +1040,47 @@ func _update_teleporter_fields(node: Node) -> void:
 			if ob2.get_item_text(i2) == mode2:
 				ob2.select(i2)
 				break
-	if _tele_fields.has("dropoff_target") and _tele_fields["dropoff_target"] is LineEdit:
-		(_tele_fields["dropoff_target"] as LineEdit).text = str(_read_prop(node, "dropoff_target", ""))
+	if _tele_fields.has("dropoff_target") and _tele_fields["dropoff_target"] is OptionButton:
+		var ob_target := _tele_fields["dropoff_target"] as OptionButton
+		ob_target.clear()
+		var options: Array[String] = []
+		var label_map: Array[String] = []
+		for t in get_tree().get_nodes_in_group("teleporters"):
+			if not (t is Node):
+				continue
+			if t == node:
+				continue
+			# only same scene
+			if t.get_tree() != node.get_tree():
+				continue
+			var tid := ""
+			if "data_id" in t:
+				var tv = t.get("data_id")
+				if tv is String:
+					tid = tv
+			if tid == "" and t.has_meta("data_id"):
+				var mv = t.get_meta("data_id")
+				if mv is String:
+					tid = mv
+			if tid == "":
+				tid = t.name
+			var display := t.name
+			if tid != "" and tid != t.name:
+				display = "%s (%s)" % [t.name, tid]
+			options.append(display)
+			label_map.append(t.name)
+		var current_target := str(_read_prop(node, "dropoff_target", ""))
+		if options.is_empty():
+			ob_target.add_item("Add another teleporter")
+			ob_target.disabled = true
+		else:
+			ob_target.disabled = false
+			for i in range(options.size()):
+				ob_target.add_item(options[i], i)
+				ob_target.set_item_metadata(i, label_map[i])
+			var idx := label_map.find(current_target)
+			ob_target.select(idx if idx != -1 else 0)
+		ob_target.tooltip_text = "Select destination teleporter in this scene"
 	if _tele_fields.has("dropoff_margin") and _tele_fields["dropoff_margin"] is LineEdit:
 		(_tele_fields["dropoff_margin"] as LineEdit).text = "%.2f" % float(_read_prop(node, "dropoff_margin", 0.0))
 
