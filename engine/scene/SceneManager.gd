@@ -156,6 +156,13 @@ func apply_actor_data(node: Node) -> void:
 		if poly_after:
 			poly_after.color = res.tint
 			poly_after.set_meta("editor_tint", res.tint)
+	# Stats application
+	if "stats" in res and res.stats is Dictionary:
+		_apply_stats(node, res.stats)
+	if "stats_id" in res and res.stats_id != "":
+		var sres = reg.get_resource_for_category("Stats", res.stats_id)
+		if sres:
+			_apply_stats(node, sres)
 	# Teleporter-specific assignments
 	if infer_category_from_id(data_id) == "Teleporter":
 		if "exit_only" in res and "exit_only" in node:
@@ -259,6 +266,22 @@ func _apply_movement(node: Node, mv) -> void:
 		node.max_flaps = mv.max_flaps
 	if "flap_impulse" in node and "flap_impulse" in mv:
 		node.flap_impulse = mv.flap_impulse
+
+
+func _apply_stats(node: Node, stats_res) -> void:
+	if node == null or stats_res == null:
+		return
+	var comp: Node = node.get_node_or_null("StatsComponent")
+	if comp == null and "stats" in node and node.get("stats") is Node:
+		comp = node.get("stats")
+	if comp == null and node.has_method("get_stats"):
+		comp = node.call("get_stats")
+	if comp == null:
+		return
+	if stats_res is Dictionary and comp.has_method("apply_stats_dict"):
+		comp.apply_stats_dict(stats_res)
+	elif comp.has_method("apply_stats_resource"):
+		comp.apply_stats_resource(stats_res)
 
 
 func apply_data(node: Node) -> void:

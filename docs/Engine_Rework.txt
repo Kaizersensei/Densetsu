@@ -1,0 +1,141 @@
+DENSETSU ENGINE REWORK — CODEX HANDOFF DOCUMENT
+==============================================
+
+ROLE OF CODEX
+-------------
+Codex is responsible for producing implementation plans, integration steps,
+and scaffolding code ONLY within the constraints defined here.
+
+DO NOT redesign architecture.
+
+AUTHORITATIVE ARCHITECTURE
+--------------------------
+- Godot 4.4
+- Actor-based runtime
+- FSM-driven logic (custom State / StateMachine)
+- Resource-first database
+- Schema-driven editor (DataEditor.gd)
+
+CANONICAL DATA CATEGORIES
+------------------------
+actors, movement, stats, prefabs, polygon_templates, collision,
+platforms, spawners, sprites, projectiles, traps, triggers, ai_profiles
+
+Resources are the single source of truth.
+
+PLUGIN INTEGRATION RULES
+------------------------
+1. Plugins must be treated as COMPONENT PROVIDERS, never as owners.
+2. Plugins must read from and write to existing Resource data.
+3. If a plugin introduces new data, it must be mapped into existing Resources
+   or a new Resource type approved explicitly.
+4. No plugin may bypass Actor/FSM lifecycle.
+
+MOVEMENT
+--------
+- Baseline: data-driven platformer movement
+- Optional: Sonic-style physics as a separate movement backend/profile
+- Terrain: polygon-based collision only
+
+COMBAT
+------
+- Use hitbox/hurtbox primitives
+- Damage, hitpause, knockback, juggle, invuln handled by Densetsu logic
+- Projectiles and attacks are data-defined
+
+AI
+--
+- AIProfileData is authoritative
+- Behavior Trees allowed only if exportable / runtime-usable
+
+EDITOR & MODDING
+----------------
+- All systems must be editable without Godot editor access
+- Assume in-game editor and drag-and-drop workflows
+- Avoid reliance on Godot Editor-only APIs
+
+PROHIBITIONS
+------------
+- No tilemaps
+- No hardcoded character logic
+- No duplicate databases
+- No editor-only plugins
+
+SUCCESS CRITERIA
+----------------
+Codex output is valid if:
+- It preserves existing data contracts
+- It reduces custom engine code
+- It keeps systems modular and swappable
+- It supports future editor and modding goals
+
+DENSETSU ENGINE REWORK — CODEX HANDOFF DOCUMENT
+==============================================
+
+ROLE OF CODEX
+-------------
+Codex is responsible for producing implementation plans, integration steps,
+and scaffolding code ONLY within the constraints defined here.
+
+DO NOT redesign architecture.
+
+AUTHORITATIVE ARCHITECTURE
+--------------------------
+- Godot 4.4
+- Actor-based runtime
+- FSM-driven logic (custom State / StateMachine)
+- Resource-first database
+- Schema-driven editor (DataEditor.gd)
+
+CANONICAL DATA CATEGORIES
+------------------------
+actors, movement, stats, prefabs, polygon_templates, collision,
+platforms, spawners, sprites, projectiles, traps, triggers, ai_profiles
+
+Resources are the single source of truth.
+
+PLUGIN INTEGRATION RULES
+------------------------
+1. Plugins must be treated as COMPONENT PROVIDERS, never as owners.
+2. Plugins must read from and write to existing Resource data.
+3. If a plugin introduces new data, it must be mapped into existing Resources
+   or a new Resource type approved explicitly.
+4. No plugin may bypass Actor/FSM lifecycle.
+
+MOVEMENT
+--------
+- Baseline: data-driven platformer movement
+- Optional: Sonic-style physics as a separate movement backend/profile
+- Terrain: polygon-based collision only
+
+COMBAT
+------
+- Use hitbox/hurtbox primitives
+- Damage, hitpause, knockback, juggle, invuln handled by Densetsu logic
+- Projectiles and attacks are data-defined
+
+AI
+--
+- AIProfileData is authoritative
+- Behavior Trees allowed only if exportable / runtime-usable
+
+EDITOR & MODDING
+----------------
+- All systems must be editable without Godot editor access
+- Assume in-game editor and drag-and-drop workflows
+- Avoid reliance on Godot Editor-only APIs
+
+PROHIBITIONS
+------------
+- No tilemaps
+- No hardcoded character logic
+- No duplicate databases
+- No editor-only plugins
+
+SUCCESS CRITERIA
+----------------
+Codex output is valid if:
+- It preserves existing data contracts
+- It reduces custom engine code
+- It keeps systems modular and swappable
+- It supports future editor and modding goals

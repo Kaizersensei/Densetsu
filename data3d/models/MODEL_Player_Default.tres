@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ModelData3D" load_steps=3 format=3 uid="uid://bxf2e5u75c3re"]
+
+[ext_resource type="Script" uid="uid://c454vwar8b5xu" path="res://engine3d/data/resources/ModelData3D.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://dmyrflud401tg" path="res://addons/PlayerCharacter/GodotPlush/godot_plush_skin.tscn" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "MODEL_Player_Default"
+description = "Default player model (temp: GodotPlush)"
+tags = null
+scene = ExtResource("2")
+scale = Vector3(1, 1, 1)
+animation_tree_path = NodePath("")
+animation_player_path = NodePath("")
+anim_idle_state = "idle"
+anim_walk_state = "walk"
+anim_run_state = "run"
+anim_jump_state = "jump"
+anim_fall_state = "fall"

@@ -1,0 +1,218 @@
+[gd_scene load_steps=15 format=3 uid="uid://blo6di4bc2dhy"]
+
+[ext_resource type="Script" uid="uid://svvb7grqkek4" path="res://engine3d/actors/ActorPlayer3D.gd" id="1"]
+[ext_resource type="Script" uid="uid://bg4blphgx3gth" path="res://engine3d/actors/ActorInterface3D.gd" id="2"]
+[ext_resource type="Script" uid="uid://b7capdr7osldx" path="res://engine3d/data/resources/MovementData3D.gd" id="2_5bhly"]
+[ext_resource type="Script" uid="uid://c2d4tbwgy4eqw" path="res://engine/fsm/StateMachine.gd" id="3"]
+[ext_resource type="Script" uid="uid://ds3mdj8o751uv" path="res://engine3d/camera/OrbitCamera3D.gd" id="4"]
+[ext_resource type="AnimationLibrary" uid="uid://chkte3qisliy8" path="res://assets/characters/biped/anim/BipedAnimations_ActionAdventure.tres" id="4_xmke7"]
+[ext_resource type="Resource" path="res://data3d/camera/CAMERA_Player_Default.tres" id="6"]
+[ext_resource type="Script" uid="uid://gobeerxywupj" path="res://engine3d/animation/AnimDriver3D.gd" id="7"]
+[ext_resource type="Script" uid="uid://bv10y44cnvk32" path="res://engine3d/fsm/states/LocomotionGrounded3D.gd" id="8"]
+[ext_resource type="Script" uid="uid://dihc3v8pgysay" path="res://engine3d/fsm/states/LocomotionAir3D.gd" id="9"]
+[ext_resource type="Resource" uid="uid://cjlgtt24v43of" path="res://data3d/models/MODEL_Player_Michio_ActionAdventure.tres" id="10"]
+[ext_resource type="Script" uid="uid://wxsy2frp5x55" path="res://engine3d/animation/AnimDebugOverlay.gd" id="10_2j0nq"]
+
+[sub_resource type="Resource" id="Resource_27o67"]
+script = ExtResource("2_5bhly")
+id = ""
+description = ""
+tags = PackedStringArray()
+gravity = 20.0
+walk_speed = 4.0
+run_speed = 6.5
+acceleration = 20.0
+deceleration = 20.0
+turn_rate = 3.0
+turn_smooth = 8.0
+turn_invert = true
+max_slope_angle = 45.0
+step_height = 0.3
+step_snap_max_angle = 10.0
+step_sensor_distance = 0.2
+step_snap_smooth_speed = 10.0
+air_control = 0.6
+air_accel = 12.0
+air_decel = 12.0
+max_fall_speed = 30.0
+jump_speed = 8.0
+double_jump_speed = 8.0
+max_jumps = 2
+coyote_time = 0.12
+jump_buffer_time = 0.12
+require_jump_release = true
+double_jump_clamp_fall_speed = 0.0
+jump_cut = 0.5
+wall_jump_enabled = true
+wall_check_distance = 0.6
+wall_check_height = 0.9
+wall_slide_gravity_scale = 0.4
+wall_slide_max_fall_speed = 6.0
+wall_jump_up_speed = 7.0
+wall_jump_push_speed = 6.0
+wall_jump_lock_time = 0.15
+dash_speed = 10.0
+dash_time = 0.2
+dash_cooldown = 0.1
+dash_allow_air = false
+dash_allow_double_tap = true
+dash_double_tap_window = 0.25
+roll_speed = 8.0
+roll_time = 0.75
+roll_cooldown = 0.2
+crouch_height = 1.1
+crouch_speed = 1.5
+sneak_speed = 2.5
+drop_through_time = 0.2
+drop_through_layer = 0
+drop_through_speed = 2.0
+high_fall_speed = 12.0
+high_fall_time = 0.4
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_27o67"]
+radius = 0.236527
+height = 1.61652
+
+[node name="ActorPlayer3D" type="CharacterBody3D"]
+floor_stop_on_slope = false
+floor_max_angle = 1.06465
+script = ExtResource("1")
+actor_role = 0
+actor_tags = PackedStringArray()
+controller_type = 1
+base_gravity = 20.0
+base_walk_speed = 4.0
+base_run_speed = 6.5
+base_acceleration = 20.0
+base_deceleration = 20.0
+turn_rate = 3.0
+turn_smooth = 8.0
+turn_invert = true
+advanced_max_slope_angle = 45.0
+advanced_step_height = 0.3
+advanced_step_snap_max_angle = 10.0
+advanced_step_sensor_distance = 0.2
+advanced_step_snap_smooth_speed = 10.0
+advanced_air_control = 0.6
+advanced_air_accel = 12.0
+advanced_air_decel = 12.0
+advanced_max_fall_speed = 30.0
+jump_speed = 8.0
+jump_double_speed = 8.0
+jump_max_jumps = 2
+jump_coyote_time = 0.12
+jump_buffer_time = 0.12
+jump_require_release = true
+jump_cut = 0.5
+wall_jump_enabled = true
+wall_check_distance = 0.6
+wall_check_height = 0.9
+wall_slide_gravity_scale = 0.4
+wall_slide_max_fall_speed = 6.0
+wall_jump_up_speed = 7.0
+wall_jump_push_speed = 6.0
+wall_jump_lock_time = 0.15
+dash_speed = 10.0
+dash_time = 0.2
+dash_cooldown = 0.1
+dash_allow_double_tap = true
+dash_double_tap_window = 0.25
+roll_speed = 8.0
+roll_time = 0.75
+roll_cooldown = 0.2
+posture_crouch_toggle = true
+posture_crouch_height = 1.1
+posture_crouch_speed = 1.5
+posture_sneak_speed = 2.5
+drop_through_time = 0.2
+drop_through_speed = 2.0
+fall_high_speed = 12.0
+fall_high_time = 0.4
+movement_data = SubResource("Resource_27o67")
+model_data = ExtResource("10")
+preview_model_in_editor = true
+
+[node name="VisualRoot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.04479, 0)
+
+[node name="ModelRoot" type="Node3D" parent="VisualRoot"]
+transform = Transform3D(-0.01, 0, 1.50996e-09, 0, 0.01, 0, -1.50996e-09, 0, -0.01, 0, 0.1, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="VisualRoot/ModelRoot"]
+root_node = NodePath("../michio full")
+libraries = {
+&"biped": ExtResource("4_xmke7")
+}
+autoplay = "biped/action_adventure_pack__idle_(2)"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.04479, 0)
+shape = SubResource("CapsuleShape3D_27o67")
+
+[node name="ActorInterface3D" type="Node" parent="."]
+script = ExtResource("2")
+
+[node name="AnimDriver3D" type="Node" parent="."]
+script = ExtResource("7")
+animation_player_path = NodePath("AnimationPlayer")
+target_root_path = NodePath("VisualRoot/ModelRoot")
+debug_enabled = true
+debug_verbose = true
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("3")
+initial_state = "LocomotionGrounded"
+
+[node name="LocomotionGrounded" type="Node" parent="StateMachine"]
+script = ExtResource("8")
+
+[node name="LocomotionAir" type="Node" parent="StateMachine"]
+script = ExtResource("9")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.57259, 0)
+current = true
+script = ExtResource("4")
+camera_data = ExtResource("6")
+target_path = NodePath("..")
+follow_height = 3.0
+
+[node name="AnimDebugOverlay" type="Node" parent="."]
+script = ExtResource("10_2j0nq")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="AnimDebugOverlay"]
+
+[node name="Panel" type="PanelContainer" parent="AnimDebugOverlay/CanvasLayer"]
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 520.0
+offset_bottom = 320.0
+
+[node name="Label" type="Label" parent="AnimDebugOverlay/CanvasLayer/Panel"]
+layout_mode = 2
+text = "Anim Debug
+actor: /root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/ActorPlayer3D
+fsm:  (prev )
+pos: (0.00, 0.00, 0.00)
+vel: (0.00, 0.00, 0.00)
+on_floor: false
+state: jump=false fall=false air=false jumps=0 coyote=0.00
+state: dash=false roll=false crouch=false sneak=false
+anim_driver: /root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/ActorPlayer3D/AnimDriver3D
+target_root: VisualRoot/ModelRoot -> /root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/ActorPlayer3D/VisualRoot/ModelRoot
+anim_player_path: AnimationPlayer -> /root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/ActorPlayer3D/VisualRoot/ModelRoot/AnimationPlayer
+anim_tree_path:  -> <null>
+library_name: biped
+anim_current:  (playing false)
+anim_root_node: ../michio full -> /root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/ActorPlayer3D/VisualRoot/ModelRoot/michio full
+anim_libs: [&\"biped\"]
+anim_count: 22
+ids: move= camera= model=
+res: move= camera=null model=MODEL_Player_Michio_ActionAdventure
+aim: (0.00, 0.00, -1.00)
+model_root: /root/@EditorNode@21272/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11482/@VSplitContainer@11134/@HSplitContainer@11136/@HSplitContainer@11138/@Control@11139/@SubViewportContainer@11140/@SubViewport@11141/ActorPlayer3D/VisualRoot/ModelRoot
+model_id: MODEL_Player_Michio_ActionAdventure
+model_scene: res://temp/fbx animations/Action Adventure Pack/michio full.fbx
+model_library: res://assets/characters/biped/anim/BipedAnimations_ActionAdventure.tres
+model_anim_player_path: 
+skeletons: 1 primary_bones: 48"

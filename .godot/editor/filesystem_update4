@@ -1,14 +1,7 @@
-res://game/levels/CollisionTest.tscn
-res://assets/placeholder_enemy_projectile.tres
-res://assets/placeholder_player.tres
-res://assets/placeholder_enemy.tres
-res://assets/placeholder_deco.tres
-res://assets/placeholder_trap.tres
-res://assets/placeholder_item.tres
-res://assets/placeholder_projectile.tres
-res://game/MainMenu.tscn
-res://engine/editor/EntityInspectorPopup.gd
-res://engine/editor/EntityInspectorPopup.tscn
-res://engine/scene/SceneManager.gd
-res://engine/teleport/Teleporter2D.gd
-res://engine/editor/EditorManager.gd
+res://engine3d/actors/ActorPlayer3D.tscn
+res://assets/characters/biped/anim/BipedAnimations_ActionAdventure.tres
+res://temp/fbx animations/Action Adventure Pack/metal.tres
+res://temp/fbx animations/Action Adventure Pack/skin.tres
+res://temp/fbx animations/Action Adventure Pack/face.tres
+res://data3d/models/MODEL_Player_Michio_ActionAdventure.tres
+res://engine3d/tests/Actor3D_Test.tscn

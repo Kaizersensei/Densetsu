@@ -1,89 +1,141 @@
 ea4bc82a6ad023ab7ee23ee620429895
-::res://::1765319563
+::res://::1769570160
 icon.svg::CompressedTexture2D/CompressedTexture2D::8628337075502139453::1764088422::1764088745::1::::<><><>0<>0<>73389a15339cd5a46a5231836784f7b1<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
+project_analysis_3d_shift.txt::TextFile/TextFile::-1::1769361184::0::1::::<><><>0<>0<><>::
 README.md::TextFile/TextFile::-1::1764263830::0::1::::<><><>0<>0<><>::
-::res://addons/::1764091492
-::res://assets/::1765319374
-placeholder_deco.tres::GradientTexture2D::552915581276146957::1765319372::0::1::::<><><>0<>0<><>::
-placeholder_enemy.tres::GradientTexture2D::1323079694463705799::1765319372::0::1::::<><><>0<>0<><>::
-placeholder_enemy_projectile.tres::GradientTexture2D::6682747842725829768::1765319371::0::1::::<><><>0<>0<><>::
-placeholder_item.tres::GradientTexture2D::4725290373835713626::1765319373::0::1::::<><><>0<>0<><>::
-placeholder_player.tres::GradientTexture2D::5604261193579995254::1765319372::0::1::::<><><>0<>0<><>::
-placeholder_projectile.tres::GradientTexture2D::6461275362961420982::1765319374::0::1::::<><><>0<>0<><>::
-placeholder_trap.tres::GradientTexture2D::8057128624940666828::1765319373::0::1::::<><><>0<>0<><>::
-::res://assets/sprites/::1765303184
-::res://assets/sprites/characters/::1765303213
-::res://assets/sprites/characters/actor_michio/::1765309782
+::res://addons/::1769386465
+Icon.png::CompressedTexture2D/CompressedTexture2D::1748054729375877329::1766526035::1766526036::1::::<><><>0<>0<>df2806e543dd37a2585328b6587fa501<>res://.godot/imported/Icon.png-9f85b70a150951cec049e3bf137c7b98.ctex::
+::res://addons/addons/::1766526035
+::res://addons/addons/combat_colliders/::1766526036
+plugin.cfg::TextFile/TextFile::-1::1766526035::0::1::::<><><>0<>0<><>::
+plugin.gd::GDScript/GDScript::8605773638767467554::1766526035::0::1::::<>EditorPlugin<><>0<>1<><>::
+::res://addons/addons/combat_colliders/core/::1766526036
+combat_collider.gd::GDScript/GDScript::8404257997562912745::1766526035::0::1::::CombatCollider<>Area2D<><>0<>1<><>::
+hitbox_manip.gd::GDScript/GDScript::8181598315377826264::1766526035::0::1::::HitBoxShape<>HurtBoxShape<><>0<>1<><>::
+hurtbox_manip.gd::GDScript/GDScript::6489392107460474116::1766526035::0::1::::HurtBoxShape<>CollisionShape2D<><>0<>1<><>::
+::res://addons/addons/combat_colliders/example_resource/::1766526036
+knockback_rsc.gd::GDScript/GDScript::3714062456364662771::1766526035::0::1::::KnockbackComponent<>Resource<><>0<>1<><>::
+ui_effect_rsc.gd::GDScript/GDScript::6758139129251947520::1766526035::0::1::::UIEffectComponent<>Resource<><>0<>1<><>::
+::res://addons/addons/combat_colliders/util/::1766526036
+collider_inspector.gd::GDScript/GDScript::1005471421364117231::1766526035::0::1::::<>EditorInspectorPlugin<><>0<>0<><>::
+::res://addons/Arts/::1769386467
+::res://addons/Arts/Fonts/::1769386708
+LabelFontSettings.tres::LabelSettings/LabelSettings::1272753411038797759::1744737897::0::1::::<><><>0<>0<><>::uid://dewgtcm8moxxi::::res://addons/Arts/Fonts/Ticketing.ttf
+Ticketing.ttf::FontFile/FontFile::7485832093361875522::1744737897::1769386708::1::::<><><>0<>0<>34b033122343b8390a65d234b6d7e297<>res://.godot/imported/Ticketing.ttf-8780c476e4eb7c822ed9d28281dd9717.fontdata::
+::res://addons/Arts/Images/::1769386710
+icon.png::CompressedTexture2D/CompressedTexture2D::3300286452747486007::1744737897::1769386708::1::::<><><>0<>0<>522da64d8a92822079e5f7b206a7fbc4<>res://.godot/imported/icon.png-62aa57622d2a29ab0531cdd7e208c7d7.ctex::
+icon.svg::CompressedTexture2D/CompressedTexture2D::7709002159805060389::1744737897::1769386708::1::::<><><>0<>0<>027b08196e81e7ff9b03dbf61d08f117<>res://.godot/imported/icon.svg-d426f1132ded078c29a55330e378d207.ctex::
+image_1.png::CompressedTexture2D/CompressedTexture2D::3792410361734327958::1744737897::1769386709::1::::<><><>0<>0<>c80a1ae53f1d74853aa9cee5a275e251<>res://.godot/imported/image_1.png-1c52e58d83dc1a7117281f13f75352e6.ctex::
+image_2.png::CompressedTexture2D/CompressedTexture2D::5715870508398577363::1744737897::1769386709::1::::<><><>0<>0<>6d1a0b262b62a581981b3453a09a6803<>res://.godot/imported/image_2.png-886a9278561b916137ced0bf5d6b1213.ctex::
+image_3.png::CompressedTexture2D/CompressedTexture2D::1212139926714362759::1744737897::1769386709::1::::<><><>0<>0<>ecaf9dc07be7408efc395592385fc053<>res://.godot/imported/image_3.png-628144a909212164ac936b85090021f5.ctex::
+preview.png::CompressedTexture2D/CompressedTexture2D::2359328966398137648::1744737897::1769386709::1::::<><><>0<>0<>1905be332233d08cc6b530c78bb197b2<>res://.godot/imported/preview.png-c59dba3ca7a80f61a0d8e7c495b03f85.ctex::
+::res://addons/Arts/Materials/::1769386709
+blue_mat.tres::StandardMaterial3D/StandardMaterial3D::1281298836285044377::1744737897::0::1::::<><><>0<>0<><>::
+green_mat.tres::StandardMaterial3D/StandardMaterial3D::4652361588561310958::1744737897::0::1::::<><><>0<>0<><>::
+grid_mat.tres::StandardMaterial3D/StandardMaterial3D::5806814556197159050::1744737897::0::1::::<><><>0<>0<><>::uid://c06nhxdwvnj8b::::res://addons/Arts/Materials/texture_07.png
+red_mat.tres::StandardMaterial3D/StandardMaterial3D::1518867345409334478::1744737897::0::1::::<><><>0<>0<><>::
+texture_07.png::CompressedTexture2D/CompressedTexture2D::6592361203875794495::1744737897::1769386709::1::::<><><>0<>0<>97d733e226a1bbfaa3cf4c4414fd0e95<>res://.godot/imported/texture_07.png-48c4afb56cb99b4de59348ccf29c6abe.s3tc.ctex::
+yellow_mat.tres::StandardMaterial3D/StandardMaterial3D::8669563920055361557::1744737897::0::1::::<><><>0<>0<><>::
+::res://addons/Arts/Sounds/::1769386708
+footstep_concrete_000.ogg::AudioStreamOggVorbis/AudioStreamOggVorbis::4667121442165619032::1744737897::1769386708::1::::<><><>0<>0<>98083dc1d68da242bc2a6eee74a2f023<>res://.godot/imported/footstep_concrete_000.ogg-c78b5527d228a7865d77323a36c3b8b4.oggvorbisstr::
+footstep_concrete_001.ogg::AudioStreamOggVorbis/AudioStreamOggVorbis::6990785048619564075::1744737897::1769386708::1::::<><><>0<>0<>b18a87032a56f590fd039ae954956a77<>res://.godot/imported/footstep_concrete_001.ogg-bc3fa3dbecce3b1d0a2b6626274e4fdd.oggvorbisstr::
+footstep_concrete_002.ogg::AudioStreamOggVorbis/AudioStreamOggVorbis::4085120183761323163::1744737897::1769386708::1::::<><><>0<>0<>0fdcb17c77596929ce7b1b62c7603602<>res://.godot/imported/footstep_concrete_002.ogg-077f6494f1e253e334922ef4f77f19c6.oggvorbisstr::
+jingles_SAX15.ogg::AudioStreamOggVorbis/AudioStreamOggVorbis::3209734235067397673::1744737897::1769386708::1::::<><><>0<>0<>5e21e45df78c35dad5f9bbf4decb9acd<>res://.godot/imported/jingles_SAX15.ogg-109529a82b8ff7a847d0bd60024b87ef.oggvorbisstr::
+::res://addons/hitbox_hurtbox/::1766526144
+plugin.cfg::TextFile/TextFile::-1::1766526147::0::1::::<><><>0<>0<><>::
+plugin.gd::GDScript/GDScript::3778966742586564713::1766525030::0::1::::<>EditorPlugin<><>0<>1<><>::
+::res://addons/PlayerCharacter/::1769386456
+PlayerCharacterScene.tscn::PackedScene/PackedScene::2828968496043097856::1744737897::0::1::::<><><>0<>0<><>::uid://de2sqbhiahmo6::::res://addons/PlayerCharacter/StateMachine/player_character_script.gd<>uid://dmyrflud401tg::::res://addons/PlayerCharacter/GodotPlush/godot_plush_skin.tscn<>uid://c0b71d2b1hdp6::::res://addons/PlayerCharacter/OrbitControl/orbit_view.tscn<>uid://3h8kirrnujiv::::res://addons/PlayerCharacter/Vfx/particles_manager_script.gd<>uid://fkuklawrv3wp::::res://addons/PlayerCharacter/Vfx/dust_mat.tres<>uid://b7q12qmsksbc7::::res://addons/Arts/Sounds/footstep_concrete_000.ogg<>uid://c6unhc5lontfn::::res://addons/Arts/Sounds/footstep_concrete_001.ogg<>uid://byg4lkp3ws8kt::::res://addons/Arts/Sounds/footstep_concrete_002.ogg<>uid://bly24bd3apvev::::res://addons/Arts/Sounds/jingles_SAX15.ogg<>uid://sca7ypsol83f::::res://addons/PlayerCharacter/StateMachine/state_machine_script.gd<>uid://stil4xkf3tk0::::res://addons/PlayerCharacter/StateMachine/idle_state_script.gd<>uid://blt7dest23fk0::::res://addons/PlayerCharacter/StateMachine/walk_state_script.gd<>uid://5gk47o641xgt::::res://addons/PlayerCharacter/StateMachine/run_state_script.gd<>uid://dvu58wf01wils::::res://addons/PlayerCharacter/StateMachine/jump_state_script.gd<>uid://bh3rdvokmrar1::::res://addons/PlayerCharacter/StateMachine/inair_state_script.gd<>uid://sescerp70o6b::::res://addons/Arts/Fonts/LabelFontSettings.tres<>uid://d2tif6xsjkwnw::::res://addons/PlayerCharacter/StateMachine/ragdoll_state_script.gd<>uid://chnbi4s1tf7pa::::res://addons/PlayerCharacter/Debug/DebugHUDScript.gd
+::res://addons/PlayerCharacter/Debug/::1769386455
+DebugHUDScript.gd::GDScript/GDScript::5291076739189790614::1744737897::0::1::::<>CanvasLayer<><>0<>0<><>::
+::res://addons/PlayerCharacter/GodotPlush/::1769386712
+godot_plush_model.glb::PackedScene/PackedScene::846501009444688303::1744737897::1769386712::1::::<><><>0<>0<>9acbf34181f632be3d9d68e13fd02d06<>res://.godot/imported/godot_plush_model.glb-51da4438f28a08c3bd7c02b9bd6156b2.scn::
+godot_plush_skin.gd::GDScript/GDScript::4117455997432784310::1744737897::0::1::::<>Node3D<><>0<>0<><>::
+godot_plush_skin.tscn::PackedScene/PackedScene::8052114967508693996::1744737897::0::1::::<><><>0<>0<><>::uid://bywr5s55l57ru::::res://addons/PlayerCharacter/GodotPlush/godot_plush_skin.gd<>uid://mcb0ovo14n40::::res://addons/PlayerCharacter/GodotPlush/godot_plush_model.glb<>uid://dhkgcxxo8ja7b::::res://addons/PlayerCharacter/GodotPlush/Material/godot_plush.gdshader<>uid://buh6uaww5rtsq::::res://addons/PlayerCharacter/GodotPlush/Material/godot_plush_mat.tres<>uid://drijhg0g7ak1n::::res://addons/PlayerCharacter/GodotPlush/Material/godot_plush_albedo.png<>uid://dts2qgujqag2b::::res://addons/PlayerCharacter/GodotPlush/Material/godot_plush_normal.png<>uid://b8nyuc00vuxii::::res://addons/PlayerCharacter/GodotPlush/CustomAnimations/custom_animations.res
+::res://addons/PlayerCharacter/GodotPlush/CustomAnimations/::1769386455
+blink.res::Animation/Animation::813494906258431162::1744737897::0::1::::<><><>0<>0<><>::
+custom_animations.res::AnimationLibrary/AnimationLibrary::4730982503087012164::1744737897::0::1::::<><><>0<>0<><>::uid://luce3pd1uq55::::res://components/godot_plush/custom_animations/blink.res
+run_foot_step.res::Animation/Animation::8716665045891718493::1744737897::0::1::::<><><>0<>0<><>::
+walk_foot_step.res::Animation/Animation::2481768701198426598::1744737897::0::1::::<><><>0<>0<><>::
+::res://addons/PlayerCharacter/GodotPlush/Material/::1769386709
+godot_plush.gdshader::Shader/Shader::7671596851878640921::1744737897::0::1::::<><><>0<>0<><>::
+godot_plush_albedo.png::CompressedTexture2D/CompressedTexture2D::8369546722526163369::1744737897::1769386709::1::::<><><>0<>0<>0039b7505d057c26caa584eed182bac4<>res://.godot/imported/godot_plush_albedo.png-38c09a6d1028e1c1cde65f04dd1ca1a2.ctex::
+godot_plush_mat.tres::ShaderMaterial/ShaderMaterial::3806566178412082792::1744737897::0::1::::<><><>0<>0<><>::uid://dhkgcxxo8ja7b::::res://addons/PlayerCharacter/GodotPlush/Material/godot_plush.gdshader<>uid://drijhg0g7ak1n::::res://addons/PlayerCharacter/GodotPlush/Material/godot_plush_albedo.png<>uid://dts2qgujqag2b::::res://addons/PlayerCharacter/GodotPlush/Material/godot_plush_normal.png
+godot_plush_normal.png::CompressedTexture2D/CompressedTexture2D::8531677157748664527::1744737897::1769386709::1::::<><><>0<>0<>1d903c6e8c889f82d417503f897f95c0<>res://.godot/imported/godot_plush_normal.png-ea68cfddab63f96514dc9a7c537a76cf.ctex::
+::res://addons/PlayerCharacter/OrbitControl/::1769386455
+orbit_view.gd::GDScript/GDScript::6872998829884717510::1744737897::0::1::::<>SpringArm3D<><>0<>0<><>::
+orbit_view.tscn::PackedScene/PackedScene::6531616409861354593::1744737897::0::1::::<><><>0<>0<><>::uid://c46lj0jmqn7io::::res://addons/PlayerCharacter/OrbitControl/orbit_view.gd
+::res://addons/PlayerCharacter/StateMachine/::1769386456
+idle_state_script.gd::GDScript/GDScript::1303129301656618729::1744737897::0::1::::IdleState<>State<><>0<>0<><>::
+inair_state_script.gd::GDScript/GDScript::2936583837620419940::1744737897::0::1::::InairState<>State<><>0<>0<><>::
+jump_state_script.gd::GDScript/GDScript::8676396927950264152::1744737897::0::1::::JumpState<>State<><>0<>0<><>::
+player_character_script.gd::GDScript/GDScript::7496877167264075299::1744737897::0::1::::<>CharacterBody3D<><>0<>0<><>::
+ragdoll_state_script.gd::GDScript/GDScript::9094080336129609096::1744737897::0::1::::RagdollState<>State<><>0<>0<><>::
+run_state_script.gd::GDScript/GDScript::2118712237439003835::1744737897::0::1::::RunState<>State<><>0<>0<><>::
+state_machine_script.gd::GDScript/GDScript::1267586370967146617::1744737897::0::1::::<>Node<><>0<>0<><>::
+state_script.gd::GDScript/GDScript::439973848194825068::1744737897::0::1::::State<>Node<><>0<>0<><>::
+walk_state_script.gd::GDScript/GDScript::3199669680989175409::1744737897::0::1::::WalkState<>State<><>0<>0<><>::
+::res://addons/PlayerCharacter/Vfx/::1769386722
+base_smoke.gdshader::Shader/Shader::2351315572845411632::1744737897::0::1::::<><><>0<>0<><>::
+dust_mat.tres::ShaderMaterial/ShaderMaterial::372820772305145059::1769386722::0::1::::<><><>0<>0<><>::uid://8q83aqwnx01q::::res://addons/PlayerCharacter/Vfx/base_smoke.gdshader
+jump_particles.tscn::PackedScene/PackedScene::6675096964240456513::1744737897::0::1::::<><><>0<>0<><>::uid://cknpnrjadrm00::::res://addons/PlayerCharacter/Vfx/self_destroy_particles.gd<>uid://8q83aqwnx01q::::res://addons/PlayerCharacter/Vfx/base_smoke.gdshader
+land_particles.tscn::PackedScene/PackedScene::5586524368587331502::1744737897::0::1::::<><><>0<>0<><>::uid://fkuklawrv3wp::::res://addons/PlayerCharacter/Vfx/dust_mat.tres<>uid://cknpnrjadrm00::::res://addons/PlayerCharacter/Vfx/self_destroy_particles.gd
+particles_manager_script.gd::GDScript/GDScript::1981760232082715033::1744737897::0::1::::<>Node3D<><>0<>0<><>::
+self_destroy_particles.gd::GDScript/GDScript::5502501591586447763::1744737897::0::1::::<>GPUParticles3D<><>0<>0<><>::
+::res://assets/::1769471822
+::res://assets/characters/::1769471822
+::res://assets/characters/biped/::1769476056
+BipedBase.tscn::PackedScene/PackedScene::5426185614508370605::1769476056::0::1::::<><><>0<>0<><>::uid://b13biqnfl7grm::::res://temp/fbx animations/michio full_1.png<>uid://b3llpqnwulm7m::::res://temp/fbx animations/michio full_0.png
+BipedBase_report.txt::TextFile/TextFile::-1::1769472371::0::1::::<><><>0<>0<><>::
+::res://assets/characters/biped/anim/::1769567225
+BipedAnimations_ActionAdventure.tres::AnimationLibrary::5285969312189863529::1769567224::0::1::::<><><>0<>0<><>::
+BipedAnimations_ActionAdventure_report.txt::TextFile/TextFile::-1::1769551093::0::1::::<><><>0<>0<><>::
+BipedAnimations_ActionAdventure_Skeleton3D.tres::AnimationLibrary::1726558138695550767::1769566907::0::1::::<><><>0<>0<><>::
 ::res://autoload/::1764170910
 EventBus.gd::GDScript/GDScript::5260470903693051881::1764170834::0::1::::<>Node<><>0<>0<><>::
 InputManager.gd::GDScript/GDScript::5412327402161393522::1764170847::0::1::::<>Node<><>0<>0<><>::
 Runtime.gd::GDScript/GDScript::1027813782768627933::1764170805::0::1::::<>Node<><>0<>0<><>::
-::res://data/::1765311479
-::res://data/actors/::1764429352
-ACTOR_Deco.tres::Resource/ActorData::-1::1764546590::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_deco.tres<>res://engine/decoration/ActorDeco2D.tscn
-ACTOR_DecoStatic.tres::Resource/ActorData::-1::1764545039::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_deco.tres<>res://engine/decoration/ActorDeco2D_Static.tscn
-ACTOR_Enemy.tres::Resource/ActorData::-1::1765312845::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_enemy.tres<>res://engine/actors/EnemyDummy.tscn<>res://data/sprites/SPRITE_ActorMichio.tres
-ACTOR_NPC.tres::Resource/ActorData::-1::1765312860::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_player.tres<>res://engine/actors/ActorNPC.tscn<>res://assets/placeholder_player.tres<>res://data/sprites/SPRITE_ActorMichio.tres
-ACTOR_Player.tres::Resource/ActorData::-1::1765312826::0::1::::<><><>0<>0<><>::res://engine/actors/resources/ActorData.gd<>res://assets/placeholder_player.tres<>res://engine/actors/ActorCharacter2D.tscn<>res://data/sprites/SPRITE_ActorMichio.tres
-::res://data/ai_profiles/::1764429345
-AIPROFILE_Default.tres::Resource/AIProfileData::-1::1764428352::0::1::::<><><>0<>0<><>::res://engine/data/resources/AIProfileData.gd
-::res://data/biomes/::1764521767
-BaseBiome.tres::Resource/BiomeData::-1::1764602904::0::1::::<><><>0<>0<><>::res://engine/data/resources/BiomeData.gd
-::res://data/factions/::1764429340
-FACTION_Neutral.tres::Resource/FactionData::-1::1764531102::0::1::::<><><>0<>0<><>::res://engine/data/resources/FactionData.gd
-::res://data/items/::1764429337
-ITEM_Floating.tres::Resource/ItemData::-1::1764430853::0::1::::<><><>0<>0<><>::res://engine/data/resources/ItemData.gd<>res://assets/placeholder_item.tres<>res://engine/items/ActorItem2D.tscn
-::res://data/loot_tables/::1764429332
-LOOTTABLE_Common.tres::Resource/LootTableData::-1::1764428411::0::1::::<><><>0<>0<><>::res://engine/data/resources/LootTableData.gd
-::res://data/movement/::1764779660
-MOVEMENT_Base.tres::Resource/MovementData::-1::1764789028::0::1::::<><><>0<>0<><>::res://engine/data/resources/MovementData.gd
-::res://data/particles/::1764441685
-BaseParticles.tres::Resource/ParticlesData::-1::1764602939::0::1::::<><><>0<>0<><>::res://engine/data/resources/ParticlesData.gd
-::res://data/platforms/::1765050405
-ACTOR_Deco.tres::Resource/PlatformData::-1::1764546803::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/decoration/ActorDeco2D.tscn
-ACTOR_DecoStatic.tres::Resource/PlatformData::-1::1764546812::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/decoration/ActorDeco2D_Static.tscn
-PLATFORM_Ceiling.tres::Resource/PlatformData::-1::1764545121::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/PlatformSolid.tscn
-PLATFORM_OneWay_Default.tres::Resource/PlatformData::-1::1764545080::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/PlatformOneWay.tscn
-PLATFORM_SolidGround.tres::Resource/PlatformData::-1::1764545067::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/PlatformSolid.tscn
-PLATFORM_WallLeft.tres::Resource/PlatformData::-1::1764545144::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/PlatformSolid.tscn
-PLATFORM_WallRight.tres::Resource/PlatformData::-1::1764545159::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/PlatformSolid.tscn
-SCENERY_Deco.tres::Resource/PlatformData::-1::1764546915::0::1::::<><><>0<>0<><>::res://engine/decoration/ActorDeco2D.tscn<>res://engine/data/resources/PlatformData.gd
-SCENERY_DecoStatic.tres::Resource/PlatformData::-1::1764546988::0::1::::<><><>0<>0<><>::res://engine/decoration/ActorDeco2D_Static.tscn<>res://engine/data/resources/PlatformData.gd
-SCENERY_WaterVolume.tres::Resource/PlatformData::-1::1765050405::0::1::::<><><>0<>0<><>::res://engine/data/resources/PlatformData.gd<>res://engine/platforms/WaterVolume.tscn
-::res://data/polygon_templates/::1764593814
-POLY_Default.tres::Resource/PolygonTemplateData::-1::1764593814::0::1::::<><><>0<>0<><>::res://engine/data/resources/PolygonTemplateData.gd
-::res://data/prefabs/::1764521768
-BasePrefab.tres::Resource/PrefabData::-1::1764538561::0::1::::<><><>0<>0<><>::res://engine/data/resources/PrefabData.gd
-::res://data/projectiles/::1764429363
-PROJECTILE_Enemy.tres::Resource/ProjectileData::-1::1764429614::0::1::::<><><>0<>0<><>::res://engine/data/resources/ProjectileData.gd<>res://assets/placeholder_enemy_projectile.tres<>res://engine/projectiles/EnemyProjectile2D.tscn
-::res://data/quests/::1764521814
-BaseQuest.tres::Resource/QuestsData::-1::1764538564::0::1::::<><><>0<>0<><>::res://engine/data/resources/QuestsData.gd
-BaseQuests.tres::Resource/QuestsData::-1::1764507510::0::1::::<><><>0<>0<><>::res://engine/data/resources/QuestsData.gd
-::res://data/regions/::1764521813
-BaseRegion.tres::Resource/RegionData::-1::1764538565::0::1::::<><><>0<>0<><>::res://engine/data/resources/RegionData.gd
-::res://data/sounds/::1764527922
-BaseSound.tres::Resource/SoundsData::-1::1764538565::0::1::::<><><>0<>0<><>::res://engine/data/resources/SoundsData.gd
-BaseSounds.tres::Resource/SoundsData::-1::1764531147::0::1::::<><><>0<>0<><>::res://engine/data/resources/SoundsData.gd
-::res://data/spawners/::1764429367
-SPAWNER_Enemy.tres::Resource/SpawnerData::-1::1764531203::0::1::::<><><>0<>0<><>::res://engine/actors/resources/SpawnerData.gd<>res://engine/actors/EnemyDummy.tscn
-::res://data/sprites/::1765311619
-SPRITE_ActorMichio.tres::Resource/SpriteData::-1::1765311619::0::1::::<><><>0<>0<><>::res://engine/sprites/SpriteData.gd<>res://resources/sprite_frames/actor_michio_frames.tres
-::res://data/stats/::1764429381
-STATS_Basic.tres::Resource/StatsData::-1::1764502891::0::1::::<><><>0<>0<><>::res://engine/data/resources/StatsData.gd
-::res://data/status_effects/::1764521812
-BaseStatusEffect.tres::Resource/StatusEffectData::-1::1764538568::0::1::::<><><>0<>0<><>::res://engine/data/resources/StatusEffectData.gd
-::res://data/strings/::1764441687
-BaseStrings.tres::Resource/StringsData::-1::1764538570::0::1::::<><><>0<>0<><>::res://engine/data/resources/StringsData.gd
-::res://data/teleporters/::1765057236
-TELEPORTER_Default.tres::Resource/TeleporterData::-1::1765057236::0::1::::<><><>0<>0<><>::res://engine/data/resources/TeleporterData.gd<>res://engine/teleport/Teleporter2D.tscn
-::res://data/traps/::1764429386
-TRAP_Basic.tres::Resource/TrapData::-1::1764429506::0::1::::<><><>0<>0<><>::res://engine/data/resources/TrapData.gd<>res://assets/placeholder_trap.tres<>res://engine/traps/ActorTrap2D.tscn
-::res://data/triggers/::1764521808
-BaseTrigger.tres::Resource/TriggerData::-1::1764538571::0::1::::<><><>0<>0<><>::res://engine/data/resources/TriggerData.gd
-::res://data/weather/::1764441683
-BaseWeather.tres::Resource/WeatherData::-1::1764538573::0::1::::<><><>0<>0<><>::res://engine/data/resources/WeatherData.gd
-::res://docs/::1765310650
+::res://data/::1769465146
+::res://data/actors/::1769465146
+::res://data/ai_profiles/::1769465146
+::res://data/biomes/::1769465146
+::res://data/collision/::1769465146
+::res://data/factions/::1769465146
+::res://data/items/::1769465146
+::res://data/loot_tables/::1769465146
+::res://data/movement/::1769465146
+::res://data/particles/::1769465146
+::res://data/platforms/::1769465146
+::res://data/polygon_templates/::1769465146
+::res://data/prefabs/::1769465146
+::res://data/projectiles/::1769465146
+::res://data/quests/::1769465146
+::res://data/regions/::1769465146
+::res://data/sounds/::1769465146
+::res://data/spawners/::1769465146
+::res://data/sprites/::1769465146
+::res://data/stats/::1769465146
+::res://data/status_effects/::1769465146
+::res://data/strings/::1769465146
+::res://data/teleporters/::1769465146
+::res://data/traps/::1769465146
+::res://data/triggers/::1769465146
+::res://data/weather/::1769465146
+::res://data3d/::1769440756
+::res://data3d/actors/::1769383508
+::res://data3d/camera/::1769383533
+CAMERA_Player_Default.tres::Resource/CameraRigData3D::-1::1769383533::0::1::::<><><>0<>0<><>::res://engine3d/data/resources/CameraRigData3D.gd
+::res://data3d/models/::1769567224
+MODEL_Player_Default.tres::Resource/ModelData3D::4012734086209186726::1769386721::0::1::::<><><>0<>0<><>::uid://c454vwar8b5xu::::res://engine3d/data/resources/ModelData3D.gd<>uid://dmyrflud401tg::::res://addons/PlayerCharacter/GodotPlush/godot_plush_skin.tscn
+MODEL_Player_Michio_ActionAdventure.tres::Resource/ModelData3D::5427648388464177897::1769570019::0::1::::<><><>0<>0<><>::uid://c454vwar8b5xu::::res://engine3d/data/resources/ModelData3D.gd<>uid://chkte3qisliy8::::res://assets/characters/biped/anim/BipedAnimations_ActionAdventure.tres<>uid://coissavetp8po::::res://temp/fbx animations/Action Adventure Pack/michio full.fbx
+::res://data3d/movement/::1769467028
+MOVEMENT_Player_Default.tres::Resource/MovementData3D::8494272736229450997::1769569348::0::1::::<><><>0<>0<><>::uid://b7capdr7osldx::::res://engine3d/data/resources/MovementData3D.gd
+::res://data3d/prefabs/::1769440756
+::res://docs/::1769467366
+3D shift implementation.txt::TextFile/TextFile::-1::1769562160::0::1::::<><><>0<>0<><>::
 AI Implementation phase 0.txt::TextFile/TextFile::-1::1764087891::0::1::::<><><>0<>0<><>::
+codex_worklog.md::TextFile::-1::1769570081::0::1::::<><><>0<>0<><>::
+combat_collider_adapter.md::TextFile/TextFile::-1::1766526168::0::1::::<><><>0<>0<><>::
 database.txt::TextFile/TextFile::-1::1764521506::0::1::::<><><>0<>0<><>::
 data_inspector_notes.md::TextFile/TextFile::-1::1764538555::0::1::::<><><>0<>0<><>::
 debig tool ideas.txt::TextFile/TextFile::-1::1764521742::0::1::::<><><>0<>0<><>::
@@ -91,15 +143,20 @@ Densetsu Design Document 2026.txt::TextFile/TextFile::-1::1764271998::0::1::::<>
 Editor Core.txt::TextFile/TextFile::-1::1764170301::0::1::::<><><>0<>0<><>::
 editor_assessment.md::TextFile/TextFile::-1::1764414129::0::1::::<><><>0<>0<><>::
 engine reference.txt::TextFile/TextFile::-1::1764109937::0::1::::<><><>0<>0<><>::
+Engine_Rework.txt::TextFile/TextFile::-1::1766519173::0::1::::<><><>0<>0<><>::
+engine_rework_plan.md::TextFile/TextFile::-1::1766519942::0::1::::<><><>0<>0<><>::
 error_registry.md::TextFile/TextFile::-1::1764241437::0::1::::<><><>0<>0<><>::
 implementation strategy.txt::TextFile/TextFile::-1::1764272473::0::1::::<><><>0<>0<><>::
+issue_log.md::TextFile/TextFile::-1::1769566749::0::1::::<><><>0<>0<><>::
 movement analysis.txt::TextFile/TextFile::-1::1764094121::0::1::::<><><>0<>0<><>::
 movement implementation.txt::TextFile/TextFile::-1::1764778316::0::1::::<><><>0<>0<><>::
 phase one.txt::TextFile/TextFile::-1::1764170279::0::1::::<><><>0<>0<><>::
+plugin_strategy.md::TextFile/TextFile::-1::1766526772::0::1::::<><><>0<>0<><>::
 polygon terrain.txt::TextFile/TextFile::-1::1764591458::0::1::::<><><>0<>0<><>::
 polygon_terrain_plan.md::TextFile/TextFile::-1::1764592871::0::1::::<><><>0<>0<><>::
 stats.txt::TextFile/TextFile::-1::1764502473::0::1::::<><><>0<>0<><>::
 sysplan old GDD.txt::TextFile/TextFile::-1::1764167584::0::1::::<><><>0<>0<><>::
+tooling_opportunities.md::TextFile/TextFile::-1::1769364057::0::1::::<><><>0<>0<><>::
 work_principles_week1.md::TextFile/TextFile::-1::1764761730::0::1::::<><><>0<>0<><>::
 ::res://docs/C2 Sources/::1764764147
 ::res://docs/C2 Sources/platform+/::1751549079
@@ -176,30 +233,15 @@ WEATHER.uistate.xml::TextFile/TextFile::-1::1755942839::0::1::::<><><>0<>0<><>::
 WEATHER.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
 Woods.uistate.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
 Woods.xml::TextFile/TextFile::-1::1757078372::0::1::::<><><>0<>0<><>::
+::res://docs/codebase/::1769363375
 ::res://docs/OpenBOR/::1765310654
-::res://editor_saves/::1765053150
-last_scene.tscn::PackedScene/PackedScene::-1::1765051125::0::1::::<><><>0<>0<><>::res://game/levels/CollisionTest.gd<>res://engine/actors/ActorCharacter2D.tscn<>res://engine/actors/ActorCharacter2D.gd<>res://engine/actors/EnemyDummy.tscn<>res://engine/actors/ActorNPC.tscn<>res://engine/decoration/ActorDeco2D.tscn<>res://engine/decoration/ActorDeco2D.gd<>res://engine/traps/ActorTrap2D.tscn<>res://engine/traps/ActorTrap2D.gd<>res://engine/platforms/PlatformOneWay.tscn<>res://engine/debug/DebugOverlay.tscn<>res://engine/debug/DebugOverlay.gd<>res://game/levels/KillZone.gd<>res://engine/platforms/PlatformSolid.tscn<>res://engine/platforms/WaterVolume.tscn<>res://engine/platforms/WaterVolume.gd
-new_scene.tscn::PackedScene/PackedScene::-1::1765064634::0::1::::<><><>0<>0<><>::
-::res://editor_saves/test saves/::1764263150
-test_save.tscn::PackedScene/PackedScene::-1::1764263150::0::1::::<><><>0<>0<><>::res://game/levels/CollisionTest.gd<>res://engine/actors/ActorCharacter2D.tscn<>res://engine/actors/ActorCharacter2D.gd<>res://engine/actors/EnemyDummy.tscn<>res://engine/platforms/PlatformSolid.tscn<>res://engine/platforms/PlatformOneWay.tscn<>res://engine/decoration/ActorDeco2D_Static.tscn<>res://engine/decoration/ActorDeco2D.gd<>res://engine/decoration/ActorDeco2D.tscn<>res://engine/traps/ActorTrap2D.tscn<>res://engine/traps/ActorTrap2D.gd<>res://engine/items/ActorItem2D.tscn<>res://engine/items/ActorItem2D.gd<>res://engine/debug/DebugOverlay.tscn<>res://engine/debug/DebugOverlay.gd<>res://game/levels/KillZone.gd
-::res://engine/::1765311604
-::res://engine/actors/::1764769832
-ActorCharacter2D.gd::GDScript/GDScript::733884129668344800::1765043905::0::1::::<>CharacterBody2D<><>0<>0<><>::
-ActorCharacter2D.tscn::PackedScene/PackedScene::3708528227828754155::1764769832::0::1::::<><><>0<>0<><>::uid://kpq713sgkyl1::::res://engine/actors/ActorCharacter2D.gd<>uid://b5ukyq8bv8gdn::::res://engine/core/ActorInterface.gd<>uid://cl30mlx6o5dhm::::res://assets/placeholder_player.tres<>uid://c2d4tbwgy4eqw::::res://engine/fsm/StateMachine.gd<>uid://d4cfif6puoan7::::res://engine/fsm/states/ActorIdle.gd<>uid://r128s4eqbo86::::res://engine/stats/StatsComponent.gd<>uid://cwgvbbuqenk06::::res://engine/fsm/states/ActorRun.gd<>uid://xdptniwfon8m::::res://engine/fsm/states/ActorJump.gd<>uid://bk1us330fsky::::res://engine/fsm/states/ActorFall.gd<>uid://b02d10wg6s285::::res://engine/fsm/states/ActorLand.gd<>uid://c370ai0q863jg::::res://engine/fsm/states/ActorHurt.gd<>uid://cnsrbg70eyj00::::res://engine/fsm/states/ActorDeath.gd<>uid://cf4f53ylasonx::::res://engine/fsm/states/ActorWalk.gd<>uid://baycmiveuccel::::res://engine/fsm/states/ActorSprint.gd
-ActorNPC.tscn::PackedScene/PackedScene::3972274300::1764768628::0::1::::<><><>0<>0<><>::res://engine/actors/ActorCharacter2D.gd<>res://engine/core/ActorInterface.gd<>res://assets/placeholder_player.tres<>res://engine/fsm/StateMachine.gd<>res://engine/stats/StatsComponent.gd<>res://engine/fsm/states/ActorIdle.gd<>res://engine/fsm/states/ActorRun.gd<>res://engine/fsm/states/ActorJump.gd<>res://engine/fsm/states/ActorFall.gd<>res://engine/fsm/states/ActorLand.gd<>res://engine/fsm/states/ActorHurt.gd<>res://engine/fsm/states/ActorDeath.gd
-EnemyDummy.tscn::PackedScene/PackedScene::9090500484348966552::1764769832::0::1::::<><><>0<>0<><>::uid://kpq713sgkyl1::::res://engine/actors/ActorCharacter2D.gd<>uid://b5ukyq8bv8gdn::::res://engine/core/ActorInterface.gd<>uid://s356uh1hcntn::::res://assets/placeholder_enemy.tres<>uid://c2d4tbwgy4eqw::::res://engine/fsm/StateMachine.gd<>uid://r128s4eqbo86::::res://engine/stats/StatsComponent.gd<>uid://d4cfif6puoan7::::res://engine/fsm/states/ActorIdle.gd<>uid://cwgvbbuqenk06::::res://engine/fsm/states/ActorRun.gd<>uid://xdptniwfon8m::::res://engine/fsm/states/ActorJump.gd<>uid://bk1us330fsky::::res://engine/fsm/states/ActorFall.gd<>uid://b02d10wg6s285::::res://engine/fsm/states/ActorLand.gd<>uid://c370ai0q863jg::::res://engine/fsm/states/ActorHurt.gd<>uid://cnsrbg70eyj00::::res://engine/fsm/states/ActorDeath.gd
-::res://engine/actors/movement/::1764764904
-BaselinePlatformController.gd::GDScript/GDScript::789643986764436741::1765051025::0::1::::BaselinePlatformController<>RefCounted<><>0<>0<><>::
-::res://engine/actors/resources/::1764274094
-ActorData.gd::GDScript/GDScript::7695722391809700878::1765311685::0::1::::ActorData<>Resource<><>0<>0<><>::
-SpawnerData.gd::GDScript/GDScript::7817924598187642350::1764531189::0::1::::SpawnerData<>Resource<><>0<>0<><>::
-::res://engine/core/::1764088744
-ActorInterface.gd::GDScript/GDScript::4534024468323600835::1764171972::0::1::::ActorInterface<>Node<><>0<>0<><>::
+::res://engine/::1769464946
 ::res://engine/data/::1764370591
-DataRegistry.gd::GDScript/GDScript::7716431376464895988::1765311468::0::1::::<>Node<><>0<>0<><>::
-::res://engine/data/resources/::1765056953
-AIProfileData.gd::GDScript/GDScript::2919206459201465392::1764424887::0::1::::AIProfileData<>Resource<><>0<>0<><>::
+DataRegistry.gd::GDScript/GDScript::7716431376464895988::1769437505::0::1::::<>Node<><>0<>0<><>::
+::res://engine/data/resources/::1765368775
+AIProfileData.gd::GDScript/GDScript::2919206459201465392::1765376624::0::1::::AIProfileData<>Resource<><>0<>0<><>::
 BiomeData.gd::GDScript/GDScript::6043976331143336380::1764521253::0::1::::BiomeData<>Resource<><>0<>0<><>::
+CollisionData.gd::GDScript/GDScript::2416191796318784802::1765368400::0::1::::CollisionData<>Resource<><>0<>0<><>::
 FactionData.gd::GDScript/GDScript::2477943021010436180::1764530992::0::1::::FactionData<>Resource<><>0<>0<><>::
 ItemData.gd::GDScript/GDScript::121755063328571704::1764430838::0::1::::ItemData<>Resource<><>0<>0<><>::
 LootTableData.gd::GDScript/GDScript::3671710235010806720::1764424909::0::1::::LootTableData<>Resource<><>0<>0<><>::
@@ -207,102 +249,125 @@ MovementData.gd::GDScript/GDScript::4748673429759491876::1764789798::0::1::::Mov
 ParticlesData.gd::GDScript/GDScript::2904673137560948440::1764530972::0::1::::ParticlesData<>Resource<><>0<>0<><>::
 PlatformData.gd::GDScript/GDScript::5955669251590964312::1764544984::0::1::::PlatformData<>Resource<><>0<>0<><>::
 PolygonTemplateData.gd::GDScript/GDScript::8034881898082196327::1764592882::0::1::::PolygonTemplateData<>Resource<><>0<>0<><>::
-PrefabData.gd::GDScript/GDScript::5519445094384981696::1764521270::0::1::::PrefabData<>Resource<><>0<>0<><>::
+PrefabData.gd::GDScript/GDScript::5519445094384981696::1766571802::0::1::::PrefabData<>Resource<><>0<>0<><>::
 ProjectileData.gd::GDScript/GDScript::2904563891810624000::1764429449::0::1::::ProjectileData<>Resource<><>0<>0<><>::
 QuestsData.gd::GDScript/GDScript::3067529072736938917::1764441511::0::1::::QuestsData<>Resource<><>0<>0<><>::
 RegionData.gd::GDScript/GDScript::7439275527695595561::1764521277::0::1::::RegionData<>Resource<><>0<>0<><>::
 SoundsData.gd::GDScript/GDScript::975885415231295124::1764530979::0::1::::SoundsData<>Resource<><>0<>0<><>::
-StatsData.gd::GDScript/GDScript::8016638230955286035::1764502877::0::1::::StatsData<>Resource<><>0<>0<><>::
+StatsData.gd::GDScript/GDScript::8016638230955286035::1769366568::0::1::::StatsData<>Resource<><>0<>0<><>::
 StatusEffectData.gd::GDScript/GDScript::8782119541571912255::1764521286::0::1::::StatusEffectData<>Resource<><>0<>0<><>::
 StringsData.gd::GDScript/GDScript::2819515793176876014::1764530985::0::1::::StringsData<>Resource<><>0<>0<><>::
-TeleporterData.gd::GDScript/GDScript::2759960607443141467::1765056927::0::1::::TeleporterData<>Resource<><>0<>0<><>::
+TeleporterData.gd::GDScript/GDScript::2759960607443141467::1765325805::0::1::::TeleporterData<>Resource<><>0<>0<><>::
 TrapData.gd::GDScript/GDScript::6145410537320601315::1764429462::0::1::::TrapData<>Resource<><>0<>0<><>::
 TriggerData.gd::GDScript/GDScript::1081843097383464212::1764521295::0::1::::TriggerData<>Resource<><>0<>0<><>::
 WeatherData.gd::GDScript/GDScript::6001834347898817798::1764530965::0::1::::WeatherData<>Resource<><>0<>0<><>::
-::res://engine/debug/::1764090031
-DebugOverlay.gd::GDScript/GDScript::7599624553609394309::1764104887::0::1::::<>Node2D<><>0<>0<><>::
-DebugOverlay.tscn::PackedScene/PackedScene::-1::1764104897::0::1::::<><><>0<>0<><>::res://engine/debug/DebugOverlay.gd
-::res://engine/decoration/::1764090031
-ActorDeco2D.gd::GDScript/GDScript::6155269997945775076::1764173199::0::1::::<>Node2D<><>0<>0<><>::
-ActorDeco2D.tscn::PackedScene/PackedScene::122618::1764173221::0::1::::<><><>0<>0<><>::res://engine/decoration/ActorDeco2D.gd<>res://assets/placeholder_deco.tres
-ActorDeco2D_Static.tscn::PackedScene/PackedScene::-1::1764173520::0::1::::<><><>0<>0<><>::res://assets/placeholder_deco.tres<>res://engine/decoration/ActorDeco2D.gd
-::res://engine/editor/::1765304793
-DataEditor.gd::GDScript/GDScript::6028169167055824734::1765057295::0::1::::<>Control<><>0<>0<><>::
-DataEditor.tscn::PackedScene/PackedScene::-1::1765124965::0::1::::<><><>0<>0<><>::res://engine/editor/DataEditor.gd
-EditorCamera2D.gd::GDScript/GDScript::6617687716914119291::1765307841::0::1::::<>Camera2D<><>0<>0<><>::
-EditorCamera2D.tscn::PackedScene/PackedScene::-1::1764171081::0::1::::<><><>0<>0<><>::res://engine/editor/EditorCamera2D.gd
-EditorManager.gd::GDScript/GDScript::1274986858552652684::1765313212::0::1::::<>Node<><>0<>0<><>::
-EditorOverlay.gd::GDScript/GDScript::1517429260681015944::1765123720::0::1::::<>CanvasLayer<><>0<>0<><>::
-EditorOverlay.tscn::PackedScene/PackedScene::-1::1765123564::0::1::::<><><>0<>0<><>::res://engine/editor/EditorOverlay.gd
-EntityInspectorPopup.gd::GDScript/GDScript::1897182965279361800::1765318704::0::1::::<>Panel<><>0<>0<><>::
-EntityInspectorPopup.tscn::PackedScene::-1::1765319535::0::1::::<><><>0<>0<><>::res://engine/editor/EntityInspectorPopup.gd
-GridOverlay.gd::GDScript/GDScript::4234779333078259122::1764768646::0::1::::<>Node2D<><>0<>0<><>::
-WindowController.gd::GDScript/GDScript::2257297426031895159::1764368366::0::1::::<>Node<><>0<>0<><>::
-::res://engine/editor/icons/::1764426199
-cursor_cross.png::CompressedTexture2D/CompressedTexture2D::8862815271201008142::1764426182::1764426198::1::::<><><>0<>0<>a5c66da63d1883b8a3482e7b9ad0208b<>res://.godot/imported/cursor_cross.png-ab0dacaf071d18da4cc42c529a9b2759.ctex::
-cursor_plus.png::CompressedTexture2D/CompressedTexture2D::2396077858686090883::1764426193::1764426199::1::::<><><>0<>0<>a7cacb422c416b635d2fe993d95bc300<>res://.godot/imported/cursor_plus.png-b220bf355acf8ef61b823aff9096be09.ctex::
-cursor_select.png::CompressedTexture2D/CompressedTexture2D::7298958119630067839::1764426172::1764426198::1::::<><><>0<>0<>ae7d265f89db16e556827ef98eb17028<>res://.godot/imported/cursor_select.png-2854e4ce3068fe05d6e41288503a7a15.ctex::
-enemy_spawner.png::CompressedTexture2D/CompressedTexture2D::8002179531035895923::1764271612::1764271653::1::::<><><>0<>0<>f025ae4705947386e52f0946997565a3<>res://.godot/imported/enemy_spawner.png-64ee03053a339c7258c3bdbb73295ef2.ctex::
-::res://engine/editor/tiles/::1764175343
-::res://engine/fsm/::1764150531
+::res://engine/fsm/::1769464946
 State.gd::GDScript/GDScript::7192307744275451945::1764110084::0::1::::FSMState<>Node<><>0<>0<><>::
 StateMachine.gd::GDScript/GDScript::6675928088564553198::1764168320::0::1::::StateMachine<>Node<><>0<>0<><>::
-::res://engine/fsm/states/::1764168868
-ActorDeath.gd::GDScript/GDScript::5723489474640661551::1764168523::0::1::::<>FSMState<><>0<>0<><>::
-ActorFall.gd::GDScript/GDScript::92447968849300332::1764168503::0::1::::<>FSMState<><>0<>0<><>::
-ActorHurt.gd::GDScript/GDScript::6805707461779411824::1764168516::0::1::::<>FSMState<><>0<>0<><>::
-ActorIdle.gd::GDScript/GDScript::9199185454619929770::1764167732::0::1::::<>FSMState<><>0<>0<><>::
-ActorJump.gd::GDScript/GDScript::1621481918081428770::1764168497::0::1::::<>FSMState<><>0<>0<><>::
-ActorLand.gd::GDScript/GDScript::4197109903007580844::1764168509::0::1::::<>FSMState<><>0<>0<><>::
-ActorRun.gd::GDScript/GDScript::6330659120741547841::1764168492::0::1::::<>FSMState<><>0<>0<><>::
-ActorSprint.gd::GDScript/GDScript::2436109066139170731::1764168782::0::1::::<>FSMState<><>0<>0<><>::
-ActorWalk.gd::GDScript/GDScript::5184011207454700537::1764168777::0::1::::<>FSMState<><>0<>0<><>::
-TrapArmed.gd::GDScript/GDScript::4703399489440346378::1764167741::0::1::::<>FSMState<><>0<>0<><>::
-TrapTriggered.gd::GDScript/GDScript::7350127927098407215::1764167746::0::1::::<>FSMState<><>0<>0<><>::
-::res://engine/items/::1764090367
-ActorItem2D.gd::GDScript/GDScript::1981565268467763105::1764243774::0::1::::<>Area2D<><>0<>0<><>::
-ActorItem2D.tscn::PackedScene/PackedScene::336544::1764766526::0::1::::<><><>0<>0<><>::uid://3h5dctq1a4cj::::res://engine/items/ActorItem2D.gd<>uid://b8k73vpirl0rm::::res://assets/placeholder_item.tres
-::res://engine/platforms/::1765050552
-PlatformGround.tscn::PackedScene/PackedScene::-1::1764240794::0::1::::<><><>0<>0<><>::
-PlatformOneWay.tscn::PackedScene/PackedScene::-1::1764257711::0::1::::<><><>0<>0<><>::
-PlatformSlopeLeft.tscn::PackedScene/PackedScene::-1::1764241734::0::1::::<><><>0<>0<><>::
-PlatformSlopeRight.tscn::PackedScene/PackedScene::-1::1764241746::0::1::::<><><>0<>0<><>::
-PlatformSolid.tscn::PackedScene/PackedScene::-1::1764264543::0::1::::<><><>0<>0<><>::
-PlatformWall.tscn::PackedScene/PackedScene::-1::1764240809::0::1::::<><><>0<>0<><>::
-WaterVolume.gd::GDScript/GDScript::7042424946449885131::1765050488::0::1::::WaterVolume<>Area2D<><>0<>0<><>::
-WaterVolume.tscn::PackedScene/PackedScene::-1::1765050513::0::1::::<><><>0<>0<><>::res://engine/platforms/WaterVolume.gd
-::res://engine/projectiles/::1764272021
-ActorProjectile2D.gd::GDScript/GDScript::7935991277277744429::1764100744::0::1::::<>Area2D<><>0<>0<><>::
-ActorProjectile2D.tscn::PackedScene/PackedScene::941862803192722::1764766573::0::1::::<><><>0<>0<><>::res://engine/projectiles/ActorProjectile2D.gd<>res://assets/placeholder_projectile.tres
-EnemyProjectile2D.tscn::PackedScene/PackedScene::-1::1764766602::0::1::::<><><>0<>0<><>::res://engine/projectiles/ActorProjectile2D.gd<>res://assets/placeholder_enemy_projectile.tres
 ::res://engine/scene/::1764544670
-SceneManager.gd::GDScript/GDScript::8654153056383494242::1765311992::0::1::::<>Node<><>0<>0<><>::
-::res://engine/spawners/::1764272125
-EnemySpawner.gd::GDScript/GDScript::6027707094873872397::1764358797::0::1::::<>Area2D<><>0<>0<><>::
-EnemySpawner.tscn::PackedScene/PackedScene::-1::1764766638::0::1::::<><><>0<>0<><>::res://engine/spawners/EnemySpawner.gd<>res://engine/editor/icons/enemy_spawner.png
-::res://engine/sprites/::1765311904
-SpriteData.gd::GDScript/GDScript::3874987088691423938::1765311604::0::1::::SpriteData<>Resource<><>0<>0<><>::
-::res://engine/stats/::1764167897
-StatsComponent.gd::GDScript/GDScript::1248583443878471169::1764167755::0::1::::StatsComponent<>Node<><>0<>0<><>::
-::res://engine/teleport/::1765064202
-Teleporter2D.gd::GDScript/GDScript::2542057396091739529::1765064364::0::1::::Teleporter2D<>Area2D<><>0<>0<><>::
-Teleporter2D.tscn::PackedScene/PackedScene::-1::1765057028::0::1::::<><><>0<>0<><>::res://engine/teleport/Teleporter2D.gd
-::res://engine/terrain/::1764595278
-PolygonTerrain2D.gd::GDScript/GDScript::2311119187420561737::1764599986::0::1::::PolygonTerrain2D<>StaticBody2D<><>0<>0<><>::
-PolygonTerrain2D.tscn::PackedScene/PackedScene::-1::1764597467::0::1::::<><><>0<>0<><>::res://engine/terrain/PolygonTerrain2D.gd
+SceneManager.gd::GDScript/GDScript::8654153056383494242::1766526759::0::1::::<>Node<><>0<>0<><>::
 ::res://engine/tests/::1764088303
-::res://engine/traps/::1764090333
-ActorTrap2D.gd::GDScript/GDScript::744704761273799592::1764168093::0::1::::<>StaticBody2D<><>0<>0<><>::
-ActorTrap2D.tscn::PackedScene/PackedScene::766443::1764167813::0::1::::<><><>0<>0<><>::uid://ku0gcqki2kse::::res://engine/traps/ActorTrap2D.gd<>res://assets/placeholder_trap.tres<>res://engine/fsm/StateMachine.gd<>res://engine/fsm/states/TrapArmed.gd<>res://engine/fsm/states/TrapTriggered.gd<>res://engine/core/ActorInterface.gd
-::res://game/::1765319374
-MainMenu.gd::GDScript/GDScript::2844595577807685233::1765053130::0::1::::<>Control<><>0<>0<><>::
-MainMenu.tscn::PackedScene::6973839647743803916::1765319374::0::1::::<><><>0<>0<><>::uid://bgr7crboy3kdd::::res://game/MainMenu.gd
-::res://game/levels/::1765319371
-CollisionTest.gd::GDScript/GDScript::3499912320078136751::1764100049::0::1::::<>Node2D<><>0<>0<><>::
-CollisionTest.tscn::PackedScene::9200015917437539029::1765319371::0::1::::<><><>0<>0<><>::uid://bp4nbrrx7n2jj::::res://game/levels/CollisionTest.gd<>uid://bs3o6hkufssrb::::res://engine/actors/ActorCharacter2D.tscn<>uid://d2rrhkmanwo4g::::res://engine/actors/EnemyDummy.tscn<>uid://ctornpc::::res://engine/actors/ActorNPC.tscn<>uid://deco::::res://engine/decoration/ActorDeco2D.tscn<>uid://trap::::res://engine/traps/ActorTrap2D.tscn<>res://engine/platforms/PlatformOneWay.tscn<>res://engine/debug/DebugOverlay.tscn<>uid://ducujtrkyat5y::::res://game/levels/KillZone.gd<>res://engine/platforms/PlatformSolid.tscn
-default_scene.tscn::PackedScene/PackedScene::-1::1765051121::0::1::::<><><>0<>0<><>::res://game/levels/CollisionTest.gd<>res://engine/actors/ActorCharacter2D.tscn<>res://engine/actors/ActorCharacter2D.gd<>res://engine/actors/EnemyDummy.tscn<>res://engine/actors/ActorNPC.tscn<>res://engine/decoration/ActorDeco2D.tscn<>res://engine/decoration/ActorDeco2D.gd<>res://engine/traps/ActorTrap2D.tscn<>res://engine/traps/ActorTrap2D.gd<>res://engine/platforms/PlatformOneWay.tscn<>res://engine/debug/DebugOverlay.tscn<>res://engine/debug/DebugOverlay.gd<>res://game/levels/KillZone.gd<>res://engine/platforms/PlatformSolid.tscn<>res://engine/platforms/WaterVolume.tscn<>res://engine/platforms/WaterVolume.gd
-KillZone.gd::GDScript/GDScript::8568399116040320864::1764091163::0::1::::<>Area2D<><>0<>0<><>::
-::res://game/prototypes/::1764088303
-::res://resources/::1765309825
-::res://resources/sprite_frames/::1765309825
-actor_michio_frames.tres::SpriteFrames/SpriteFrames::8656884504347888011::1765311424::0::1::::<><><>0<>0<><>::uid://8pk5dpkx6rnw::::res://assets/sprites/actor_michio/actor_michio_idle_000.png<>uid://cv2bsg5dqpnkc::::res://assets/sprites/actor_michio/actor_michio_idle_001.png<>uid://42sah8ilvub0::::res://assets/sprites/actor_michio/actor_michio_idle_002.png<>uid://x7bob4xymda1::::res://assets/sprites/actor_michio/actor_michio_idle_003.png<>uid://cwmvvdvdteqk5::::res://assets/sprites/actor_michio/actor_michio_walk_000.png<>uid://ds3njvhwcy3f4::::res://assets/sprites/actor_michio/actor_michio_walk_001.png<>uid://ced3mbf26ybbn::::res://assets/sprites/actor_michio/actor_michio_walk_002.png<>uid://cyr3yjwcaeqmo::::res://assets/sprites/actor_michio/actor_michio_walk_003.png<>uid://duvapiiigyfdh::::res://assets/sprites/actor_michio/actor_michio_walk_004.png<>uid://by8c5j8shkkaw::::res://assets/sprites/actor_michio/actor_michio_run_000.png<>uid://dtjhppv02fk0i::::res://assets/sprites/actor_michio/actor_michio_run_001.png<>uid://1kol10k7olhd::::res://assets/sprites/actor_michio/actor_michio_run_002.png<>uid://0pcw7lg23qty::::res://assets/sprites/actor_michio/actor_michio_run_003.png<>uid://dxf754q3ijita::::res://assets/sprites/actor_michio/actor_michio_run_004.png<>uid://w1app26xg5dd::::res://assets/sprites/actor_michio/actor_michio_run_005.png<>uid://bk1ytym4231y6::::res://assets/sprites/actor_michio/actor_michio_sprint_000.png<>uid://4p6aokrnih58::::res://assets/sprites/actor_michio/actor_michio_sprint_001.png<>uid://botnkob3qfrul::::res://assets/sprites/actor_michio/actor_michio_sprint_002.png<>uid://7dq3ptok2dwu::::res://assets/sprites/actor_michio/actor_michio_sprint_003.png<>uid://btc8bmgx63hs3::::res://assets/sprites/actor_michio/actor_michio_sprint_004.png<>uid://c3vyqeqhancxi::::res://assets/sprites/actor_michio/actor_michio_sprint_005.png<>uid://04ow22anv53y::::res://assets/sprites/actor_michio/actor_michio_duck_000.png<>uid://jyb1hk5skuxc::::res://assets/sprites/actor_michio/actor_michio_duck_001.png<>uid://crdkiwdrkg7s5::::res://assets/sprites/actor_michio/actor_michio_roll_000.png<>uid://bawu0i5g0tiwp::::res://assets/sprites/actor_michio/actor_michio_jump_000.png<>uid://b0717slt8hkhc::::res://assets/sprites/actor_michio/actor_michio_jump_001.png<>uid://cto32w67mb6kn::::res://assets/sprites/actor_michio/actor_michio_fall_000.png<>uid://b10ys0r01povs::::res://assets/sprites/actor_michio/actor_michio_fall_001.png<>uid://bofv1g4n2fei1::::res://assets/sprites/actor_michio/actor_michio_doublejump_000.png<>uid://dlnp4xj2q5dy2::::res://assets/sprites/actor_michio/actor_michio_doublejump_001.png<>uid://mxy53bhi51m5::::res://assets/sprites/actor_michio/actor_michio_doublejump_002.png<>uid://dr6hs0s6lxfaa::::res://assets/sprites/actor_michio/actor_michio_doublejump_003.png<>uid://b6bcyy6xed28v::::res://assets/sprites/actor_michio/actor_michio_doublejump_004.png<>uid://bmwsngbbvv3cl::::res://assets/sprites/actor_michio/actor_michio_doublejump_005.png<>uid://dchcf6isfr237::::res://assets/sprites/actor_michio/actor_michio_doublejump_006.png<>uid://cpxjwb54d24ta::::res://assets/sprites/actor_michio/actor_michio_doublejump_007.png<>uid://c5mqvk4jf2m88::::res://assets/sprites/actor_michio/actor_michio_ledge_000.png<>uid://ct2ynm8ed0rcm::::res://assets/sprites/actor_michio/actor_michio_pole_000.png<>uid://olbyf8ix2tpg::::res://assets/sprites/actor_michio/actor_michio_pole_001.png<>uid://0utrg22lensy::::res://assets/sprites/actor_michio/actor_michio_pole_002.png<>uid://dueks018mcxh6::::res://assets/sprites/actor_michio/actor_michio_climb_000.png<>uid://bdifbtwmws44g::::res://assets/sprites/actor_michio/actor_michio_climb_001.png<>uid://bkbiuawfkghp4::::res://assets/sprites/actor_michio/actor_michio_climb_002.png<>uid://bh6r5gnd6t04t::::res://assets/sprites/actor_michio/actor_michio_climb_003.png<>uid://beqfboggdegaj::::res://assets/sprites/actor_michio/actor_michio_climb_004.png<>uid://bct1nwao6rwei::::res://assets/sprites/actor_michio/actor_michio_punch1_000.png<>uid://ivtoify6dy2a::::res://assets/sprites/actor_michio/actor_michio_punch1_001.png<>uid://jjwwbn7qeqwe::::res://assets/sprites/actor_michio/actor_michio_punch1_002.png<>uid://bueau26gk5key::::res://assets/sprites/actor_michio/actor_michio_punch1_003.png<>uid://ck8nx3mmiq31h::::res://assets/sprites/actor_michio/actor_michio_punch1_004.png<>uid://bwonmxhks6wtc::::res://assets/sprites/actor_michio/actor_michio_punch1_005.png<>uid://dvg4tpl3kcefy::::res://assets/sprites/actor_michio/actor_michio_punch2_000.png<>uid://da0km5na8guns::::res://assets/sprites/actor_michio/actor_michio_punch2_001.png<>uid://y35vturpwjde::::res://assets/sprites/actor_michio/actor_michio_punch2_002.png<>uid://cubd2knbjyuba::::res://assets/sprites/actor_michio/actor_michio_punch2_003.png<>uid://bv3pen71dr1yv::::res://assets/sprites/actor_michio/actor_michio_punch2_004.png<>uid://c7rrwut60n10p::::res://assets/sprites/actor_michio/actor_michio_punch3_000.png<>uid://bqhxwu7sw8w1y::::res://assets/sprites/actor_michio/actor_michio_punch3_001.png<>uid://boab06fd4sl5k::::res://assets/sprites/actor_michio/actor_michio_punch3_002.png<>uid://darpnlmeo61d6::::res://assets/sprites/actor_michio/actor_michio_punch3_003.png<>uid://bxyjqgcf2v157::::res://assets/sprites/actor_michio/actor_michio_punch3_004.png<>uid://c6vpcoos26gfj::::res://assets/sprites/actor_michio/actor_michio_punch3_005.png<>uid://0yepljck5oke::::res://assets/sprites/actor_michio/actor_michio_kick1_000.png<>uid://dabsufu1gvhiq::::res://assets/sprites/actor_michio/actor_michio_kick1_001.png<>uid://cxsxk8viwnf35::::res://assets/sprites/actor_michio/actor_michio_kick1_002.png<>uid://d1mliqcovsvso::::res://assets/sprites/actor_michio/actor_michio_kick1_003.png<>uid://cbvb0sj1p7oib::::res://assets/sprites/actor_michio/actor_michio_kick1_004.png<>uid://u3hljowia867::::res://assets/sprites/actor_michio/actor_michio_kick2_000.png<>uid://dy1cm7lnyutr8::::res://assets/sprites/actor_michio/actor_michio_kick2_001.png<>uid://cdmc224wsktoq::::res://assets/sprites/actor_michio/actor_michio_kick2_002.png<>uid://c4akbkmccj8hb::::res://assets/sprites/actor_michio/actor_michio_kick2_003.png<>uid://c5e26nexc3ufb::::res://assets/sprites/actor_michio/actor_michio_kick3_000.png<>uid://dpnpl4q56iqa3::::res://assets/sprites/actor_michio/actor_michio_kick3_001.png<>uid://ecpbgbovdvxq::::res://assets/sprites/actor_michio/actor_michio_kick3_002.png<>uid://n6210ayi86k2::::res://assets/sprites/actor_michio/actor_michio_kick3_003.png<>uid://b4m88qsdpkulx::::res://assets/sprites/actor_michio/actor_michio_kick3_004.png<>uid://dop13gqyxxgly::::res://assets/sprites/actor_michio/actor_michio_kick3_005.png<>uid://b5pwxqvph7107::::res://assets/sprites/actor_michio/actor_michio_kick3_006.png<>uid://1v4npqkv1e1::::res://assets/sprites/actor_michio/actor_michio_kickair_000.png<>uid://b4h7af0qgw3ix::::res://assets/sprites/actor_michio/actor_michio_kickair_001.png<>uid://cj8vifrs7v43y::::res://assets/sprites/actor_michio/actor_michio_kickair_002.png<>uid://bkqpobohblk61::::res://assets/sprites/actor_michio/actor_michio_kickduck_000.png<>uid://bq8if2myysvch::::res://assets/sprites/actor_michio/actor_michio_kickduck_001.png<>uid://b7t8tmsh46kc0::::res://assets/sprites/actor_michio/actor_michio_kickduck_002.png<>uid://biqmx6j6r1jmt::::res://assets/sprites/actor_michio/actor_michio_swordh_000.png<>uid://61tiadl0l1jw::::res://assets/sprites/actor_michio/actor_michio_swordh_001.png<>uid://cabxv6n1dn581::::res://assets/sprites/actor_michio/actor_michio_swordh_002.png<>uid://lq27ek8kafqg::::res://assets/sprites/actor_michio/actor_michio_swordh_003.png<>uid://dypcf8bkrcyxb::::res://assets/sprites/actor_michio/actor_michio_swordh_004.png<>uid://kdansdjp26re::::res://assets/sprites/actor_michio/actor_michio_swordhair_000.png<>uid://46l5r6agbvdx::::res://assets/sprites/actor_michio/actor_michio_swordhair_001.png<>uid://8n6thsykkio5::::res://assets/sprites/actor_michio/actor_michio_swordhair_002.png<>uid://ddv4f3illkwae::::res://assets/sprites/actor_michio/actor_michio_swordhair_003.png<>uid://clh0g6qtis75y::::res://assets/sprites/actor_michio/actor_michio_swordhair_004.png<>uid://b3bb6slg1n7nb::::res://assets/sprites/actor_michio/actor_michio_swordhduck_000.png<>uid://cae0hw2ogplre::::res://assets/sprites/actor_michio/actor_michio_swordhduck_001.png<>uid://bm7whmsu7h6kr::::res://assets/sprites/actor_michio/actor_michio_swordhduck_002.png<>uid://5wxvkwcryc4s::::res://assets/sprites/actor_michio/actor_michio_swordhduck_003.png<>uid://j8i83xsm5mv::::res://assets/sprites/actor_michio/actor_michio_swordhduck_004.png<>uid://cxoovkn2gdgsl::::res://assets/sprites/actor_michio/actor_michio_swordhstab_000.png<>uid://b6xv3p4qeo3yp::::res://assets/sprites/actor_michio/actor_michio_swordhstab_001.png<>uid://cndgylhri8846::::res://assets/sprites/actor_michio/actor_michio_swordhstab_002.png<>uid://bciq1w4jcq5jr::::res://assets/sprites/actor_michio/actor_michio_swordhstab_003.png<>uid://c1gt2wjdg0sft::::res://assets/sprites/actor_michio/actor_michio_swordhstab_004.png<>uid://cda870v44wsbs::::res://assets/sprites/actor_michio/actor_michio_swordhstab_005.png<>uid://bfesytx7snbtb::::res://assets/sprites/actor_michio/actor_michio_swordhstab_006.png<>uid://bse28rlbsmr1i::::res://assets/sprites/actor_michio/actor_michio_swordhstab_007.png<>uid://owra6p5vvklv::::res://assets/sprites/actor_michio/actor_michio_swordhstab_008.png<>uid://df3odphh1djde::::res://assets/sprites/actor_michio/actor_michio_swordv_000.png<>uid://b41k6hcykdet3::::res://assets/sprites/actor_michio/actor_michio_swordv_001.png<>uid://oeghufneqfc2::::res://assets/sprites/actor_michio/actor_michio_swordv_002.png<>uid://b31sicnck02hl::::res://assets/sprites/actor_michio/actor_michio_swordv_003.png<>uid://ca8mfki8aisqw::::res://assets/sprites/actor_michio/actor_michio_swordv_004.png<>uid://23rqg2up780c::::res://assets/sprites/actor_michio/actor_michio_swordvair_000.png<>uid://bakpje3hag4sb::::res://assets/sprites/actor_michio/actor_michio_swordvair_001.png<>uid://xb8mq2l2mffx::::res://assets/sprites/actor_michio/actor_michio_swordvair_002.png<>uid://caeavgmvdoin8::::res://assets/sprites/actor_michio/actor_michio_swordvair_003.png<>uid://lngmta1282fp::::res://assets/sprites/actor_michio/actor_michio_swordvair_004.png<>uid://dxivux1resmld::::res://assets/sprites/actor_michio/actor_michio_swordvduck_000.png<>uid://ci1ndg6r4r1u4::::res://assets/sprites/actor_michio/actor_michio_swordvduck_001.png<>uid://cpia3w17k84y0::::res://assets/sprites/actor_michio/actor_michio_swordvduck_002.png<>uid://cg7fdt7nu5wxu::::res://assets/sprites/actor_michio/actor_michio_swordvduck_003.png<>uid://4nv41rrd3q2g::::res://assets/sprites/actor_michio/actor_michio_shoot_000.png<>uid://byctipijgj67h::::res://assets/sprites/actor_michio/actor_michio_shoot_001.png<>uid://bveoh24rv4qpy::::res://assets/sprites/actor_michio/actor_michio_shoot_002.png<>uid://bv78bgdal8rhe::::res://assets/sprites/actor_michio/actor_michio_shoot_003.png<>uid://clu5jyw5e3pna::::res://assets/sprites/actor_michio/actor_michio_blockhth_000.png<>uid://do2uktoiirbwq::::res://assets/sprites/actor_michio/actor_michio_blocksword_000.png<>uid://d2q1ykp862fyg::::res://assets/sprites/actor_michio/actor_michio_hurt_000.png<>uid://dg2tgo24xmwjq::::res://assets/sprites/actor_michio/actor_michio_hurt_001.png<>uid://dpsihvdne6ks5::::res://assets/sprites/actor_michio/actor_michio_hurt_002.png<>uid://crv2a6f0fckv2::::res://assets/sprites/actor_michio/actor_michio_hurt_003.png<>uid://c1f621cr5mg75::::res://assets/sprites/actor_michio/actor_michio_walljump_000.png<>uid://byibqca8v8fx2::::res://assets/sprites/actor_michio/actor_michio_walljump_001.png<>uid://mhua0okar7yi::::res://assets/sprites/actor_michio/actor_michio_walljump_002.png
+::res://engine3d/::1769471012
+README.md::TextFile/TextFile::-1::1769363612::0::1::::<><><>0<>0<><>::
+::res://engine3d/actors/::1769569718
+ActorCharacter3D.gd::GDScript::7426349266513842115::1769570067::0::1::::ActorCharacter3D<>CharacterBody3D<><>0<>1<><>::
+ActorCharacter3D.tscn::PackedScene/PackedScene::-1::1769387541::0::1::::<><><>0<>0<><>::res://engine3d/actors/ActorCharacter3D.gd<>res://engine3d/actors/ActorInterface3D.gd<>res://engine/fsm/StateMachine.gd
+ActorInterface3D.gd::GDScript/GDScript::2867501860083088629::1769363647::0::1::::ActorInterface3D<>Node<><>0<>0<><>::
+ActorNPC3D.gd::GDScript/GDScript::7117363727862464219::1769433415::0::1::::<>ActorCharacter3D<><>0<>1<><>::
+ActorNPC3D.tscn::PackedScene/PackedScene::-1::1769387547::0::1::::<><><>0<>0<><>::res://engine3d/actors/ActorNPC3D.gd<>res://engine3d/actors/ActorInterface3D.gd<>res://engine/fsm/StateMachine.gd
+ActorPlayer3D.gd::GDScript/GDScript::1308029651772051569::1769433410::0::1::::<>ActorCharacter3D<><>0<>1<><>::
+ActorPlayer3D.tscn::PackedScene::3189287301461071466::1769569718::0::1::::<><><>0<>0<><>::uid://svvb7grqkek4::::res://engine3d/actors/ActorPlayer3D.gd<>uid://bg4blphgx3gth::::res://engine3d/actors/ActorInterface3D.gd<>uid://b7capdr7osldx::::res://engine3d/data/resources/MovementData3D.gd<>uid://c2d4tbwgy4eqw::::res://engine/fsm/StateMachine.gd<>uid://ds3mdj8o751uv::::res://engine3d/camera/OrbitCamera3D.gd<>res://data3d/camera/CAMERA_Player_Default.tres<>uid://gobeerxywupj::::res://engine3d/animation/AnimDriver3D.gd<>uid://bv10y44cnvk32::::res://engine3d/fsm/states/LocomotionGrounded3D.gd<>uid://dihc3v8pgysay::::res://engine3d/fsm/states/LocomotionAir3D.gd<>uid://cjlgtt24v43of::::res://data3d/models/MODEL_Player_Michio_ActionAdventure.tres<>uid://wxsy2frp5x55::::res://engine3d/animation/AnimDebugOverlay.gd
+ActorScenery3D.gd::GDScript/GDScript::6481323450793840484::1769433420::0::1::::<>ActorCharacter3D<><>0<>1<><>::
+ActorScenery3D.tscn::PackedScene/PackedScene::-1::1769387553::0::1::::<><><>0<>0<><>::res://engine3d/actors/ActorScenery3D.gd<>res://engine3d/actors/ActorInterface3D.gd<>res://engine/fsm/StateMachine.gd
+README.md::TextFile/TextFile::-1::1769363619::0::1::::<><><>0<>0<><>::
+::res://engine3d/animation/::1769561631
+AnimDebugOverlay.gd::GDScript/GDScript::1592772439951731126::1769566867::0::1::::<>Node<><>0<>1<><>::
+AnimDriver3D.gd::GDScript/GDScript::450102447986468007::1769555149::0::1::::AnimDriver3D<>Node<><>0<>1<><>::
+README.md::TextFile/TextFile::-1::1769363619::0::1::::<><><>0<>0<><>::
+::res://engine3d/camera/::1769377385
+OrbitCamera3D.gd::GDScript/GDScript::8481198299341237653::1769437536::0::1::::OrbitCamera3D<>Camera3D<><>0<>0<><>::
+README.md::TextFile/TextFile::-1::1769363619::0::1::::<><><>0<>0<><>::
+::res://engine3d/controllers/::1769372693
+IInputSource.gd::GDScript/GDScript::6639118039645281321::1769467843::0::1::::IInputSource<>RefCounted<><>0<>0<><>::
+NullInputSource.gd::GDScript/GDScript::4080187217032760227::1769467854::0::1::::NullInputSource<>IInputSource<><>0<>0<><>::
+PlayerInputSource.gd::GDScript/GDScript::7451166481053678212::1769467850::0::1::::PlayerInputSource<>IInputSource<><>0<>0<><>::
+README.md::TextFile/TextFile::-1::1769363619::0::1::::<><><>0<>0<><>::
+::res://engine3d/data/::1769366379
+README.md::TextFile/TextFile::-1::1769363619::0::1::::<><><>0<>0<><>::
+::res://engine3d/data/resources/::1769440750
+CameraRigData3D.gd::GDScript/GDScript::6089633091843157091::1769366517::0::1::::CameraRigData3D<>Resource<><>0<>0<><>::
+ModelData3D.gd::GDScript/GDScript::6872048616303444050::1769522824::0::1::::ModelData3D<>Resource<><>0<>1<><>::
+MovementData3D.gd::GDScript::4636619407831918425::1769568989::0::1::::MovementData3D<>Resource<><>0<>0<><>::
+PrefabData3D.gd::GDScript/GDScript::7301345611902410277::1769437500::0::1::::PrefabData3D<>Resource<><>0<>0<><>::
+StatsFormulaData.gd::GDScript/GDScript::5434716886619272630::1769366532::0::1::::StatsFormulaData<>Resource<><>0<>0<><>::
+::res://engine3d/fsm/::1769385610
+ControllerContext3D.gd::GDScript/GDScript::3842198377085516649::1769469831::0::1::::ControllerContext3D<>RefCounted<><>0<>0<><>::
+README.md::TextFile/TextFile::-1::1769363619::0::1::::<><><>0<>0<><>::
+::res://engine3d/fsm/states/::1769385610
+LocomotionAir3D.gd::GDScript::7735396035336262944::1769568166::0::1::::LocomotionAir3D<>FSMState<><>0<>0<><>::
+LocomotionGrounded3D.gd::GDScript::3915622573655777779::1769568157::0::1::::LocomotionGrounded3D<>FSMState<><>0<>0<><>::
+::res://engine3d/tests/::1769568198
+Actor3D_Test.gd::GDScript/GDScript::6605747121813654966::1769562072::0::1::::<>Node3D<><>0<>0<><>::
+Actor3D_Test.tscn::PackedScene::8687576373083702414::1769568198::0::1::::<><><>0<>0<><>::uid://blo6di4bc2dhy::::res://engine3d/actors/ActorPlayer3D.tscn<>uid://c1d4xpvfgbkre::::res://engine3d/tests/Actor3D_Test.gd
+README.md::TextFile/TextFile::-1::1769436030::0::1::::<><><>0<>0<><>::
+SmokeSceneDebug.gd::GDScript/GDScript::7994568659757041930::1769562087::0::1::::<>Node3D<><>0<>0<><>::
+smoke_camera_3d.tscn::PackedScene/PackedScene::-1::1769435991::0::1::::<><><>0<>0<><>::res://engine3d/actors/ActorPlayer3D.tscn<>res://engine3d/tests/SmokeSceneDebug.gd
+smoke_data_apply_3d.tscn::PackedScene/PackedScene::-1::1769436022::0::1::::<><><>0<>0<><>::res://engine3d/actors/ActorPlayer3D.tscn<>res://engine3d/tests/SmokeSceneDebug.gd
+smoke_movement_3d.tscn::PackedScene/PackedScene::2160481686660823627::1769552822::0::1::::<><><>0<>0<><>::uid://blo6di4bc2dhy::::res://engine3d/actors/ActorPlayer3D.tscn<>uid://dl5vm30is5di5::::res://engine3d/tests/SmokeSceneDebug.gd<>uid://b7capdr7osldx::::res://engine3d/data/resources/MovementData3D.gd
+::res://engine3d/tools/::1769521875
+BuildActionAdventureLibrary.gd::GDScript/GDScript::7646962659170807710::1769519394::0::1::::<>EditorScript<><>0<>1<><>::
+BuildBipedAnimationLibrary.gd::GDScript/GDScript::290825036978048323::1769519381::0::1::::<>EditorScript<><>0<>1<><>::
+BuildBipedBaseRig.gd::GDScript/GDScript::8983663116009158091::1769472351::0::1::::<>EditorScript<><>0<>1<><>::
+::res://LICENSES/::1769363597
+third_person_controller_mit.txt::TextFile/TextFile::-1::1769363597::0::1::::<><><>0<>0<><>::
+::res://temp/::1769470701
+::res://temp/fbx animations/::1769552502
+michio full.fbx::PackedScene/PackedScene::1761006778982309094::1769445324::1769552502::1::::<><><>0<>0<>b8b5eabceea25f8e28e3a13d87e9f0e1<>res://.godot/imported/michio full.fbx-cd7e6c08aad31b41629e06567337b675.scn::uid://b13biqnfl7grm::::res://temp/fbx animations/michio full_1.png<>uid://b3llpqnwulm7m::::res://temp/fbx animations/michio full_0.png<>uid://dyc43e5uaswle::::res://temp/fbx animations/michio full_2.png<>uid://b70taysd67jud::::res://temp/fbx animations/michio full_3.png
+michio full_0.png::CompressedTexture2D/CompressedTexture2D::4375111996164482964::1769471151::1769471590::1::::<><><>0<>0<>1af0b7b447b83e297abb943172bca3b0<>res://.godot/imported/michio full_0.png-f75f9536f3152fb6e794fd92c7a054d9.s3tc.ctex::
+michio full_1.png::CompressedTexture2D/CompressedTexture2D::4269209059438824182::1769471152::1769471589::1::::<><><>0<>0<>edb5f0dc74e0c681d94722031d798e46<>res://.godot/imported/michio full_1.png-4c90e2d79b0218bf9ab7ef732fda9a6f.s3tc.ctex::
+michio full_2.png::CompressedTexture2D/CompressedTexture2D::8849734106266739298::1769471152::1769471613::1::::<><><>0<>0<>e595d6d0633a64b02645b9f31e72368d<>res://.godot/imported/michio full_2.png-5bec32b711c655bb32a692f95d00dd8a.s3tc.ctex::
+michio full_3.png::CompressedTexture2D/CompressedTexture2D::4685228035370079007::1769471152::1769471613::1::::<><><>0<>0<>eeb9728c320ed54b0b7f7bb863ad4e1f<>res://.godot/imported/michio full_3.png-ae92f989ffc9503f289de3754e55d75d.s3tc.ctex::
+michio rigged.fbx::PackedScene/PackedScene::5895277415059046893::1769474396::1769474502::1::::<><><>0<>0<>eaef213fea50bdbcddcb5f84c07e1269<>res://.godot/imported/michio rigged.fbx-fa8df3491b655d554277038a8f2508c2.scn::uid://cnehhan8xyapw::::res://temp/fbx animations/michio rigged_3.png<>uid://bo0xvnpj72lye::::res://temp/fbx animations/michio rigged_5.png<>uid://bmdvi2fgp7nrn::::res://temp/fbx animations/michio rigged_0.png
+michio rigged_0.png::CompressedTexture2D/CompressedTexture2D::3236170709959410803::1769474501::1769474503::1::::<><><>0<>0<>dee07aa0ac94f08a225f96c3412513b6<>res://.godot/imported/michio rigged_0.png-d7dc19fc4cdd21ad056ddcfc8db4701f.s3tc.ctex::
+michio rigged_1.png::CompressedTexture2D/CompressedTexture2D::5401897638817819958::1769474501::1769474501::1::::<><><>0<>0<>b27a1016a4d54c484dd28cf5f023d441<>res://.godot/imported/michio rigged_1.png-3731f17b8db4a857fa0448e697423685.ctex::
+michio rigged_3.png::CompressedTexture2D/CompressedTexture2D::5693991386817067684::1769474501::1769474503::1::::<><><>0<>0<>0441f4ae45f401d99e83971dcb33657d<>res://.godot/imported/michio rigged_3.png-2c1e09de4273db8956bca17ab1a31035.s3tc.ctex::
+michio rigged_4.png::CompressedTexture2D/CompressedTexture2D::2878653769631402696::1769474502::1769474502::1::::<><><>0<>0<>b749752f209ad0f275d52980d640801f<>res://.godot/imported/michio rigged_4.png-1ffee7f5daef1b0316418d99e1ec7712.ctex::
+michio rigged_5.png::CompressedTexture2D/CompressedTexture2D::3422108637411054744::1769474502::1769474503::1::::<><><>0<>0<>3f64cb3414736f4db0e8e91b46e63444<>res://.godot/imported/michio rigged_5.png-800f5bbe4fbbdebad01f59262aedd2e2.s3tc.ctex::
+::res://temp/fbx animations/Action Adventure Pack/::1769566908
+cover to stand (2).fbx::PackedScene/PackedScene::6954159946412784724::1769461974::1769471374::1::::<><><>0<>0<>44ca4ee3cbc870c280cfe839eeb22ea4<>res://.godot/imported/cover to stand (2).fbx-45e2edad0217338c96e1825efd7fa9fd.scn::
+cover to stand.fbx::PackedScene/PackedScene::5114063147544344764::1769461974::1769471375::1::::<><><>0<>0<>9e49c007d7746ddc1f476757aa384bea<>res://.godot/imported/cover to stand.fbx-6e2bdfc8df1f34c27dc9da02bbf31789.scn::
+crouched sneaking left.fbx::PackedScene/PackedScene::5236932324163310584::1769461974::1769471375::1::::<><><>0<>0<>a41cc979fb1ebfd8463f8c0ddcb9aceb<>res://.godot/imported/crouched sneaking left.fbx-15e445ec91b6fd24f693dbfa1699afc7.scn::
+crouched sneaking right.fbx::PackedScene/PackedScene::8415008886102825466::1769461974::1769471375::1::::<><><>0<>0<>3b2f02499bcd57ebe4b297083e0b6d9a<>res://.godot/imported/crouched sneaking right.fbx-24df245497ac81c75ff02f97426eb21e.scn::
+face.tres::StandardMaterial3D::5755844915454740282::1769566907::0::1::::<><><>0<>0<><>::uid://b8h0cvc7sbp61::::res://temp/fbx animations/Action Adventure Pack/michio full_3.png
+falling idle.fbx::PackedScene/PackedScene::1226181899032179073::1769461974::1769471375::1::::<><><>0<>0<>47f789deb135fe569a1fece92b78c5ee<>res://.godot/imported/falling idle.fbx-755c29af8bd21bc3ca3b2081d3b5c3d8.scn::
+falling to roll.fbx::PackedScene/PackedScene::215211016841915413::1769461974::1769471376::1::::<><><>0<>0<>df747cf61d5cc82bf5b58c3e798b50bf<>res://.godot/imported/falling to roll.fbx-fc203ef77aa5adbc4b5c65def5140bb0.scn::
+hair.tres::StandardMaterial3D/StandardMaterial3D::5639846301356858278::1769565539::0::1::::<><><>0<>0<><>::uid://dpt1obx6h0qyl::::res://temp/fbx animations/Action Adventure Pack/michio full_0.png
+hard landing.fbx::PackedScene/PackedScene::1963288803340918576::1769461974::1769471376::1::::<><><>0<>0<>eb9f7cab693836301635fb5fb7cfe6ce<>res://.godot/imported/hard landing.fbx-0461c17315ecbb8002030bfb339b188c.scn::
+idle (2).fbx::PackedScene/PackedScene::8603231883861685931::1769461974::1769471376::1::::<><><>0<>0<>c4b3b62b4a69ae913027032f0de51854<>res://.godot/imported/idle (2).fbx-b75ef2bc7ccd9823b9e3de91c21e877d.scn::
+idle (3).fbx::PackedScene/PackedScene::1330085698749050388::1769461974::1769471376::1::::<><><>0<>0<>535f9328395054cc959d04b55ca26687<>res://.godot/imported/idle (3).fbx-c1c3992eec2a15a236646387f7b03285.scn::
+idle (4).fbx::PackedScene/PackedScene::8612720643147388167::1769461974::1769471377::1::::<><><>0<>0<>8c71ea1f856b6b208bdb774e0327edb3<>res://.godot/imported/idle (4).fbx-1f350b8f663a7e924adb73c8f8d1d5db.scn::
+idle (5).fbx::PackedScene/PackedScene::3315927309189263207::1769461974::1769471377::1::::<><><>0<>0<>e85b9e3468b9ac79aeee5604c2b19b94<>res://.godot/imported/idle (5).fbx-70b4dc8b100244d5668f79068d00259d.scn::
+idle.fbx::PackedScene/PackedScene::1319729120024132259::1769461974::1769471377::1::::<><><>0<>0<>0c5d88d1333bfe50a86f2ff8cda699b1<>res://.godot/imported/idle.fbx-08b09f7bba97d3dc741b25e431fdbb67.scn::
+jumping up.fbx::PackedScene/PackedScene::6418779467710664003::1769461974::1769471378::1::::<><><>0<>0<>10743da201fffc1f84b2cfa1bbf5369d<>res://.godot/imported/jumping up.fbx-bace93b3bd5045ffc44af05a8ae373b0.scn::
+left cover sneak.fbx::PackedScene/PackedScene::6413832677877560747::1769461974::1769471378::1::::<><><>0<>0<>0098092c6741f5cefb58cd97ddcb0e08<>res://.godot/imported/left cover sneak.fbx-333a650225dc4f842073ac6407d52d7b.scn::
+left turn.fbx::PackedScene/PackedScene::2415733225934557706::1769461974::1769471378::1::::<><><>0<>0<>ddf9104f245e60ce197ffbaf47913056<>res://.godot/imported/left turn.fbx-c0d51f3d74877b908747a71ac2e80c72.scn::
+Material.tres::StandardMaterial3D/StandardMaterial3D::451986680032399655::1769565539::0::1::::<><><>0<>0<><>::uid://cxjaxi173jcqg::::res://temp/fbx animations/Action Adventure Pack/michio full_1.png
+metal.tres::StandardMaterial3D::369373270477353714::1769566907::0::1::::<><><>0<>0<><>::
+michio full.fbx::PackedScene/PackedScene::5773125283159871224::1769564994::1769565886::1::::<><><>0<>0<>d405d61a5f5d8d2d41180dd6a3eaf56d<>res://.godot/imported/michio full.fbx-ab564349fd1cdd584ec7f9f923d2af9c.scn::uid://cml8pd7hu47a5::::res://temp/fbx animations/Action Adventure Pack/hair.tres<>uid://go7fix1iacmh::::res://temp/fbx animations/Action Adventure Pack/Material.tres<>uid://dxcigaq5rkcvr::::res://temp/fbx animations/Action Adventure Pack/pants.tres<>uid://dv06orky6ou6s::::res://temp/fbx animations/Action Adventure Pack/shoes.tres<>uid://fi6r2rm83oec::::res://temp/fbx animations/Action Adventure Pack/metal.tres<>uid://dpug3x3h41wpd::::res://temp/fbx animations/Action Adventure Pack/shirt.tres<>uid://cnvlr1p34xr8k::::res://temp/fbx animations/Action Adventure Pack/skin.tres<>uid://coaf6pdbxji87::::res://temp/fbx animations/Action Adventure Pack/face.tres
+michio full_0.png::CompressedTexture2D/CompressedTexture2D::8252921615376227411::1769471378::1769565418::1::::<><><>0<>0<>1dd1250de1cc94767c547580af1bc30d<>res://.godot/imported/michio full_0.png-6755c754d5cd11515cf151211ac0638f.s3tc.ctex::
+michio full_1.png::CompressedTexture2D/CompressedTexture2D::6405805705950721078::1769471378::1769565418::1::::<><><>0<>0<>468f47cdd3692a0ed8242ce05b1866b9<>res://.godot/imported/michio full_1.png-48a9d8736a7d1db8008f20ea86d92ba3.s3tc.ctex::
+michio full_2.png::CompressedTexture2D/CompressedTexture2D::6936163512715750295::1769471379::1769565418::1::::<><><>0<>0<>9266c56edd6773eca9a0036bd018f3b5<>res://.godot/imported/michio full_2.png-3258f9f80064db7c9382f1ef4b2516c8.s3tc.ctex::
+michio full_3.png::CompressedTexture2D/CompressedTexture2D::4718625771991566748::1769564906::1769564997::1::::<><><>0<>0<>35b933954dac30809ce35bb5f9987654<>res://.godot/imported/michio full_3.png-62f20ef5b928ffe5279aae823fbc942d.s3tc.ctex::
+michio full_4.png::CompressedTexture2D/CompressedTexture2D::2029125219794932288::1769565958::1769565960::1::::<><><>0<>0<>9dec051978bb333888409cab35d73ffd<>res://.godot/imported/michio full_4.png-14d084b015414cffe58e8f88f539828b.s3tc.ctex::
+pants.tres::StandardMaterial3D/StandardMaterial3D::8778230687070775811::1769565539::0::1::::<><><>0<>0<><>::uid://cxjaxi173jcqg::::res://temp/fbx animations/Action Adventure Pack/michio full_1.png
+right cover sneak.fbx::PackedScene/PackedScene::5931252331315828031::1769461974::1769471380::1::::<><><>0<>0<>49e740aaa9ef86135a09a657052b46e1<>res://.godot/imported/right cover sneak.fbx-e5b43481af7e0bcfd94004cb23f42e26.scn::
+right turn.fbx::PackedScene/PackedScene::1402520810522500917::1769461974::1769471380::1::::<><><>0<>0<>dfbafa15dbf12b22a3b28306feabe52d<>res://.godot/imported/right turn.fbx-1f40e25843fdb6a715dcc09484c177c7.scn::
+run to stop.fbx::PackedScene/PackedScene::1633698694893911435::1769461974::1769471380::1::::<><><>0<>0<>374bb94f0678f4829283574f897346f0<>res://.godot/imported/run to stop.fbx-0fc9d87591703a89c13ea91d95ee5279.scn::
+running.fbx::PackedScene/PackedScene::4360309590565377493::1769461974::1769471380::1::::<><><>0<>0<>bceed2125f6f1fedd8cb6d505f688d53<>res://.godot/imported/running.fbx-8a0aa7d81b838bcf932665e73f74fbb4.scn::
+shirt.tres::StandardMaterial3D/StandardMaterial3D::8253797816566346841::1769565539::0::1::::<><><>0<>0<><>::uid://c526unhmjrbfr::::res://temp/fbx animations/Action Adventure Pack/michio full_2.png
+shoes.tres::StandardMaterial3D/StandardMaterial3D::8686745348697354208::1769565539::0::1::::<><><>0<>0<><>::
+skin.tres::StandardMaterial3D::5729347903023733112::1769566907::0::1::::<><><>0<>0<><>::uid://356npw5jra4o::::res://temp/fbx animations/Action Adventure Pack/michio full_4.png
+stand to cover (2).fbx::PackedScene/PackedScene::8240501480217569574::1769461974::1769471381::1::::<><><>0<>0<>17cbdab92c2a9b2cf5796c1e55d79982<>res://.godot/imported/stand to cover (2).fbx-e1b134667c8f3745e767421761c40ccc.scn::
+stand to cover.fbx::PackedScene/PackedScene::3303297507905461517::1769461974::1769471381::1::::<><><>0<>0<>8f0eb9d8a1ec3395edbfebc0c7be1b4c<>res://.godot/imported/stand to cover.fbx-8ff5b729ba9be5714b3a982e7975720a.scn::
+walking.fbx::PackedScene/PackedScene::2099146981793954547::1769461974::1769471381::1::::<><><>0<>0<>56dd8a1133313b67107d9ccb14380199<>res://.godot/imported/walking.fbx-ee78998e19e6c2e1d428893b40a519b8.scn::
+::res://third_party/::1769363565

@@ -1,0 +1,82 @@
+PROJECT ANALYSIS — DENSETSU ENGINE (2D → 3D CONSIDERATION)
+Date: 2025-12-24
+
+1) Scope & Objectives (current)
+- Engine: Godot 4.4, actor-based runtime with custom FSM (State/StateMachine), resource-first data registry, schema-driven in-game editor (EditorManager + DataEditor).
+- Gameplay target: 2D sidescroller/platformer with data-driven movement, combat via hitbox/hurtbox, AI profiles, modular prefabs, polygon terrain (no tilemaps).
+- Modding/editing: in-game editor, drag/drop placements, data editing via DataRegistry/DataEditor; avoid editor-only APIs; resources are the single source of truth.
+
+2) Current Architecture & Systems
+- Core actor: CharacterBody2D (`engine/actors/ActorCharacter2D.gd`), with FSM, movement controller (`BaselinePlatformController.gd`), ActorInterface (signals, lifecycle, damage hook), StatsComponent (now integer stats, per-element power/defense with absorb flags).
+- FSM: Minimal logic in states (Idle/Run/Walk/Sprint/Jump/Fall/Land/Hurt/Death); still mostly stubs for movement/animation intent.
+- Movement: Data-driven via `MovementData` and applied by SceneManager; baseline platformer controller supports coyote/buffer, wall jump, glide/flight/swim/flap scaffolding.
+- Combat: HitPayload/HurtboxReceiver bridge; Combat Collider (plugin) expected for hitboxes; projectiles expose hit payload; no attack resource yet (damage/knockback still basic).
+- AI: AIProfileData exists; no runtime AI controller/BT integration implemented.
+- Terrain: PolygonTerrain2D for collision/visuals; WaterVolume area sets in_water flag.
+- Data layer: DataRegistry singleton scans `data/*` categories; SceneManager applies actor data (movement, sprite, collision, tint, stats via stats_id); StatsData/StatsComponent refactored to ints and explicit elements.
+- Editor: EditorManager + DataEditor (schema-based for most categories; custom grouped UI for Stats). Prefab stamping via PrefabData in `data/prefabs` (paths + default_data_id). EntityInspectorPopup exists; in-game overlays.
+- Prefabs: PrefabData entries for solid/one-way/water/teleporter/player/enemy/npc/deco/deco_solid/trap_basic/item_floating/spawner_enemy; EditorManager resolves prefabs via PrefabData (PREFAB_KIND_TO_ID).
+- Assets: Placeholder sprites (2D), sprite frames for Michio; basic placeholder textures for enemies/projectiles.
+- Autoloads: Runtime, EventBus, InputManager, DataRegistry, SceneManager, EditorManager.
+
+3) Data Coverage (present)
+- Actors: Player, Enemy, NPC, Deco, DecoStatic (data ids).
+- Movement: MOVEMENT_Base.
+- Stats: STATS_Basic (integer stats, element power/defense, absorb flags).
+- Sprites: SPRITE_ActorMichio.
+- Prefabs: as listed above.
+- Projectiles: PROJECTILE_Enemy (basic speed/damage/knockback).
+- Collision/Traps/Triggers/AI profiles: minimal (AIPROFILE_Default exists but unused); collision presets added in engine/data/resources but data folder may lack populated entries.
+- Terrain: Polygon templates (POLY_Default).
+
+4) Gaps / Risks (2D state)
+- Combat: No attack resource, no damage type/resistance math pipeline, no hitpause/knockback rules; hurt logic minimal.
+- FSM: States mostly decorative; no animation intents, no timing/transition policy; movement state decisions live in ActorCharacter2D rather than states.
+- AI: No runtime controller; AIProfileData unused; no sensing/pathing/BT integration.
+- Prefab stamping: Relies on PrefabData presence; categories for deco_solid, etc., added but visuals/data per prefab are minimal.
+- Content: Only placeholders; many canonical categories empty or thin (collision, traps, triggers, quests, weather, sounds, particles, loot tables).
+- Editor: Still hardcoded schemas; not fully reflective; prefab stamping now data-driven but needs validation.
+- Testing: No automated tests; no smoke scenes for regressions.
+
+5) 3D Shift Considerations (what to keep / what to change)
+- Keep:
+  - Resource-first data model (ActorData, MovementData, StatsData, PrefabData, AIProfileData).
+  - FSM architecture and ActorInterface signaling.
+  - DataRegistry/SceneManager application flow; PrefabData-driven stamping.
+  - Input abstractions, editor/modding goals (in-game editor).
+- Change/Adapt:
+  - Actors: Move from CharacterBody2D to CharacterBody3D (or KinematicBody3D) with 3D gravity/up axis; rework BaselinePlatformController to 3D (Vector3 velocities, floor detection, slopes).
+  - MovementData: Add 3D-specific fields (jump directions, air control, slope limits, step height, camera-relative input toggles); review units and gravity.
+  - Collision: Replace PolygonTerrain2D with MeshInstance3D + CollisionShape3D or CSG/heightfield; collision categories/layers extended for 3D.
+  - Rendering: Replace sprites with models/AnimationTree; SpriteData -> ModelData (mesh, materials, animations).
+  - Combat: Replace 2D Areas with Area3D/Shape3D; Combat Collider equivalent in 3D or custom hitbox components; HitPayload/HurtboxReceiver can stay, but typed for 3D vectors/knockback.
+  - Camera: Introduce camera rigs (follow, orbital, shoulder). Preserve data-driven actor types; camera scripts can read actor tags.
+  - Prefabs: Update PrefabData prefab_path to 3D scenes; categories stay the same (actor, scenery, teleporter, trap, item, spawner).
+  - Editor: Reuse EditorManager/DataEditor but adjust picking/gizmos for 3D (raycasts, 3D handles); Scene preview/render must handle models.
+  - Physics layers/masks: audit and expand for 3D.
+  - AI: Add 3D navigation (NavigationRegion3D), pathfinding; BT/AI controller should output 3D movement vectors.
+
+6) What we need to add for 3D parity
+- ActorCharacter3D scene/script with FSM + ActorInterface; 3D movement controller (baseline platformer equivalent).
+- ModelData resource (mesh/material/animation set) and SpriteData replacement; SceneManager apply_model_data.
+- 3D hitbox/hurtbox components (Area3D) and/or 3D-compatible Combat Collider; update HitPayload knockback to Vector3.
+- Terrain/level prefabs: basic floor, ramp, wall, teleporter, water volume in 3D; PrefabData entries pointing to 3D scenes.
+- Camera rigs: data/config for camera modes (follow/orbit/shoulder) tied to actor tags.
+- AI runtime: simple controller (patrol/chase) + optional BT runtime, using AIProfileData extended for 3D sensing (ranges, FOV).
+- Animation: AnimationTree/Animator hookup driven by FSM state intents.
+- Data categories: flesh out collision presets, traps, triggers, projectiles (3D), spawners, sounds, particles, weather.
+- Tests: smoke scene for 3D movement/combat; automated checks for DataRegistry application and prefab stamping.
+
+7) Recommended next steps
+1) Stand up ActorCharacter3D + BaselinePlatformController3D; extend MovementData with 3D fields; update SceneManager to apply to 3D actors.
+2) Define ModelData resource + SceneManager apply_model_data; migrate SpriteData usage accordingly; create one sample model prefab.
+3) Port combat bridge to 3D (Area3D hitboxes/hurtboxes); ensure HitPayload uses Vector3 knockback.
+4) Build 3D prefabs (floor, ramp, wall, teleporter, water, player/enemy/NPC) and update PrefabData paths.
+5) Camera rigs (follow/orbit) with data-driven config; tag-based camera target selection.
+6) Implement lightweight AI controller using AIProfileData (patrol/chase) and add NavigationRegion3D to test scenes.
+7) Flesh out DataEditor schemas for new resources (ModelData) and 3D-specific fields.
+8) Create a 3D test scene to validate movement, combat, prefab stamping, data application.
+
+8) Notes
+- Absorption rule: “to MP” should deplete MP before HP (magic barrier); “to HP” default on.
+- Prefab stamping now depends on PrefabData presence; ensure IDs exist for all buttons (PREFAB_KIND_TO_ID map).

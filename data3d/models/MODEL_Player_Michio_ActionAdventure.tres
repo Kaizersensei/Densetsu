@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="ModelData3D" load_steps=4 format=3 uid="uid://cjlgtt24v43of"]
+
+[ext_resource type="Script" uid="uid://c454vwar8b5xu" path="res://engine3d/data/resources/ModelData3D.gd" id="1"]
+[ext_resource type="AnimationLibrary" uid="uid://chkte3qisliy8" path="res://assets/characters/biped/anim/BipedAnimations_ActionAdventure.tres" id="1_byiu8"]
+[ext_resource type="PackedScene" uid="uid://coissavetp8po" path="res://temp/fbx animations/Action Adventure Pack/michio full.fbx" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "MODEL_Player_Michio_ActionAdventure"
+description = "Michio rigged (Action Adventure pack)"
+tags = PackedStringArray()
+scene = ExtResource("2")
+scale = Vector3(0.01, 0.01, 0.01)
+animation_tree_path = NodePath("")
+animation_player_path = NodePath("")
+animation_library = ExtResource("1_byiu8")
+animation_library_name = &"biped"
+force_double_sided = true
+anim_idle_state = "action_adventure_pack__idle_(2)"
+anim_walk_state = "action_adventure_pack__walking"
+anim_run_state = "action_adventure_pack__running"
+anim_sprint_state = "action_adventure_pack__running"
+anim_jump_state = "action_adventure_pack__jumping_up"
+anim_fall_state = "action_adventure_pack__falling_idle"
+anim_roll_state = "action_adventure_pack__falling_to_roll"
+anim_crouch_idle_state = "action_adventure_pack__idle"
+anim_crouch_walk_state = "action_adventure_pack__walking"

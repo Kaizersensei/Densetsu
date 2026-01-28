@@ -1,0 +1,32 @@
+Animation Library Build (Action Adventure)
+Input root: res://temp/fbx animations
+Output library: res://assets/characters/biped/anim/BipedAnimations_ActionAdventure.tres
+Clips:
+- ADD action_adventure_pack__cover_to_stand_(2) <= res://temp/fbx animations/Action Adventure Pack/cover to stand (2).fbx [mixamo_com]
+- ADD action_adventure_pack__cover_to_stand <= res://temp/fbx animations/Action Adventure Pack/cover to stand.fbx [mixamo_com]
+- ADD action_adventure_pack__crouched_sneaking_left <= res://temp/fbx animations/Action Adventure Pack/crouched sneaking left.fbx [mixamo_com]
+- ADD action_adventure_pack__crouched_sneaking_right <= res://temp/fbx animations/Action Adventure Pack/crouched sneaking right.fbx [mixamo_com]
+- ADD action_adventure_pack__falling_idle <= res://temp/fbx animations/Action Adventure Pack/falling idle.fbx [mixamo_com]
+- ADD action_adventure_pack__falling_to_roll <= res://temp/fbx animations/Action Adventure Pack/falling to roll.fbx [mixamo_com]
+- ADD action_adventure_pack__hard_landing <= res://temp/fbx animations/Action Adventure Pack/hard landing.fbx [mixamo_com]
+- ADD action_adventure_pack__idle_(2) <= res://temp/fbx animations/Action Adventure Pack/idle (2).fbx [mixamo_com]
+- ADD action_adventure_pack__idle_(3) <= res://temp/fbx animations/Action Adventure Pack/idle (3).fbx [mixamo_com]
+- ADD action_adventure_pack__idle_(4) <= res://temp/fbx animations/Action Adventure Pack/idle (4).fbx [mixamo_com]
+- ADD action_adventure_pack__idle_(5) <= res://temp/fbx animations/Action Adventure Pack/idle (5).fbx [mixamo_com]
+- ADD action_adventure_pack__idle <= res://temp/fbx animations/Action Adventure Pack/idle.fbx [mixamo_com]
+- ADD action_adventure_pack__jumping_up <= res://temp/fbx animations/Action Adventure Pack/jumping up.fbx [mixamo_com]
+- ADD action_adventure_pack__left_cover_sneak <= res://temp/fbx animations/Action Adventure Pack/left cover sneak.fbx [mixamo_com]
+- ADD action_adventure_pack__left_turn <= res://temp/fbx animations/Action Adventure Pack/left turn.fbx [mixamo_com]
+- SKIP res://temp/fbx animations/Action Adventure Pack/michio full.fbx
+- ADD action_adventure_pack__right_cover_sneak <= res://temp/fbx animations/Action Adventure Pack/right cover sneak.fbx [mixamo_com]
+- ADD action_adventure_pack__right_turn <= res://temp/fbx animations/Action Adventure Pack/right turn.fbx [mixamo_com]
+- ADD action_adventure_pack__run_to_stop <= res://temp/fbx animations/Action Adventure Pack/run to stop.fbx [mixamo_com]
+- ADD action_adventure_pack__running <= res://temp/fbx animations/Action Adventure Pack/running.fbx [mixamo_com]
+- ADD action_adventure_pack__stand_to_cover_(2) <= res://temp/fbx animations/Action Adventure Pack/stand to cover (2).fbx [mixamo_com]
+- ADD action_adventure_pack__stand_to_cover <= res://temp/fbx animations/Action Adventure Pack/stand to cover.fbx [mixamo_com]
+- ADD action_adventure_pack__walking <= res://temp/fbx animations/Action Adventure Pack/walking.fbx [mixamo_com]
+- SKIP res://temp/fbx animations/michio full.fbx
+- SKIP res://temp/fbx animations/michio rigged.fbx
+Saved: res://assets/characters/biped/anim/BipedAnimations_ActionAdventure.tres
+Total animations added: 22
+Updated model data library: res://data3d/models/MODEL_Player_Michio_ActionAdventure.tres

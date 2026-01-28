@@ -1,0 +1,5 @@
+Biped Base Rig Build
+Source FBX: res://temp/fbx animations/michio full.fbx
+Output Scene: res://assets/characters/biped/BipedBase.tscn
+ERROR: Failed to pack scene (attempt 1).
+Saved fallback: res://assets/characters/biped/BipedBase.tscn

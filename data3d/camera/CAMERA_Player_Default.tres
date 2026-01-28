@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="CameraRigData3D" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://engine3d/data/resources/CameraRigData3D.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "CAMERA_Player_Default"
+description = "Default player camera (3D)"
+follow_distance = 6.0
+follow_height = 1.6
+follow_smooth = 5.0
+yaw_sensitivity = 2.0
+pitch_sensitivity = 2.0
+pitch_min = -60.0
+pitch_max = 70.0
+aim_distance = 2.5
+shoulder_offset = Vector3(0.5, 0.4, 0.0)
+min_distance = 2.0
+max_distance = 6.0

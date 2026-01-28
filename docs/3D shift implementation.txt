@@ -1,0 +1,343 @@
+## Integration + Refactor Plan for Codex (3D engine rebuild, editor excluded but “tap-in” ready)
+
+**Constraints you set**
+
+* **FSM:** merge best of both into **one cohesive controller** (single authoritative FSM).
+* **Demo assets:** replace entirely; **only code remains useful**.
+* **Workflow:** step-by-step integration/refactor.
+* **Editor:** **not implemented now**, but architecture must allow EditorMode to plug in later with minimal changes.
+* **Keep engine principles:** actor-based runtime + resource-first data + registry/apply flows.
+
+---
+
+## Guiding architecture (what Codex must preserve)
+
+### Single “Gameplay FSM” (authoritative)
+
+* Keep **your** FSM abstractions as the canonical API (State tags, priorities, context flags, frame events, etc.). 
+* Port/translate the asset’s states into your FSM **as state implementations**, not a second FSM.
+
+**Report:** One FSM, one transition system, one debug/introspection surface.
+
+### Strict module boundaries (editor tap-in later)
+
+* Runtime modules must expose **data-driven configuration** and **pure interfaces**, with no editor-specific logic.
+* Editor later will “tap in” by calling the same public hooks the runtime already uses (e.g., `apply_*()` from registry), but editor code remains absent for now.
+
+**Report:** Build runtime APIs as if an editor exists, but don’t implement editor behaviors.
+
+---
+
+## Phase 0 — Repo layout + import strategy (no behavior changes yet)
+
+### Tasks
+
+1. Create `/third_party/asset_3934/` (or `/vendor/third_person_controller/`) and import code *as-is*.
+2. Add `LICENSES/` entry for MIT attribution.
+3. Create `/engine3d/` modules with placeholders:
+
+   * `/engine3d/actors/`
+   * `/engine3d/fsm/`
+   * `/engine3d/controllers/`
+   * `/engine3d/camera/`
+   * `/engine3d/animation/`
+   * `/engine3d/data/`
+   * `/engine3d/tests/`
+
+### Acceptance
+
+* Project runs the imported controller demo untouched (sanity baseline), then freezes as “reference behavior”.
+
+**Report:** Establish a stable “known good” baseline before refactoring.
+
+---
+
+## Phase 1 — Define the 3D actor surface (engine-owned, minimal features)
+
+### Goal
+
+Create `ActorCharacter3D.gd` (CharacterBody3D) with the same engine contracts your 2D actor has:
+
+* lifecycle hooks / signals (ActorInterface-style)
+* FSM host
+* StatsComponent / basic combat placeholders (no actual combat logic)
+* “data apply” entry points (even if DataRegistry isn’t fully wired yet)
+
+### Tasks
+
+1. Implement `ActorCharacter3D.gd`
+2. Implement `ActorInterface3D` (or reuse existing interface if already generic)
+3. Stub: `apply_movement_data(movement_id)` / `apply_model_data(model_id)` / `apply_camera_data(camera_id)`
+4. Create a minimal test scene: one actor + ground plane.
+
+### Acceptance
+
+* Actor spawns, ticks, FSM updates, no movement yet.
+
+**Report:** Establish the engine’s 3D “host” class before importing controller behaviors.
+
+---
+
+## Phase 2 — FSM merge (make your FSM drive the imported behaviors)
+
+### Goal
+
+Codex merges the asset controller logic into your FSM shape.
+
+### Tasks (order matters)
+
+1. **Lock your State API** (the one used across the engine). 
+2. Implement a `ControllerContext3D` struct/object containing:
+
+   * references: `body: CharacterBody3D`, `camera_rig`, `anim_driver`, `input_source`
+   * cached motion state: velocity, grounded, floor normal, timers (coyote/buffer), etc.
+3. Port asset states into your state classes:
+
+   * `LocomotionGrounded`, `LocomotionAir`, `Jump`, `Fall`, `Ragdoll` (and any aim/shoulder camera state if modeled as state)
+4. Port asset transition conditions into your transition system:
+
+   * coyote time / buffer
+   * jump cut
+   * air control curves
+   * slope/ground checks
+
+### Acceptance
+
+* Using your FSM, the actor replicates baseline movement behavior from the imported demo (in a temporary scene).
+
+**Report:** The asset FSM is fully subsumed; only your FSM remains.
+
+---
+
+## Phase 3 — Input decoupling (Player vs AI-ready, editor-ready)
+
+### Goal
+
+Controller reads from an injected `InputSource`, not from `Input` directly.
+
+### Tasks
+
+1. Define interface `IInputSource`:
+
+   * `get_move_vector()`
+   * `is_jump_pressed()` / `is_jump_just_pressed()` / `is_jump_just_released()`
+   * `is_run_held()`, `is_aim_held()`, etc.
+2. Implement:
+
+   * `PlayerInputSource` (wraps Godot Input actions)
+   * `NullInputSource` (for tests)
+3. Controller reads only `IInputSource`.
+
+### Acceptance
+
+* Movement works with `PlayerInputSource`.
+* Swap to `NullInputSource` and movement stops deterministically.
+
+**Report:** Input becomes a dependency, not a singleton—required for AI and editor simulation later.
+
+---
+
+## Phase 4 — Data resources (MovementData3D / CameraData / ModelData)
+
+### Goal
+
+Replace “export variables everywhere” with resource-first tuning, consistent with your registry/apply direction.
+
+### Tasks
+
+1. Create resources:
+
+   * `MovementData3D.tres` (or `.gd` Resource class)
+   * `CameraRigData.tres`
+   * `ModelData.tres`
+2. Populate fields based on the asset’s tunables:
+
+   * speed/walk/run accel/decel
+   * slope limits / snap parameters / step height (if present)
+   * jump: height, cut multiplier, buffer time, coyote time, multi-jump count
+   * air control curve references
+3. Implement `apply_*()` on `ActorCharacter3D`:
+
+   * copy Resource values into `ControllerContext3D`
+   * keep a single “runtime config” struct for fast access
+4. Add “config hot swap” debug command for testing (not editor mode).
+
+### Acceptance
+
+* Changing `MovementData3D` in one place changes behavior without touching scripts.
+
+**Report:** Movement/camera/model become data-driven—required for later editor tap-in.
+
+---
+
+## Phase 5 — Camera rig module (separate system, data-driven modes)
+
+### Goal
+
+Camera is not embedded in movement state scripts; it’s a rig with modes.
+
+### Tasks
+
+1. Implement `CameraRig3D.gd`:
+
+   * follow/orbit core
+   * mode switching: free / aim over-shoulder L/R / pan / zoom
+2. Expose `set_mode(mode_id)` and `apply_camera_data(camera_data)`
+3. FSM emits **camera intent** (mode + offsets), rig performs it.
+
+### Acceptance
+
+* Switching aim mode works without changing movement logic.
+* Camera data changes (sens, offsets, clamp) apply cleanly.
+
+**Report:** Camera becomes a replaceable module with stable API.
+
+---
+
+## Phase 6 — Animation driver (FSM intent → AnimationTree params)
+
+### Goal
+
+AnimationTree is presentation; gameplay FSM remains authoritative.
+
+### Tasks
+
+1. Implement `AnimDriver3D.gd`
+2. Define minimal intent payload:
+
+   * `locomotion_state` (ground/air)
+   * speed normalized
+   * vertical velocity
+   * is_aiming / aim_side
+   * is_ragdoll
+3. AnimDriver maps intent into AnimationTree parameters.
+
+### Acceptance
+
+* AnimationTree responds to locomotion state changes.
+* No animation graph logic is allowed to trigger gameplay transitions.
+
+**Report:** Clean separation prevents dual state machine drift.
+
+---
+
+## Phase 7 — Optional systems isolation (ragdoll, SFX, VFX)
+
+### Goal
+
+Keep optional behaviors behind feature flags; demo assets removed safely.
+
+### Tasks
+
+1. Create `FeatureFlags3D`:
+
+   * `enable_ragdoll`
+   * `enable_footstep_sfx`
+   * `enable_particles`
+2. Replace direct demo references with hook interfaces:
+
+   * `IFootstepEmitter`
+   * `ILandEmitter`
+   * `IJumpEmitter`
+3. Provide default no-op implementations.
+
+### Acceptance
+
+* Removing all demo assets does not break runtime.
+* Enabling features requires only plugging emitters/assets, not rewriting controller.
+
+**Report:** Demo content dependency eliminated; only the logic remains.
+
+---
+
+## Phase 8 — Registry/apply integration (editor still excluded)
+
+### Goal
+
+Reattach the resource pipeline without implementing editor UI/tools.
+
+### Tasks
+
+1. Ensure DataRegistry can load MovementData3D / CameraRigData / ModelData.
+2. SceneManager (or equivalent) applies these IDs to the actor via the already-built `apply_*()` hooks.
+3. Create `PrefabData3D` schema placeholder (no editor usage):
+
+   * references ids for movement/model/camera/stats
+4. Keep any editor-only concepts behind `#if TOOLS` or `Engine.is_editor_hint()` (but do not implement tools).
+
+### Acceptance
+
+* Spawn actor with ids, fully configured via registry + apply.
+* No editor UI code exists; only runtime hooks.
+
+**Report:** The runtime “tap-in points” for editor are in place.
+
+---
+
+## Phase 9 — Test harness + regression scenes (mandatory)
+
+### Tasks
+
+1. Create smoke scenes:
+
+   * `smoke_movement_3d.tscn`: slopes, steps, jumps (buffer/coyote), run/walk.
+   * `smoke_camera_3d.tscn`: free ↔ aim ↔ shoulder swap ↔ zoom.
+   * `smoke_data_apply_3d.tscn`: confirms ids apply correctly.
+2. Add an automated “play scene” checklist script:
+
+   * asserts actor nodes present
+   * asserts config applied
+   * prints key runtime values on-screen for quick review
+
+### Acceptance
+
+* Every phase ends with smoke scenes still passing.
+
+**Report:** Prevents refactors from silently breaking fundamentals.
+
+---
+
+## Phase 10 — Cleanup and module hardening (handoff-ready)
+
+### Tasks
+
+1. Remove vendor code that’s now redundant (after confirmed parity).
+2. Document public APIs:
+
+   * `ActorCharacter3D`
+   * `ControllerContext3D`
+   * `CameraRig3D`
+   * `AnimDriver3D`
+   * Resource schemas
+3. Freeze the “engine module interface” to support later editor mode.
+
+### Acceptance
+
+* No dependency on vendor scenes/assets.
+* New assets can be swapped in without code edits (only data + model setup).
+
+**Report:** Engine codebase becomes the only required runtime foundation.
+
+---
+
+## “Editor tap-in” preparation checklist (without implementing editor)
+
+Codex must ensure these exist by the end:
+
+* `apply_*()` hooks on actors for all configurable modules 
+* Resource schemas with stable IDs and registry loading 
+* No direct coupling to demo scenes/assets
+* Input abstraction (`IInputSource`) for simulation/AI/testing
+* Smoke scenes to validate runtime behavior before editor is reintroduced
+
+---
+
+## Next step to execute (Codex instruction)
+
+Start **Phase 0 → Phase 1** only:
+
+1. Import vendor code into `/third_party/asset_3934/`
+2. Create `ActorCharacter3D.gd` + minimal test scene
+3. Do **not** refactor vendor controller yet—just establish the engine-owned 3D actor host.
+
+If you want, I can convert Phase 0–1 into a Codex-ready task list with exact file names, class stubs, and dependency wiring order (still no editor).

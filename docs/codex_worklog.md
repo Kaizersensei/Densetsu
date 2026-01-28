@@ -1,0 +1,179 @@
+# Codex Worklog (traceability)
+
+2025-12-29
+- Added combat bridge scaffolding: `engine/combat/HitPayload.gd`, `engine/combat/HurtboxReceiver.gd` (hurtbox wrapper forwarding to ActorInterface/FSM), and `HitPayloadAdapter.gd` (attach to hitboxes to expose payloads).
+- Wired hurtbox receivers into actor scenes (`ActorCharacter2D.tscn`, `ActorNPC.tscn`, `EnemyDummy.tscn`); later removed the in-house sample hitbox emitter to avoid conflicts once Combat Collider was enabled manually.
+- Added lightweight addon shell `addons/hitbox_hurtbox` (tool-mode plugin stub only) to keep the bridge scripts available; no custom hitbox logic shipped.
+- Updated docs: `docs/plugin_strategy.md` with plugin bridge notes; `docs/combat_collider_adapter.md` with steps to use Combat Collider + HitPayloadAdapter.
+- Data-driven stats hookup: added `stats_id` to `ActorData`, stats application in `SceneManager._apply_stats` (uses ActorData.stats or StatsData resource), and `StatsComponent` loaders (`apply_stats_resource` / `apply_stats_dict`) plus resistances export. Movement application unchanged.
+- Data editor: added Stats category controls to `engine/editor/DataEditor.gd` (shows hp/mp/core stats, elements, skills, resistances, stats dict) so stats templates display/edit correctly.
+- Stats schema refactor: `StatsData.gd` and `StatsComponent.gd` now use integer fields (hp/max_hp/mp/max_mp, base stats, skills) and explicit per-element power/defense + absorb flags (no dicts). `STATS_Basic.tres` updated accordingly; DataEditor stats schema adjusted to the new fields.
+- Stats UX tweaks: absorption flags default to HP=true (MP optional), labels simplified to "Absorb to HP/MP"; base stats and skills now grouped 3-per-line; note for design: redirecting an element to MP should deplete MP before HP (magic barrier behavior).
+- DataEditor schema cleanup: removed legacy Stats dict/resistances entries from CATEGORY_CONTROLS to rely on the custom Stats inspector layout instead.
+- Prefabs: added PrefabData resources (`PREFAB_Solid`, `PREFAB_OneWay`, `PREFAB_Water`, `PREFAB_Teleporter`, `PREFAB_ActorPlayer`, `PREFAB_ActorEnemy`, `PREFAB_ActorNPC`, `PREFAB_TrapBasic`, `PREFAB_ItemFloating`, `PREFAB_SpawnerEnemy`) with prefab paths and default_data_id, extended PrefabData schema with default_data_id. EditorManager now falls back to PrefabData lookups when placing prefabs; data_id is applied from PrefabData if present.
+- Prefabs update: added deco prefabs (`PREFAB_Deco`, `PREFAB_DecoSolid`) and mapping table `PREFAB_KIND_TO_ID`; EditorManager prefab placement now resolves prefab paths and default_data_id via PrefabData (registry) instead of hardcoded scenes.
+- Prefab placement fix: typed the PrefabData lookups (pid/pid2 as String) to avoid parse errors and ensure prefab spawning remains functional.
+- 3D Phase 0–1: imported vendor code into `third_party/asset_3934`, added MIT license entry (`LICENSES/third_person_controller_mit.txt`), created `engine3d` module skeleton, and added `ActorInterface3D`, `ActorCharacter3D`, and `engine3d/tests/Actor3D_Test.tscn` for minimal 3D host + ground scene.
+- Tooling strategy: started a living log in `docs/tooling_opportunities.md` to track modular tool opportunities (movement, camera, prefab, stats/combat, AI, terrain) and shared runtime hooks.
+
+2026-01-25
+- Expanded `engine3d/tests/Actor3D_Test.tscn` with a slope and step blocks plus an on-screen debug panel, and added `engine3d/tests/Actor3D_Test.gd` to report position/velocity/floor state and data ids.
+- Added inspector categories and base actor parameters in `engine3d/actors/ActorCharacter3D.gd`, plus controller role enums and data override fields.
+- Added 3D resource schemas with inspector categories: `engine3d/data/resources/MovementData3D.gd`, `CameraRigData3D.gd`, `ModelData3D.gd`, `StatsFormulaData.gd`.
+- Added 3D actor branch scripts `engine3d/actors/ActorPlayer3D.gd`, `engine3d/actors/ActorNPC3D.gd`, `engine3d/actors/ActorScenery3D.gd` with role/controller defaults.
+- Grouped `engine/data/resources/StatsData.gd` exports into inspector categories (Identity/Vitals/Base Stats/Elements/Skills).
+- Added basic 3D input/movement scaffolding: `engine3d/controllers/IInputSource.gd`, `PlayerInputSource.gd`, `NullInputSource.gd`, and basic movement in `engine3d/actors/ActorCharacter3D.gd` (walk/run/jump/gravity).
+- Added Xbox-style input mappings for movement/jump/run in `project.godot`, and added 3D actor scenes `engine3d/actors/ActorPlayer3D.tscn`, `engine3d/actors/ActorNPC3D.tscn`, `engine3d/actors/ActorScenery3D.tscn`. Updated `engine3d/tests/Actor3D_Test.tscn` to use the player actor scene.
+- Switched startup to the 3D test scene and removed 2D editor/scene autoloads by setting `run/main_scene` to `res://engine3d/tests/Actor3D_Test.tscn` and removing `EditorManager`/`SceneManager` from `project.godot`.
+- Added basic 3D jump buffer/coyote time/air control in `engine3d/actors/ActorCharacter3D.gd` and aim direction storage.
+- Added `engine3d/camera/OrbitCamera3D.gd` and wired it into `engine3d/tests/Actor3D_Test.tscn` so the camera orbits the actor and writes aim direction.
+- Added right-stick look actions (`look_left/right/up/down`) to `project.godot` and surfaced aim direction in `engine3d/tests/Actor3D_Test.gd`.
+- Made movement camera-relative in `engine3d/actors/ActorCharacter3D.gd`, attached the orbit camera to `engine3d/actors/ActorPlayer3D.tscn` for inspector-accessible tuning, and removed the standalone camera from `engine3d/tests/Actor3D_Test.tscn`.
+- Added a simple camera context enum with turning logic in `engine3d/actors/ActorCharacter3D.gd` (default simple third person) and bound left stick X to idle turning while turning toward movement direction when moving.
+- Added camera data binding in `engine3d/camera/OrbitCamera3D.gd` and `engine3d/actors/ActorCharacter3D.gd` so `CameraRigData3D` resources can drive orbit parameters.
+- Updated `engine3d/camera/OrbitCamera3D.gd` to keep the camera behind the player by default (yaw relative to target) and added `camera_recenter` support for right-stick press. Added `camera_recenter` action in `project.godot`.
+- Made movement world-relative for the simple third-person context in `engine3d/actors/ActorCharacter3D.gd` and removed idle spin turning.
+- Added auto-recenter when moving in `engine3d/camera/OrbitCamera3D.gd`, with configurable speed and deadzone.
+- Smoothed player turning via `lerp_angle` in `engine3d/actors/ActorCharacter3D.gd` and slowed camera follow/recenter defaults in `engine3d/camera/OrbitCamera3D.gd` (with yaw inversion toggle).
+- Switched simple third-person movement to tank-style (forward/back on stick Y, turn on stick X) with a new `turn_smooth` parameter in `engine3d/data/resources/MovementData3D.gd`. Slowed camera follow/recenter defaults further in `engine3d/camera/OrbitCamera3D.gd`.
+- Added default `MovementData3D` and `CameraRigData3D` sub-resources to `engine3d/actors/ActorPlayer3D.tscn` so all player and camera parameters are visible/editable in the inspector.
+- Slowed default player turn rate and added a `turn_invert` flag in `engine3d/data/resources/MovementData3D.gd`; wired the flag in `engine3d/actors/ActorCharacter3D.gd` and updated the player sub-resource defaults.
+- Added 3D data categories to `engine/data/DataRegistry.gd` and created `data3d/` folders with default movement/camera resources.
+- Switched `engine3d/actors/ActorPlayer3D.tscn` to use external 3D data resources and set `movement_id`/`camera_id`, keeping player and camera parameters inspector-editable through `.tres` resources.
+- Wired `engine3d/actors/ActorCharacter3D.gd` to apply movement/camera/model ids via `DataRegistry` when set.
+
+2026-01-26
+- Added `engine3d/fsm/ControllerContext3D.gd` and initial 3D locomotion states (`engine3d/fsm/states/LocomotionGrounded3D.gd`, `engine3d/fsm/states/LocomotionAir3D.gd`) to run movement through the engine FSM and drive animation intent.
+- Added `engine3d/animation/AnimDriver3D.gd` to map FSM intent into the GodotPlush animation state machine (with late target binding).
+- Updated `engine3d/actors/ActorCharacter3D.gd` to build a controller context, expose input/movement/camera/anim accessors, and apply model data by instancing scenes into `VisualRoot/ModelRoot` (refreshing anim bindings).
+- Added `data3d/models/MODEL_Player_Default.tres` pointing to the GodotPlush skin scene for the default player model.
+- Updated `engine3d/actors/ActorPlayer3D.tscn` with VisualRoot/ModelRoot, AnimDriver3D, FSM state nodes + initial state, model id/resource, and disabled basic movement so FSM drives locomotion.
+- Made animation state names data-driven via `engine3d/data/resources/ModelData3D.gd` and used them in the 3D locomotion states; set GodotPlush defaults in `data3d/models/MODEL_Player_Default.tres` for easy model swaps later.
+- Fixed strict typing parse errors in `engine3d/actors/ActorCharacter3D.gd` by typing the registry lookup.
+- Copied vendor GodotPlush assets into `addons/PlayerCharacter` and `addons/Arts` so the placeholder model's internal `res://addons/...` references resolve.
+- Pointed `data3d/models/MODEL_Player_Default.tres` at the local `res://addons/PlayerCharacter/GodotPlush/godot_plush_skin.tscn` copy to avoid third_party path dependencies.
+- Prevented double movement if `use_basic_movement` is still enabled by skipping FSM movement in `engine3d/fsm/states/LocomotionGrounded3D.gd` and `engine3d/fsm/states/LocomotionAir3D.gd`.
+- Added a debug fallback mesh in `engine3d/actors/ActorCharacter3D.gd` that appears only if the model scene fails to instance, keeping the actor visible during asset/import issues.
+- Added pivot defaults in `engine3d/actors/ActorCharacter3D.gd` to align collision and visuals to bottom-center, with optional offset controls.
+- Updated 3D actor scenes (`engine3d/actors/ActorCharacter3D.tscn`, `engine3d/actors/ActorNPC3D.tscn`, `engine3d/actors/ActorScenery3D.tscn`, `engine3d/actors/ActorPlayer3D.tscn`) to place collision/visual nodes at bottom-center by default; adjusted `engine3d/tests/Actor3D_Test.tscn` spawn height accordingly.
+- Made the model-instancing fallback check for any geometry so the debug mesh appears when the model scene loads without visible geometry.
+- Fixed a strict typing parse error in `engine3d/actors/ActorCharacter3D.gd` by typing the collision shape lookup and shape variable.
+- Aligned the 3D test scene floor to Godot’s Y-up coordinate system by switching the ground collision to a boundary plane and lowering slope/steps; reset the player spawn height so the bottom-centered pivot sits on the floor (`engine3d/tests/Actor3D_Test.tscn`).
+- Added camera collision handling in `engine3d/camera/OrbitCamera3D.gd` using a raycast from the pivot to prevent clipping, with inspector-exposed collision settings.
+- Reduced camera jitter by resolving collision before smoothing and clamping the camera along the ray direction instead of pushing along hit normals (`engine3d/camera/OrbitCamera3D.gd`).
+- Ensured tank controls are applied in player space by turning before movement for the SIMPLE_THIRD_PERSON context (`engine3d/actors/ActorCharacter3D.gd`).
+- Exposed all MovementData3D parameters directly on the actor inspector via proxy exports in `engine3d/actors/ActorCharacter3D.gd` to make player tuning visible without opening the resource.
+- Marked `engine3d/actors/ActorCharacter3D.gd` as tool-mode and guarded runtime logic so movement proxy values display in the editor inspector.
+- Synced movement proxy fields from `MovementData3D` on load so inspector defaults match runtime tuning (`engine3d/actors/ActorCharacter3D.gd`).
+- Restored player movement/model/camera resource bindings in `engine3d/actors/ActorPlayer3D.tscn` and synced movement proxies on editor enter-tree so inspector values reflect data.
+- Made 3D actor scripts tool-mode and added movement resource setter + inspector refresh so movement proxy values pull from the bound MovementData3D resource (`engine3d/actors/ActorCharacter3D.gd`, `engine3d/actors/ActorPlayer3D.gd`, `engine3d/actors/ActorNPC3D.gd`, `engine3d/actors/ActorScenery3D.gd`).
+- Shortened movement proxy labels in the actor inspector by renaming exports with group prefixes (Base/Turning/Advanced/Jump) so labels no longer truncate (`engine3d/actors/ActorCharacter3D.gd`).
+- Added 3D smoke-test scenes and a shared debug overlay to verify movement, camera collision, and ID-based data application (`engine3d/tests/smoke_movement_3d.tscn`, `engine3d/tests/smoke_camera_3d.tscn`, `engine3d/tests/smoke_data_apply_3d.tscn`, `engine3d/tests/SmokeSceneDebug.gd`).
+- Wired max step height into 3D movement by adding a step-up check that lifts the actor before moving when blocked (`engine3d/actors/ActorCharacter3D.gd`).
+- Added camera mode support (follow/aim/shoulder) with data-driven distances/offsets and mode switching helpers in the orbit rig (`engine3d/camera/OrbitCamera3D.gd`).
+- Added a 3D prefab resource schema placeholder and registry category (`engine3d/data/resources/PrefabData3D.gd`, `engine/data/DataRegistry.gd`).
+- Expanded `MovementData3D` with wall jump/slide, dash, roll, posture, drop-through, and high-fall tuning parameters for 3D movement (`engine3d/data/resources/MovementData3D.gd`).
+- Added dash/roll/crouch/sneak input actions and extended the 3D input source interface to expose these controls (`project.godot`, `engine3d/controllers/IInputSource.gd`, `engine3d/controllers/PlayerInputSource.gd`).
+- Implemented the full 3D player movement state flow (input state, jump release gating, double/wall jump, dash, roll, crouch/sneak, drop-through, wall slide) and surfaced the new parameters in the actor inspector (`engine3d/actors/ActorCharacter3D.gd`).
+- Fixed a script parse failure by renaming runtime cooldown timers to avoid name collisions with exported movement parameters (`engine3d/actors/ActorCharacter3D.gd`).
+- Added a step-snap angle limit so step snapping is skipped on sloped surfaces; exposed as a tunable movement parameter and set a default in the player movement resource (`engine3d/actors/ActorCharacter3D.gd`, `engine3d/data/resources/MovementData3D.gd`, `data3d/movement/MOVEMENT_Player_Default.tres`).
+- Reworked step snapping to use a forward floor sensor (with distance/angle checks) and added visual smoothing to reduce jitter (`engine3d/actors/ActorCharacter3D.gd`, `engine3d/data/resources/MovementData3D.gd`, `data3d/movement/MOVEMENT_Player_Default.tres`).
+- Adjusted the step sensor to start in front of the collision bounds so step detection isn’t masked by the actor’s own footprint (`engine3d/actors/ActorCharacter3D.gd`).
+- Set a default step sensor distance on the player scene so the new field is visible with a nonzero value in the inspector (`engine3d/actors/ActorPlayer3D.tscn`).
+- Switched step detection to rely on a collider-style forward sensor with a box-based ShapeCast footprint (no raycast), aligned the sensor with movement direction, and chose the highest valid hit to handle angled approaches (`engine3d/actors/ActorCharacter3D.gd`).
+- Fixed strict typing parse errors in collision helper functions and replaced `get_floor_collision` usage with slide-collision inspection for floor collider detection (`engine3d/actors/ActorCharacter3D.gd`).
+- Added optional in-game debug visualization for the step sensor, floor cast volume, and hit point (toggle via `debug_step_sensors` on the actor) (`engine3d/actors/ActorCharacter3D.gd`).
+- Adjusted step detection to allow steps that share the same collider as the floor by removing the floor-collider filter (uses height/angle checks to reject flat ground) (`engine3d/actors/ActorCharacter3D.gd`).
+- Extended step debugging with contact/clearance markers (green/red spheres) to show which step-snap check is failing (`engine3d/actors/ActorCharacter3D.gd`).
+- Added overlap/cast-state color cues to the step sensor debug boxes (bright = hit, dim = no hit) to help diagnose missing step detection (`engine3d/actors/ActorCharacter3D.gd`).
+- Made step detection rely on the downward ShapeCast hit even when the overlap sensor doesn’t report a candidate, so stepping can still trigger while debugging overlap issues (`engine3d/actors/ActorCharacter3D.gd`).
+- Ensured step detection runs even when current velocity is near zero by removing the early return on horizontal speed (uses input direction for detection) (`engine3d/actors/ActorCharacter3D.gd`).
+- Disabled double-tap dash triggering in code and defaults, and remapped dash/roll controller buttons to RB/R1 (`engine3d/actors/ActorCharacter3D.gd`, `engine3d/actors/ActorPlayer3D.tscn`, `data3d/movement/MOVEMENT_Player_Default.tres`, `project.godot`).
+- Allowed step snapping when already touching a wall by falling back to slide-collision contact checks if `test_move` doesn’t report a forward collision (`engine3d/actors/ActorCharacter3D.gd`).
+- Made step snapping use the full sensor distance for the forward contact probe (more reliable when velocity drops) and bound roll to down+RB while dash uses RB with a direction (removed separate roll input) (`engine3d/actors/ActorCharacter3D.gd`, `project.godot`).
+- Relaxed step contact requirements (ignore direction in wall contact, reduce safe_margin during step checks, and use a small forward nudge) so stepping triggers without needing rotation when pressed against the step (`engine3d/actors/ActorCharacter3D.gd`).
+- Oriented step detection toward blocking contact normals when present, carried horizontal momentum across step transitions, and added an alternate RB mapping for dash to cover different controller button indices (`engine3d/actors/ActorCharacter3D.gd`, `project.godot`).
+- Added a pinned low-severity entry to `docs/issue_log.md` to track intermittent step snap failure when moving straight into steps.
+- Updated dash behavior to allow steering during a boost and to sustain while RB is held (sprint-like control) (`engine3d/actors/ActorCharacter3D.gd`, `engine3d/controllers/IInputSource.gd`, `engine3d/controllers/PlayerInputSource.gd`, `engine3d/controllers/NullInputSource.gd`).
+- Restored turning control during boosts and moved roll/crouch to the B button (roll when moving, crouch otherwise); added a toggle option for crouch behavior (`engine3d/actors/ActorCharacter3D.gd`, `engine3d/controllers/IInputSource.gd`, `engine3d/controllers/PlayerInputSource.gd`, `engine3d/controllers/NullInputSource.gd`, `project.godot`).
+- Added a low-priority roll/crouch tuning note to `docs/issue_log.md`.
+- Archived unused 2D/legacy engine content into `/.backup/old_engine_YYYYMMDD_HHMMSS/` (engine 2D modules, data/game/resources/assets/editor_saves) with a manifest of moved paths; kept `engine/data` and `engine/fsm/State*.gd` in place for 3D dependencies.
+- Reworked dash/boost handling so RB functions as a sprint-like speed boost (no movement lock), with boost speed applied through the normal acceleration path; dash can also start from a held RB + direction (more reliable sprint activation). (`engine3d/actors/ActorCharacter3D.gd`)
+- Expanded grounded animation intents to include sprint/roll/crouch states, and added model data mappings for those intents (defaults fall back to existing idle/walk/run states). (`engine3d/fsm/states/LocomotionGrounded3D.gd`, `engine3d/fsm/ControllerContext3D.gd`, `engine3d/data/resources/ModelData3D.gd`)
+- Added an EditorScript to build a biped AnimationLibrary from FBX packs in `temp/fbx animations`, with optional root-translation stripping and a build report. (`engine3d/tools/BuildBipedAnimationLibrary.gd`)
+- Added an EditorScript to build a reusable biped base rig scene from a chosen T-pose FBX (armature + mesh) with a build report. (`engine3d/tools/BuildBipedBaseRig.gd`)
+- Added animation-library support for biped rigs (library binding on model apply, AnimationPlayer fallback in AnimDriver), and created a Michio rigged model data resource mapped to Action Adventure clips. (`engine3d/actors/ActorCharacter3D.gd`, `engine3d/animation/AnimDriver3D.gd`, `engine3d/data/resources/ModelData3D.gd`, `data3d/models/MODEL_Player_Michio_ActionAdventure.tres`, `engine3d/actors/ActorPlayer3D.tscn`)
+- Made AnimDriver resolve target paths relative to ancestor nodes so model/animation paths work from sibling nodes (fixes missing AnimationPlayer lookups). (`engine3d/animation/AnimDriver3D.gd`)
+- Retargeted animation track paths to the rigged FBX hierarchy (prefixing Skeleton3D tracks with Armature) and added optional double-sided material forcing via model data. (`engine3d/tools/BuildBipedAnimationLibrary.gd`, `engine3d/data/resources/ModelData3D.gd`, `engine3d/actors/ActorCharacter3D.gd`, `data3d/models/MODEL_Player_Michio_ActionAdventure.tres`)
+- Added a small Action Adventure-only animation library builder to speed up testing and avoid loading the full animation pack. (`engine3d/tools/BuildActionAdventureLibrary.gd`, `data3d/models/MODEL_Player_Michio_ActionAdventure.tres`)
+- Updated the Action Adventure library builder to sanitize tracks against the rig skeleton, retarget to the correct Skeleton3D path, and drop unresolved tracks. (`engine3d/tools/BuildActionAdventureLibrary.gd`)
+- Archived the full biped animation library into `.backup/anim_library_full_20260127` to prevent it from being loaded during testing. (`.backup/anim_library_full_20260127/`)
+- Moved non-Action Adventure FBX animation packs into `temp/fbx animations/_disabled` to prevent them from loading during project import. (`temp/fbx animations/_disabled/`)
+- Added `.gdignore` to `.backup` and moved disabled FBX packs to `.backup/fbx_disabled_20260127` so Godot no longer imports them. (`.backup/.gdignore`, `.backup/fbx_disabled_20260127/`)
+
+2026-01-27
+- Made AnimDriver retry playing the current state if no playable target exists yet (avoids getting stuck in T-pose when targets resolve after the first state set). (`engine3d/animation/AnimDriver3D.gd`)
+- Auto-derived animation player/tree paths from the instantiated model when not explicitly set, and set root_node on newly created AnimationPlayers to align track paths. (`engine3d/actors/ActorCharacter3D.gd`)
+- Cleared the plush-only skin path on the player’s AnimDriver so it relies on the model’s AnimationPlayer instead. (`engine3d/actors/ActorPlayer3D.tscn`)
+- Added AnimDriver debug helpers to dump resolved targets and animation lists when a state cannot be played (toggle in inspector). (`engine3d/animation/AnimDriver3D.gd`)
+- Expanded AnimDriver debug to enumerate AnimationPlayer/AnimationTree nodes under the model root, and dump after model apply when debugging is enabled. (`engine3d/animation/AnimDriver3D.gd`, `engine3d/actors/ActorCharacter3D.gd`)
+- Added per-state debug logging for AnimDriver playback attempts plus AnimationPlayer playback mode/active flags in dumps. (`engine3d/animation/AnimDriver3D.gd`)
+- Ensure bound AnimationPlayers are set to idle process mode/active and auto-pick a root_node relative to the nearest Skeleton3D ancestor. (`engine3d/actors/ActorCharacter3D.gd`)
+- Added verbose animation validation in AnimDriver debug to report unresolved track nodes and missing bones for the current animation. (`engine3d/animation/AnimDriver3D.gd`)
+- Added verbose dumps of Skeleton3D bone samples and current animation track bone samples to identify bone-name mismatches. (`engine3d/animation/AnimDriver3D.gd`)
+- Fixed debug helper typing to allow resolving root nodes without type errors. (`engine3d/animation/AnimDriver3D.gd`)
+- Added model binding debug (mesh skeleton path + skin presence) when AnimDriver debugging is enabled. (`engine3d/actors/ActorCharacter3D.gd`)
+- Fixed debug helper typing to avoid Variant inference warnings treated as errors. (`engine3d/actors/ActorCharacter3D.gd`)
+- Auto-assign a Skin to meshes missing one by reusing or generating the Skeleton3D skin from rest pose. (`engine3d/actors/ActorCharacter3D.gd`)
+- Switched the player model data to use the T-pose mesh from the Action Adventure pack (`michio full.fbx`) for testing skin binding. (`data3d/models/MODEL_Player_Michio_ActionAdventure.tres`)
+- Remap animation library track paths at runtime when the model lacks an `Armature` node (so `Armature/Skeleton3D:*` becomes `Skeleton3D:*`). (`engine3d/actors/ActorCharacter3D.gd`)
+- Updated animation library builders to strip full root translation (X/Y/Z) based on bone subname matching (mixamorig hips included). (`engine3d/tools/BuildBipedAnimationLibrary.gd`, `engine3d/tools/BuildActionAdventureLibrary.gd`)
+- Added a standalone Animation Preview scene that instantiates the model, binds the animation library, and auto-plays an animation (editor-friendly). (`engine3d/tools/AnimationPreview3D.tscn`, `engine3d/tools/AnimationPreview3D.gd`)
+- Added an editor preview toggle on ActorCharacter3D to instantiate the model + animation library directly in the actor scene without saving preview nodes. (`engine3d/actors/ActorCharacter3D.gd`)
+- Removed the placeholder AnimationPlayer from `ActorPlayer3D.tscn` to avoid editor-time track resolution errors when using preview instancing. (`engine3d/actors/ActorPlayer3D.tscn`)
+- Removed the editor preview toggle and the standalone AnimationPreview scene/scripts per latest directive. (`engine3d/actors/ActorCharacter3D.gd`, `engine3d/tools/AnimationPreview3D.tscn`, `engine3d/tools/AnimationPreview3D.gd`)
+- Cleared stale Godot editor state references to the removed AnimationPlayer node in `ActorPlayer3D.tscn` to stop editor NodePath errors. (`.godot/editor/ActorPlayer3D.tscn-editstate-066aa4fc55cc2a3b50a75da7b1ac7f88.cfg`, `.godot/editor/ActorPlayer3D.tscn-folding-066aa4fc55cc2a3b50a75da7b1ac7f88.cfg`)
+- Removed the Animation editor state block from the ActorPlayer3D editor state file to avoid empty NodePath resolution errors. (`.godot/editor/ActorPlayer3D.tscn-editstate-066aa4fc55cc2a3b50a75da7b1ac7f88.cfg`)
+- Reintroduced editor preview in `ActorPlayer3D` only (no standalone preview scene), with safe visibility toggling and model/animation binding. (`engine3d/actors/ActorCharacter3D.gd`)
+- Made editor preview replace children immediately and use a dedicated PreviewAnimationPlayer node under ModelRoot for animation editing. (`engine3d/actors/ActorCharacter3D.gd`)
+- Marked `ModelData3D` as tool mode for editor-time resolve_state calls; ensured preview instances are renamed + owner-cleared to avoid name clashes. (`engine3d/data/resources/ModelData3D.gd`, `engine3d/actors/ActorCharacter3D.gd`)
+- Auto-bind MeshInstance3D nodes to the primary Skeleton3D (largest bone count) when instancing a model so animations can drive the mesh. (`engine3d/actors/ActorCharacter3D.gd`)
+- Guarded editor preview refresh until the node is inside the tree, fixed recursive setters for model/preview properties, and only set preview AnimationPlayer ownership when editing the actor scene directly to prevent VisualRoot/ModelRoot name clashes in nested scenes. (`engine3d/actors/ActorCharacter3D.gd`)
+- Preserved explicit AnimationPlayer root_node values when valid so editor preview targets the instanced model (avoids track resolution failures). (`engine3d/actors/ActorCharacter3D.gd`)
+- Added proper backing fields for `model_data` and `preview_model_in_editor` exports to avoid invalid `field` usage in GDScript. (`engine3d/actors/ActorCharacter3D.gd`)
+- Added a runtime fallback to apply `model_data` after ID resolution so the model still loads if the registry path fails. (`engine3d/actors/ActorCharacter3D.gd`)
+- Removed the saved PreviewAnimationPlayer node from the player scene and taught AnimDriver to ignore editor preview AnimationPlayers so runtime binding uses the real model animations. (`engine3d/actors/ActorPlayer3D.tscn`, `engine3d/animation/AnimDriver3D.gd`, `engine3d/actors/ActorCharacter3D.gd`)
+- Added a root `.gitignore` entry for `.backup/` and created `.backup/working_scripts/` to keep rollback script snapshots out of git/Godot. (`.gitignore`, `.backup/working_scripts/`)
+- Archived VC recovery baselines for `ActorCharacter3D.gd` (15:29 and 15:12) and rolled current script back to the 15:29 behavior with minimal setter fixes. (`.backup/working_scripts/VC_20260127_1529/`, `.backup/working_scripts/VC_20260127_1512/`, `engine3d/actors/ActorCharacter3D.gd`)
+- Restored VC recovery versions of `ActorCharacter3D.gd`, `ActorPlayer3D.tscn`, `AnimDriver3D.gd`, and `MODEL_Player_Michio_ActionAdventure.tres` (pre‑box state), with a minimal setter fix for `model_data` and `preview_model_in_editor`. Backed up current files to `.backup/working_scripts/rollback_20260127_*`. (`.backup/!VC recovery/`, `.backup/working_scripts/rollback_20260127_*/`, `engine3d/actors/ActorCharacter3D.gd`, `engine3d/actors/ActorPlayer3D.tscn`, `engine3d/animation/AnimDriver3D.gd`, `data3d/models/MODEL_Player_Michio_ActionAdventure.tres`)
+- Removed the saved PreviewAnimationPlayer from `ActorPlayer3D.tscn`, marked preview AnimationPlayers as editor‑only, and taught AnimDriver to ignore them so runtime binds to the model’s real AnimationPlayer. (`engine3d/actors/ActorPlayer3D.tscn`, `engine3d/actors/ActorCharacter3D.gd`, `engine3d/animation/AnimDriver3D.gd`)
+- Set ActorPlayer3D's model_data to MODEL_Player_Michio_ActionAdventure so the runtime spawns the Michio model instead of the debug box (ensures AnimDriver can find an AnimationPlayer under ModelRoot). (ngine3d/actors/ActorPlayer3D.tscn)
+- Renamed the manual AnimationPlayer under ModelRoot to PreviewAnimationPlayer and set it editor_only so runtime binds to the model's real AnimationPlayer (avoids track resolution warnings). (ngine3d/actors/ActorPlayer3D.tscn)
+- Updated Godot editor state to point to PreviewAnimationPlayer so the editor stops trying to open a removed AnimationPlayer path. (.godot/editor/ActorPlayer3D.tscn-editstate-066aa4fc55cc2a3b50a75da7b1ac7f88.cfg, .godot/editor/ActorPlayer3D.tscn-folding-066aa4fc55cc2a3b50a75da7b1ac7f88.cfg)
+- Added a remapped Action Adventure animation library with Skeleton3D track paths and pointed the Michio model data + ActorPlayer3D preview to it to avoid track-resolution warnings. (`assets/characters/biped/anim/BipedAnimations_ActionAdventure_Skeleton3D.tres`, `data3d/models/MODEL_Player_Michio_ActionAdventure.tres`, `engine3d/actors/ActorPlayer3D.tscn`)
+- Collapsed editor/runtime model instancing into a single path (no separate preview instance/player), so the Actor uses the same template instance in editor and game; removed the preview AnimationPlayer node and preview-only logic. (`engine3d/actors/ActorCharacter3D.gd`, `engine3d/actors/ActorPlayer3D.tscn`, `engine3d/animation/AnimDriver3D.gd`)
+- Marked AnimDriver3D as tool-mode and cleared stale editor references to the removed PreviewAnimationPlayer2 to fix placeholder-instance errors in the editor. (`engine3d/animation/AnimDriver3D.gd`, `.godot/editor/ActorPlayer3D.tscn-editstate-066aa4fc55cc2a3b50a75da7b1ac7f88.cfg`, `.godot/editor/ActorPlayer3D.tscn-folding-066aa4fc55cc2a3b50a75da7b1ac7f88.cfg`)
+- Removed the lingering Animation editor state block for ActorPlayer3D to stop NodePath "" resolution errors. (`.godot/editor/ActorPlayer3D.tscn-editstate-066aa4fc55cc2a3b50a75da7b1ac7f88.cfg`)
+- Added an explicit AnimationPlayer under ModelRoot (bound to the Skeleton3D remapped library) and wired AnimDriver to it so animation editing is available in the actor scene without extra preview instances. (`engine3d/actors/ActorPlayer3D.tscn`, `engine3d/actors/ActorCharacter3D.gd`)
+- Preserved the ModelRoot AnimationPlayer on model refresh and assigned editor ownership to the instanced model so it appears under ModelRoot in the scene tree when preview is enabled. (`engine3d/actors/ActorCharacter3D.gd`)
+- Made the Skeleton3D Action Adventure animation library editable by clearing imported-track flags (backup stored under `.backup/anim_library_editable_YYYYMMDD_HHMMSS`). (`assets/characters/biped/anim/BipedAnimations_ActionAdventure_Skeleton3D.tres`)
+- Prevented animation-library remapping when the library already uses Skeleton3D paths, so edits apply to the real `.tres` instead of a runtime duplicate. (`engine3d/actors/ActorCharacter3D.gd`)
+- Made editor-time model refresh immediately free old ModelRoot instances (except the saved AnimationPlayer) to stop duplicate-name clashes when toggling preview. (`engine3d/actors/ActorCharacter3D.gd`)
+- Reverted the saved model instance from the player scene and added editor-preview cleanup hooks so preview instances are visible but never saved into `ActorPlayer3D.tscn`. (`engine3d/actors/ActorPlayer3D.tscn`, `engine3d/actors/ActorCharacter3D.gd`)
+- Set `pivot_align_bottom` true on the player scene to keep visuals aligned with the collider after restoring the scene file. (`engine3d/actors/ActorPlayer3D.tscn`)
+- Fixed strict-typing warnings (treated as errors) in `_library_uses_armature_paths` by explicitly typing loop limits. (`engine3d/actors/ActorCharacter3D.gd`)
+- Rebuild preview after editor save so the model doesn’t disappear when saving the scene. (`engine3d/actors/ActorCharacter3D.gd`)
+
+2026-01-28
+- Added an in-game/editor animation debug overlay that reports FSM state, AnimDriver targets, AnimationPlayer status, model data bindings, and track validation counts to help diagnose animation/preview issues. (`engine3d/animation/AnimDebugOverlay.gd`, `engine3d/actors/ActorPlayer3D.tscn`)
+- Extended the animation debug overlay with movement, actor state (jump/fall/air), controller context, ID/resource bindings, aim direction, and a Scroll Lock hotkey toggle; hid older smoke/test overlays when the unified overlay is present. (`engine3d/animation/AnimDebugOverlay.gd`, `engine3d/tests/SmokeSceneDebug.gd`, `engine3d/tests/Actor3D_Test.gd`)
+- Fixed the overlay hotkey to use a keycode integer (default 145) to avoid missing enum members on this Godot build. (`engine3d/animation/AnimDebugOverlay.gd`)
+- Added an action-based toggle fallback (`debug_toggle`) plus keycode polling so the overlay can be switched off even if Scroll Lock key events aren’t delivered. (`engine3d/animation/AnimDebugOverlay.gd`)
+- Made animation library binding remap to the actual Skeleton3D path found in the model instance (handles changes to model node structure like Armature nesting). (`engine3d/actors/ActorCharacter3D.gd`)
+- Guarded the debug overlay action toggle so missing InputMap actions no longer emit errors. (`engine3d/animation/AnimDebugOverlay.gd`)
+- Allowed FSM air/ground transitions even when basic movement is applied outside the FSM (prevents being stuck in grounded while airborne). (`engine3d/fsm/states/LocomotionGrounded3D.gd`, `engine3d/fsm/states/LocomotionAir3D.gd`)
+- Added crouch collider support with a tunable crouch height, automatic collision shape resizing (capsule/box/cylinder), and headroom checks before standing up. (`engine3d/actors/ActorCharacter3D.gd`, `engine3d/data/resources/MovementData3D.gd`)
+- Added `crouch_height` to the default player movement resource. (`data3d/movement/MOVEMENT_Player_Default.tres`)
+- Snapshotted the updated crouch-related scripts into `.backup/working_scripts/crouch_20260128_040332/` for rollback.
+- Pointed the Michio model to the Armature/Skeleton3D animation library so edits persist without runtime remapping. (`data3d/models/MODEL_Player_Michio_ActionAdventure.tres`)
+- Removed AnimationPlayer nodes embedded in imported model instances so only the persistent ModelRoot player is used for editing and runtime binding. (`engine3d/actors/ActorCharacter3D.gd`)

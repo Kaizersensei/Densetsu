@@ -1,0 +1,164 @@
+[gd_scene load_steps=15 format=3 uid="uid://51s22kaw422b"]
+
+[ext_resource type="PackedScene" uid="uid://blo6di4bc2dhy" path="res://engine3d/actors/ActorPlayer3D.tscn" id="1"]
+[ext_resource type="Script" uid="uid://dl5vm30is5di5" path="res://engine3d/tests/SmokeSceneDebug.gd" id="2"]
+[ext_resource type="Script" uid="uid://b7capdr7osldx" path="res://engine3d/data/resources/MovementData3D.gd" id="3_4p38k"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_1"]
+size = Vector2(20, 20)
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_1"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_1"]
+size = Vector3(6, 1, 6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2"]
+size = Vector3(6, 1, 6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2"]
+size = Vector3(1.5, 0.25, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3"]
+size = Vector3(1.5, 0.25, 1.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3"]
+size = Vector3(1.5, 0.5, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4"]
+size = Vector3(1.5, 0.5, 1.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4"]
+size = Vector3(1.5, 0.75, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5"]
+size = Vector3(1.5, 0.75, 1.5)
+
+[sub_resource type="Resource" id="Resource_ctpi1"]
+script = ExtResource("3_4p38k")
+id = ""
+description = ""
+tags = PackedStringArray()
+gravity = 9.8
+walk_speed = 4.0
+run_speed = 6.5
+acceleration = 20.0
+deceleration = 20.0
+turn_rate = 3.0
+turn_smooth = 8.0
+turn_invert = true
+max_slope_angle = 45.0
+step_height = 0.3
+step_snap_max_angle = 10.0
+step_sensor_distance = 0.2
+step_snap_smooth_speed = 10.0
+air_control = 0.6
+air_accel = 12.0
+air_decel = 12.0
+max_fall_speed = 30.0
+jump_speed = 8.0
+double_jump_speed = 8.0
+max_jumps = 1
+coyote_time = 0.12
+jump_buffer_time = 0.12
+require_jump_release = true
+double_jump_clamp_fall_speed = 0.0
+jump_cut = 0.5
+wall_jump_enabled = true
+wall_check_distance = 0.6
+wall_check_height = 0.9
+wall_slide_gravity_scale = 0.4
+wall_slide_max_fall_speed = 6.0
+wall_jump_up_speed = 7.0
+wall_jump_push_speed = 6.0
+wall_jump_lock_time = 0.15
+dash_speed = 10.0
+dash_time = 0.2
+dash_cooldown = 0.1
+dash_allow_air = false
+dash_allow_double_tap = true
+dash_double_tap_window = 0.25
+roll_speed = 7.0
+roll_time = 0.35
+roll_cooldown = 0.2
+crouch_speed = 1.5
+sneak_speed = 2.5
+drop_through_time = 0.2
+drop_through_layer = 0
+drop_through_speed = 2.0
+high_fall_speed = 12.0
+high_fall_time = 0.4
+
+[node name="smoke_movement_3d" type="Node3D"]
+script = ExtResource("2")
+scene_title = "Smoke Movement 3D"
+expected_movement_id = "MOVEMENT_Player_Default"
+expected_camera_id = "CAMERA_Player_Default"
+expected_model_id = "MODEL_Player_Default"
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.764842, -0.415016, 0.492725, 0, 0.764842, 0.644218, -0.644218, -0.492725, 0.584984, 0, 0, 0)
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("PlaneMesh_1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("WorldBoundaryShape3D_1")
+
+[node name="Slope" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.939373, 0.342898, 0, -0.342898, 0.939373, 6, 0.5, 0)
+
+[node name="SlopeMesh" type="MeshInstance3D" parent="Slope"]
+mesh = SubResource("BoxMesh_1")
+
+[node name="SlopeShape" type="CollisionShape3D" parent="Slope"]
+shape = SubResource("BoxShape3D_2")
+
+[node name="Steps" type="Node3D" parent="."]
+
+[node name="Step1" type="StaticBody3D" parent="Steps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.125, 2)
+
+[node name="Step1Mesh" type="MeshInstance3D" parent="Steps/Step1"]
+mesh = SubResource("BoxMesh_2")
+
+[node name="Step1Shape" type="CollisionShape3D" parent="Steps/Step1"]
+shape = SubResource("BoxShape3D_3")
+
+[node name="Step2" type="StaticBody3D" parent="Steps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.25, 3.75)
+
+[node name="Step2Mesh" type="MeshInstance3D" parent="Steps/Step2"]
+mesh = SubResource("BoxMesh_3")
+
+[node name="Step2Shape" type="CollisionShape3D" parent="Steps/Step2"]
+shape = SubResource("BoxShape3D_4")
+
+[node name="Step3" type="StaticBody3D" parent="Steps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0.375, 5.5)
+
+[node name="Step3Mesh" type="MeshInstance3D" parent="Steps/Step3"]
+mesh = SubResource("BoxMesh_4")
+
+[node name="Step3Shape" type="CollisionShape3D" parent="Steps/Step3"]
+shape = SubResource("BoxShape3D_5")
+
+[node name="Actor" parent="." instance=ExtResource("1")]
+movement_data = SubResource("Resource_ctpi1")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Panel" type="Panel" parent="CanvasLayer"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 380.0
+offset_bottom = 230.0
+
+[node name="Label" type="Label" parent="CanvasLayer/Panel"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 364.0
+offset_bottom = 214.0
+text = "Smoke Movement 3D"

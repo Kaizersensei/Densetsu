@@ -27,6 +27,12 @@ const CATEGORY_DIRS := {
 	"Trigger": "res://data/triggers",
 	"Teleporter": "res://data/teleporters",
 	"Weather": "res://data/weather",
+	"Collision": "res://data/collision",
+	"Actor3D": "res://data3d/actors",
+	"Movement3D": "res://data3d/movement",
+	"CameraRig3D": "res://data3d/camera",
+	"Model3D": "res://data3d/models",
+	"Prefab3D": "res://data3d/prefabs",
 }
 
 var _by_id: Dictionary = {}

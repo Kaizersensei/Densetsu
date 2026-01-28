@@ -1,8 +1,0 @@
-[gd_resource type="Resource" script_class="AIProfileData" load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://engine/data/resources/AIProfileData.gd" id="1"]
-
-[resource]
-script = ExtResource("1")
-id = "AIPROFILE_Default"
-description = "Default AI profile placeholder"
