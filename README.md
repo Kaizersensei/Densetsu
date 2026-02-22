@@ -2,8 +2,6 @@
 
 ***I DON'T TAKE CREDIT FOR ANY CODE IN THIS REPO***
 
-<img width="1831" height="1009" alt="image" src="https://github.com/user-attachments/assets/0872ba97-9c5a-4517-95b0-b6ab9eac8c81" />
-
 
 This repository contains the ongoing development of the **Densetsu Engine**, support tools, experimental systems, and prototype gameplay elements for the world of **Densetsu**. It serves as a central place to organize engine logic, testing modules, documentation, and research powering the larger Densetsu project.
 
@@ -17,7 +15,7 @@ Densetsu is a long-term fantasy IP spanning multiple media formats including gam
 
 The goals of this repository include:
 
-* Building a modular, character-driven **2D action-RPG engine** in Godot
+* Building a modular, character-driven **3D action-RPG engine** in Godot
 * Experimenting with **actor systems**, **FSMs**, **AI behavior**, and **environment systems**
 * Hosting prototypes and test scenes for movement, combat, and interactions
 * Organizing working documents and technical notes
@@ -27,7 +25,7 @@ The goals of this repository include:
 
 ## Personal Contribution Statement
 
-This repository reflects a vast amount of iterative work, testing, and experimentation — but the code itself is 99% ChatGPT - I'm a game designer, not a coder.
+This repository reflects a vast amount of iterative work, testing, and experimentation but the code itself is 99% AI generated under strong human supervision - I'm a systems integrator, not a coder.
 
 ### **What I did:**
 
@@ -35,7 +33,7 @@ This repository reflects a vast amount of iterative work, testing, and experimen
 * **Engine architecture**
 * **Extensive testing, debugging, hallucination control, and QA** (with CyberSpaceGod)
 
-This project exists because of intensive design iteration, testing discipline, and collaborative refinement — not because I wrote the code. Any technical progress here is the result of steering, checking, validating, and shaping the systems that the engine depends on.
+This project exists because of intensive design iteration, testing discipline, and collaborative refinement. Any technical progress here is the result of steering, checking, validating, and shaping the systems that the engine depends on.
 
 ---
 
@@ -43,13 +41,13 @@ This project exists because of intensive design iteration, testing discipline, a
 
 The repository may include:
 
-* Actor system prototypes
-* State machine drafts
-* Movement and combat experiments
-* Environment system tests
-* Editor and tool experiments
-* Documentation exports
-* Systems integration experiments (FSM + stats + actor core)
+* Actor system
+* State machine
+* Movement and combat
+* Environment system
+* Custom editor, plugins and tools
+* Documentation stubs
+* Systems integration (FSM + stats + actor core)
 
 This is **NOT** the final engine nor the full game. It is the construction site from which those things will emerge.
 
@@ -65,21 +63,16 @@ Densetsu is built on:
 * **Modular systems that can scale**
 * **A long-term vision for a fully realized IP**
 
-This repository mirrors that: evolving, refining, breaking, fixing, and gradually forming the larger structure of the Densetsu Engine.
-
 ---
 
 ## License
 
-This repo is experimental and not intended for reuse or redistribution. No license is provided at this stage.
+This repo is heavily experimental and not yet intended for reuse or redistribution. No license is provided at this stage. Try it your own risk and will but don't expect much support as features get added and changed almost every day. I strongly advise to wait until a demo comes out, that would mean we reached a useable stage.
 
 ---
 
 ## Contact
 
-For inquiries about the project, world, or collaboration, visit:
+For inquiries about the project, world, or collaboration, the most direct way is [Bluesky] (@kaizersensei.bsky.social). Public Discord server coming soon.
 
-* **Retraissance** — official team and project hub
-* **Densetsu** — main IP in development
 
-(Links or badges can be added here once ready.)
