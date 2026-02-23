@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bdr2usvvggjrp"
+path="res://.godot/imported/thouse09_House1_Level1_SeperatorBeams__59.obj-a008c70990f2857ae965b627978bc87f.mesh"
+
+[deps]
+
+files=["res://.godot/imported/thouse09_House1_Level1_SeperatorBeams__59.obj-a008c70990f2857ae965b627978bc87f.mesh"]
+
+source_file="res://assets/3d-unsorted/_arraymeshes/thouse09_House1_Level1_SeperatorBeams__59.obj"
+dest_files=["res://.godot/imported/thouse09_House1_Level1_SeperatorBeams__59.obj-a008c70990f2857ae965b627978bc87f.mesh", "res://.godot/imported/thouse09_House1_Level1_SeperatorBeams__59.obj-a008c70990f2857ae965b627978bc87f.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://project_audit_dock"]
+
+[ext_resource type="Script" path="res://addons/project_audit/unused_files_dock.gd" id="1_unused_dock"]
+
+[node name="UnusedFilesDock" type="VBoxContainer"]
+script = ExtResource("1_unused_dock")
+custom_minimum_size = Vector2(0, 220)
+
+[node name="Toolbar" type="HBoxContainer" parent="."]
+
+[node name="ScanButton" type="Button" parent="Toolbar"]
+text = "Scan"
+
+[node name="SaveButton" type="Button" parent="Toolbar"]
+text = "Save Report"
+
+[node name="CopyButton" type="Button" parent="Toolbar"]
+text = "Copy List"
+
+[node name="CountLabel" type="Label" parent="Toolbar"]
+text = "Unused: 0"
+size_flags_horizontal = 3
+
+[node name="Tree" type="Tree" parent="."]
+size_flags_vertical = 3
+hide_root = true

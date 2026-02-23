@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://sgy10civce2g"
+path="res://.godot/imported/FarmCrate_Empty.obj-75cc5a8d327406186fd90d0ca00ae9ac.mesh"
+
+[deps]
+
+files=["res://.godot/imported/FarmCrate_Empty.obj-75cc5a8d327406186fd90d0ca00ae9ac.mesh"]
+
+source_file="res://assets/3d-unsorted/FarmCrate_Empty.obj"
+dest_files=["res://.godot/imported/FarmCrate_Empty.obj-75cc5a8d327406186fd90d0ca00ae9ac.mesh", "res://.godot/imported/FarmCrate_Empty.obj-75cc5a8d327406186fd90d0ca00ae9ac.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

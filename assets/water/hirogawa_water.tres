@@ -1,0 +1,92 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://sgee4rwsml85"]
+
+[ext_resource type="Shader" uid="uid://dqsqhxnsf2eit" path="res://shaders/dfw/dfw_flowing_water.gdshader" id="1_dfwsh"]
+[ext_resource type="Texture2D" uid="uid://c5gc81vvvjnf5" path="res://assets/textures/Densetsu/LOOP_woods_1.png" id="2_base"]
+[ext_resource type="Texture2D" uid="uid://ckchfn61l15yf" path="res://temp/dfw_border_masks/Node3D__DFW_water_border_mask.png" id="3_j8rmu"]
+[ext_resource type="Texture2D" uid="uid://luk1qysgdrn8" path="res://assets/textures/Densetsu/LOOP_woods_1_n.png" id="4_uvjlk"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_dfwsh")
+shader_parameter/dfw_enabled = true
+shader_parameter/sync_global_advection = true
+shader_parameter/allow_quad_randomization = false
+shader_parameter/base_dir = Vector2(-1.25, 1)
+shader_parameter/quad_uv_size = 0.5370000255075
+shader_parameter/speed = 0.002000000095
+shader_parameter/speed_variation = 0.0890000042275
+shader_parameter/seed = 2206.86010482585
+shader_parameter/jitter_angle_deg = 16.0
+shader_parameter/time_scale = 1.0
+shader_parameter/use_manual_time = false
+shader_parameter/manual_time = 0.0
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+shader_parameter/continuous_warp_amp = 0.002
+shader_parameter/continuous_warp_scale = 2.5
+shader_parameter/per_quad_warp_amp = 0.11579999707026
+shader_parameter/per_quad_warp_detail_mix = 0.9450000448875
+shader_parameter/use_quad_edge_blend = true
+shader_parameter/quad_edge_blend_width = 0.12
+shader_parameter/quad_edge_blend_strength = 0.0430000020425
+shader_parameter/use_mask_edge_cell_density = true
+shader_parameter/mask_edge_cell_scale_min = 0.35
+shader_parameter/mask_edge_cell_density_power = 1.5
+shader_parameter/mask_edge_cell_density_gain = 1.0
+shader_parameter/use_border = true
+shader_parameter/border_mask = ExtResource("3_j8rmu")
+shader_parameter/border_mask_invert = true
+shader_parameter/border_mask_uv_scale = Vector2(1, 1)
+shader_parameter/border_mask_uv_offset = Vector2(-9.500001, -9.5)
+shader_parameter/border_strength = 8.0
+shader_parameter/border_smooth = 7.99999982304666
+shader_parameter/border_gradient_step_mul = 1.0599999800322
+shader_parameter/border_influence_gain = 4.0
+shader_parameter/use_neighbor_border_influence = true
+shader_parameter/neighbor_influence_strength = 8.0
+shader_parameter/neighbor_influence_blend = 1.0
+shader_parameter/neighbor_influence_min_edge = 0.8130000386175
+shader_parameter/flow_noise_source = 1
+shader_parameter/flow_noise_scale = 11.409999744963681
+shader_parameter/flow_noise_contrast = 0.93999998271444
+shader_parameter/flow_noise_bias = 0.025000048687499943
+shader_parameter/albedo_color = Color(0.3026763, 0.62410474, 0.7153811, 0.8509804)
+shader_parameter/albedo_tex = ExtResource("2_base")
+shader_parameter/use_albedo_tex = true
+shader_parameter/albedo_tex_mix = 0.28
+shader_parameter/albedo_flow_influence = 1.0
+shader_parameter/normal_tex = ExtResource("4_uvjlk")
+shader_parameter/use_normal_tex = true
+shader_parameter/normal_strength = 0.6650000315875
+shader_parameter/normal_uv_scale = 4.81999989226336
+shader_parameter/normal_detail_scale = 1.7499999646093205
+shader_parameter/normal_detail_speed_mul = 1.35
+shader_parameter/normal_detail_mix = 0.4750000225625
+shader_parameter/procedural_normal_strength = 0.4450000211375
+shader_parameter/procedural_normal_step = 0.0110000005225
+shader_parameter/roughness_base = 0.5
+shader_parameter/roughness_tex = ExtResource("2_base")
+shader_parameter/use_roughness_tex = true
+shader_parameter/roughness_tex_mix = 0.1030000048925
+shader_parameter/roughness_flow_amp = 0.4870000231325
+shader_parameter/metallic_base = 0.0
+shader_parameter/use_metallic_tex = false
+shader_parameter/metallic_tex_mix = 1.0
+shader_parameter/specular_base = 0.55
+shader_parameter/ao_base = 1.0
+shader_parameter/use_ao_tex = false
+shader_parameter/ao_tex_mix = 1.0
+shader_parameter/emission_color = Color(0, 0, 0, 1)
+shader_parameter/emission_energy = 0.0
+shader_parameter/use_emission_tex = false
+shader_parameter/emission_tex_mix = 1.0
+shader_parameter/use_edge_foam = false
+shader_parameter/foam_color = Color(0.85, 0.9, 0.95, 1)
+shader_parameter/foam_intensity = 0.8
+shader_parameter/foam_edge_bias = 0.7
+shader_parameter/foam_noise_scale = 8.0
+shader_parameter/foam_noise_cutoff = 0.0
+shader_parameter/debug_flow = false
+shader_parameter/debug_mode = 0
+shader_parameter/debug_freeze_animation = false
+shader_parameter/debug_time = 0.0

@@ -1,7 +1,0 @@
-res://engine3d/actors/ActorPlayer3D.tscn
-res://assets/characters/biped/anim/BipedAnimations_ActionAdventure.tres
-res://temp/fbx animations/Action Adventure Pack/metal.tres
-res://temp/fbx animations/Action Adventure Pack/skin.tres
-res://temp/fbx animations/Action Adventure Pack/face.tres
-res://data3d/models/MODEL_Player_Michio_ActionAdventure.tres
-res://engine3d/tests/Actor3D_Test.tscn

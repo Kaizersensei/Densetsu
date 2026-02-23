@@ -1,8 +1,8 @@
 extends Node3D
 
-@onready var _actor: CharacterBody3D = $Actor
-@onready var _label: Label = $CanvasLayer/Panel/Label
-@onready var _canvas: CanvasLayer = $CanvasLayer
+@onready var _actor: CharacterBody3D = get_node_or_null("Actor") as CharacterBody3D
+@onready var _label: Label = get_node_or_null("CanvasLayer/Panel/Label") as Label
+@onready var _canvas: CanvasLayer = get_node_or_null("CanvasLayer") as CanvasLayer
 
 
 func _process(_delta: float) -> void:

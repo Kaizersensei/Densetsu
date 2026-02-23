@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bxpghahdvg0yg"
+path="res://.godot/imported/Hill_2_1_Asia_combined.obj-ed63e813a811542b51908730458d21ea.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Hill_2_1_Asia_combined.obj-ed63e813a811542b51908730458d21ea.mesh"]
+
+source_file="res://assets/3d-unsorted/_arraymeshes/Hill_2_1_Asia_combined.obj"
+dest_files=["res://.godot/imported/Hill_2_1_Asia_combined.obj-ed63e813a811542b51908730458d21ea.mesh", "res://.godot/imported/Hill_2_1_Asia_combined.obj-ed63e813a811542b51908730458d21ea.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

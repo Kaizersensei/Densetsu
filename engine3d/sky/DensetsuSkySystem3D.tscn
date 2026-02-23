@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://engine3d/sky/DensetsuSkySystem3D.gd" id="1_9n3mg"]
+[ext_resource type="Script" path="res://engine3d/sky/DensetsuSkyClock.gd" id="2_1qnvc"]
+
+[node name="DensetsuSkySystem3D" type="Node3D"]
+script = ExtResource("1_9n3mg")
+
+[node name="Clock" type="Node" parent="."]
+script = ExtResource("2_1qnvc")

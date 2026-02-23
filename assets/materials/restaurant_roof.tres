@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://ubryjudvgw1d"]
+
+[ext_resource type="Texture2D" uid="uid://ccvsism4j5nhy" path="res://assets/textures/Densetsu/daimyo_1.png" id="1_x72ja"]
+
+[resource]
+albedo_texture = ExtResource("1_x72ja")
+uv1_scale = Vector3(4, 1.215, 1)
+uv1_offset = Vector3(0, -0.05, 0)

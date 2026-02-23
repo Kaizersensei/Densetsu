@@ -1,0 +1,1 @@
+# Ignore demo sources that rely on unavailable plugins (e.g., Terrain3D).

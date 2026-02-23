@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://engine3d/postfx/ToonPostFXController3D.gd" id="1_2w2e0"]
+[ext_resource type="PackedScene" path="res://engine3d/postfx/SobelOutlineDepthPostFX3D.tscn" id="2_rdc8k"]
+
+[node name="ToonPostFXController3D" type="Node3D"]
+script = ExtResource("1_2w2e0")
+
+[node name="SobelDepthPass" parent="." instance=ExtResource("2_rdc8k")]

@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://engine3d/postfx/ToonPostFXController3D.tscn" id="1_h7tq8"]
+
+[node name="HandDrawnOutlinePostFX3D" instance=ExtResource("1_h7tq8")]

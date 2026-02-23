@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bnc7yv33oku4w"
+path="res://.godot/imported/Ramen_Haven__roof_overhang.obj-8fc01d462a39cfb8e02c7a0c5027600d.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Ramen_Haven__roof_overhang.obj-8fc01d462a39cfb8e02c7a0c5027600d.mesh"]
+
+source_file="res://assets/3d-original/Scenery/Building/Ramen_Haven_/Ramen_Haven__roof_overhang.obj"
+dest_files=["res://.godot/imported/Ramen_Haven__roof_overhang.obj-8fc01d462a39cfb8e02c7a0c5027600d.mesh", "res://.godot/imported/Ramen_Haven__roof_overhang.obj-8fc01d462a39cfb8e02c7a0c5027600d.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

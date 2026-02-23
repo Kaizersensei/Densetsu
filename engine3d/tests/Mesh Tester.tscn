@@ -1,0 +1,422 @@
+[gd_scene format=3 uid="uid://bhpm0q1hsl2w5"]
+
+[ext_resource type="Script" uid="uid://c1d4xpvfgbkre" path="res://engine3d/tests/Actor3D_Test.gd" id="1_k7d7g"]
+[ext_resource type="Shader" uid="uid://pkwkc7i12g4q" path="res://shaders/sky/densetsu_sky.gdshader" id="2_r2d23"]
+[ext_resource type="PackedScene" path="res://engine3d/sky/DensetsuSkySystem3D.tscn" id="2_shqjl"]
+[ext_resource type="Texture2D" uid="uid://dg5fwy1er53ew" path="res://assets/textures/Sky/moon.png" id="3_56503"]
+[ext_resource type="PackedScene" uid="uid://blo6di4bc2dhy" path="res://engine3d/actors/ActorPlayer3D.tscn" id="3_rtx7s"]
+[ext_resource type="Script" uid="uid://c71wjjivlmrvo" path="res://engine3d/sky/DensetsuCloudLayer.gd" id="4_kg04v"]
+[ext_resource type="Material" uid="uid://cyncsh63uw7fr" path="res://assets/materials/Densetsu_default_clouds.tres" id="5_f25nb"]
+[ext_resource type="Texture2D" uid="uid://0ju6hmckxln2" path="res://assets/sky/cloud2.png" id="6_c1a52"]
+[ext_resource type="PackedScene" uid="uid://bel2yysrcdil7" path="res://assets/Prefabs/hirogawa inn.tscn" id="6_gleuw"]
+[ext_resource type="Texture2D" uid="uid://cywswfp1u5130" path="res://assets/textures/Densetsu/terrain/1024/grass patch.png" id="6_kiaym"]
+[ext_resource type="PackedScene" uid="uid://d1kag4kexqioe" path="res://assets/3d-unsorted/_sorted/Building/DSM_3d-platformer-set1-example_Cube_17793.tscn" id="6_rqy32"]
+[ext_resource type="Shader" uid="uid://csvkhi5vjvpum" path="res://shaders/sky/cloud_layer_base_material_adapter.gdshader" id="6_vaund"]
+[ext_resource type="Script" uid="uid://bluikfvpbfvqd" path="res://engine3d/sky/DensetsuWeatherCondition.gd" id="7_1fcih"]
+[ext_resource type="PackedScene" uid="uid://bi2oyu70xmngs" path="res://assets/Prefabs/infinitree.tscn" id="7_gleuw"]
+[ext_resource type="Texture2D" uid="uid://curkgkd3nkct6" path="res://assets/sky/cloud3.png" id="8_4obct"]
+[ext_resource type="PackedScene" uid="uid://dp8do36fpiots" path="res://assets/Prefabs/rain particles.tscn" id="8_iojpx"]
+[ext_resource type="PackedScene" uid="uid://7vqcok5wk0eh" path="res://assets/Prefabs/hirogawa restaurant.scn" id="8_s63m8"]
+[ext_resource type="Texture2D" uid="uid://rs73p6en27j8" path="res://assets/textures/Densetsu/!old/ui_weather/003.png" id="9_iojpx"]
+[ext_resource type="Script" uid="uid://2rn7taajiugt" path="res://engine3d/sky/DensetsuSkyClock.gd" id="10_c1a52"]
+[ext_resource type="PackedScene" uid="uid://ydxem3ku3f7v" path="res://assets/Prefabs/hirogawa_farm.scn" id="10_qcybh"]
+[ext_resource type="Texture2D" uid="uid://b0n85a17vlaus" path="res://assets/textures/Densetsu/!old/ui_weather/017.png" id="10_sfh1t"]
+[ext_resource type="PackedScene" uid="uid://c8rrluqioi5ym" path="res://assets/Prefabs/hirogawa bridge.scn" id="11_shqjl"]
+[ext_resource type="PackedScene" uid="uid://ch0mrhbgr0oir" path="res://assets/Prefabs/wheat patch.scn" id="12_r2d23"]
+
+[sub_resource type="Gradient" id="Gradient_r2d23"]
+offsets = PackedFloat32Array(0, 0.04347826, 0.08695652, 0.13043478, 0.17391305, 0.2173913, 0.26086956, 0.3043478, 0.3478261, 0.39130434, 0.4347826, 0.47826087, 0.5217391, 0.5652174, 0.6086956, 0.65217394, 0.6956522, 0.73913044, 0.7826087, 0.82608694, 0.8695652, 0.9130435, 0.95652175, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.04, 0.07, 0.14, 1, 0.04, 0.07, 0.14, 1, 0.04, 0.07, 0.14, 1, 0.04, 0.07, 0.14, 1, 0.2, 0.22, 0.35, 1, 0.31516656, 0.15501541, 0.35315552, 1, 0.9126367, 0.4653229, 0.71421695, 1, 0.65, 0.47, 0.34, 1, 0.36783424, 0.41922113, 0.6503651, 1, 0.33491755, 0.6013315, 0.9192389, 1, 0.44, 0.67, 0.95, 1, 0.44, 0.67, 0.95, 1, 0.44, 0.67, 0.95, 1, 0.2523008, 0.5991812, 0.9999997, 1, 0.26187265, 0.63573307, 1.0615184, 1, 0.85, 0.56, 0.34, 1, 0.85, 0.56, 0.34, 1, 0.4418639, 0.20331708, 0.27993637, 1, 0.31, 0.26, 0.42, 1, 0.06, 0.08, 0.16, 1, 0.06, 0.08, 0.16, 1, 0.06, 0.08, 0.16, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_56503"]
+gradient = SubResource("Gradient_r2d23")
+width = 240
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_56503"]
+disable_ambient_light = true
+albedo_color = Color(1.223865, 1.164938, 0.9351223, 1)
+albedo_texture = ExtResource("3_56503")
+uv1_scale = Vector3(0.305, 0.305, 0.305)
+uv1_offset = Vector3(0.085, -0.045, 0)
+
+[sub_resource type="Resource" id="Resource_f25nb"]
+script = ExtResource("4_kg04v")
+material = ExtResource("5_f25nb")
+opacity = 0.94
+uv_scale = Vector2(0.3, 0.795)
+uv_offset = Vector2(-0.225, 0)
+metadata/_custom_type_script = "uid://c71wjjivlmrvo"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1fcih"]
+transparency = 1
+albedo_color = Color(3.546238, 3.546238, 3.546238, 1)
+albedo_texture = ExtResource("6_c1a52")
+uv1_scale = Vector3(10, 10, 10)
+
+[sub_resource type="Resource" id="Resource_iojpx"]
+script = ExtResource("4_kg04v")
+material = SubResource("StandardMaterial3D_1fcih")
+tint = Color(0.3872597, 0.38083354, 0.5265647, 1)
+opacity = 0.94
+uv_scale = Vector2(0.48, 0.585)
+uv_offset = Vector2(-0.225, 0)
+uv_scroll = Vector2(0.002, 0)
+metadata/_custom_type_script = "uid://c71wjjivlmrvo"
+
+[sub_resource type="Resource" id="Resource_1fcih"]
+script = ExtResource("7_1fcih")
+auto_base_weight = 31.4095
+auto_spring_weight = 47.009
+auto_summer_weight = 65.868
+auto_autumn_weight = 46.017
+auto_winter_weight = 15.794
+metadata/_custom_type_script = "uid://bluikfvpbfvqd"
+
+[sub_resource type="Resource" id="Resource_sfh1t"]
+script = ExtResource("7_1fcih")
+weather_id = "light_rain"
+display_name = "Light Rain"
+ui_icon = ExtResource("9_iojpx")
+auto_base_weight = 31.4095
+auto_spring_weight = 20.563
+auto_summer_weight = 5.322
+auto_autumn_weight = 47.899
+auto_winter_weight = 71.669
+volumetric_fog_density_offset = 0.154
+near_particles_scene = ExtResource("8_iojpx")
+mid_particles_scene = ExtResource("8_iojpx")
+far_particles_scene = ExtResource("8_iojpx")
+near_emission_multiplier = 1.8
+metadata/_custom_type_script = "uid://bluikfvpbfvqd"
+
+[sub_resource type="Resource" id="Resource_mlcb6"]
+script = ExtResource("7_1fcih")
+weather_id = "foggy"
+display_name = "Foggy"
+ui_icon = ExtResource("10_sfh1t")
+auto_base_weight = 37.181
+auto_spring_weight = 24.951
+auto_summer_weight = 0.0
+auto_autumn_weight = 25.408
+auto_winter_weight = 44.351
+volumetric_fog_density_offset = 1.0
+fog_color_override_amount = 0.33
+metadata/_custom_type_script = "uid://bluikfvpbfvqd"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sfh1t"]
+resource_local_to_scene = true
+shader = ExtResource("6_vaund")
+shader_parameter/albedo_texture = ExtResource("8_4obct")
+shader_parameter/albedo_color = Color(3.546238, 3.546238, 3.546238, 1)
+shader_parameter/uv_scale = Vector2(0.3, 0.795)
+shader_parameter/uv_offset = Vector2(-0.225, 0)
+shader_parameter/uv_scroll = Vector2(0, 0)
+shader_parameter/time_seconds = 405.3
+shader_parameter/material_uv_scale = Vector2(1.755, 1.755)
+shader_parameter/material_uv_offset = Vector2(0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mlcb6"]
+resource_local_to_scene = true
+shader = ExtResource("6_vaund")
+shader_parameter/albedo_texture = ExtResource("6_c1a52")
+shader_parameter/albedo_color = Color(3.546238, 3.546238, 3.546238, 1)
+shader_parameter/uv_scale = Vector2(0.48, 0.585)
+shader_parameter/uv_offset = Vector2(-0.225, 0)
+shader_parameter/uv_scroll = Vector2(0.002, 0)
+shader_parameter/time_seconds = 405.302
+shader_parameter/material_uv_scale = Vector2(10, 10)
+shader_parameter/material_uv_offset = Vector2(0, 0)
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_23lsr"]
+viewport_path = NodePath("DensetsuSkySystem3D/_CloudCompositeViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_eexal"]
+resource_local_to_scene = true
+shader = ExtResource("2_r2d23")
+shader_parameter/hour_gradient = SubResource("GradientTexture1D_56503")
+shader_parameter/time_hours = 0.45
+shader_parameter/day_of_year = 13.0
+shader_parameter/days_per_year = 365.0
+shader_parameter/horizon_shift_hours = -0.22000000000000064
+shader_parameter/sky_intensity = 1.0
+shader_parameter/horizon_exponent = 1.65
+shader_parameter/sun_direction = Vector3(0.692546, -0.12999904, -0.70956343)
+shader_parameter/moon_direction = Vector3(-0.08810678, 0.5757306, 0.8128785)
+shader_parameter/moon_phase = 0.40699325052382973
+shader_parameter/sun_visibility = 0.0
+shader_parameter/moon_visibility = 1.0
+shader_parameter/sun_tint = Color(1, 0.95, 0.85, 1)
+shader_parameter/sun_disk_size = 0.001
+shader_parameter/sun_glow_size = 0.033
+shader_parameter/sun_falloff = 20.9
+shader_parameter/sun_brightness = 9.0
+shader_parameter/moon_tint = Color(0.65, 0.78, 1, 1)
+shader_parameter/moon_disk_size = 0.12
+shader_parameter/moon_brightness = 1.99
+shader_parameter/moon_phase_softness = 0.02
+shader_parameter/moon_earthshine = 0.08
+shader_parameter/moon_lock_phase_orientation = true
+shader_parameter/moon_surface_texture = ExtResource("3_56503")
+shader_parameter/moon_surface_color = Color(1.223865, 1.164938, 0.9351223, 1)
+shader_parameter/moon_surface_uv_scale = Vector2(0.305, 0.305)
+shader_parameter/moon_surface_uv_offset = Vector2(0.085, -0.045)
+shader_parameter/cloud_group_texture = SubResource("ViewportTexture_23lsr")
+shader_parameter/cloud_group_opacity = 1.0
+shader_parameter/cloud_group_brightness = 1.0
+shader_parameter/cloud_group_contrast = 4.0
+shader_parameter/cloud_uv_offset = Vector2(0.3591757, 0.035)
+shader_parameter/cloud_seam_blend_width = 0.062
+shader_parameter/fog_shift_color = Color(0.6, 0.7, 0.8, 1)
+shader_parameter/fog_shift_amount = 0.0
+shader_parameter/weather_shift_color = Color(1, 1, 1, 1)
+shader_parameter/weather_shift_amount = 0.0
+shader_parameter/weather_override_color = Color(1, 1, 1, 1)
+shader_parameter/weather_override_amount = 0.0
+shader_parameter/weather_mask = 1.0
+shader_parameter/stars_enabled = true
+shader_parameter/stars_density = 0.342
+shader_parameter/stars_brightness = 1.15
+shader_parameter/stars_size = 2.4
+shader_parameter/stars_twinkle_speed = 0.97
+shader_parameter/stars_seed = 1337.0
+
+[sub_resource type="Sky" id="Sky_kn3tp"]
+sky_material = SubResource("ShaderMaterial_eexal")
+process_mode = 1
+
+[sub_resource type="Environment" id="Environment_kg04v"]
+background_mode = 2
+sky = SubResource("Sky_kn3tp")
+fog_light_color = Color(0.9, 0.93, 0.97, 1)
+fog_density = 0.0
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.014681728
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dnd4g"]
+albedo_color = Color(9.228977, 9.228977, 9.228977, 1)
+albedo_texture = ExtResource("3_56503")
+
+[sub_resource type="SphereMesh" id="SphereMesh_f25nb"]
+radius = 1.0
+height = 2.0
+
+[sub_resource type="Environment" id="Environment_c1a52"]
+background_mode = 1
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_sky_contribution = 0.0
+ambient_light_energy = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rqy32"]
+albedo_color = Color(0.838023, 0.85584104, 0.45109165, 1)
+albedo_texture = ExtResource("6_kiaym")
+uv1_scale = Vector3(1000, 1000, 1000)
+
+[node name="Actor3D_Test" type="Node3D" unique_id=646117495]
+script = ExtResource("1_k7d7g")
+
+[node name="DensetsuSkySystem3D" parent="." unique_id=508694502 instance=ExtResource("2_shqjl")]
+process_mode = 3
+world_environment_path = NodePath("WorldEnvironment")
+sun_light_path = NodePath("DirectionalLight3D")
+moon_light_path = NodePath("")
+clock_path = NodePath("DensetsuSkyClock")
+auto_create_clock = false
+manual_time_hours = 0.0
+clock_running = false
+clock_editor_preview = true
+clock_minutes_per_real_second = 15.4
+clock_day = 13
+clock_month_lengths = PackedInt32Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+clock_hour = 0
+clock_minute = 27
+hour_gradient = SubResource("GradientTexture1D_56503")
+use_default_hour_gradient = false
+horizon_shift_hours = -0.22000000000000064
+sun_disk_size = 0.001
+sun_glow_size = 0.033
+sun_falloff = 20.9
+moon_disk_size = 0.12
+moon_brightness = 1.99
+sync_sun_light_color = false
+moon_visibility_fade_hours = 0.95
+moon_surface_material = SubResource("StandardMaterial3D_56503")
+latitude_deg = -13.050000000000011
+axial_tilt_deg = 45.0
+moon_orbital_tilt_deg = 4.99
+stars_density = 0.342
+stars_size = 2.4
+stars_twinkle_speed = 0.97
+cloud_layers = Array[ExtResource("4_kg04v")]([SubResource("Resource_f25nb"), SubResource("Resource_iojpx")])
+cloud_group_contrast = 4.0
+cloud_uv_offset = Vector2(0, 0.035)
+cloud_uv_scroll_speed = Vector2(0.001, 0)
+cloud_seam_blend_width = 0.062
+base_environment_fog_density = 0.0
+environment_fog_density_curve = 2.74
+base_environment_fog_light_color = Color(0.9, 0.93, 0.97, 1)
+base_environment_volumetric_fog_enabled = true
+base_environment_volumetric_fog_density = 0.136
+environment_volumetric_fog_density_curve = 3.41
+weather_conditions = Array[ExtResource("7_1fcih")]([SubResource("Resource_1fcih"), SubResource("Resource_sfh1t"), SubResource("Resource_mlcb6")])
+active_weather_id = "light_rain"
+weather_blend = 60.0
+weather_auto_enabled = true
+weather_auto_in_editor = true
+weather_auto_hold_min_hours = 1.0
+weather_auto_hold_max_hours = 8.0
+debug_ui_enabled = true
+
+[node name="_CloudCompositeViewport" type="SubViewport" parent="DensetsuSkySystem3D" unique_id=240034516]
+disable_3d = true
+transparent_bg = true
+size = Vector2i(1024, 512)
+render_target_update_mode = 4
+
+[node name="_CloudCanvasRoot" type="Control" parent="DensetsuSkySystem3D/_CloudCompositeViewport" unique_id=974861544]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1024.0
+offset_bottom = 512.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CloudLayer_0" type="ColorRect" parent="DensetsuSkySystem3D/_CloudCompositeViewport/_CloudCanvasRoot" unique_id=1272013236]
+modulate = Color(1, 1, 1, 0.94)
+material = SubResource("ShaderMaterial_sfh1t")
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="CloudLayer_1" type="ColorRect" parent="DensetsuSkySystem3D/_CloudCompositeViewport/_CloudCanvasRoot" unique_id=1898810174]
+modulate = Color(0.3872597, 0.38083354, 0.5265647, 0.94)
+z_index = 1
+material = SubResource("ShaderMaterial_mlcb6")
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="_WeatherTiers" type="Node3D" parent="DensetsuSkySystem3D" unique_id=1327622522]
+
+[node name="NearTier" type="Node3D" parent="DensetsuSkySystem3D/_WeatherTiers" unique_id=741689514]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Node3D" parent="DensetsuSkySystem3D/_WeatherTiers/NearTier" unique_id=2014160081 instance=ExtResource("8_iojpx")]
+
+[node name="MidTier" type="Node3D" parent="DensetsuSkySystem3D/_WeatherTiers" unique_id=1784595378]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
+
+[node name="Node3D" parent="DensetsuSkySystem3D/_WeatherTiers/MidTier" unique_id=1615236917 instance=ExtResource("8_iojpx")]
+
+[node name="FarTier" type="Node3D" parent="DensetsuSkySystem3D/_WeatherTiers" unique_id=1057791908]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -39)
+
+[node name="Node3D" parent="DensetsuSkySystem3D/_WeatherTiers/FarTier" unique_id=1705565269 instance=ExtResource("8_iojpx")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="DensetsuSkySystem3D" unique_id=1027444519]
+environment = SubResource("Environment_kg04v")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="DensetsuSkySystem3D" unique_id=1544235751]
+transform = Transform3D(0.71563625, 0.090800844, -0.692546, 0, 0.99151415, 0.12999904, 0.69847316, -0.093032025, 0.7095635, 0, 0, 0)
+light_color = Color(1, 0.95, 0.85, 1)
+light_energy = 0.0
+shadow_enabled = true
+
+[node name="_MoonSurfaceViewport" type="SubViewport" parent="DensetsuSkySystem3D" unique_id=706444959]
+own_world_3d = true
+transparent_bg = true
+render_target_update_mode = 4
+
+[node name="_MoonSurfaceCanvas" type="Control" parent="DensetsuSkySystem3D/_MoonSurfaceViewport" unique_id=2057811496]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 512.0
+offset_bottom = 512.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="_MoonSurfaceRect" type="ColorRect" parent="DensetsuSkySystem3D/_MoonSurfaceViewport/_MoonSurfaceCanvas" unique_id=1796502045]
+material = SubResource("StandardMaterial3D_dnd4g")
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="_MoonSurface3DRoot" type="Node3D" parent="DensetsuSkySystem3D/_MoonSurfaceViewport" unique_id=400077178]
+
+[node name="_MoonSurfaceCamera3D" type="Camera3D" parent="DensetsuSkySystem3D/_MoonSurfaceViewport/_MoonSurface3DRoot" unique_id=95771821]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3)
+projection = 1
+current = true
+size = 2.1
+near = 0.01
+far = 20.0
+
+[node name="_MoonSurfaceMesh3D" type="MeshInstance3D" parent="DensetsuSkySystem3D/_MoonSurfaceViewport/_MoonSurface3DRoot" unique_id=1329014485]
+material_override = SubResource("StandardMaterial3D_56503")
+mesh = SubResource("SphereMesh_f25nb")
+
+[node name="_MoonSurfaceLight3D" type="DirectionalLight3D" parent="DensetsuSkySystem3D/_MoonSurfaceViewport/_MoonSurface3DRoot" unique_id=324416643]
+transform = Transform3D(-0.99417716, 0.06203924, 0.088106714, 0, 0.81763947, -0.5757306, -0.107757404, -0.5723783, -0.81287855, 0, 0, 0)
+light_color = Color(0.65, 0.78, 1, 1)
+light_energy = 1.5
+shadow_enabled = true
+
+[node name="_MoonSurfaceWorldEnvironment" type="WorldEnvironment" parent="DensetsuSkySystem3D/_MoonSurfaceViewport/_MoonSurface3DRoot" unique_id=41727424]
+environment = SubResource("Environment_c1a52")
+
+[node name="DensetsuSkyClock" type="Node" parent="DensetsuSkySystem3D" unique_id=1618581706]
+script = ExtResource("10_c1a52")
+running = false
+editor_preview = true
+minutes_per_real_second = 15.4
+day = 13
+month_lengths = PackedInt32Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+hour = 0
+minute = 27
+metadata/_custom_type_script = "uid://2rn7taajiugt"
+
+[node name="Actor" parent="." unique_id=1120605101 instance=ExtResource("3_rtx7s")]
+transform = Transform3D(0.5551058, 0, 0.8317798, 0, 1, 0, -0.8317798, 0, 0.5551058, -0.1162498, 2.8853388, -16.257233)
+
+[node name="floor" parent="." unique_id=752012657 instance=ExtResource("6_rqy32")]
+transform = Transform3D(1000, 0, 0, 0, 0.01, 0, 0, 0, 1000, 0, 1.0040182, 0)
+material_override = SubResource("StandardMaterial3D_rqy32")
+cast_shadows = 0
+
+[node name="Inn" parent="." unique_id=329539024 instance=ExtResource("6_gleuw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.254014, 2.3563013, -30.883717)
+
+[node name="Infinitree" parent="." unique_id=2134674992 instance=ExtResource("7_gleuw")]
+transform = Transform3D(2.4, 0, 0, 0, 5.7599998, 0, 0, 0, 2.5500002, -26.951405, -2.823495, -76.57696)
+
+[node name="Restaurant" parent="." unique_id=465323740 instance=ExtResource("8_s63m8")]
+transform = Transform3D(-3.278354e-08, 0, 0.75, 0, 0.75, 0, -0.75, 0, -3.278354e-08, -24.50705, -0.090449095, -27.81709)
+
+[node name="Hirogawa Farm2" parent="." unique_id=389722858 instance=ExtResource("10_qcybh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2866744, 1.0400038, 0.91920674)
+
+[node name="bridge" parent="." unique_id=104470809 instance=ExtResource("11_shqjl")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 43.850204, 1.1663519, -20.693825)
+
+[node name="Wheat" type="StaticBody3D" parent="." unique_id=639047713]
+
+[node name="Node3D2" parent="Wheat" unique_id=805173783 instance=ExtResource("12_r2d23")]
+transform = Transform3D(1.25, 0, 0, 0, 1.25, 0, 0, 0, 1.25, -8.153412, 0.8104216, -1.5022383)
+
+[node name="Node3D3" parent="Wheat" unique_id=337483129 instance=ExtResource("12_r2d23")]
+transform = Transform3D(-0.32352388, 0, 1.2074072, 0, 1.25, 0, -1.2074072, 0, -0.32352388, -11.153412, 0.8104216, -0.5022383)
+
+[node name="Node3D4" parent="Wheat" unique_id=374498022 instance=ExtResource("12_r2d23")]
+transform = Transform3D(-1.2074072, 0, 0.3235239, 0, 1.25, 0, -0.3235239, 0, -1.2074072, -11.23171, 0.8104216, 1.4924959)
+
+[node name="Node3D5" parent="Wheat" unique_id=1092846940 instance=ExtResource("12_r2d23")]
+transform = Transform3D(-2.9802322e-08, 0, -1.25, 0, 1.2500001, 0, 1.25, 0, -2.9802322e-08, -8.075113, 0.8104216, 1.3030275)
+
+[node name="Node3D6" parent="Wheat" unique_id=282070365 instance=ExtResource("12_r2d23")]
+transform = Transform3D(1.0825317, 0, 0.6250001, 0, 1.25, 0, -0.6250001, 0, 1.0825317, -10.075113, 0.8104216, -0.6969725)

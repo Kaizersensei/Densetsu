@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://engine3d/actors/AnimalNPC3D.gd" id="1"]
+[ext_resource type="Script" path="res://engine3d/actors/ActorInterface3D.gd" id="2"]
+[ext_resource type="Script" path="res://engine/fsm/StateMachine.gd" id="3"]
+[ext_resource type="Resource" path="res://data3d/models/animals/MODEL_NPC_ChickenFRoot.tres" id="4_model_data"]
+[ext_resource type="PackedScene" path="res://assets/3d-unsorted/_sorted/Actor/chickenF_root.glb" id="5_model_scene"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
+radius = 0.35
+height = 1.2
+
+[node name="NPC_ChickenFRoot" type="CharacterBody3D"]
+script = ExtResource("1")
+actor_data_id = "NPC_ChickenFRoot"
+model_data = ExtResource("4_model_data")
+visual_binding_mode = 1
+preview_model_in_editor = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.6, 0)
+shape = SubResource("CapsuleShape3D_1")
+
+[node name="ActorParams3D" type="Node" parent="."]
+
+[node name="VisualRoot" type="Node3D" parent="."]
+
+[node name="ModelRoot" type="Node3D" parent="VisualRoot"]
+
+[node name="ChickenFRootModel" parent="VisualRoot/ModelRoot" instance=ExtResource("5_model_scene")]
+
+[node name="ActorInterface3D" type="Node" parent="."]
+script = ExtResource("2")
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("3")

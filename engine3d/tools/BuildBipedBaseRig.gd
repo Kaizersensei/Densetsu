@@ -4,7 +4,7 @@ extends EditorScript
 # Builds a reusable biped base scene from a single T-pose FBX rig.
 # This is used as the character model source (armature + mesh).
 
-const SOURCE_FBX := "res://temp/fbx animations/michio full.fbx"
+const SOURCE_FBX := "res://assets/animations/michio full.fbx"
 const OUTPUT_SCENE := "res://assets/characters/biped/BipedBase.tscn"
 const OUTPUT_REPORT := "res://assets/characters/biped/BipedBase_report.txt"
 

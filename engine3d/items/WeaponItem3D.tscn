@@ -1,0 +1,44 @@
+[gd_scene load_steps=10 format=3 uid="uid://weaponitem3d"]
+
+[ext_resource type="Script" path="res://engine3d/items/WeaponItem3D.gd" id="1_weapon"]
+[ext_resource type="Script" path="res://engine3d/items/ItemData3D.gd" id="2_item_script"]
+[ext_resource type="Script" path="res://engine3d/items/EquipmentData.gd" id="3_equipment_script"]
+[ext_resource type="Script" path="res://engine3d/items/WeaponData.gd" id="4_weapon_script"]
+
+[sub_resource type="Resource" id="ItemData_1"]
+script = ExtResource("2_item_script")
+item_id = "weapon_placeholder"
+display_name = "Weapon Placeholder"
+category = "weapon"
+equip_slot = "weapon"
+
+[sub_resource type="Resource" id="EquipmentData_1"]
+script = ExtResource("3_equipment_script")
+
+[sub_resource type="Resource" id="WeaponData_1"]
+script = ExtResource("4_weapon_script")
+weapon_type = "melee"
+
+[sub_resource type="BoxMesh" id="BoxMesh_1"]
+size = Vector3(0.2, 0.05, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.8, 0.8, 0.8, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(0.2, 0.05, 0.8)
+
+[node name="WeaponItem3D" type="Node3D"]
+script = ExtResource("1_weapon")
+item_data = SubResource("ItemData_1")
+equipment_data = SubResource("EquipmentData_1")
+weapon_data = SubResource("WeaponData_1")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+mesh = SubResource("BoxMesh_1")
+material_override = SubResource("StandardMaterial3D_1")

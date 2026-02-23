@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bxcr4krbhejfm"
+path="res://.godot/imported/Building_10_Asia_Roof_3.obj-155d4eb2b4901b884e78b79ec8786ecf.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Building_10_Asia_Roof_3.obj-155d4eb2b4901b884e78b79ec8786ecf.mesh"]
+
+source_file="res://assets/3d-unsorted/_sorted/Building/Building_10_Asia/Building_10_Asia_Roof_3.obj"
+dest_files=["res://.godot/imported/Building_10_Asia_Roof_3.obj-155d4eb2b4901b884e78b79ec8786ecf.mesh", "res://.godot/imported/Building_10_Asia_Roof_3.obj-155d4eb2b4901b884e78b79ec8786ecf.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

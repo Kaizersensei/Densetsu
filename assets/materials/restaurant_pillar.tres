@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cjlvjape38ew5"]
+
+[ext_resource type="Texture2D" uid="uid://daj4yjcqk2l6w" path="res://assets/textures/Densetsu/bark1.png" id="1_0fule"]
+
+[resource]
+albedo_texture = ExtResource("1_0fule")
+uv1_scale = Vector3(0.84, 0.84, 0.84)
+uv1_offset = Vector3(0.11, 0, 0)

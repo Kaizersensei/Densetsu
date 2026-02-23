@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://2kmebhkootsc"]
+
+[ext_resource type="ArrayMesh" uid="uid://bpao28hhqblr5" path="res://assets/3d-unsorted/japanese-style-fence/source/_arraymeshes/JapaneseFencePieces_MainFence__0.obj" id="3_ql1v6"]
+[ext_resource type="Texture2D" uid="uid://d8sbic4vfdj1" path="res://assets/textures/Densetsu/9TEX_daimyio16.png" id="4_yiw8s"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ql1v6"]
+albedo_texture = ExtResource("4_yiw8s")
+uv1_scale = Vector3(0.275, 0.5, 0.625)
+uv1_offset = Vector3(0, 0.105, 0)
+uv1_triplanar = true
+
+[node name="Node3D" type="Node3D" unique_id=1895647684]
+
+[node name="JapaneseFencePiecesMainFence0" type="MeshInstance3D" parent="." unique_id=854744495]
+transform = Transform3D(2, 0, 0, 0, 1.6, 0, 0, 0, 7.4, 0, 0, 0)
+mesh = ExtResource("3_ql1v6")
+surface_material_override/0 = SubResource("StandardMaterial3D_ql1v6")

@@ -1,13 +1,21 @@
 @tool
 extends EditorScript
 
-# Builds a small AnimationLibrary from the Action Adventure pack only.
+# Builds a shared AnimationLibrary from selected packs.
 
-const INPUT_ROOT := "res://temp/fbx animations"
+const INPUT_ROOT := "res://assets/animations"
 const OUTPUT_LIBRARY := "res://assets/characters/biped/anim/BipedAnimations_ActionAdventure.tres"
 const OUTPUT_REPORT := "res://assets/characters/biped/anim/BipedAnimations_ActionAdventure_report.txt"
-var PACK_FILTER: PackedStringArray = PackedStringArray(["Action Adventure Pack"])
-const REFERENCE_RIG_SCENE := "res://temp/fbx animations/michio rigged.fbx"
+const SKIP_EXISTING_ANIMATIONS := true
+var ONLY_ANIMATIONS: PackedStringArray = PackedStringArray([])
+const FORCE_REIMPORT_ONLY := true
+var PACK_FILTER: PackedStringArray = PackedStringArray([
+	"Action Adventure Pack",
+	"Pro Sword and Shield Pack",
+	"Gestures Pack Basic",
+	"Supplemental Moveset",
+])
+const REFERENCE_RIG_SCENE := "res://assets/animations/michio rigged.fbx"
 const MODEL_DATA_PATH := "res://data3d/models/MODEL_Player_Michio_ActionAdventure.tres"
 
 const INCLUDE_TPOSE := false
@@ -50,7 +58,7 @@ func _run() -> void:
 	_collect_fbx(INPUT_ROOT, files)
 	files.sort()
 	var report: Array[String] = []
-	report.append("Animation Library Build (Action Adventure)")
+	report.append("Animation Library Build (Selected Packs)")
 	report.append("Input root: " + INPUT_ROOT)
 	report.append("Output library: " + OUTPUT_LIBRARY)
 	report.append("Clips:")
@@ -82,12 +90,17 @@ func _run() -> void:
 			if anim == null:
 				continue
 			var out_name := _build_anim_name(path, anim_name, anim_names.size())
+			if not ONLY_ANIMATIONS.is_empty() and not ONLY_ANIMATIONS.has(out_name):
+				continue
+			if FORCE_REIMPORT_ONLY and not ONLY_ANIMATIONS.is_empty() and lib.has_animation(out_name):
+				lib.remove_animation(out_name)
+			if SKIP_EXISTING_ANIMATIONS and lib.has_animation(out_name):
+				report.append("- KEEP " + out_name + " (already exists)")
+				continue
 			var out_anim: Animation = anim.duplicate()
 			_sanitize_animation_tracks(out_anim)
 			if STRIP_ROOT_TRANSLATION:
 				_strip_root_translation(out_anim)
-			if lib.has_animation(out_name):
-				lib.remove_animation(out_name)
 			lib.add_animation(out_name, out_anim)
 			report.append("- ADD " + out_name + " <= " + path + " [" + anim_name + "]")
 			added += 1
@@ -115,7 +128,7 @@ func _load_or_create_library() -> AnimationLibrary:
 	return lib
 
 
-func _collect_fbx(dir_path: String, out: Array[String]) -> void:
+func _collect_fbx(dir_path: String, out: Array[String], inside_allowed_pack: bool = false) -> void:
 	var dir := DirAccess.open(dir_path)
 	if dir == null:
 		push_error("Missing input dir: " + dir_path)
@@ -129,8 +142,8 @@ func _collect_fbx(dir_path: String, out: Array[String]) -> void:
 			continue
 		var full := dir_path.path_join(name)
 		if dir.current_is_dir():
-			if _is_pack_allowed(name):
-				_collect_fbx(full, out)
+			if inside_allowed_pack or _is_pack_allowed(name):
+				_collect_fbx(full, out, true)
 			continue
 		elif name.to_lower().ends_with(".fbx"):
 			out.append(full)

@@ -4,13 +4,14 @@ extends EditorScript
 # Builds a single AnimationLibrary from FBX scenes placed under INPUT_ROOT.
 # One animation per FBX is assumed, but multiple clips are handled if present.
 
-const INPUT_ROOT := "res://temp/fbx animations"
+const INPUT_ROOT := "res://assets/animations"
 const OUTPUT_LIBRARY := "res://assets/characters/biped/anim/BipedAnimations.tres"
 const OUTPUT_REPORT := "res://assets/characters/biped/anim/BipedAnimations_report.txt"
 
 const INCLUDE_TPOSE := false
 const STRIP_ROOT_TRANSLATION := true
 const TRACK_PATH_PREFIX := "Armature/"
+const SKIP_EXISTING := true
 
 var SKIP_PATTERNS: PackedStringArray = PackedStringArray([
 	"tpose",
@@ -75,12 +76,13 @@ func _run() -> void:
 			if anim == null:
 				continue
 			var out_name := _build_anim_name(path, anim_name, anim_names.size())
+			if SKIP_EXISTING and lib.has_animation(out_name):
+				report.append("- KEEP " + out_name + " (existing)")
+				continue
 			var out_anim: Animation = anim.duplicate()
 			_retarget_animation_paths(out_anim)
 			if STRIP_ROOT_TRANSLATION:
 				_strip_root_translation(out_anim)
-			if lib.has_animation(out_name):
-				lib.remove_animation(out_name)
 			lib.add_animation(out_name, out_anim)
 			report.append("- ADD " + out_name + " <= " + path + " [" + anim_name + "]")
 			added += 1

@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://b6r6vae8dbgj1"]
+
+[ext_resource type="Texture2D" uid="uid://jkbi8sqs8oxf" path="res://assets/textures/Densetsu/2025-04-21_16-33-15_1188_01_13.png" id="1_newri"]
+
+[resource]
+albedo_color = Color(0.94509804, 0.8392157, 0.29803923, 1)
+albedo_texture = ExtResource("1_newri")

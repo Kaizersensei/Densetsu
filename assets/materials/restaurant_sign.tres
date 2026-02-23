@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dthhhk3we6npm"]
+
+[ext_resource type="Texture2D" uid="uid://dglxt77fw52lp" path="res://assets/textures/Densetsu/sign_house_Default_8_baked_Color.png" id="1_5iytq"]
+
+[resource]
+albedo_texture = ExtResource("1_5iytq")
+emission_enabled = true
+emission = Color(0.31409997, 0.25950068, 0.35798475, 1)
+emission_energy_multiplier = 0.7
+emission_texture = ExtResource("1_5iytq")

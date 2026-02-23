@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ModelData3D" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://engine3d/data/resources/ModelData3D.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/3d-unsorted/_sorted/Actor/Alien Slime.fbx" id="2_scene"]
+
+[resource]
+script = ExtResource("1")
+id = "MODEL_NPC_AlienSlime"
+description = "NPC animal model: Alien Slime"
+tags = PackedStringArray("npc", "animal")
+scene = ExtResource("2_scene")
+scale = Vector3(1, 1, 1)
+anim_idle_state = "idle"
+anim_walk_state = "walk"
+anim_run_state = "run"
+anim_jump_state = "jump"
+anim_fall_state = "fall"

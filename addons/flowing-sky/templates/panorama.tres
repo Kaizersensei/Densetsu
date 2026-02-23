@@ -1,0 +1,22 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://dbu286k1fhd4q"]
+
+[ext_resource type="Shader" uid="uid://be5o18eosusuo" path="res://assets/sky/simple sky.gdshader" id="1_alo5a"]
+[ext_resource type="Texture2D" uid="uid://cwan8err20p2w" path="res://assets/sky/2025-05-15_19-13-47_3013.png" id="2_alo5a"]
+
+[resource]
+shader = ExtResource("1_alo5a")
+shader_parameter/sky_color = Color(1, 1, 1, 1)
+shader_parameter/sky_texture = ExtResource("2_alo5a")
+shader_parameter/wind_direction = Vector2(-1, 1)
+shader_parameter/wind_intensity = 0.01
+shader_parameter/wind_speed = 0.15
+shader_parameter/ground_enabled = true
+shader_parameter/ground_threshold = -0.49
+shader_parameter/ground_blend = 0.68
+shader_parameter/sun_enabled = true
+shader_parameter/sun_rotation = Vector2(60, 30)
+shader_parameter/sun_threshold = 0.98
+shader_parameter/sun_blend = 0.335
+shader_parameter/sun_show = true
+shader_parameter/pole_threshold = 0.96
+shader_parameter/pole_whirlwind = true

@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cg1omr3tehi5q"
+path="res://.godot/imported/Balcony_Railing_Straight.obj-9d61810b8afe39ece3a0828f803ae61a.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Balcony_Railing_Straight.obj-9d61810b8afe39ece3a0828f803ae61a.mesh"]
+
+source_file="res://assets/3d-unsorted/Balcony_Railing_Straight.obj"
+dest_files=["res://.godot/imported/Balcony_Railing_Straight.obj-9d61810b8afe39ece3a0828f803ae61a.mesh", "res://.godot/imported/Balcony_Railing_Straight.obj-9d61810b8afe39ece3a0828f803ae61a.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

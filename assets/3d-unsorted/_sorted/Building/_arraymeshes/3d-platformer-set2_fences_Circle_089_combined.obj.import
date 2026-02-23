@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dgn7s8o3nnpxk"
+path="res://.godot/imported/3d-platformer-set2_fences_Circle_089_combined.obj-e86942bb23c9587e69cc6c05a450d50a.mesh"
+
+[deps]
+
+files=["res://.godot/imported/3d-platformer-set2_fences_Circle_089_combined.obj-e86942bb23c9587e69cc6c05a450d50a.mesh"]
+
+source_file="res://assets/3d-unsorted/_sorted/Building/_arraymeshes/3d-platformer-set2_fences_Circle_089_combined.obj"
+dest_files=["res://.godot/imported/3d-platformer-set2_fences_Circle_089_combined.obj-e86942bb23c9587e69cc6c05a450d50a.mesh", "res://.godot/imported/3d-platformer-set2_fences_Circle_089_combined.obj-e86942bb23c9587e69cc6c05a450d50a.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://d4fym8uxk1hi6"]
+
+[ext_resource type="Texture2D" uid="uid://c0aglmnms86xg" path="res://assets/particles/water/fx_watersplashl_default_000.png" id="1_ft71q"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0mrb7"]
+render_priority = 2
+transparency = 1
+blend_mode = 1
+albedo_texture = ExtResource("1_ft71q")
+uv1_scale = Vector3(2, 2, 2)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yfy0t"]
+lifetime_randomness = 0.25
+angle_min = -720.0
+angle_max = 720.0
+inherit_velocity_ratio = 0.711
+direction = Vector3(0, -1, 0)
+spread = 1.475
+flatness = 0.146
+initial_velocity_min = 301.66
+initial_velocity_max = 737.74
+angular_velocity_min = -69.15
+angular_velocity_max = 113.9
+scale_min = 62.94
+scale_max = 111.94
+color = Color(0.843137, 1, 1, 1)
+hue_variation_min = -0.04
+hue_variation_max = 0.04
+collision_use_scale = true
+
+[sub_resource type="TubeTrailMesh" id="TubeTrailMesh_t7gap"]
+radius = 1.0
+radial_steps = 3
+sections = 2
+section_length = 2.0
+cap_top = false
+cap_bottom = false
+
+[node name="GPUParticles3D" type="GPUParticles3D"]
+transform = Transform3D(0.755351, -0.286088, 0.589575, 0.23597, 0.958064, 0.162576, -0.611362, 0.0163196, 0.791183, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_0mrb7")
+material_overlay = SubResource("StandardMaterial3D_0mrb7")
+transparency = 0.57
+cast_shadow = 0
+lod_bias = 27.458
+amount = 10
+lifetime = 2.14
+preprocess = 2.22
+speed_scale = 0.64
+randomness = 0.06
+fixed_fps = 15
+local_coords = true
+trail_enabled = true
+trail_lifetime = 0.8
+process_material = SubResource("ParticleProcessMaterial_yfy0t")
+draw_pass_1 = SubResource("TubeTrailMesh_t7gap")

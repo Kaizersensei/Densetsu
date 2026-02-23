@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://digaruy0h7ygw"]
+
+[ext_resource type="Texture2D" uid="uid://og27h8neplqn" path="res://assets/textures/Densetsu/grass/common/grass_common_A_4.png" id="1_37t64"]
+
+[resource]
+transparency = 1
+albedo_texture = ExtResource("1_37t64")
+uv1_scale = Vector3(4, 1.905, 1)
+uv1_offset = Vector3(0, -0.035, 0)

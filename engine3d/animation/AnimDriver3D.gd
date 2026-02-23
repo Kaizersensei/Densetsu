@@ -3,26 +3,62 @@ extends Node
 class_name AnimDriver3D
 
 @export_category("Targets")
+## NodePath to skin.
 @export var skin_path: NodePath
+## NodePath to animation tree.
 @export var animation_tree_path: NodePath
+## NodePath to animation player.
 @export var animation_player_path: NodePath
+## Name for animation library.
 @export var animation_library_name: StringName = &"biped"
+## NodePath to target root.
 @export var target_root_path: NodePath
 
 @export_category("Debug")
+## Enable debug mode for debug_enabled.
 @export var debug_enabled: bool = false
+## Enable debug mode for verbose.
 @export var debug_verbose: bool = false
+
+@export_category("Blending")
+## Controls blend time.
+@export var blend_time: float = 0.15
+
+@export_category("Idle Variants")
+## Enable idle variant.
+@export var idle_variant_enabled: bool = true:
+	set(value):
+		idle_variant_enabled = value
+		_sync_process_state()
+## Controls idle secondary state 1.
+@export var idle_secondary_state_1: String = ""
+## Controls idle secondary state 2.
+@export var idle_secondary_state_2: String = ""
+## Minimum value for idle variant interval.
+@export var idle_variant_interval_min: float = 6.0
+## Maximum value for idle variant interval.
+@export var idle_variant_interval_max: float = 14.0
 
 var _skin: Node
 var _anim_tree: AnimationTree
 var _anim_playback: AnimationNodeStateMachinePlayback
 var _anim_player: AnimationPlayer
 var _last_state := ""
+var _last_animation := ""
 var _debug_missing_states: Dictionary = {}
+var _debug_last_log_state := ""
+var _debug_last_log_method := ""
+var _debug_last_log_time := 0
+var _idle_primary_state: String = ""
+var _idle_timer: float = 0.0
+var _idle_variant_active: bool = false
+var _runtime_tick_enabled: bool = true
+var _playback_speed: float = 1.0
 
 
 func _ready() -> void:
 	_resolve_targets()
+	_sync_process_state()
 	if debug_enabled:
 		debug_dump("ready")
 
@@ -30,11 +66,27 @@ func _ready() -> void:
 func set_state(state_name: String) -> void:
 	if state_name == "":
 		return
+	if _idle_variant_active and _is_idle_state_name(state_name):
+		return
+	var resolved_anim := _resolve_anim_name(state_name)
 	if _skin != null and not is_instance_valid(_skin):
 		_skin = null
 	if _skin == null and _anim_playback == null and _anim_player == null:
 		_resolve_targets()
+	if not _is_idle_state_name(state_name):
+		_idle_primary_state = ""
+		_idle_variant_active = false
+	else:
+		_idle_primary_state = state_name
+		if not _idle_variant_active:
+			_reset_idle_timer()
 	if state_name == _last_state and _can_play_state(state_name):
+		var offset_anim := _last_animation
+		if offset_anim == "":
+			offset_anim = resolved_anim
+		if offset_anim == "":
+			offset_anim = state_name
+		_notify_floor_offset(state_name, offset_anim)
 		return
 	_last_state = state_name
 	if _skin != null and not is_instance_valid(_skin):
@@ -43,20 +95,77 @@ func set_state(state_name: String) -> void:
 		_resolve_targets()
 	if _skin and _skin.has_method("set_state"):
 		_skin.call("set_state", state_name)
+		_notify_floor_offset(state_name, state_name)
 		if debug_enabled:
 			_debug_log_state(state_name, "skin", true)
 		return
 	if _anim_playback:
+		if not _tree_has_state(state_name):
+			if debug_enabled:
+				_debug_log_state(state_name, "tree", false)
+				_debug_missing_state(state_name)
+			return
 		_anim_playback.travel(state_name)
+		_notify_floor_offset(state_name, state_name)
 		if debug_enabled:
 			_debug_log_state(state_name, "tree", true)
 		return
 	if _anim_player:
-		var played := _play_animation(state_name)
+		var played_name := _play_animation(resolved_anim)
+		if played_name == "" and resolved_anim != state_name:
+			played_name = _play_animation(state_name)
+		if played_name != "":
+			_last_animation = played_name
+			_notify_floor_offset(state_name, played_name)
 		if debug_enabled:
-			_debug_log_state(state_name, "player", played)
+			_debug_log_state(state_name, "player", played_name != "")
 	if debug_enabled and not _can_play_state(state_name):
 		_debug_missing_state(state_name)
+
+
+func _process(delta: float) -> void:
+	if not idle_variant_enabled:
+		return
+	if _idle_variant_active:
+		return
+	if _idle_primary_state == "":
+		return
+	if _anim_player == null:
+		return
+	if not _is_idle_state_name(_idle_primary_state):
+		return
+	_idle_timer -= delta
+	if _idle_timer > 0.0:
+		return
+	var secondary := _pick_idle_secondary_state()
+	if secondary == "":
+		_reset_idle_timer()
+		return
+	var resolved_secondary := _resolve_anim_name(secondary)
+	var played_name := _play_animation(resolved_secondary)
+	if played_name == "" and resolved_secondary != secondary:
+		played_name = _play_animation(secondary)
+	if played_name == "":
+		_reset_idle_timer()
+		return
+	_last_animation = played_name
+	_notify_floor_offset(secondary, played_name)
+	_idle_variant_active = true
+	_last_state = secondary
+	_reset_idle_timer()
+
+
+func _tree_has_state(state_name: String) -> bool:
+	if _anim_tree == null:
+		return false
+	var sm = _anim_tree.get("parameters/StateMachine")
+	if sm == null:
+		return false
+	if sm.has_method("has_node"):
+		return sm.has_node(state_name)
+	if sm.has_method("get_node"):
+		return sm.get_node(state_name) != null
+	return false
 
 
 func set_ragdoll(enabled: bool) -> void:
@@ -70,6 +179,29 @@ func set_ragdoll(enabled: bool) -> void:
 
 func refresh_targets() -> void:
 	_resolve_targets()
+
+
+func get_current_state() -> String:
+	return _last_state
+
+
+func set_playback_speed(speed: float) -> void:
+	var clamped: float = maxf(speed, 0.01)
+	_playback_speed = clamped
+	if _skin != null and is_instance_valid(_skin) and _skin.has_method("set_playback_speed"):
+		_skin.call("set_playback_speed", clamped)
+	if _anim_player != null and is_instance_valid(_anim_player):
+		if "speed_scale" in _anim_player:
+			_anim_player.speed_scale = clamped
+
+
+func get_playback_speed() -> float:
+	return _playback_speed
+
+
+func set_runtime_tick_enabled(enabled: bool) -> void:
+	_runtime_tick_enabled = enabled
+	_sync_process_state()
 
 
 func _resolve_targets() -> void:
@@ -103,6 +235,15 @@ func _resolve_targets() -> void:
 			_anim_player = _pick_anim_player(root2.find_child("AnimationPlayer", true, false) as AnimationPlayer)
 	if _anim_player == null:
 		_anim_player = _pick_anim_player(find_child("AnimationPlayer", true, false) as AnimationPlayer)
+	if _anim_player and not _anim_player.animation_finished.is_connected(_on_animation_finished):
+		_anim_player.animation_finished.connect(_on_animation_finished)
+	if _anim_player and is_instance_valid(_anim_player):
+		if "speed_scale" in _anim_player:
+			_anim_player.speed_scale = _playback_speed
+
+
+func _sync_process_state() -> void:
+	set_process(_runtime_tick_enabled and idle_variant_enabled)
 
 
 func _resolve_from_target_root(path: NodePath) -> Node:
@@ -132,19 +273,80 @@ func _pick_anim_player(candidate: AnimationPlayer) -> AnimationPlayer:
 	return candidate
 
 
-func _play_animation(state_name: String) -> bool:
+func _anim_player_ready() -> bool:
 	if _anim_player == null:
 		return false
+	if _anim_player.root_node == NodePath(""):
+		return false
+	var root := _anim_player.get_node_or_null(_anim_player.root_node)
+	if root == null:
+		return false
+	var skeletons := root.find_children("*", "Skeleton3D", true, false)
+	return not skeletons.is_empty()
+
+
+func _play_animation(state_name: String) -> String:
+	if _anim_player == null:
+		return ""
+	if not _anim_player_ready():
+		return ""
 	if _anim_player.has_animation(state_name):
-		_anim_player.play(state_name)
-		return true
+		_anim_player.play(state_name, blend_time)
+		return state_name
 	if animation_library_name != StringName():
 		var lib_name := String(animation_library_name)
 		var prefixed := lib_name + "/" + state_name
 		if _anim_player.has_animation(prefixed):
-			_anim_player.play(prefixed)
-			return true
-	return false
+			_anim_player.play(prefixed, blend_time)
+			return prefixed
+	return ""
+
+
+func _on_animation_finished(_anim_name: StringName) -> void:
+	if not _idle_variant_active:
+		return
+	if _idle_primary_state == "":
+		_idle_variant_active = false
+		return
+	_idle_variant_active = false
+	var resolved_primary := _resolve_anim_name(_idle_primary_state)
+	var played_name := _play_animation(resolved_primary)
+	if played_name == "" and resolved_primary != _idle_primary_state:
+		_play_animation(_idle_primary_state)
+	_last_state = _idle_primary_state
+
+
+func _pick_idle_secondary_state() -> String:
+	var options: Array[String] = []
+	if idle_secondary_state_1 != "":
+		options.append(idle_secondary_state_1)
+	if idle_secondary_state_2 != "":
+		options.append(idle_secondary_state_2)
+	if options.is_empty():
+		return ""
+	if options.size() == 1:
+		return options[0]
+	var idx: int = randi() % options.size()
+	return options[idx]
+
+
+func _resolve_anim_name(state_name: String) -> String:
+	var actor := _find_actor()
+	if actor and actor.has_method("resolve_anim_state"):
+		var resolved_any: Variant = actor.call("resolve_anim_state", state_name)
+		if resolved_any is String and String(resolved_any) != "":
+			return String(resolved_any)
+	return state_name
+
+
+func _reset_idle_timer() -> void:
+	var min_t: float = maxf(0.01, idle_variant_interval_min)
+	var max_t: float = maxf(min_t, idle_variant_interval_max)
+	_idle_timer = randf_range(min_t, max_t)
+
+
+func _is_idle_state_name(state_name: String) -> bool:
+	return state_name.to_lower().contains("idle")
 
 
 func _can_play_state(state_name: String) -> bool:
@@ -153,6 +355,8 @@ func _can_play_state(state_name: String) -> bool:
 	if _anim_playback:
 		return true
 	if _anim_player == null:
+		return false
+	if not _anim_player_ready():
 		return false
 	if _anim_player.has_animation(state_name):
 		return true
@@ -165,6 +369,7 @@ func _can_play_state(state_name: String) -> bool:
 
 
 func debug_dump(reason: String = "") -> void:
+	return
 	_resolve_targets()
 	var header := "AnimDriver3D debug"
 	if reason != "":
@@ -322,6 +527,7 @@ func _debug_dump_track_bones(anim_name: String) -> void:
 
 
 func _debug_missing_state(state_name: String) -> void:
+	return
 	if _debug_missing_states.has(state_name):
 		return
 	_debug_missing_states[state_name] = true
@@ -329,12 +535,26 @@ func _debug_missing_state(state_name: String) -> void:
 
 
 func _debug_log_state(state_name: String, method: String, played: bool) -> void:
-	if not debug_enabled:
+	return
+
+
+func _notify_floor_offset(state_name: String, anim_name: String) -> void:
+	var actor := _find_actor()
+	if actor == null:
 		return
-	var msg := "AnimDriver3D state=" + state_name + " method=" + method + " played=" + str(played)
-	if _anim_player:
-		msg += " current=" + _anim_player.current_animation
-	print(msg)
+	if actor.has_method("get_anim_floor_offset") and actor.has_method("set_anim_floor_offset"):
+		var offset = actor.call("get_anim_floor_offset", state_name, anim_name)
+		if offset is float or offset is int:
+			actor.call("set_anim_floor_offset", float(offset))
+
+
+func _find_actor() -> Node:
+	var node: Node = self
+	while node:
+		if node.has_method("set_anim_floor_offset"):
+			return node
+		node = node.get_parent()
+	return null
 
 
 func _safe_node_path(node: Node) -> String:

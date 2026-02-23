@@ -1,0 +1,66 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dt560nkcvvcuw"]
+
+[ext_resource type="Shader" uid="uid://rhb66wgcapko" path="res://addons/goshapes/samples/SampleAssets/Water.gdshader" id="1_0ybjm"]
+
+[sub_resource type="Gradient" id="Gradient_037cu"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_pm35h"]
+seed = 2
+frequency = 0.0009
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_k6x6o"]
+noise = SubResource("FastNoiseLite_pm35h")
+color_ramp = SubResource("Gradient_037cu")
+seamless = true
+as_normal_map = true
+seamless_blend_skirt = 0.259
+
+[sub_resource type="Gradient" id="Gradient_nwtwg"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_nw8on"]
+noise_type = 2
+frequency = 0.0032
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_qtpoh"]
+noise = SubResource("FastNoiseLite_nw8on")
+color_ramp = SubResource("Gradient_nwtwg")
+seamless = true
+as_normal_map = true
+seamless_blend_skirt = 0.47
+
+[sub_resource type="Gradient" id="Gradient_ledsb"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ph2mj"]
+noise_type = 2
+frequency = 0.003
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_eoix2"]
+noise = SubResource("FastNoiseLite_ph2mj")
+color_ramp = SubResource("Gradient_ledsb")
+seamless = true
+seamless_blend_skirt = 0.163
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_0ybjm")
+shader_parameter/albedo = Color(0.050461, 0.369974, 0.49988, 1)
+shader_parameter/albedo2 = Color(0.148618, 0.145611, 0.281845, 1)
+shader_parameter/metallic = 0.202
+shader_parameter/roughness = 0.018
+shader_parameter/wave = SubResource("NoiseTexture2D_eoix2")
+shader_parameter/texture_normal = SubResource("NoiseTexture2D_k6x6o")
+shader_parameter/texture_normal2 = SubResource("NoiseTexture2D_qtpoh")
+shader_parameter/wave_direction = Vector2(2, 0)
+shader_parameter/wave_direction2 = Vector2(0, 1)
+shader_parameter/time_scale = 0.01
+shader_parameter/noise_scale = 30.0
+shader_parameter/height_scale = 0.46
+shader_parameter/normal_scale = 0.003
+shader_parameter/color_deep = Color(0.154737, 0.203018, 0.41362, 1)
+shader_parameter/color_shallow = Color(0.184333, 0.512919, 0.621702, 1)
+shader_parameter/beers_law = 3.56
+shader_parameter/depth_offset = -6.14
+shader_parameter/edge_scale = 0.001
+shader_parameter/near = 1.0
+shader_parameter/far = 100.0
+shader_parameter/edge_color = Color(0.339095, 0.339095, 0.339095, 1)

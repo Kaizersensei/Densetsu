@@ -1,0 +1,8 @@
+# Densetsu Tool Suite MTL Export
+
+newmtl surface_0
+Kd 0.800000 0.800000 0.800000
+Ks 0.040000 0.040000 0.040000
+Ns 32.000000
+d 1.000000
+illum 2

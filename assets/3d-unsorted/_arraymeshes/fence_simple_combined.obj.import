@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://beoq60c2s8vjd"
+path="res://.godot/imported/fence_simple_combined.obj-391018570d3f4dff20a173fd9cd62b9f.mesh"
+
+[deps]
+
+files=["res://.godot/imported/fence_simple_combined.obj-391018570d3f4dff20a173fd9cd62b9f.mesh"]
+
+source_file="res://assets/3d-unsorted/_arraymeshes/fence_simple_combined.obj"
+dest_files=["res://.godot/imported/fence_simple_combined.obj-391018570d3f4dff20a173fd9cd62b9f.mesh", "res://.godot/imported/fence_simple_combined.obj-391018570d3f4dff20a173fd9cd62b9f.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

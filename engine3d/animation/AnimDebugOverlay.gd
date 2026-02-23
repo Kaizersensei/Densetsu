@@ -1,22 +1,39 @@
 @tool
 extends Node
 
+## Enable enabled.
 @export var enabled: bool = true
+## NodePath to actor.
 @export var actor_path: NodePath = NodePath("..")
+## NodePath to label.
 @export var label_path: NodePath = NodePath("CanvasLayer/Panel/Label")
+## Controls update interval.
 @export var update_interval: float = 0.2
+## Enable hotkey.
 @export var hotkey_enabled: bool = true
+## Controls toggle keycode.
 @export var toggle_keycode: int = 145
+## Input action name for toggle.
 @export var toggle_action: StringName = &"debug_toggle"
+## Input action name for use toggle.
 @export var use_action_toggle: bool = true
+## Enable validate tracks.
 @export var validate_tracks: bool = true
+## Controls validation interval.
 @export var validation_interval: float = 1.0
+## Enable show animation list.
 @export var show_animation_list: bool = false
+## Controls max animation list.
 @export var max_animation_list: int = 6
+## Enable show movement.
 @export var show_movement: bool = true
+## Enable show ids.
 @export var show_ids: bool = true
+## State name for show actor.
 @export var show_actor_state: bool = true
+## Enable show ctx.
 @export var show_ctx: bool = true
+## Enable show model data.
 @export var show_model_data: bool = true
 
 var _actor: Node
@@ -109,7 +126,7 @@ func _process(delta: float) -> void:
 		lines.append("state: jump=%s fall=%s air=%s jumps=%d coyote=%.2f" % [str(jumping), str(falling), str(in_air), jump_count, coyote])
 		lines.append("state: dash=%s roll=%s crouch=%s sneak=%s" % [str(dash), str(roll), str(crouch), str(sneak)])
 	if show_ctx:
-		var ctx := _get_controller_context(actor)
+		var ctx: Object = _get_controller_context(actor)
 		if ctx:
 			var move_input := _get_prop_vector2(ctx, "move_input")
 			var running := _get_prop_bool(ctx, "is_running")
@@ -250,7 +267,9 @@ func _get_controller_context(actor: Node) -> Object:
 	if actor == null:
 		return null
 	if actor.has_method("get_controller_context"):
-		return actor.call("get_controller_context")
+		var ctx_value: Variant = actor.call("get_controller_context")
+		if ctx_value is Object:
+			return ctx_value
 	return null
 
 
@@ -378,7 +397,11 @@ func _get_prop_bool(obj: Object, prop: String) -> bool:
 	if obj == null:
 		return false
 	if prop in obj:
-		return bool(obj.get(prop))
+		var value = obj.get(prop)
+		if value is bool:
+			return value
+		if value is int or value is float:
+			return value != 0
 	return false
 
 
@@ -386,7 +409,11 @@ func _get_prop_int(obj: Object, prop: String) -> int:
 	if obj == null:
 		return 0
 	if prop in obj:
-		return int(obj.get(prop))
+		var value = obj.get(prop)
+		if value is int:
+			return value
+		if value is float:
+			return floori(value)
 	return 0
 
 
@@ -394,7 +421,11 @@ func _get_prop_float(obj: Object, prop: String) -> float:
 	if obj == null:
 		return 0.0
 	if prop in obj:
-		return float(obj.get(prop))
+		var value = obj.get(prop)
+		if value is float:
+			return value
+		if value is int:
+			return value * 1.0
 	return 0.0
 
 
@@ -441,14 +472,22 @@ func _get_resource_id(obj: Object, prop: String) -> String:
 		return ""
 	if not (prop in obj):
 		return ""
-	var res = obj.get(prop)
-	if res == null:
+	var value: Variant = obj.get(prop)
+	if value == null:
 		return "null"
-	if "id" in res:
-		return str(res.id)
-	if res is Resource and res.resource_path != "":
-		return res.resource_path
-	return res.get_class()
+	if value is Resource:
+		var res: Resource = value as Resource
+		if "id" in res:
+			return str(res.get("id"))
+		if res.resource_path != "":
+			return res.resource_path
+		return res.get_class()
+	if value is Object:
+		var ref_obj: Object = value as Object
+		if "id" in ref_obj:
+			return str(ref_obj.get("id"))
+		return ref_obj.get_class()
+	return str(value)
 
 
 func _get_prop_res_path(obj: Object, prop: String) -> String:

@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="ModelData3D" load_steps=4 format=3 uid="uid://cjlgtt24v43of"]
+[gd_resource type="Resource" script_class="ModelData3D" format=3 uid="uid://cjlgtt24v43of"]
 
 [ext_resource type="Script" uid="uid://c454vwar8b5xu" path="res://engine3d/data/resources/ModelData3D.gd" id="1"]
 [ext_resource type="AnimationLibrary" uid="uid://chkte3qisliy8" path="res://assets/characters/biped/anim/BipedAnimations_ActionAdventure.tres" id="1_byiu8"]
-[ext_resource type="PackedScene" uid="uid://coissavetp8po" path="res://temp/fbx animations/Action Adventure Pack/michio full.fbx" id="2"]
+[ext_resource type="PackedScene" uid="uid://coissavetp8po" path="res://assets/animations/fbx animations/Action Adventure Pack/michio full.fbx" id="2"]
 
 [resource]
 script = ExtResource("1")
@@ -11,17 +11,137 @@ description = "Michio rigged (Action Adventure pack)"
 tags = PackedStringArray()
 scene = ExtResource("2")
 scale = Vector3(0.01, 0.01, 0.01)
-animation_tree_path = NodePath("")
-animation_player_path = NodePath("")
 animation_library = ExtResource("1_byiu8")
-animation_library_name = &"biped"
-force_double_sided = true
-anim_idle_state = "action_adventure_pack__idle_(2)"
+anim_state_offsets = {
+"combat_armed_attack_combo": 0.0,
+"combat_armed_attack_heavy": 0.0,
+"combat_armed_attack_light": 0.0,
+"combat_armed_block": 0.0,
+"combat_armed_combo_01": 0.0,
+"combat_armed_combo_02": 0.0,
+"combat_armed_combo_03": 0.0,
+"combat_armed_combo_04": 0.0,
+"combat_armed_combo_05": 0.0,
+"combat_armed_combo_06": 0.0,
+"combat_armed_combo_07": 0.0,
+"combat_armed_combo_08": 0.0,
+"combat_armed_combo_09": 0.0,
+"combat_armed_combo_10": 0.0,
+"combat_armed_crouch_attack_heavy": 0.0,
+"combat_armed_crouch_attack_light": 0.0,
+"combat_armed_draw": 0.0,
+"combat_armed_hit": 0.0,
+"combat_armed_idle": 0.0,
+"combat_armed_ko": 0.0,
+"combat_armed_parry": 0.0,
+"combat_armed_ready": 0.0,
+"combat_armed_sheath": 0.0,
+"combat_armed_throw": 0.0,
+"combat_ranged_aim": 0.0,
+"combat_ranged_alt_shoot": 0.0,
+"combat_ranged_charge": 0.0,
+"combat_ranged_combo_01": 0.0,
+"combat_ranged_combo_02": 0.0,
+"combat_ranged_combo_03": 0.0,
+"combat_ranged_combo_04": 0.0,
+"combat_ranged_combo_05": 0.0,
+"combat_ranged_combo_06": 0.0,
+"combat_ranged_combo_07": 0.0,
+"combat_ranged_combo_08": 0.0,
+"combat_ranged_combo_09": 0.0,
+"combat_ranged_combo_10": 0.0,
+"combat_ranged_crouch_attack_heavy": 0.0,
+"combat_ranged_crouch_attack_light": 0.0,
+"combat_ranged_hit": 0.0,
+"combat_ranged_idle": 0.0,
+"combat_ranged_ko": 0.0,
+"combat_ranged_ready": 0.0,
+"combat_ranged_reload": 0.0,
+"combat_ranged_shoot": 0.0,
+"combat_ranged_throw": 0.0,
+"combat_unarmed_attack_combo": 0.0,
+"combat_unarmed_attack_heavy": 0.0,
+"combat_unarmed_attack_light": 0.0,
+"combat_unarmed_block": 0.0,
+"combat_unarmed_combo_01": 0.0,
+"combat_unarmed_combo_02": 0.0,
+"combat_unarmed_combo_03": 0.0,
+"combat_unarmed_combo_04": 0.0,
+"combat_unarmed_combo_05": 0.0,
+"combat_unarmed_combo_06": 0.0,
+"combat_unarmed_combo_07": 0.0,
+"combat_unarmed_combo_08": 0.0,
+"combat_unarmed_combo_09": 0.0,
+"combat_unarmed_combo_10": 0.0,
+"combat_unarmed_crouch_attack_heavy": 0.0,
+"combat_unarmed_crouch_attack_light": 0.0,
+"combat_unarmed_hit": 0.0,
+"combat_unarmed_idle": 0.0,
+"combat_unarmed_ko": 0.0,
+"combat_unarmed_parry": 0.0,
+"combat_unarmed_ready": 0.0,
+"combat_unarmed_throw": 0.0,
+"crouch": 0.0,
+"crouch_aim": 0.0,
+"crouch_enter": 0.0,
+"crouch_idle": 0.0,
+"crouch_turn": 0.0,
+"crouch_turn_left": 0.0,
+"crouch_turn_right": 0.0,
+"crouch_walk": 0.0,
+"double_jump": 0.0,
+"fall": 0.0,
+"idle": -0.4,
+"idle_turn_left": 0.0,
+"idle_turn_right": 0.0,
+"interact_pickup_chest": 0.0,
+"interact_pickup_floor": 0.0,
+"interact_pickup_hip": 0.0,
+"interact_pull": 0.0,
+"interact_push": 0.0,
+"interact_talk": 0.0,
+"interact_use": 0.0,
+"jump": 0.0,
+"roll": 0.0,
+"run": 0.0,
+"run_turn_left": 0.0,
+"run_turn_right": 0.0,
+"sprint": 0.0,
+"sprint_turn_left": 0.0,
+"sprint_turn_right": 0.0,
+"stand_up": 0.0,
+"traversal_double_jump": 0.0,
+"traversal_ledge_climb": 0.0,
+"traversal_ledge_grab": 0.0,
+"traversal_ledge_hold": 0.0,
+"traversal_ledge_shimmy": 0.0,
+"traversal_wall_jump": 0.0,
+"walk": 0.0,
+"walk_turn_left": 0.0,
+"walk_turn_right": 0.0,
+"wall_jump": 0.0
+}
+anim_idle_state = "pro_sword_and_shield_pack__sword_and_shield_idle_(4)"
+anim_idle_turn_left_state = "action_adventure_pack__left_turn"
+anim_idle_turn_right_state = "action_adventure_pack__right_turn"
 anim_walk_state = "action_adventure_pack__walking"
+anim_walk_turn_left_state = "action_adventure_pack__walking"
+anim_walk_turn_right_state = "action_adventure_pack__walking"
 anim_run_state = "action_adventure_pack__running"
-anim_sprint_state = "action_adventure_pack__running"
-anim_jump_state = "action_adventure_pack__jumping_up"
+anim_run_turn_left_state = "action_adventure_pack__running"
+anim_run_turn_right_state = "action_adventure_pack__running"
+anim_sprint_state = "pro_sword_and_shield_pack__sword_and_shield_run"
+anim_sprint_turn_left_state = "pro_sword_and_shield_pack__sword_and_shield_run"
+anim_sprint_turn_right_state = "pro_sword_and_shield_pack__sword_and_shield_run"
+anim_jump_state = "pro_sword_and_shield_pack__sword_and_shield_jump"
 anim_fall_state = "action_adventure_pack__falling_idle"
+anim_double_jump_state = "action_adventure_pack__jumping_up"
+anim_wall_jump_state = "action_adventure_pack__flip_kick"
 anim_roll_state = "action_adventure_pack__falling_to_roll"
-anim_crouch_idle_state = "action_adventure_pack__idle"
-anim_crouch_walk_state = "action_adventure_pack__walking"
+anim_crouch_enter_state = "pro_sword_and_shield_pack__sword_and_shield_crouch"
+anim_crouch_idle_state = "pro_sword_and_shield_pack__sword_and_shield_crouch_idle"
+anim_crouch_walk_state = "supplemental_moveset_pro_magic_pack__crouch_walk_forward"
+anim_crouch_turn_state = "pro_sword_and_shield_pack__sword_and_shield_crouch_idle"
+anim_crouch_turn_left_state = "supplemental_moveset_pro_magic_pack__crouch_turn_left_90"
+anim_crouch_turn_right_state = "supplemental_moveset_pro_magic_pack__crouch_turn_right_90"
+anim_crouch_exit_state = "pro_sword_and_shield_pack__sword_and_shield_crouching"

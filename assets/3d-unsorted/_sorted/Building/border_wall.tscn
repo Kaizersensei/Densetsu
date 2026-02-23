@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://ci0r2ebbanu8m"]
+
+[ext_resource type="ArrayMesh" uid="uid://cfwoyhofaao5k" path="res://assets/static/buildings/modules/border_wall.obj" id="1_tvw7k"]
+[ext_resource type="Texture2D" uid="uid://bffsecrx1ygwp" path="res://assets/static/buildings/Ramen_Haven_foundation_9patch_all_00116_Color.png" id="2_p1r0a"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1phiu"]
+albedo_texture = ExtResource("2_p1r0a")
+uv1_scale = Vector3(0.001, 5, 0)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_gygrh"]
+points = PackedVector3Array(0.05, 0, -1, 0.15, 0, -1, 0.05, 0, 1, 0.05, 0.3, -1, 0.25, 0.19998, -1, 0.15, 0, 1, 0.05, 0.3, 1, 0.25, 0.3, -1, 0.25, 0.19998, 1, 0.25, 0.3, 1)
+
+[node name="Border Wall" type="StaticBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_tvw7k")
+surface_material_override/0 = SubResource("StandardMaterial3D_1phiu")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_gygrh")

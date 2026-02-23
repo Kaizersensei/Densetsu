@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://01s0do5kkf8d"
+path="res://.godot/imported/HP3_weed034_combined.obj-a99d1cfb4c7a57d4056594f074ef9fdc.mesh"
+
+[deps]
+
+files=["res://.godot/imported/HP3_weed034_combined.obj-a99d1cfb4c7a57d4056594f074ef9fdc.mesh"]
+
+source_file="res://assets/3d-unsorted/_arraymeshes/HP3_weed034_combined.obj"
+dest_files=["res://.godot/imported/HP3_weed034_combined.obj-a99d1cfb4c7a57d4056594f074ef9fdc.mesh", "res://.godot/imported/HP3_weed034_combined.obj-a99d1cfb4c7a57d4056594f074ef9fdc.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

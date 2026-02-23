@@ -1,12 +1,20 @@
 extends Node3D
 
+## NodePath to actor.
 @export var actor_path: NodePath = NodePath("Actor")
+## NodePath to label.
 @export var label_path: NodePath = NodePath("CanvasLayer/Panel/Label")
+## Controls scene title.
 @export var scene_title: String = "Smoke Scene 3D"
+## Identifier for expected movement.
 @export var expected_movement_id: String = ""
+## Identifier for expected camera.
 @export var expected_camera_id: String = ""
+## Identifier for expected model.
 @export var expected_model_id: String = ""
+## Enable show aim.
 @export var show_aim: bool = true
+## Enable hide when anim debug present.
 @export var hide_when_anim_debug_present: bool = true
 
 @onready var _actor: Node = get_node_or_null(actor_path)

@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://u3lg3ig4cj1l"]
+
+[ext_resource type="Script" uid="uid://b7j760yhlgwtt" path="res://engine3d/loading/DensetsuBootLoader.gd" id="1"]
+
+[node name="DensetsuBootLoader" type="Node" unique_id=170936720]
+script = ExtResource("1")
+minimum_visible_seconds = 1.0

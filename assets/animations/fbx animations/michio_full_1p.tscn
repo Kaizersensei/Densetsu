@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://bfeptocnsxljq"]
+
+[ext_resource type="PackedScene" uid="uid://cp8ymfrvymqsj" path="res://assets/animations/fbx animations/michio rigged.fbx" id="1_ekeoh"]
+[ext_resource type="Material" uid="uid://d4j5pmhxo5l6" path="res://assets/animations/fbx animations/Action Adventure Pack/transparent.tres" id="2_xvdrl"]
+
+[node name="michio rigged" unique_id=189002946 instance=ExtResource("1_ekeoh")]
+
+[node name="michio_template_001" parent="Armature" index="0"]
+surface_material_override/5 = ExtResource("2_xvdrl")
+
+[node name="_1_001" parent="Armature/Skeleton3D" index="0"]
+surface_material_override/0 = ExtResource("2_xvdrl")
+
+[node name="fringe_001" parent="Armature/Skeleton3D" index="1"]
+surface_material_override/0 = ExtResource("2_xvdrl")
+

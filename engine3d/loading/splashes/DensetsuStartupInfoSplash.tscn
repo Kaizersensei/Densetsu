@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://engine3d/loading/splashes/DensetsuSplashScreen.tscn" id="1"]
+
+[node name="DensetsuStartupInfoSplash" instance=ExtResource("1")]
+fade_in_seconds = 0.35
+hold_seconds = 1.2
+fade_out_seconds = 0.35
+skip_fade_out_seconds = 0.1
+background_color = Color(0, 0, 0, 1)
+title_text = "Now Loading"
+subtitle_text = "Autosave enabled. Please do not close the game while saving."
+title_modulate = Color(0.95, 0.95, 0.95, 1)
+subtitle_modulate = Color(0.8, 0.8, 0.8, 1)

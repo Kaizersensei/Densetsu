@@ -1,1 +1,21 @@
 .backup/
+temp/.ignored_plugins_archive/
+temp/.ignored_runtime_config_archive/
+
+# Godot local cache/import/editor state (generated)
+.godot/
+
+# Local scratch/output and private notes (not engine runtime)
+temp/
+docs/
+
+# Local project/editor backups and machine junk
+desktop.ini
+Thumbs.db
+.DS_Store
+project_backup.godot
+project_analysis_3d_shift.txt
+*.scn*.tmp
+
+# Local editor workspace
+.vscode/

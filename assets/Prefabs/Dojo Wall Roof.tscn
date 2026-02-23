@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://ddo6j1fkecu3a"]
+
+[ext_resource type="ArrayMesh" uid="uid://cqvqdjrr8g32p" path="res://assets/3d-unsorted/naturePack_082.obj" id="1_pi0c1"]
+[ext_resource type="Texture2D" uid="uid://gx0k4knfe2tf" path="res://assets/textures/Densetsu/9TEX_daimyio12.png" id="2_yjbbk"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qbaje"]
+albedo_color = Color(0, 1, 0.41568628, 1)
+albedo_texture = ExtResource("2_yjbbk")
+uv1_scale = Vector3(0.03, 0.025, 0.03)
+uv1_offset = Vector3(0, -0.095, 0)
+
+[node name="Node3D" type="Node3D" unique_id=2058507116]
+
+[node name="NaturePack082" type="MeshInstance3D" parent="." unique_id=1915139186]
+transform = Transform3D(6.8229003, 0, 0, 0, 1.2546, 0, 0, 0, 3.6, 0, 3.2, 0)
+mesh = ExtResource("1_pi0c1")
+surface_material_override/0 = SubResource("StandardMaterial3D_qbaje")
+surface_material_override/1 = SubResource("StandardMaterial3D_qbaje")
+surface_material_override/2 = SubResource("StandardMaterial3D_qbaje")

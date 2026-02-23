@@ -1,0 +1,139 @@
+[gd_scene format=3 uid="uid://bhpm0q1hsl2w5"]
+
+[ext_resource type="Script" uid="uid://c1d4xpvfgbkre" path="res://engine3d/tests/Actor3D_Test.gd" id="1_k7d7g"]
+[ext_resource type="Sky" uid="uid://djx338cmyvob8" path="res://addons/flowing-sky/templates/sky.tres" id="2_kggfi"]
+[ext_resource type="PackedScene" uid="uid://blo6di4bc2dhy" path="res://engine3d/actors/ActorPlayer3D.tscn" id="3_rtx7s"]
+[ext_resource type="PackedScene" uid="uid://bel2yysrcdil7" path="res://assets/Prefabs/hirogawa inn.tscn" id="6_gleuw"]
+[ext_resource type="Texture2D" uid="uid://cywswfp1u5130" path="res://assets/textures/terrain/1024/grass patch.png" id="6_kiaym"]
+[ext_resource type="PackedScene" uid="uid://d1kag4kexqioe" path="res://assets/3d-unsorted/_sorted/Building/DSM_3d-platformer-set1-example_Cube_17793.tscn" id="6_rqy32"]
+[ext_resource type="PackedScene" uid="uid://bi2oyu70xmngs" path="res://assets/Prefabs/infinitree.tscn" id="7_gleuw"]
+[ext_resource type="PackedScene" uid="uid://7vqcok5wk0eh" path="res://assets/Prefabs/hirogawa restaurant.scn" id="8_s63m8"]
+[ext_resource type="PackedScene" path="res://engine3d/postfx/ToonPostFXController3D.tscn" id="9_n17c8"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_AlienBug.tscn" id="10_sfh1t"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_AlienSlime.tscn" id="11_mlcb6"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_Butterfly.tscn" id="12_23lsr"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_Cat.tscn" id="13_eexal"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_CatRoot.tscn" id="14_kn3tp"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_Chichen.tscn" id="15_jomqt"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_ChickenFRoot.tscn" id="16_s80tu"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_ChickenRoot.tscn" id="17_rng1i"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_Cow.tscn" id="18_k7d7g"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_Crow.tscn" id="19_kggfi"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_Dog.tscn" id="20_rtx7s"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_Girafe.tscn" id="21_pq225"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_Ladybug.tscn" id="22_kdsqt"]
+[ext_resource type="PackedScene" path="res://engine3d/actors/templates/animals/NPC_Mammoth.tscn" id="23_qoe7m"]
+
+[sub_resource type="Environment" id="Environment_8xtmd"]
+background_mode = 2
+sky = ExtResource("2_kggfi")
+tonemap_mode = 2
+ssao_enabled = true
+sdfgi_enabled = true
+glow_enabled = true
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0.45335034, 0.4841283, 0.5333091, 1)
+fog_density = 1.0
+fog_sky_affect = 0.252
+fog_depth_curve = 0.42044884
+fog_depth_begin = 83.0
+fog_depth_end = 915.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rqy32"]
+albedo_color = Color(0.838023, 0.85584104, 0.45109165, 1)
+albedo_texture = ExtResource("6_kiaym")
+uv1_scale = Vector3(1000, 1000, 1000)
+
+[node name="Actor3D_Test" type="Node3D" unique_id=646117495]
+script = ExtResource("1_k7d7g")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=200200914]
+environment = SubResource("Environment_8xtmd")
+
+[node name="ToonPostFXController3D" parent="." unique_id=232858988 instance=ExtResource("9_n17c8")]
+process_mode = 3
+thickness = 0.85
+edge_threshold = 1.03
+edge_softness = 0.001
+edge_strength = 1.05
+overlay_opacity = 0.85
+invert_depth = true
+distance_start = 0.0
+distance_end = 822.6
+near_thickness_multiplier = 1.53
+far_thickness_multiplier = 0.05
+camera_near = 0.001
+camera_far = 10000.0
+camera_plane_offset = 0.01
+standard_specular = 0.64
+standard_rim_enabled = true
+standard_rim_tint = 0.5
+stylized_steps = 2.0
+stylized_step_smoothness = 0.2
+stylized_specular = 0.56
+stylized_rim_amount = 1.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1010583351]
+transform = Transform3D(0.82445, -0.203167, 0.528211, -0.262174, 0.690038, 0.674621, -0.501546, -0.694673, 0.515636, 0, 647.784, 0)
+
+[node name="Actor" parent="." unique_id=1120605101 instance=ExtResource("3_rtx7s")]
+transform = Transform3D(0.5551058, 0, 0.8317798, 0, 1, 0, -0.8317798, 0, 0.5551058, 4.0714417, 5.380331, -18.463612)
+
+[node name="floor" parent="." unique_id=752012657 instance=ExtResource("6_rqy32")]
+transform = Transform3D(1000, 0, 0, 0, 0.01, 0, 0, 0, 1000, 0, 1.0040182, 0)
+material_override = SubResource("StandardMaterial3D_rqy32")
+cast_shadows = 0
+
+[node name="Inn" parent="." unique_id=329539024 instance=ExtResource("6_gleuw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.254014, 2.3563013, -30.883717)
+
+[node name="Infinitree" parent="." unique_id=2134674992 instance=ExtResource("7_gleuw")]
+transform = Transform3D(2.4, 0, 0, 0, 5.7599998, 0, 0, 0, 2.5500002, -26.951405, -2.823495, -76.57696)
+
+[node name="Node3D" parent="." unique_id=465323740 instance=ExtResource("8_s63m8")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -24.50705, -0.48188293, -27.81709)
+
+[node name="NPC_AlienBug" parent="." unique_id=1555797162 instance=ExtResource("10_sfh1t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 1.0240182, -1)
+
+[node name="NPC_AlienSlime" parent="." unique_id=949236493 instance=ExtResource("11_mlcb6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35, 1.0240182, 6)
+
+[node name="NPC_Butterfly" parent="." unique_id=969468405 instance=ExtResource("12_23lsr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 3.0240183, -2)
+motion_mode = 1
+
+[node name="NPC_Cat" parent="." unique_id=1700342708 instance=ExtResource("13_eexal")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.0240182, -2)
+
+[node name="NPC_CatRoot" parent="." unique_id=1557182508 instance=ExtResource("14_kn3tp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.0240182, 14)
+
+[node name="NPC_Chichen" parent="." unique_id=24643805 instance=ExtResource("15_jomqt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.0240182, -4)
+
+[node name="NPC_ChickenFRoot" parent="." unique_id=1281292612 instance=ExtResource("16_s80tu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 1.0240182, -2)
+
+[node name="NPC_ChickenRoot" parent="." unique_id=1183106750 instance=ExtResource("17_rng1i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 1.0240182, 14)
+
+[node name="NPC_Cow" parent="." unique_id=1117344423 instance=ExtResource("18_k7d7g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19, 1.0240182, -2)
+
+[node name="NPC_Crow" parent="." unique_id=139369467 instance=ExtResource("19_kggfi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 12.024018, 15)
+motion_mode = 1
+
+[node name="NPC_Dog" parent="." unique_id=193863488 instance=ExtResource("20_rtx7s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1.0240182, -2)
+
+[node name="NPC_Girafe" parent="." unique_id=1094674849 instance=ExtResource("21_pq225")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 1.0240182, -7)
+
+[node name="NPC_Ladybug" parent="." unique_id=488591578 instance=ExtResource("22_kdsqt")]
+transform = Transform3D(5, 0, 0, 0, -2.1855695e-07, -5, 0, 5, -2.1855695e-07, -6, 1.0240182, -2)
+
+[node name="NPC_Mammoth" parent="." unique_id=1110236868 instance=ExtResource("23_qoe7m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 1.0240182, 5)

@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://dp8do36fpiots"]
+
+[ext_resource type="Texture2D" uid="uid://dio0hu2sttmjq" path="res://assets/textures/Densetsu/!old/ui_weather/004.png" id="1_l4mcj"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_qbry2"]
+emission_shape_scale = Vector3(5.41, 1, 5.245)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+angle_min = -18.79999
+angle_max = 15.400011
+spread = 153.416
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jfauj"]
+transparency = 1
+blend_mode = 1
+albedo_color = Color(1, 1, 1, 0.4509804)
+albedo_texture = ExtResource("1_l4mcj")
+uv1_scale = Vector3(1, 0.385, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_f86o8"]
+material = SubResource("StandardMaterial3D_jfauj")
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_l4mcj"]
+load_path = "res://.godot/imported/004.png-86b53f4e3aeb863d2a6d4c065b290a76.s3tc.ctex"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qbry2"]
+transparency = 1
+blend_mode = 1
+albedo_color = Color(1, 1, 1, 0.4509804)
+albedo_texture = SubResource("CompressedTexture2D_l4mcj")
+
+[sub_resource type="QuadMesh" id="QuadMesh_jfauj"]
+material = SubResource("StandardMaterial3D_qbry2")
+custom_aabb = AABB(-100, -100, -100, 100, 100, 100)
+orientation = 0
+
+[node name="Node3D" type="Node3D" unique_id=2014160081]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="." unique_id=370030213]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13, 0)
+amount = 50
+lifetime = 2.3
+preprocess = 1.26
+speed_scale = 1.5
+explosiveness = 0.14
+randomness = 0.74
+visibility_aabb = AABB(-50, -50, -50, 50, 50, 50)
+transform_align = 3
+trail_lifetime = 1.79
+process_material = SubResource("ParticleProcessMaterial_qbry2")
+draw_passes = 2
+draw_pass_1 = SubResource("QuadMesh_f86o8")
+draw_pass_2 = SubResource("QuadMesh_jfauj")

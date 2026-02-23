@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cyncsh63uw7fr"]
+
+[ext_resource type="Texture2D" uid="uid://curkgkd3nkct6" path="res://assets/sky/cloud3.png" id="1_myt42"]
+
+[resource]
+transparency = 1
+albedo_color = Color(3.546238, 3.546238, 3.546238, 1)
+albedo_texture = ExtResource("1_myt42")
+uv1_scale = Vector3(1.755, 1.755, 1.755)

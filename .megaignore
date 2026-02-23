@@ -1,0 +1,2 @@
+-d:.godot/editor
+-d:temp/.ignored_runtime_config_archive

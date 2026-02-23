@@ -1,0 +1,81 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Shader" path="res://shaders/dfw/dfw_flowing_water.gdshader" id="1_dfw"]
+[ext_resource type="Texture2D" path="res://assets/textures/Densetsu/LOOP_woods_1.png" id="2_tex"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_water"]
+size = Vector2(12, 12)
+subdivide_width = 64
+subdivide_depth = 64
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_water"]
+shader = ExtResource("1_dfw")
+shader_parameter/dfw_enabled = true
+shader_parameter/base_dir = Vector2(0.3, 1)
+shader_parameter/quad_uv_size = 0.0625
+shader_parameter/speed = 0.18
+shader_parameter/speed_variation = 0.15
+shader_parameter/seed = 1.0
+shader_parameter/jitter_angle_deg = 14.0
+shader_parameter/uv_scale = Vector2(0.18, 0.18)
+shader_parameter/continuous_warp_amp = 0.0025
+shader_parameter/per_quad_warp_amp = 0.0015
+shader_parameter/flow_noise_source = 1
+shader_parameter/flow_noise_scale = 2.5
+shader_parameter/albedo_color = Color(0.09, 0.2, 0.24, 1)
+shader_parameter/albedo_tex = ExtResource("2_tex")
+shader_parameter/use_albedo_tex = true
+shader_parameter/albedo_tex_mix = 0.25
+shader_parameter/albedo_flow_influence = 1.0
+shader_parameter/use_normal_tex = false
+shader_parameter/procedural_normal_strength = 0.95
+shader_parameter/procedural_normal_step = 0.012
+shader_parameter/normal_strength = 0.9
+shader_parameter/roughness_base = 0.42
+shader_parameter/roughness_tex = ExtResource("2_tex")
+shader_parameter/use_roughness_tex = true
+shader_parameter/roughness_tex_mix = 0.35
+shader_parameter/roughness_flow_amp = 0.12
+shader_parameter/specular_base = 0.6
+shader_parameter/use_edge_foam = false
+shader_parameter/debug_flow = false
+shader_parameter/debug_mode = 0
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_demo"]
+sky_top_color = Color(0.317647, 0.619608, 0.878431, 1)
+sky_horizon_color = Color(0.709804, 0.843137, 0.945098, 1)
+ground_horizon_color = Color(0.239216, 0.313726, 0.341176, 1)
+ground_bottom_color = Color(0.0980392, 0.117647, 0.145098, 1)
+
+[sub_resource type="Sky" id="Sky_demo"]
+sky_material = SubResource("ProceduralSkyMaterial_demo")
+
+[sub_resource type="Environment" id="Environment_demo"]
+background_mode = 2
+sky = SubResource("Sky_demo")
+ambient_light_source = 3
+ambient_light_energy = 0.35
+tonemap_mode = 2
+glow_enabled = false
+
+[node name="WaterDemo" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_demo")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.901073, -0.318242, 0.293893, 0, 0.678801, 0.734322, -0.433661, -0.66153, 0.611695, 0, 5.49131, 0)
+light_energy = 2.0
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.959493, 0, -0.281733, -0.102811, 0.931031, -0.350008, 0.2623, 0.364812, 0.893333, 0, 3.8, 8.6)
+current = true
+fov = 55.0
+
+[node name="WaterPlane" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_water")
+surface_material_override/0 = SubResource("ShaderMaterial_water")
+
+[node name="MarkerCenter" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 0)

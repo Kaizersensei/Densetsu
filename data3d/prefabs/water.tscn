@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://r0yq4nkoaese"]
+
+[ext_resource type="Material" uid="uid://xvpsudn1tkc5" path="res://assets/water/hirogawa_water.tres" id="1_pu3cs"]
+[ext_resource type="Texture2D" uid="uid://chwjxcbhv3q4d" path="res://assets/textures/Densetsu/terrain/512/rocky path_1.png" id="2_h77i8"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_dehm8"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yea7s"]
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.886275, 0.764706, 0.807843, 1)
+albedo_texture = ExtResource("2_h77i8")
+uv1_scale = Vector3(100000, 100000, 100000)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0mrb7"]
+
+[node name="Water" type="StaticBody3D" unique_id=71487204]
+transform = Transform3D(1000, 0, 0, 0, 1.14159, 0, 0, 0, 1000, 0, 0, 0)
+
+[node name="surface" type="MeshInstance3D" parent="." unique_id=60898116]
+transform = Transform3D(1000, 0, 0, 0, 10, 0, 0, 0, 1000, 0, 7.30241, 0)
+transparency = 0.53
+cast_shadow = 0
+ignore_occlusion_culling = true
+mesh = SubResource("BoxMesh_dehm8")
+surface_material_override/0 = ExtResource("1_pu3cs")
+
+[node name="bottom" type="MeshInstance3D" parent="." unique_id=1431700319]
+transform = Transform3D(1000, 0, 0, 0, 1, 0, 0, 0, 1000, 0, 6.039, 0)
+visible = false
+cast_shadow = 0
+ignore_occlusion_culling = true
+mesh = SubResource("BoxMesh_dehm8")
+surface_material_override/0 = SubResource("StandardMaterial3D_yea7s")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=668476962]
+transform = Transform3D(1000, 0, 0, 0, 1, 0, 0, 0, 1000, 0, 6.039, 0)
+shape = SubResource("BoxShape3D_0mrb7")

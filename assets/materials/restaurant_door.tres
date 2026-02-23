@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cm45ggre40iik"]
+
+[ext_resource type="Texture2D" uid="uid://bvtj87qllrf43" path="res://assets/textures/Densetsu/9TEX_hirogawa_door1.png" id="1_up0xn"]
+
+[resource]
+albedo_texture = ExtResource("1_up0xn")
+heightmap_scale = 13.471
+uv1_scale = Vector3(0.375, 0.395, -0.015)
+uv1_offset = Vector3(0.17, -0.05, 0)
+uv1_triplanar = true
+grow_amount = -0.235
